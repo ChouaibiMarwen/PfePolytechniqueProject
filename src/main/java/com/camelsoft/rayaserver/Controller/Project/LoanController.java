@@ -152,19 +152,21 @@ public class LoanController extends BaseController {
 
     @PostMapping("/remove_loan/{id}")
     @PreAuthorize("hasRole('SUPPLIER')")
-    @ApiOperation(value = "remove loan request from the supplier", notes = "Endpoint to add a new loan request")
+    @ApiOperation(value = "Remove loan request from the supplier", notes = "Endpoint to remove a loan request")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully remove the loan request"),
+            @ApiResponse(code = 200, message = "Successfully removed the loan request"),
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity remove_loan(@PathVariable Long id) throws IOException {
+    public ResponseEntity<String> removeLoan(@PathVariable Long id) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         Supplier supplier = user.getSupplier();
-        if(this.Services.ExistByIdAndSupplier(id,supplier)){
+        if (this.Services.ExistByIdAndSupplier(id, supplier)) {
             this.Services.DeleteById(id);
-            return ResponseEntity.ok().body(null);
+            return ResponseEntity.ok().body("Loan request removed successfully");
+        } else {
+            return ResponseEntity.badRequest().body("This loan request does not exist");
         }
-        return ResponseEntity.badRequest().body("this loan does not exist");
     }
+
 }
