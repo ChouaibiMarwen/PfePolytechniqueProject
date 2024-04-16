@@ -2,7 +2,7 @@ package com.camelsoft.rayaserver.Tools.Util;
 
 
 import com.camelsoft.rayaserver.Request.auth.DeviceInfo;
-import com.camelsoft.rayaserver.Response.OnUserLogoutSuccessEvent;
+import com.camelsoft.rayaserver.Response.Auth.OnUserLogoutSuccessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

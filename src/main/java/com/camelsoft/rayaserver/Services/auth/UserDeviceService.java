@@ -2,7 +2,7 @@ package com.camelsoft.rayaserver.Services.auth;
 
 
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
-import com.camelsoft.rayaserver.Models.Auth.users;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.UserDeviceRepository;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import com.camelsoft.rayaserver.Tools.Util.TokenUtil;

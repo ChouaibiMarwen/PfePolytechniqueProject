@@ -5,7 +5,7 @@ package com.camelsoft.rayaserver.Tools.Util;
 
 
 
-import com.camelsoft.rayaserver.Enum.Provider;
+import com.camelsoft.rayaserver.Enum.Tools.Provider;
 import com.camelsoft.rayaserver.Models.Ooath.FacebookOAuth2UserInfo;
 import com.camelsoft.rayaserver.Models.Ooath.GoogleOAuth2UserInfo;
 import com.camelsoft.rayaserver.Models.Ooath.OAuth2UserInfo;

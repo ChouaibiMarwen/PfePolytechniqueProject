@@ -4,7 +4,7 @@ package com.camelsoft.rayaserver.Tools.Util;
 
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Auth.Role;
-import com.camelsoft.rayaserver.Models.Auth.users;
+import com.camelsoft.rayaserver.Models.User.users;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

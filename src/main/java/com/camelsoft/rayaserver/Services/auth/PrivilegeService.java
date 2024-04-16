@@ -2,9 +2,9 @@ package com.camelsoft.rayaserver.Services.auth;
 
 
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
-import com.camelsoft.rayaserver.Models.Auth.users;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.PrivilegeRepository;
-import com.camelsoft.rayaserver.Response.DynamicResponse;
+import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

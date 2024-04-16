@@ -2,7 +2,7 @@ package com.camelsoft.rayaserver.Repository.Auth;
 
 
 import com.camelsoft.rayaserver.Models.Auth.RefreshToken;
-import com.camelsoft.rayaserver.Models.Auth.users;
+import com.camelsoft.rayaserver.Models.User.users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

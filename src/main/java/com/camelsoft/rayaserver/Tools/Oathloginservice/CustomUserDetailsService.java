@@ -2,8 +2,8 @@ package com.camelsoft.rayaserver.Tools.Oathloginservice;
 
 
 
-import com.camelsoft.rayaserver.Models.Auth.users;
-import com.camelsoft.rayaserver.Repository.Auth.UserRepository;
+import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Repository.User.UserRepository;
 import com.camelsoft.rayaserver.Tools.Exception.ResourceNotFoundException;
 import com.camelsoft.rayaserver.Tools.Util.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;

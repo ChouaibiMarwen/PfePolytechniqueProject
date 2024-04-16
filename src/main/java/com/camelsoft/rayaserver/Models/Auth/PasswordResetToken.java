@@ -1,5 +1,7 @@
 package com.camelsoft.rayaserver.Models.Auth;
 
+import com.camelsoft.rayaserver.Models.User.users;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Calendar;

@@ -1,14 +1,14 @@
 package com.camelsoft.rayaserver.Tools.Oathloginservice;
 
 
-import com.camelsoft.rayaserver.Enum.Provider;
+import com.camelsoft.rayaserver.Enum.Tools.Provider;
 import com.camelsoft.rayaserver.Models.Auth.Role;
-import com.camelsoft.rayaserver.Models.Auth.users;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Ooath.OAuth2UserInfo;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
-import com.camelsoft.rayaserver.Repository.Auth.UserRepository;
-import com.camelsoft.rayaserver.Services.auth.UserService;
+import com.camelsoft.rayaserver.Repository.User.UserRepository;
+import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Exception.OAuth2AuthenticationProcessingException;
 import com.camelsoft.rayaserver.Tools.Util.OAuth2UserInfoFactory;
 import com.camelsoft.rayaserver.Tools.Util.UserPrincipal;

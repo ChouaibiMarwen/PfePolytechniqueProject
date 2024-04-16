@@ -1,7 +1,7 @@
 package com.camelsoft.rayaserver.Tools.Util;
 
 
-import com.camelsoft.rayaserver.Response.OnUserLogoutSuccessEvent;
+import com.camelsoft.rayaserver.Response.Auth.OnUserLogoutSuccessEvent;
 import com.camelsoft.rayaserver.Tools.Exception.InvalidTokenRequestException;
 import io.jsonwebtoken.*;
 import org.json.JSONException;

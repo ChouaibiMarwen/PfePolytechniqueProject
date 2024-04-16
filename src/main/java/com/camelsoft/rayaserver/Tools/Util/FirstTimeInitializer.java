@@ -1,17 +1,17 @@
 package com.camelsoft.rayaserver.Tools.Util;
 
 
-import com.camelsoft.rayaserver.Enum.Gender;
-import com.camelsoft.rayaserver.Enum.RoleEnum;
+import com.camelsoft.rayaserver.Enum.User.Gender;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Auth.Role;
-import com.camelsoft.rayaserver.Models.Auth.Supplier;
-import com.camelsoft.rayaserver.Models.Auth.users;
+import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
-import com.camelsoft.rayaserver.Repository.Auth.UserRepository;
+import com.camelsoft.rayaserver.Repository.User.UserRepository;
 import com.camelsoft.rayaserver.Services.Country.CountriesServices;
 import com.camelsoft.rayaserver.Services.auth.PrivilegeService;
-import com.camelsoft.rayaserver.Services.auth.UserService;
+import com.camelsoft.rayaserver.Services.User.UserService;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;

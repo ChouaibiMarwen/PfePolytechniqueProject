@@ -1,6 +1,6 @@
 package com.camelsoft.rayaserver.Tools.Util;
 
-import com.camelsoft.rayaserver.Response.OnUserLogoutSuccessEvent;
+import com.camelsoft.rayaserver.Response.Auth.OnUserLogoutSuccessEvent;
 import net.jodah.expiringmap.ExpiringMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

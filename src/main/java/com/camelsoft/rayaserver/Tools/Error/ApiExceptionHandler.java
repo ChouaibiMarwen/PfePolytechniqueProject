@@ -1,7 +1,7 @@
 package com.camelsoft.rayaserver.Tools.Error;
 
-import com.camelsoft.rayaserver.Response.ErrorDetails;
-import com.camelsoft.rayaserver.Response.ValidationError;
+import com.camelsoft.rayaserver.Response.Tools.ErrorDetails;
+import com.camelsoft.rayaserver.Response.Tools.ValidationError;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

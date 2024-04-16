@@ -2,9 +2,9 @@ package com.camelsoft.rayaserver.Services.auth;
 
 
 import com.camelsoft.rayaserver.Models.Auth.RefreshToken;
-import com.camelsoft.rayaserver.Models.Auth.users;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RefreshTokenRepository;
-import com.camelsoft.rayaserver.Repository.Auth.UserRepository;
+import com.camelsoft.rayaserver.Repository.User.UserRepository;
 import com.camelsoft.rayaserver.Tools.Exception.TokenRefreshException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

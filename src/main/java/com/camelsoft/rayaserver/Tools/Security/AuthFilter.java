@@ -1,6 +1,6 @@
 package com.camelsoft.rayaserver.Tools.Security;
 
-import com.camelsoft.rayaserver.Services.auth.UserService;
+import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.TokenUtil;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
