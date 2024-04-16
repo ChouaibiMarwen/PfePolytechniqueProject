@@ -55,4 +55,5 @@ public class LoanRequest {
     private String carcolor;
     private String carquantity;
     private String note;
+    private String currency;
 }

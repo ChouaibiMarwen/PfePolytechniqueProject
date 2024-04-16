@@ -134,6 +134,8 @@ public class Loan implements Serializable {
     private String carcolor;
     @Column(name = "carquantity")
     private String carquantity;
+    @Column(name = "currency")
+    private String currency="SAR";
     @Column(columnDefinition = "TEXT",name = "note")
     private String note;
     @Column(name = "LoanStatus")
@@ -144,7 +146,7 @@ public class Loan implements Serializable {
     @Column(name = "timestamp")
     private Date timestamp;
 
-    public Loan(String englishfirstname, String englishlastname, String englishsecondname, String englishthirdname, String familyname, String fathername, String grandfathername, Date birthdate, String email, String phonenumber, String postcode, String unitnumber, String name, Date retirementdate, WorkSector sectortype, String copynumber, String additionalnumber, String buildingnumber, MaritalStatus maritalstatus, String numberofdependents, String nationalid, String nationalidissuedate, String nationalidexpirydate, String city, String district, String primaryaddress, String streetname, String worksector, Double salary, String employername, LoanType loantype, Date firstinstallment, String purposeofloan, String balloonloan, Double loanamount, Integer loanterm, File_model attachment, String carmark, String carmodel, String caryear, String carvin, String carcolor, String carquantity, String note, Supplier supplier) {
+    public Loan(String englishfirstname, String englishlastname, String englishsecondname, String englishthirdname, String familyname, String fathername, String grandfathername, Date birthdate, String email, String phonenumber, String postcode, String unitnumber, String name, Date retirementdate, WorkSector sectortype, String copynumber, String additionalnumber, String buildingnumber, MaritalStatus maritalstatus, String numberofdependents, String nationalid, String nationalidissuedate, String nationalidexpirydate, String city, String district, String primaryaddress, String streetname, String worksector, Double salary, String employername, LoanType loantype, Date firstinstallment, String purposeofloan, String balloonloan, Double loanamount, Integer loanterm, File_model attachment, String carmark, String carmodel, String caryear, String carvin, String carcolor, String carquantity, String note, Supplier supplier,String currency) {
         this.englishfirstname = englishfirstname;
         this.englishlastname = englishlastname;
         this.englishsecondname = englishsecondname;
@@ -190,7 +192,16 @@ public class Loan implements Serializable {
         this.carquantity = carquantity;
         this.note = note;
         this.supplier = supplier;
+        this.currency = currency;
         this.timestamp = new Date();
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public Loan() {

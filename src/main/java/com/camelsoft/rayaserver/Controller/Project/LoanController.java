@@ -142,7 +142,8 @@ public class LoanController extends BaseController {
                 request.getCarcolor(),
                 request.getCarquantity(),
                 request.getNote(),
-                supplier
+                supplier,
+                request.getCurrency()
         );
 
         // Saving the loan object
