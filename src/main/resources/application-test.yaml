@@ -1,0 +1,14 @@
+# Test-specific configuration properties
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/raya?createDatabaseIfNotExist=true
+    username: postgres
+    password: camelsoft
+logging:
+  level:
+    root: DEBUG
+
+

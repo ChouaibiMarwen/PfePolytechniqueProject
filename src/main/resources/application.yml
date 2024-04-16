@@ -1,0 +1,122 @@
+spring:
+  profiles:
+    active: test
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: not_defined_yet
+            clientSecret: not_defined_yet
+            redirectUri: '{baseUrl}/oauth2/callback/{registrationId}'
+            scope:
+              - email
+              - profile
+          facebook:
+            clientId: not_defined_yet
+            clientSecret: not_defined_yet
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}" # Note that facebook now mandates the use of https redirect URIs, so make sure your app supports https in production
+            scope:
+              - email
+              - public_profile
+  main:
+    allow-bean-definition-overriding: true
+  mail:
+    host: ssl0.ovh.net
+    port: 587
+    username: test@camel-soft.com
+    password: sBXsr{C0=naNZ9(P~M=_
+    protocol: smtp
+    properties.mail.smtp:
+      auth: true
+      connectiontimeout: 5000
+      timeout: 5000
+      writetimeout: 5000
+      starttls.enable: true
+      starttls.required: true
+      ssl.trust: ssl0.ovh.net
+  flyway:
+    schemas: migrations
+    locations: classpath:migration
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10000MB
+      max-request-size: 10000MB
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  application:
+    name: rayaserver
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  #  change profiles active to test or productions
+  devtools:
+    restart:
+      enabled: true
+  worker:
+    scheme: https
+    host: ${WORKER_HOST}
+    port: 443
+  jpa:
+    properties:
+      hibernate:
+        default_schema: public
+        format_sql: true
+        hbm2ddl:
+          auto: update
+        ddl-auto: update
+        jdbc:
+          lob:
+            non_contextual_creation: true
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      show-sql: true
+server:
+  port: ${PORT:8000}
+  ssl:
+    key-store: classpath:keystore.jks
+    key-store-password: password
+    key-password: password
+    key-store-type: JKS
+    key-store-provider: SUN
+    key-alias: tomcat
+  servlet:
+    jsp:
+      init-parameters:
+        mappedfile: false
+    session:
+      timeout: 500
+Encryption:
+  password: encryptpassword_51Lg4CQIfHgEomwEqUUX8sh9cOx9EA41O2GH27It4WnucEVRnFMKdE05PP7lphKCfTDmVuOBgfeZYz09LomfOR1qi00apEC7kmA
+  salt: encryptsalt_51Lg4CQIfHgEomwEqUUX8sh9cOx9EA41O2GH27It4WnucEVRnFMKdE05PP7lphKCfTDmVuOBgfeZYz09LomfOR1qi00apEC7kmA
+auth:
+  jwtExpirationMs: 86400000
+  jwtRefreshExpirationMs: 86400000
+  secret: camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200
+  header: Authorization
+apple:
+  clientId: com.camelsoft.rayaauth
+  authorization-grant-type: authorization_code
+  redirectUri: https://server.rayafinancing.com/oauth2/redirect
+  scope: openid,name,email
+  authorizationUri: https://appleid.apple.com/auth/authorize?response_mode=form_post
+  token-uri: https://appleid.apple.com/auth/token
+  jwkSetUri: https://appleid.apple.com/auth/keys
+  auth:
+    tokenSecret: not_defined_yet
+    tokenExpirationMsec: 864000000
+  oauth2:
+    # We're not using cookies because they won't work well in mobile clients.
+    authorizedRedirectUris:
+      - https://rayafinancing.com/oauth2/redirect
+      - https://rayafinancing.com/signin/oauth2/redirect
+      - https://server.rayafinancing.com/api/v1/oauth2/redirect
+      - https://server.rayafinancing.com/oauth2/callback/google
+      - https://localhost:8000/oauth2/callback/google
+      - http://localhost:4200/oauth2/redirect
+      - https://server.rayafinancing.com
+      - https://www.rayafinancing.com/oauth2/callback/google
+      - https://www.rayafinancing.com/signin/oauth2/redirect
+      - http://localhost:4200/signin/oauth2/redirect
+      - https://localhost:8000/signin/oauth2/redirect
+      - https://server.rayafinancing.com/oauth2/authorize/google

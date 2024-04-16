@@ -1,0 +1,15 @@
+# Production-specific configuration properties
+spring:
+  config:
+    activate:
+      on-profile: production
+  datasource:
+    url: jdbc:postgresql://node21801-suppliers.paas5.v2.sa:11003/raya?createDatabaseIfNotExist=true&sslmode=require
+    username: webadmin
+    password: XILntg88398
+logging:
+  level:
+    org:
+      hibernate: ERROR
+  file:
+    name: /var/lib/jenkins/workspace/server/src/main/resources/${spring.application.name}.log

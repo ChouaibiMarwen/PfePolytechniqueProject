@@ -1,0 +1,506 @@
+{
+  "id": 164813,
+  "nom": "Auto body repair & Paint 🔩",
+  "arNom": "إصلاح هياكل السيارات والطلاء 🔩",
+  "archive": false,
+  "maintenance": false,
+  "item": {
+    "id": 168966,
+    "description": null,
+    "fetchOrder": null,
+    "descriptionAr": null,
+    "quantity": 1,
+    "quantity_show": null,
+    "inputsBlock": [
+      {
+        "id": 168968,
+        "title": "Please make sure to upload the pictures of the Car you want to repair?  🛠️",
+        "titleAr": "الرجاء تأكد من تحميل صور السيارة التي ترغب في تصليحها؟ 🛠️",
+        "fetchOrder": 1,
+        "required": true,
+        "inputs": [],
+        "image": {
+          "id": 168967,
+          "name": "IMG_3186_1699429918847_1700144206816",
+          "description": null,
+          "url": "tender/IMG_3186_1699429918847_1700144206816.jpeg",
+          "type": "image/jpeg",
+          "range": null,
+          "share": null,
+          "size": 144608
+        },
+        "timestamp": 1700144266438
+      }
+    ],
+    "linksBlock": [],
+    "togglesBlock": [
+      {
+        "id": 168969,
+        "fetchOrder": 1,
+        "title": "Type of Vehicle? ",
+        "titleAr": "نوع السيارة/المركبة؟",
+        "required": true,
+        "toggles": [
+          {
+            "id": 168974,
+            "fetchOrder": 1,
+            "title": "SEDAN",
+            "titleAr": "صالون/مركبه خفيفه",
+            "value": true,
+            "required": true,
+            "inputsBlock": [],
+            "linksBlock": [],
+            "togglesBlock": [],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [
+              {
+                "id": 177983,
+                "name": "1701792392192Picture12",
+                "description": null,
+                "url": "input/input/1701792392192Picture12.jpg",
+                "type": "image/jpeg",
+                "range": null,
+                "share": null,
+                "size": 4138
+              }
+            ],
+            "timestamp": 1700144266438
+          },
+          {
+            "id": 168970,
+            "fetchOrder": 2,
+            "title": "VAN",
+            "titleAr": "فان",
+            "value": false,
+            "required": true,
+            "inputsBlock": [],
+            "linksBlock": [],
+            "togglesBlock": [
+              {
+                "id": 173679,
+                "fetchOrder": 1,
+                "title": "",
+                "titleAr": null,
+                "required": true,
+                "toggles": [],
+                "image": null,
+                "timestamp": 1701357404604
+              }
+            ],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [
+              {
+                "id": 177984,
+                "name": "1701792392218Picture225",
+                "description": null,
+                "url": "input/input/1701792392218Picture225.jpg",
+                "type": "image/jpeg",
+                "range": null,
+                "share": null,
+                "size": 4140
+              }
+            ],
+            "timestamp": 1700144266438
+          },
+          {
+            "id": 168971,
+            "fetchOrder": 3,
+            "title": "PICKUP",
+            "titleAr": "بيك أب",
+            "value": false,
+            "required": true,
+            "inputsBlock": [],
+            "linksBlock": [],
+            "togglesBlock": [],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [
+              {
+                "id": 177985,
+                "name": "1701792392307Picture336",
+                "description": null,
+                "url": "input/input/1701792392307Picture336.jpg",
+                "type": "image/jpeg",
+                "range": null,
+                "share": null,
+                "size": 4833
+              }
+            ],
+            "timestamp": 1700144266438
+          },
+          {
+            "id": 168973,
+            "fetchOrder": 4,
+            "title": "CABRIOLET",
+            "titleAr": "سيارة مكشوفة",
+            "value": false,
+            "required": true,
+            "inputsBlock": [],
+            "linksBlock": [
+              {
+                "id": 173682,
+                "title": "",
+                "titleAr": null,
+                "fetchOrder": 1,
+                "required": true,
+                "inputs": [],
+                "image": null,
+                "timestamp": 1701357450923
+              }
+            ],
+            "togglesBlock": [],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [
+              {
+                "id": 177988,
+                "name": "1701792392513Picture447",
+                "description": null,
+                "url": "input/input/1701792392513Picture447.png",
+                "type": "image/png",
+                "range": null,
+                "share": null,
+                "size": 19333
+              }
+            ],
+            "timestamp": 1700144266438
+          },
+          {
+            "id": 168972,
+            "fetchOrder": 5,
+            "title": "TRUCK",
+            "titleAr": "شاحنة",
+            "value": false,
+            "required": true,
+            "inputsBlock": [],
+            "linksBlock": [],
+            "togglesBlock": [],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [
+              {
+                "id": 177986,
+                "name": "1701792392397Picture5585",
+                "description": null,
+                "url": "input/input/1701792392397Picture5585.png",
+                "type": "image/png",
+                "range": null,
+                "share": null,
+                "size": 12715
+              }
+            ],
+            "timestamp": 1700144266438
+          },
+          {
+            "id": 175021,
+            "fetchOrder": 6,
+            "title": "SPORT CAR",
+            "titleAr": "سيارة رياضية",
+            "value": false,
+            "required": true,
+            "inputsBlock": [],
+            "linksBlock": [],
+            "togglesBlock": [],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [
+              {
+                "id": 177987,
+                "name": "170179239248727198",
+                "description": null,
+                "url": "input/input/170179239248727198.png",
+                "type": "image/png",
+                "range": null,
+                "share": null,
+                "size": 5750
+              }
+            ],
+            "timestamp": 1701540651679
+          },
+          {
+            "id": 177724,
+            "fetchOrder": 7,
+            "title": "BUS",
+            "titleAr": "حافلة/باص",
+            "value": false,
+            "required": true,
+            "inputsBlock": [],
+            "linksBlock": [],
+            "togglesBlock": [],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [
+              {
+                "id": 177729,
+                "name": "1701790605409download(1)",
+                "description": null,
+                "url": "input/input/1701790605409download(1).png",
+                "type": "image/png",
+                "range": null,
+                "share": null,
+                "size": 2179
+              }
+            ],
+            "timestamp": 1701790479079
+          },
+          {
+            "id": 177728,
+            "fetchOrder": 8,
+            "title": "Other Vehicles?",
+            "titleAr": "مركبات أخرى؟",
+            "value": false,
+            "required": true,
+            "inputsBlock": [],
+            "linksBlock": [],
+            "togglesBlock": [],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [
+              {
+                "id": 177730,
+                "name": "1701790606151black-vehicles-icons-set-vector-3405019",
+                "description": null,
+                "url": "input/input/1701790606151black-vehicles-icons-set-vector-3405019.jpg",
+                "type": "image/jpeg",
+                "range": null,
+                "share": null,
+                "size": 123019
+              }
+            ],
+            "timestamp": 1701790558169
+          }
+        ],
+        "image": null,
+        "timestamp": 1700144266438
+      },
+      {
+        "id": 175024,
+        "fetchOrder": 2,
+        "title": "Select the area of body repair & Paint? (Example: 1 or 7 and 12)",
+        "titleAr": "قم بأختيار رقم المنطقة التي ترغب بصبغها جزئياً؟ (مثال: رقم 1 أو 7 و 12)",
+        "required": true,
+        "toggles": [
+          {
+            "id": 175025,
+            "fetchOrder": 1,
+            "title": "",
+            "titleAr": "",
+            "value": false,
+            "required": true,
+            "inputsBlock": [
+              {
+                "id": 175029,
+                "title": "Input the Area Number? ❻❼❾❿",
+                "titleAr": "رقم المنطقة أو المناطق؟ ❻❼❾❿",
+                "fetchOrder": 1,
+                "required": true,
+                "inputs": [
+                  {
+                    "id": 175030,
+                    "title": "",
+                    "titleAr": "",
+                    "selecte": null,
+                    "selectAr": null,
+                    "value": "",
+                    "fetchOrder": 1,
+                    "type": "TEXT",
+                    "required": true,
+                    "inputsBlock": [],
+                    "linksBlock": [],
+                    "togglesBlock": [],
+                    "radioBlock": [],
+                    "images": [],
+                    "timestamp": 1701541317660
+                  }
+                ],
+                "image": null,
+                "timestamp": 1701541299407
+              }
+            ],
+            "linksBlock": [],
+            "togglesBlock": [],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [
+              {
+                "id": 178006,
+                "name": "1701792931604car-detail",
+                "description": null,
+                "url": "input/input/1701792931604car-detail.jpg",
+                "type": "image/jpeg",
+                "range": null,
+                "share": null,
+                "size": 593458
+              }
+            ],
+            "timestamp": 1701541110911
+          }
+        ],
+        "image": null,
+        "timestamp": 1701541068218
+      },
+      {
+        "id": 168975,
+        "fetchOrder": 3,
+        "title": "Other services ⚙️",
+        "titleAr": "خدمات أخرى ⚙️",
+        "required": true,
+        "toggles": [
+          {
+            "id": 168977,
+            "fetchOrder": 1,
+            "title": "Full Painting? 🖌️",
+            "titleAr": "الصبغ بالكامل؟ 🖌️",
+            "value": false,
+            "required": false,
+            "inputsBlock": [
+              {
+                "id": 175031,
+                "title": "Color of Paint?🔴🟠🟡🟢🔵🟣",
+                "titleAr": "اللون المستهدف؟ 🔴🟠🟡🟢🔵🟣",
+                "fetchOrder": 1,
+                "required": true,
+                "inputs": [
+                  {
+                    "id": 175032,
+                    "title": "",
+                    "titleAr": "",
+                    "selecte": null,
+                    "selectAr": null,
+                    "value": "",
+                    "fetchOrder": 1,
+                    "type": "TEXT",
+                    "required": false,
+                    "inputsBlock": [],
+                    "linksBlock": [],
+                    "togglesBlock": [],
+                    "radioBlock": [],
+                    "images": [],
+                    "timestamp": 1701541628486
+                  }
+                ],
+                "image": {
+                  "id": 175033,
+                  "name": "1701541645122colors-english-en",
+                  "description": null,
+                  "url": "InputBlock/InputBlock/1701541645122colors-english-en.jpg",
+                  "type": "image/jpeg",
+                  "range": null,
+                  "share": null,
+                  "size": 133309
+                },
+                "timestamp": 1701541603018
+              }
+            ],
+            "linksBlock": [],
+            "togglesBlock": [],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [],
+            "timestamp": 1700144266438
+          },
+          {
+            "id": 168978,
+            "fetchOrder": 2,
+            "title": "Partial Painting?🖌️",
+            "titleAr": "الصبغ بشكل جزيء؟ 🖌️",
+            "value": false,
+            "required": false,
+            "inputsBlock": [
+              {
+                "id": 175034,
+                "title": "Color of Paint?🔴🟠🟡🟢🔵🟣",
+                "titleAr": "اللون المستهدف؟ 🔴🟠🟡🟢🔵🟣",
+                "fetchOrder": 1,
+                "required": true,
+                "inputs": [
+                  {
+                    "id": 175035,
+                    "title": "",
+                    "titleAr": "",
+                    "selecte": null,
+                    "selectAr": null,
+                    "value": "",
+                    "fetchOrder": 1,
+                    "type": "TEXT",
+                    "required": false,
+                    "inputsBlock": [],
+                    "linksBlock": [],
+                    "togglesBlock": [],
+                    "radioBlock": [],
+                    "images": [],
+                    "timestamp": 1701541677654
+                  }
+                ],
+                "image": {
+                  "id": 175036,
+                  "name": "1701541687167colors-english-en",
+                  "description": null,
+                  "url": "InputBlock/InputBlock/1701541687167colors-english-en.jpg",
+                  "type": "image/jpeg",
+                  "range": null,
+                  "share": null,
+                  "size": 133309
+                },
+                "timestamp": 1701541653761
+              }
+            ],
+            "linksBlock": [],
+            "togglesBlock": [],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [],
+            "timestamp": 1700144266438
+          },
+          {
+            "id": 168976,
+            "fetchOrder": 3,
+            "title": "If body fixing required to buy parts, Customer need to provide or will be provided at cost to the customer, Confirmed?",
+            "titleAr": "إذا كان تصليح جسد مركبتك يتطلب شراء قطع الغيار، يتحمل الزبون مسؤولية توفير القطع أو ستوفر القطع بتكلفة منفصلة على الزبون نفسه. موافق؟  ",
+            "value": false,
+            "required": true,
+            "inputsBlock": [],
+            "linksBlock": [],
+            "togglesBlock": [],
+            "radioBlock": [],
+            "trueFile": null,
+            "falseFile": null,
+            "images": [],
+            "timestamp": 1700144266438
+          }
+        ],
+        "image": null,
+        "timestamp": 1700144266438
+      }
+    ],
+    "radioBlock": [],
+    "images": [],
+    "audio": null,
+    "timestamp": 1700144266442
+  },
+  "subcategories": [],
+  "image": {
+    "id": 174277,
+    "name": "1701444124508Autobodyrepair&Paint",
+    "description": null,
+    "url": "Categories/Categories/1701444124508Autobodyrepair&Paint.png",
+    "type": "image/png",
+    "range": null,
+    "share": null,
+    "size": 126546
+  },
+  "timestmp": 1699428199508
+}
