@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Enum.Tools.Provider;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.Length;
@@ -109,6 +110,9 @@ public class users implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "users_table_id")
     private Set<File_model> files = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Invoice> invoices = new HashSet<>();
     @Column(name = "timestmp")
     private Date timestmp;
 
@@ -138,6 +142,14 @@ public class users implements Serializable {
         this.password = password;
         this.name = name;
         this.timestmp = new Date();
+    }
+
+    public Set<Invoice> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(Set<Invoice> invoices) {
+        this.invoices = invoices;
     }
 
     public Long getId() {

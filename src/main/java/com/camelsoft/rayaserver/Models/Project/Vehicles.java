@@ -53,7 +53,6 @@ public class Vehicles implements Serializable {
     @ElementCollection
     private Set<String> interiorfeatures = new HashSet<>();
     @Column(columnDefinition = "TEXT",name = "description")
-
     private String description;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
     @JoinColumn(name = "carimages_id")

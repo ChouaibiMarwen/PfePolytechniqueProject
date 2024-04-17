@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.VehiclesPostStatus;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.Project.VehiclesMedia;
@@ -161,6 +162,9 @@ public class VehiclesController extends BaseController {
         );
         VehiclesPriceFinancing result = this.vehiclesPriceFinancingService.Save(model);
         vehicles.setVehiclespricefinancing(result);
+        if(vehicles.getCarimages() != null){
+            vehicles.setStatus(VehiclesPostStatus.PUBLISHED);
+        }
         this.Services.Update(vehicles);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -261,6 +265,9 @@ public class VehiclesController extends BaseController {
         );
         VehiclesMedia result = this.vehiclesMediaService.Save(model);
         vehicles.setCarimages(result);
+        if(vehicles.getVehiclespricefinancing() != null){
+            vehicles.setStatus(VehiclesPostStatus.PUBLISHED);
+        }
         this.Services.Update(vehicles);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
