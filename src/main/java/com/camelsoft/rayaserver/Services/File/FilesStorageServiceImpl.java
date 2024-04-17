@@ -24,6 +24,7 @@ import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -270,13 +271,23 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
     @Override
     public void delete_file_by_path_from_cdn(String path, Long imageid) {
-        space.deleteObject(bucketName, path);
         if (this.repository.existsById(imageid))
+        {
+            space.deleteObject(bucketName, path);
             this.repository.deleteById(imageid);
+
+        }
 
     }
 
+    public File_model findbyid(Long media_id){
+        if (this.repository.existsById(media_id))
+        {
+            return  this.repository.findById(media_id).get();
 
+        }
+        return null;
+    }
 
     @Override
     public void delete_all_file_by_path(Set<File_model> images) {

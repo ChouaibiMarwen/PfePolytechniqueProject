@@ -32,7 +32,6 @@ public class File_model implements Serializable {
     @Column(name = "file_size")
     private long size;
     // used for mapping users files ! important do not delete
-
     @JsonIgnore
     @Column(name = "timestmp")
     private Date timestmp;
