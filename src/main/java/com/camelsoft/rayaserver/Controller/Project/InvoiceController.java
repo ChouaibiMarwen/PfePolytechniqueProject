@@ -7,6 +7,7 @@ import com.camelsoft.rayaserver.Models.Project.Product;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.InvoiceRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
+import com.camelsoft.rayaserver.Response.Project.InvoiceReport;
 import com.camelsoft.rayaserver.Services.Project.InvoiceService;
 import com.camelsoft.rayaserver.Services.Project.ProductService;
 import com.camelsoft.rayaserver.Services.User.UserService;
@@ -23,6 +24,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Set;
 
 @RestController
@@ -128,6 +131,30 @@ public class InvoiceController extends BaseController {
         if (status != null) invoice.setStatus(status);
         Invoice result = this.service.Update(invoice);
         return new ResponseEntity<>(result, HttpStatus.OK);
+
+
+    }
+    @GetMapping(value = {"/invoice_report_admin"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all invoice by status for admin", notes = "Endpoint to get vehicles")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<InvoiceReport> invoice_report_admin(@ModelAttribute Date date,@ModelAttribute InvoiceRelated related) throws IOException {
+        InvoiceReport report = new InvoiceReport();
+        report.setDate(date);
+        report.setInvoicepermonth(this.service.countInvoicePerMonth(date,related));
+        report.setRefundbymonth(this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.REFUNDS,related));
+        report.setPaymentbymonth(this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.PAID,related)+this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.UNPAID,related));
+        report.setPurshaseorderrequest(0); // need to added later
+        report.setRequestdone(0); // need to added later
+        report.setRequestpending(0); // need to added later
+        report.setSoldcars(this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.PAID,related));
+        report.setInvoicepermonth(this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.PAID,related)+this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.UNPAID,related)+this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.REFUNDS,related));
+        return new ResponseEntity<>(report, HttpStatus.OK);
 
 
     }

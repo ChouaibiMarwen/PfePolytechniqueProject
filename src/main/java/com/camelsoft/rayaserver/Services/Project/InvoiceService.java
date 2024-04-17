@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -58,7 +60,7 @@ public class InvoiceService {
 
 
             PageRequest pg = PageRequest.of(page, size);
-            Page<Invoice> pckge = this.repository.findAllByArchiveIsFalseAndRelated(pg,related);
+            Page<Invoice> pckge = this.repository.findAllByArchiveIsFalseAndRelated(pg, related);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {
@@ -70,7 +72,7 @@ public class InvoiceService {
     public DynamicResponse FindAllByState(int page, int size, InvoiceStatus status, InvoiceRelated related) {
         try {
             PageRequest pg = PageRequest.of(page, size);
-            Page<Invoice> pckge = this.repository.findAllByStatusAndArchiveIsFalseAndRelated(pg, status,related);
+            Page<Invoice> pckge = this.repository.findAllByStatusAndArchiveIsFalseAndRelated(pg, status, related);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {
@@ -126,5 +128,48 @@ public class InvoiceService {
             throw new NotFoundException(ex.getMessage());
         }
 
+    }
+
+    public Integer countInvoicePerMonth(Date date, InvoiceRelated related) {
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int month = calendar.get(Calendar.MONTH) + 1; // Calendar month is zero-based
+            int year = calendar.get(Calendar.YEAR);
+
+            // Set the start date to the first day of the specified month
+            calendar.set(year, month - 1, 1, 0, 0, 0);
+            Date startDate = calendar.getTime();
+
+            // Set the end date to the last day of the specified month
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+            Date endDate = calendar.getTime();
+
+            // Call repository method to count invoices within the specified month
+            return this.repository.countByTimestampBetweenAndRelated(startDate, endDate,related);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+    }
+    public Integer countInvoicePerMonthAndStatus(Date date,InvoiceStatus status, InvoiceRelated related) {
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int month = calendar.get(Calendar.MONTH) + 1; // Calendar month is zero-based
+            int year = calendar.get(Calendar.YEAR);
+
+            // Set the start date to the first day of the specified month
+            calendar.set(year, month - 1, 1, 0, 0, 0);
+            Date startDate = calendar.getTime();
+
+            // Set the end date to the last day of the specified month
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+            Date endDate = calendar.getTime();
+
+            // Call repository method to count invoices within the specified month
+            return this.repository.countByTimestampBetweenAndStatusAndRelated(startDate, endDate,status,related);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
     }
 }
