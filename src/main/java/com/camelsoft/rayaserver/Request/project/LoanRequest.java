@@ -1,8 +1,8 @@
 package com.camelsoft.rayaserver.Request.project;
 
-import com.camelsoft.rayaserver.Enum.Project.LoanType;
-import com.camelsoft.rayaserver.Enum.Project.MaritalStatus;
-import com.camelsoft.rayaserver.Enum.Project.WorkSector;
+import com.camelsoft.rayaserver.Enum.Project.Loan.LoanType;
+import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
+import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import lombok.Data;
 

@@ -14,6 +14,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +37,7 @@ import java.util.regex.Pattern;
 public class FilesStorageServiceImpl implements FilesStorageService {
     @Autowired
     private File_Repository repository;
-    private static final List<String> image_accepte_type = Arrays.asList("jpeg", "jpg", "png", "pdf","gif", "bmp", "tiff", "tif", "ico", "webp", "svg", "heic", "raw");
+    private static final List<String> image_accepte_type = Arrays.asList("jpeg", "jpg", "png", "gif", "bmp", "tiff", "tif", "ico", "webp", "svg", "heic", "raw");
     private final AmazonS3 space;
     private final String bucketName = "bucketName";
 
@@ -48,7 +50,31 @@ public class FilesStorageServiceImpl implements FilesStorageService {
                 .build();
     }
 
+    public Boolean checkformat(MultipartFile file){
+        if(file == null || file.isEmpty())
+        {
+            return false;
+        }
+        String extension = file.getContentType().substring(file.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+        if (!image_accepte_type.contains(extension)) {
+            return false;
+        }
+        return true;
+    }
+    public Boolean checkformatList(Set<MultipartFile> files){
+        for (MultipartFile f : files) {
+            if( f == null ||  f.isEmpty())
+            {
+                return false;
+            }
+            String extension = f.getContentType().substring(f.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+            if (!image_accepte_type.contains(extension)) {
+                return false;
+            }
+        }
 
+        return true;
+    }
     @Override
     public File_model save_file(MultipartFile file, String folderName) throws IOException {
 
@@ -264,18 +290,41 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     @Override
-    public Set<File_model> save_all(List<MultipartFile> file, String directory) {
+    public Set<File_model> save_all(Set<MultipartFile> files, String folderName) {
         try {
             Set<File_model> images = new HashSet<>();
-            for (int i = 0; i < file.size(); i++) {
-                String extention = file.get(i).getContentType().substring(file.get(i).getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
-                if (extention.contains("+xml") && extention.contains("svg"))
-                    extention = "svg";
-                if (!image_accepte_type.contains(extention))
-                    throw new RuntimeException("Could not read the file!");
-                File_model resource_media = this.save_file001(file.get(i), directory);
-                resource_media.setRange(i);
-                images.add(resource_media);
+            for (MultipartFile file : files){
+                // Create a new PutObjectRequest object.
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(file.getSize());
+                metadata.setContentType(file.getContentType());
+                // Check if the folder exists, and create it if it doesn'
+                String fileName = ((new Date()).getTime() + file.getOriginalFilename()).replaceAll("\\s+", "");
+
+                String objectKey = folderName.replaceAll("\\s+", "") + "/" + folderName.replaceAll("\\s+", "") + "/" + fileName;
+
+                PutObjectRequest putObjectRequest = new PutObjectRequest(
+                        bucketName,
+                        objectKey,
+                        file.getInputStream(),
+                        metadata);
+
+                // Set the object's ACL to public read
+                AccessControlList acl = new AccessControlList();
+                acl.grantPermission(GroupGrantee.AllUsers, Permission.Read); // Public-read permission
+
+                putObjectRequest.setAccessControlList(acl);
+                // Upload the object to DigitalOcean Spaces.
+                space.putObject(putObjectRequest);
+
+                String fileNameresult = extractFileName(objectKey, file.getOriginalFilename());
+                File_model fileresult = new File_model(
+                        fileNameresult,
+                        objectKey,
+                        file.getContentType(),
+                        file.getSize()
+                );
+                images.add(fileresult);
             }
             return images;
         } catch (Exception e) {

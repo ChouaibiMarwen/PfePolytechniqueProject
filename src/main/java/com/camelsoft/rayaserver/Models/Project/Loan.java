@@ -1,11 +1,12 @@
 package com.camelsoft.rayaserver.Models.Project;
 
-import com.camelsoft.rayaserver.Enum.Project.LoanStatus;
-import com.camelsoft.rayaserver.Enum.Project.LoanType;
-import com.camelsoft.rayaserver.Enum.Project.MaritalStatus;
-import com.camelsoft.rayaserver.Enum.Project.WorkSector;
+import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
+import com.camelsoft.rayaserver.Enum.Project.Loan.LoanType;
+import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
+import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -145,6 +146,9 @@ public class Loan implements Serializable {
     private Supplier supplier;
     @Column(name = "timestamp")
     private Date timestamp;
+    @JsonIgnore
+    @Column(name = "archive")
+    private Boolean archive = false;
 
     public Loan(String englishfirstname, String englishlastname, String englishsecondname, String englishthirdname, String familyname, String fathername, String grandfathername, Date birthdate, String email, String phonenumber, String postcode, String unitnumber, String name, Date retirementdate, WorkSector sectortype, String copynumber, String additionalnumber, String buildingnumber, MaritalStatus maritalstatus, String numberofdependents, String nationalid, String nationalidissuedate, String nationalidexpirydate, String city, String district, String primaryaddress, String streetname, String worksector, Double salary, String employername, LoanType loantype, Date firstinstallment, String purposeofloan, String balloonloan, Double loanamount, Integer loanterm, File_model attachment, String carmark, String carmodel, String caryear, String carvin, String carcolor, String carquantity, String note, Supplier supplier,String currency) {
         this.englishfirstname = englishfirstname;
@@ -198,6 +202,14 @@ public class Loan implements Serializable {
 
     public String getCurrency() {
         return currency;
+    }
+
+    public Boolean getArchive() {
+        return archive;
+    }
+
+    public void setArchive(Boolean archive) {
+        this.archive = archive;
     }
 
     public void setCurrency(String currency) {

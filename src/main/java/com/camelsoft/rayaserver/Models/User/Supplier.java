@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Models.User;
 
 
+import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.Tools.Rating;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Loan;
@@ -12,7 +13,6 @@ import java.io.Serializable;
 import java.util.*;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-
 @Entity
 @Table(name = "supplier")
 public class Supplier implements Serializable {
@@ -52,11 +52,14 @@ public class Supplier implements Serializable {
     @JsonIgnore
     private users user;
 
-    @Column(name = "timestmp")
-    private Date timestmp;
+    @Column(name = "timestamp")
+    private Date timestamp;
+    @JsonIgnore
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY ,orphanRemoval = true)
+    private Set<Vehicles> vehicles = new HashSet<>();
 
     public Supplier() {
-        this.timestmp = new Date();
+        this.timestamp = new Date();
     }
 
     public Long getId() {
@@ -140,11 +143,27 @@ public class Supplier implements Serializable {
         this.ratings = ratings;
     }
 
-    public Date getTimestmp() {
-        return timestmp;
+    public Set<Loan> getLoans() {
+        return loans;
     }
 
-    public void setTimestmp(Date timestmp) {
-        this.timestmp = timestmp;
+    public void setLoans(Set<Loan> loans) {
+        this.loans = loans;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Set<Vehicles> getVehicles() {
+        return vehicles;
+    }
+
+    public void setVehicles(Set<Vehicles> vehicles) {
+        this.vehicles = vehicles;
     }
 }

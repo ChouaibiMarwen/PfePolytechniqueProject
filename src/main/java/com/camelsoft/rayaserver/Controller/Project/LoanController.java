@@ -1,6 +1,6 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
-import com.camelsoft.rayaserver.Enum.Project.LoanStatus;
+import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.User.Supplier;
@@ -44,6 +44,12 @@ public class LoanController extends BaseController {
 
     @GetMapping(value = {"/all_loans_admin"})
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all loan by status for admin", notes = "Endpoint to get loan request")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
     public ResponseEntity<DynamicResponse> all_loans_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) LoanStatus status) throws IOException {
         // users user = UserServices.findByUserName(getCurrentUser().getUsername());
         DynamicResponse result = new DynamicResponse();
@@ -58,6 +64,12 @@ public class LoanController extends BaseController {
 
     @GetMapping(value = {"/all_loans_supplier"})
     @PreAuthorize("hasRole('SUPPLIER')")
+    @ApiOperation(value = "get all loan by status for supplier", notes = "Endpoint to get loan request")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
+    })
     public ResponseEntity<DynamicResponse> all_loans_supplier(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) LoanStatus status) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         DynamicResponse result = new DynamicResponse();
