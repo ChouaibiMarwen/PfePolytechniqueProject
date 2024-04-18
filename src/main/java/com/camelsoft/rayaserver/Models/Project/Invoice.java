@@ -78,14 +78,19 @@ public class Invoice implements Serializable {
     private String remark;
    @Column(name = "related")
     private InvoiceRelated related = InvoiceRelated.NONE;
+   @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
-    @JoinColumn(name = "user_id", nullable = false)
-    private users user;
+    @JoinColumn(name = "user_id_createdby", nullable = false)
+    private users createdby;
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @JoinColumn(name = "user_id_relatedto", nullable = false)
+    private users relatedto;
     public Invoice() {
         this.timestamp = new Date();
     }
 
-    public Invoice(Integer invoicenumber, Date invoicedate, Date duedate, String currency, String suppliername, String supplierzipcode, String supplierstreetadress, String supplierphonenumber, String bankname, String bankzipcode, String bankstreetadress, String bankphonenumber, String vehicleregistration, String vehiclecolor, String vehiclevin, String vehiclemodel, String vehiclemark, String vehiclemileage, String vehiclemotexpiry, String vehicleenginesize, Set<Product> products,users user,InvoiceRelated related) {
+    public Invoice(Integer invoicenumber, Date invoicedate, Date duedate, String currency, String suppliername, String supplierzipcode, String supplierstreetadress, String supplierphonenumber, String bankname, String bankzipcode, String bankstreetadress, String bankphonenumber, String vehicleregistration, String vehiclecolor, String vehiclevin, String vehiclemodel, String vehiclemark, String vehiclemileage, String vehiclemotexpiry, String vehicleenginesize, Set<Product> products,users createdby,InvoiceRelated related,users relatedto) {
         this.invoicenumber = invoicenumber;
         this.invoicedate = invoicedate;
         this.duedate = duedate;
@@ -107,7 +112,8 @@ public class Invoice implements Serializable {
         this.vehiclemotexpiry = vehiclemotexpiry;
         this.vehicleenginesize = vehicleenginesize;
         this.products = products;
-        this.user = user;
+        this.createdby = createdby;
+        this.relatedto = relatedto;
         this.related=related;
         this.timestamp = new Date();
     }
@@ -120,12 +126,20 @@ public class Invoice implements Serializable {
         this.related = related;
     }
 
-    public users getUser() {
-        return user;
+    public users getCreatedby() {
+        return createdby;
     }
 
-    public void setUser(users user) {
-        this.user = user;
+    public void setCreatedby(users createdby) {
+        this.createdby = createdby;
+    }
+
+    public users getRelatedto() {
+        return relatedto;
+    }
+
+    public void setRelatedto(users relatedto) {
+        this.relatedto = relatedto;
     }
 
     public String getRemark() {

@@ -72,13 +72,22 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<Invoice> add_invoice(@ModelAttribute InvoiceRequest request) throws IOException {
-        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
+        users relatedto = UserServices.findById(request.getRelatedtouserid());
 
         if (this.service.ExistByInvoiceNumber(request.getInvoicenumber())) {
             return new ResponseEntity(request.getInvoicenumber() + "is already found , please try something else !", HttpStatus.FOUND);
         }
         if (request.getRelated() == null || request.getRelated() == InvoiceRelated.NONE) {
             return new ResponseEntity("you need to defined the invoice relation " + request.getRelated(), HttpStatus.NOT_ACCEPTABLE);
+        }
+        if(relatedto.getSupplier()!=null){
+            if(request.getRelated()!= InvoiceRelated.SUPPLIER)
+                return new ResponseEntity("the related to is a supplier and the related is not a supplier", HttpStatus.NOT_ACCEPTABLE);
+
+        }else{
+            if(request.getRelated()!= InvoiceRelated.CUSTOMER)
+                return new ResponseEntity("the related to is a customer and the related is not a customer", HttpStatus.NOT_ACCEPTABLE);
         }
         Set<Product> products = this.productservice.SaveProductList(request.getProducts());
         Invoice invoice = new Invoice(
@@ -103,8 +112,9 @@ public class InvoiceController extends BaseController {
                 request.getVehiclemotexpiry(),
                 request.getVehicleenginesize(),
                 products,
-                user,
-                request.getRelated()
+                createdby,
+                request.getRelated(),
+                relatedto
         );
         Invoice result = this.service.Save(invoice);
         return new ResponseEntity<>(result, HttpStatus.OK);

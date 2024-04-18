@@ -440,6 +440,14 @@ public class UserService extends BaseController implements UserDetailsService {
             throw new NotFoundException(String.format("No data found"));
         }
     }
+ public Long Count() {
+        try {
+            return userRepository.count();
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(String.format("No data found"));
+        }
+    }
 
     public users saveUserotp(users user, String role) {
 

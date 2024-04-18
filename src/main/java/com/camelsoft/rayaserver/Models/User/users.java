@@ -57,11 +57,11 @@ public class users implements Serializable {
     @Column(name = "providerid")
     private String providerId = "";
     @Column(name = "provider")
-    private Provider provider= Provider.local;
+    private Provider provider = Provider.local;
     @Column(name = "suspend_reason")
     private String suspendReason;
     @Column(name = "active")
-    private Boolean active=true;
+    private Boolean active = true;
     @Column(name = "address")
     private String address;
     @Column(name = "focalpointname")
@@ -71,9 +71,9 @@ public class users implements Serializable {
     @Column(name = "region")
     private String region;
     @Column(name = "verified")
-    private Boolean verified=false;
+    private Boolean verified = false;
     @Column(name = "verified_docs")
-    private Boolean verifiedDocs=false;
+    private Boolean verifiedDocs = false;
     @Column(name = "birth_date")
     private Date birthDate;
     @ManyToMany(fetch = FetchType.EAGER)
@@ -82,7 +82,7 @@ public class users implements Serializable {
             @JoinColumn(name = "usar_id", referencedColumnName = "user_id"),
             inverseJoinColumns =
             @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
-    private Set<Privilege> privileges=new HashSet<>();
+    private Set<Privilege> privileges = new HashSet<>();
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Supplier supplier;
     @Column(name = "notification_email")
@@ -110,21 +110,26 @@ public class users implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "users_table_id")
     private Set<File_model> files = new HashSet<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "createdby", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private Set<Invoice> invoices = new HashSet<>();
+    private Set<Invoice> invoicescreated = new HashSet<>();
+    @OneToMany(mappedBy = "relatedto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Invoice> invoicesrecived = new HashSet<>();
     @Column(name = "timestmp")
     private Date timestmp;
 
     public users() {
         this.timestmp = new Date();
     }
+
     public users(String username, String phonenumber, String lastotp) {
         this.username = username;
         this.phonenumber = phonenumber;
         this.lastotp = lastotp;
         this.timestmp = new Date();
     }
+
     public users(String username, String email, String password, String name, Gender gender, String phonenumber, String country) {
         this.username = username;
         this.email = email;
@@ -144,12 +149,20 @@ public class users implements Serializable {
         this.timestmp = new Date();
     }
 
-    public Set<Invoice> getInvoices() {
-        return invoices;
+    public Set<Invoice> getInvoicescreated() {
+        return invoicescreated;
     }
 
-    public void setInvoices(Set<Invoice> invoices) {
-        this.invoices = invoices;
+    public void setInvoicescreated(Set<Invoice> invoicescreated) {
+        this.invoicescreated = invoicescreated;
+    }
+
+    public Set<Invoice> getInvoicesrecived() {
+        return invoicesrecived;
+    }
+
+    public void setInvoicesrecived(Set<Invoice> invoicesrecived) {
+        this.invoicesrecived = invoicesrecived;
     }
 
     public Long getId() {

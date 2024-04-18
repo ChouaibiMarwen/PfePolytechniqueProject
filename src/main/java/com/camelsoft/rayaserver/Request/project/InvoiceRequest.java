@@ -33,5 +33,6 @@ public class InvoiceRequest {
     private String vehiclemotexpiry;
     private String vehicleenginesize;
     private InvoiceRelated related=InvoiceRelated.NONE;
+    private Long relatedtouserid;
     private Set<ProductRequest> products = new HashSet<>();
 }
