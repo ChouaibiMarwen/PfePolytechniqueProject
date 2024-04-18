@@ -221,7 +221,7 @@
 	</dependencyManagement>
 
 	<build>
-		<finalName>RestForYou</finalName>
+		<finalName>RayaServerCamelSoft</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
