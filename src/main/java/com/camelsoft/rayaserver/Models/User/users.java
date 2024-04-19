@@ -22,6 +22,7 @@ import java.util.*;
 @Table(name = "users_table",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "user_name"),
+                @UniqueConstraint(columnNames = "phone_number"),
                 @UniqueConstraint(columnNames = "email")
         })
 public class users implements Serializable {

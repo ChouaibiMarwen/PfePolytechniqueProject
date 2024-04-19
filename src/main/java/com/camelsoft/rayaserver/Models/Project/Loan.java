@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "Laon_Request")
+@Table(name = "Loan_Request")
 public class Loan implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
