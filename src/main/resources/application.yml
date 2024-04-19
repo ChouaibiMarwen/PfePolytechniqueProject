@@ -72,7 +72,7 @@ spring:
       database-platform: org.hibernate.dialect.PostgreSQLDialect
       show-sql: true
 server:
-  port: ${PORT:8000}
+  port: ${PORT:8080}
   ssl:
     key-store: classpath:keystore.jks
     key-store-password: password
