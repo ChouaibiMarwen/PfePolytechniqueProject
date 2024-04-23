@@ -26,6 +26,8 @@ public class UserDevice implements Serializable {
     private String token;
    @Column(name = "tokendevice" )
     private String tokendevice;
+    @Column(name = "logout" )
+    private Boolean logout = false;
     @Column(name = "timestmp")
     private Date timestmp;
     public UserDevice() {
@@ -50,6 +52,14 @@ public class UserDevice implements Serializable {
         this.tokendevice = tokendevice;
         this.ip = ip;
         this.timestmp= new Date();
+    }
+
+    public Boolean getLogout() {
+        return logout;
+    }
+
+    public void setLogout(Boolean logout) {
+        this.logout = logout;
     }
 
     public String getTokendevice() {

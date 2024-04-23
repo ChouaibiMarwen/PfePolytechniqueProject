@@ -94,7 +94,12 @@ public class users implements Serializable {
     private Boolean notificationFcm = false;
     @Column(name = "total_time")
     private Double totalTime = 0d;
-
+    @Column(name = "first_name")
+    @NotEmpty(message = "*Please provide your first name")
+    private String firstname;
+    @Column(name = "last_name")
+    @NotEmpty(message = "*Please provide your last name")
+    private String lastname;
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
@@ -148,6 +153,22 @@ public class users implements Serializable {
         this.password = password;
         this.name = name;
         this.timestmp = new Date();
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public Set<Invoice> getInvoicescreated() {
