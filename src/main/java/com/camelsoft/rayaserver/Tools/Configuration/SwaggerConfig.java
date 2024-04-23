@@ -52,13 +52,11 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "Safaqat REST API", //title
-                "Safaqat public rest API.", //description
+                "RAYA FINANCING REST API", //title
+                "RAYA FINANCING public rest API.", //description
                 "Version 1.0", //version
                 "Terms of service", //terms of service URL
                 new Contact("CAMELSOFT LLC", "www.camel-soft.com", "contact@camel-soft.com"),
                 "License of API", "www.camel-soft.com", Collections.emptyList()); // contact info
     }
-    //      mongodb+srv://mohamed123:mohamed123@cluster0.b5tct.mongodb.net/consulti?retryWrites=true&w=majority
-    //mongodb://127.0.0.1:27017/consulti
 }
