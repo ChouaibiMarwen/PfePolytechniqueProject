@@ -48,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/v1/auth/**",
             "/api/v1/**",
             "/api/v1/public/**",
+            "/api/v1/country/**",
             "/WebContent/**",
             "/api/v1/add_missing_social_data",
             "/asset/**",
