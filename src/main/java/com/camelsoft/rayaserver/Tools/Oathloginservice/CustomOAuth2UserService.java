@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Tools.Oathloginservice;
 
 
 import com.camelsoft.rayaserver.Enum.Tools.Provider;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Models.File.File_model;
@@ -78,13 +79,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private users registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
         users user = new users();
-        Role userRole = roleRepository.findByRole("ROLE_USER");
+        Role userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
         List<users> usersList = this.userService.findAll();
         Long lastuserid = usersList.get(usersList.size() - 1).getId() + 1;
         String username = userService.GenerateUserName(oAuth2UserInfo.getName(), lastuserid);
 
         user.setProvider(Provider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
-        user.setProviderId(oAuth2UserInfo.getId());
+
         user.setName(oAuth2UserInfo.getName());
         user.setEmail(oAuth2UserInfo.getEmail());
         user.setUsername(username);
@@ -92,7 +93,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         user.setRole(userRole);
         File_model file_model = new File_model();
         file_model.setUrl(oAuth2UserInfo.getImageUrl());
-        user.setImage(file_model);
+        user.setProfileimage(file_model);
         return userRepository.save(user);
     }
 
@@ -100,7 +101,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         existingUser.setName(oAuth2UserInfo.getName());
         File_model file_model = new File_model();
         file_model.setUrl(oAuth2UserInfo.getImageUrl());
-        existingUser.setImage(file_model);;
+        existingUser.setProfileimage(file_model);;
         return userRepository.save(existingUser);
     }
 

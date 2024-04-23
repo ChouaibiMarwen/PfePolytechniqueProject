@@ -1,11 +1,18 @@
 package com.camelsoft.rayaserver.Models.country;
 
+import com.camelsoft.rayaserver.Models.Tools.Address;
+import com.camelsoft.rayaserver.Models.Tools.IdentificationInformation;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@Data
 @Entity
 @Table(name = "countries")
 public class Root implements Serializable {
@@ -55,7 +62,12 @@ public class Root implements Serializable {
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.DETACH)
     @JoinTable(name = "countries_states", joinColumns = @JoinColumn(name = "country_id"), inverseJoinColumns = @JoinColumn(name = "state_id"))
     private List<State> states;
-
+    @JsonIgnore
+    @OneToMany(mappedBy = "country")
+    private Set<Address> addresses = new HashSet<>();
+     @JsonIgnore
+    @OneToMany(mappedBy = "issuingcountry")
+    private Set<IdentificationInformation> identificationInformations = new HashSet<>();
     public Root() {
     }
 
@@ -81,166 +93,5 @@ public class Root implements Serializable {
         this.states = states;
     }
 
-    public String getNatives() {
-        return natives;
-    }
 
-    public void setNatives(String natives) {
-        this.natives = natives;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIso3() {
-        return iso3;
-    }
-
-    public void setIso3(String iso3) {
-        this.iso3 = iso3;
-    }
-
-    public String getIso2() {
-        return iso2;
-    }
-
-    public void setIso2(String iso2) {
-        this.iso2 = iso2;
-    }
-
-    public String getNumeric_code() {
-        return numeric_code;
-    }
-
-    public void setNumeric_code(String numeric_code) {
-        this.numeric_code = numeric_code;
-    }
-
-    public String getPhone_code() {
-        return phone_code;
-    }
-
-    public void setPhone_code(String phone_code) {
-        this.phone_code = phone_code;
-    }
-
-    public String getCapital() {
-        return capital;
-    }
-
-    public void setCapital(String capital) {
-        this.capital = capital;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public String getCurrency_symbol() {
-        return currency_symbol;
-    }
-
-    public void setCurrency_symbol(String currency_symbol) {
-        this.currency_symbol = currency_symbol;
-    }
-
-    public String getTld() {
-        return tld;
-    }
-
-    public void setTld(String tld) {
-        this.tld = tld;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    public String getSubregion() {
-        return subregion;
-    }
-
-    public void setSubregion(String subregion) {
-        this.subregion = subregion;
-    }
-
-    public List<Timezone> getTimezones() {
-        return timezones;
-    }
-
-    public void setTimezones(List<Timezone> timezones) {
-        this.timezones = timezones;
-    }
-
-    public Translations getTranslations() {
-        return translations;
-    }
-
-    public void setTranslations(Translations translations) {
-        this.translations = translations;
-    }
-
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getEmoji() {
-        return emoji;
-    }
-
-    public void setEmoji(String emoji) {
-        this.emoji = emoji;
-    }
-
-    public String getEmojiU() {
-        return emojiU;
-    }
-
-    public void setEmojiU(String emojiU) {
-        this.emojiU = emojiU;
-    }
-
-    public List<State> getStates() {
-        return states;
-    }
-
-    public void setStates(List<State> states) {
-        this.states = states;
-    }
-    public void addStates(State state) {
-        this.states.add(state);
-    }
 }

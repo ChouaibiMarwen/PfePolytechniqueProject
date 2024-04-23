@@ -3,13 +3,10 @@ package com.camelsoft.rayaserver.Controller.Auth;
 import com.camelsoft.rayaserver.Models.Auth.PasswordResetToken;
 import com.camelsoft.rayaserver.Models.Auth.RefreshToken;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
-import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Repository.User.UserRepository;
 import com.camelsoft.rayaserver.Request.User.LogOutRequest;
 import com.camelsoft.rayaserver.Request.User.SignInRequest;
 import com.camelsoft.rayaserver.Request.auth.TokenRefreshRequest;
-import com.camelsoft.rayaserver.Request.auth.signupRequest;
 import com.camelsoft.rayaserver.Response.Auth.JwtResponse;
 import com.camelsoft.rayaserver.Response.Auth.OnUserLogoutSuccessEvent;
 import com.camelsoft.rayaserver.Response.Tools.ApiResponse;
@@ -23,14 +20,11 @@ import com.camelsoft.rayaserver.Tools.Exception.TokenRefreshException;
 import com.camelsoft.rayaserver.Tools.Exception.UserLogoutException;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import com.camelsoft.rayaserver.Tools.Util.TokenUtil;
-import com.google.firebase.messaging.FirebaseMessagingException;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,13 +35,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 
 @RestController
@@ -162,102 +154,7 @@ public class AuthController extends BaseController {
     }
 
 
-        @PostMapping(value = {"/signup_user"})
-    public ResponseEntity<users> signup_user(@ModelAttribute signupRequest request) throws IOException, InterruptedException, MessagingException {
-        // Check if email is null
-        if (request.getEmail() == null)
-            return new ResponseEntity("null email", HttpStatus.CONFLICT);
 
-        // Check email format
-        if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
-            return new ResponseEntity("Wrong email format", HttpStatus.CONFLICT);
-        String phoneNUmber = request.getPhonenumber().replaceAll("[\\s()]", "");
-
-        if (request.getPhonenumber()!=null) {
-            if (phoneNUmber.length() == 8 && !phoneNUmber.contains("+")) {
-                phoneNUmber = "+968" + phoneNUmber;
-            }
-            if (phoneNUmber.length() == 11 && !phoneNUmber.contains("+")) {
-                phoneNUmber = "+" + phoneNUmber;
-            }
-            if (phoneNUmber.length() < 8) {
-                phoneNUmber = "+968" + phoneNUmber;
-            }
-
-            if (userService.existbyphonenumber(phoneNUmber))
-                return new ResponseEntity("Phone number already exists.", HttpStatus.CONFLICT);
-        }
-
-
-
-        // Check if email already exists
-        users existingUserByEmail = userService.findbyemail(request.getEmail().toLowerCase());
-        if (existingUserByEmail != null) {
-            if (existingUserByEmail.getVerified()) {
-                return new ResponseEntity("Account already exists.", HttpStatus.CONFLICT);
-            } else {
-                // If the user exists but is not verified, update user details and send verification email again
-                String token = generateRandomResetCode(4);
-                existingUserByEmail.setCity(request.getCity());
-                existingUserByEmail.setName(request.getName());
-                existingUserByEmail.setGender(request.getGender());
-                existingUserByEmail.setPhonenumber(phoneNUmber);
-                existingUserByEmail.setCountry(request.getCountry());
-                existingUserByEmail.setBirthDate(request.getBirthDate());
-                existingUserByEmail.setPassword(request.getPassword());
-                users result = userService.saveUser(existingUserByEmail);
-
-                // Send verification email again
-                PasswordResetToken resetToken = this.resetTokenServices.findbyuser(existingUserByEmail);
-                if (resetToken != null) {
-                    this.resetTokenServices.remove_code(resetToken.getUser());
-                }
-                resetToken = this.resetTokenServices.createPasswordResetTokenForUser(existingUserByEmail, token);
-                //this.mailSenderServices.sendConfirmEmailInEmailHtml(existingUserByEmail.getEmail(), token);
-
-                return new ResponseEntity<>(result, HttpStatus.OK);
-            }
-        } else {
-            // Check if username is unique
-            String username = userService.GenerateUserName(request.getName(), userService.Count());
-            users existingUserByUsername = userService.findByUserName(username);
-            if (existingUserByUsername != null) {
-                return new ResponseEntity("Username already exists.", HttpStatus.CONFLICT);
-            }
-
-            // Check if phone number is unique
-            users existingUserByPhoneNumber = userService.findByPhonenumber(request.getPhonenumber());
-            if (existingUserByPhoneNumber != null) {
-                return new ResponseEntity("Phone number already exists.", HttpStatus.CONFLICT);
-            }
-
-            // Create a new user
-            users newUser = new users();
-            // Set user details
-            newUser.setUsername(username);
-            newUser.setEmail(request.getEmail().toLowerCase());
-            newUser.setName(request.getName());
-            newUser.setGender(request.getGender());
-            newUser.setPhonenumber(request.getPhonenumber());
-            newUser.setCountry(request.getCountry());
-            newUser.setCity(request.getCity());
-            newUser.setBirthDate(request.getBirthDate());
-            newUser.setPassword(request.getPassword());
-            newUser.setActive(false);
-            newUser.setVerified(false);
-
-            // Save the user
-            users result = userService.saveUser(newUser);
-
-            // Generate and send verification token
-            String token = generateRandomResetCode(4);
-            PasswordResetToken resetToken = this.resetTokenServices.createPasswordResetTokenForUser(result, token);
-
-
-
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        }
-    }
 
     @PostMapping(value = {"/resend_code"})
     public ResponseEntity<users> resend_code(@RequestParam String email) throws IOException, InterruptedException, MessagingException {
@@ -287,78 +184,6 @@ public class AuthController extends BaseController {
 
         return sb.toString();
     }
-
-    @PostMapping(value = {"/signup_supplier"})
-    public ResponseEntity<users> signup_supplier(@ModelAttribute signupRequest request) throws IOException, InterruptedException, MessagingException {
-        users usersL = this.userService.findTop();
-        Long lastuserid = usersL.getId() + 1;
-        if (request.getEmail() == null)
-            return new ResponseEntity("data missing", HttpStatus.CONFLICT);
-
-        if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
-            return new ResponseEntity("Wrong email format", HttpStatus.CONFLICT);
-        users user = userService.findbyemail(request.getEmail().toLowerCase());
-        if (user != null && user.getVerified())
-            return new ResponseEntity("Account already exist.", HttpStatus.CONFLICT);
-
-        String phoneNUmber = request.getPhonenumber().replaceAll("[\\s()]", "");
-
-        if (request.getPhonenumber()!=null) {
-
-            if (userService.existbyphonenumber(phoneNUmber))
-                return new ResponseEntity("Phone number already exists.", HttpStatus.CONFLICT);
-        }
-
-        if (user != null && !user.getVerified()) {
-
-            String token = generateRandomResetCode(4);
-            PasswordResetToken resetToken = this.resetTokenServices.findbyuser(user);
-            user.setCity(request.getCity());
-            user.setName(request.getName());
-            user.setGender(request.getGender());
-            user.setPhonenumber(phoneNUmber);
-            user.setCountry(request.getCountry());
-            user.setBirthDate(request.getBirthDate());
-            user.setPassword(request.getPassword());
-            users result = userService.saveSupplier(user);
-            if (resetToken != null)
-                this.resetTokenServices.remove_code(resetToken.getUser());
-
-            resetToken = this.resetTokenServices.createPasswordResetTokenForUser(user, token);
-            //this.mailSenderServices.sendConfirmEmailInEmailHtml(user.getEmail(), token);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } else {
-            String username = userService.GenerateUserName(request.getName(), lastuserid);
-            user = new users(username,
-                    request.getEmail().toLowerCase(),
-                    request.getPassword(),
-                    request.getName(),
-                    request.getGender(),
-                    request.getPhonenumber(),
-                    request.getCountry());
-            user.setBirthDate(request.getBirthDate());
-            user.setActive(false);
-            user.setVerified(false);
-            user.setCity(request.getCity());
-            Supplier supplier = new Supplier();
-            users result = userService.saveSupplier(user);
-            supplier.setUser(result);
-            result.setSupplier(supplier);
-            supplier = supplierServices.save(supplier);
-            result = userService.UpdateUser(result);
-            String token = UserService.generateRandomNumberString(4);
-            PasswordResetToken resetToken = this.resetTokenServices.findbyuser(result);
-            if (resetToken != null) {
-                this.resetTokenServices.remove_code(resetToken.getUser());
-            }
-            resetToken = this.resetTokenServices.createPasswordResetTokenForUser(result, token);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-
-        }
-    }
-
-
-
     @PostMapping(value = {"/reset_password_first_step"})
     public ResponseEntity reset_password_first_step(@RequestParam("email") String email) throws IOException, MessagingException {
         if (!this.userService.existbyemail(email.toLowerCase()))
@@ -375,43 +200,6 @@ public class AuthController extends BaseController {
         return new ResponseEntity("code send it to email , the code wille be expired in : " + resetToken.getExpiryDate(), HttpStatus.OK);
     }
 
-    @PostMapping(value = {"/email_check_first_step"})
-    public ResponseEntity email_check_first_step(@RequestParam("email") String email) throws IOException, MessagingException {
-        if (!this.userService.existbyemail(email.toLowerCase()))
-            return new ResponseEntity("user not found", HttpStatus.NOT_FOUND);
-        users user = userService.findbyemail(email.toLowerCase());
-        String token = UserService.generateRandomNumberString(4);
-        PasswordResetToken resetToken = this.resetTokenServices.findbyuser(user);
-        if (resetToken != null) {
-            this.resetTokenServices.remove_code(resetToken.getUser());
-        }
-        resetToken = this.resetTokenServices.createPasswordResetTokenForUser(user, token);
-
-        return new ResponseEntity("code send it to email , the code wille be expired in : " + resetToken.getExpiryDate(), HttpStatus.OK);
-    }
-
-    @PostMapping(value = {"/validate_email"})
-    public ResponseEntity<String> validate_email(@RequestParam("email") String email, @RequestParam("verification_code") String code) throws IOException {
-        if (!this.userService.existbyemail(email.toLowerCase()))
-            return new ResponseEntity("user not found", HttpStatus.NOT_FOUND);
-        users user = userService.findbyemail(email.toLowerCase());
-        PasswordResetToken resetToken = this.resetTokenServices.findbyuser(user);
-        if (resetToken == null) {
-            return new ResponseEntity("this code is not found", HttpStatus.NOT_FOUND);
-        }
-        String result = this.resetTokenServices.validatePasswordResetToken(user, code);
-        if (result == null) {
-            user.setVerified(true);
-            user.setActive(true);
-            this.userService.UpdateUser(user);
-            return new ResponseEntity<>("code correct", HttpStatus.OK);
-        }
-        if (result.equals("expired"))
-            return new ResponseEntity("this code is expired", HttpStatus.NOT_ACCEPTABLE);
-        if (result.equals("invalidToken"))
-            return new ResponseEntity("this code is not valid", HttpStatus.NOT_ACCEPTABLE);
-        return new ResponseEntity("this code is wrong", HttpStatus.NOT_ACCEPTABLE);
-    }
 
     @PostMapping(value = {"/validate_reset_code_second_step"})
     public ResponseEntity<String> validate_reset_code_second_step(@RequestParam("email") String email, @RequestParam("reset_code") String code) throws IOException {

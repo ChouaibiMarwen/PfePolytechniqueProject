@@ -1,18 +1,23 @@
 package com.camelsoft.rayaserver.Controller.User;
 
- 
 
+import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
+import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
+import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.SessionAction;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.UserSession;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.User.LogOutRequest;
-import com.camelsoft.rayaserver.Request.User.UpdateUserRequest;
+import com.camelsoft.rayaserver.Request.User.PersonalInformationRequest;
+
 import com.camelsoft.rayaserver.Response.Auth.OnUserLogoutSuccessEvent;
 import com.camelsoft.rayaserver.Response.Tools.ApiResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 
+import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.User.UserSessionService;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
@@ -34,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -58,7 +64,8 @@ public class UsersController extends BaseController {
     private UserSessionService userSessionService;
     @Autowired
     private AuthenticationManager authenticationManager;
-
+    @Autowired
+    private PersonalInformationService personalInformationService;
 
     @GetMapping(value = {"/current_user"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER') ")
@@ -68,34 +75,58 @@ public class UsersController extends BaseController {
     }
 
 
-    @PatchMapping(value = {"/update_profile_user"})
+    @PatchMapping(value = {"/update_personal_information"})
     @PreAuthorize("hasRole('ADMIN')  or hasRole('SUPPLIER') ")
-    public ResponseEntity<users> update_profile_user(@ModelAttribute UpdateUserRequest request, @RequestParam(required = false, name = "file") MultipartFile file) throws IOException {
+    public ResponseEntity<PersonalInformation> update_personal_information(@ModelAttribute PersonalInformationRequest request) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
-        File_model imagepath = user.getImage();
+        PersonalInformation personalInformation = new PersonalInformation();
+        if(user.getPersonalinformation()!=null) {
+            personalInformation = user.getPersonalinformation();
+        }else{
+            personalInformation = this.personalInformationService.save(personalInformation);
+            user.setPersonalinformation(personalInformation);
+            this.userService.UpdateUser(user);
+        }
+        if (request.getFirstnameen() != null) personalInformation.setFirstnameen(request.getFirstnameen());
+        if (request.getLastnameen() != null) personalInformation.setLastnameen(request.getLastnameen());
+        if (request.getFirstnamear() != null) personalInformation.setFirstnamear(request.getFirstnamear());
+        if (request.getLastnamear() != null) personalInformation.setLastnamear(request.getLastnamear());
+        if (request.getBirthDate() != null) personalInformation.setBirthDate(request.getBirthDate());
+        if (request.getSecondnamear() != null) personalInformation.setSecondnamear(request.getSecondnamear());
+        if (request.getThirdnamear() != null) personalInformation.setThirdnamear(request.getThirdnamear());
+        if (request.getGrandfathernamear() != null) personalInformation.setGrandfathernamear(request.getGrandfathernamear());
+        if (request.getSecondnameen() != null) personalInformation.setSecondnameen(request.getSecondnameen());
+        if (request.getThirdnameen() != null) personalInformation.setThirdnameen(request.getThirdnameen());
+        if (request.getGrandfathernameen() != null) personalInformation.setGrandfathernameen(request.getGrandfathernameen());
+        if (request.getNumberofdependents() != null) personalInformation.setNumberofdependents(request.getNumberofdependents());
+        if (request.getGender() != null) personalInformation.setGender(request.getGender());
+        if (request.getWorksector() != null) personalInformation.setWorksector(request.getWorksector());
+        if (request.getMaritalstatus() != null) personalInformation.setMaritalstatus(request.getMaritalstatus());
+        PersonalInformation result = this.personalInformationService.update(personalInformation);
+
+
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping(value = {"/update_profile_image"})
+    @PreAuthorize("hasRole('ADMIN')  or hasRole('SUPPLIER') ")
+    public ResponseEntity<users> update_profile_image(@RequestParam(required = false, name = "file") MultipartFile file) throws IOException {
+        users user = this.userService.findByUserName(getCurrentUser().getUsername());
+        File_model imagepath = user.getProfileimage();
         if (file != null) {
             String extention = file.getContentType().substring(file.getContentType().indexOf("/") + 1);
             if (!image_accepte_type.contains(extention))
                 return new ResponseEntity("this type is not acceptable : " + extention, HttpStatus.BAD_REQUEST);
             File_model resource_media = filesStorageService.save_file(file, "profile");
-            if (user.getImage() != null)
-                this.filesStorageService.delete_file_by_path_from_cdn(user.getImage().getUrl(),user.getImage().getId());
+            if (user.getProfileimage() != null)
+                this.filesStorageService.delete_file_by_path_from_cdn(user.getProfileimage().getUrl(), user.getProfileimage().getId());
 
             if (resource_media == null)
                 return new ResponseEntity("image not valid", HttpStatus.BAD_REQUEST);
             imagepath = resource_media;
         }
-
-        if (request.getFirstname() != null) user.setFirstname(request.getFirstname());
-        if (request.getLastName() != null) user.setLastname(request.getLastName());
-        user.setName(user.getFirstname() + " " + user.getLastname());
-        if (request.getPhonenumber() != null) user.setPhonenumber(request.getPhonenumber());
-        if (request.getCountry() != null) user.setCountry(request.getCountry());
-        if (request.getCity() != null) user.setCity(request.getCity());
-        user.setNotificationFcm(request.isNotificationfcm());
-        user.setNotificationEmail(request.isNotificationemail());
-        user.setImage(imagepath);
-
+        user.setProfileimage(imagepath);
         users result = userService.UpdateUser(user);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -121,7 +152,7 @@ public class UsersController extends BaseController {
             applicationEventPublisher.publishEvent(logoutSuccessEvent);
             userDevice.setLogout(true);
             UserDevice deviceResult = this.userDeviceService.update(userDevice);
-            UserSession session = new UserSession(currentUser,deviceResult, SessionAction.LOGOUT,"users Logout ");
+            UserSession session = new UserSession(currentUser, deviceResult, SessionAction.LOGOUT, "users Logout ");
             this.userSessionService.save(session);
             return ResponseEntity.ok(new ApiResponse(true, "users has successfully logged out from the system!"));
         } else {

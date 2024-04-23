@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "Invoice")
@@ -29,7 +30,7 @@ public class Invoice implements Serializable {
     @Column(name = "duedate")
     private Date duedate = new Date();
     @Column(name = "currency")
-    private String currency="SAR";
+    private String currency = "SAR";
     @Column(name = "suppliername")
     private String suppliername;
     @Column(name = "supplierzipcode")
@@ -62,7 +63,7 @@ public class Invoice implements Serializable {
     private String vehiclemotexpiry;
     @Column(name = "vehicleenginesize")
     private String vehicleenginesize;
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "invoice_products",
             joinColumns =
             @JoinColumn(name = "invoice_id", referencedColumnName = "id"),
@@ -74,23 +75,24 @@ public class Invoice implements Serializable {
     private Boolean archive = false;
     @Column(name = "timestamp")
     private Date timestamp;
-    @Column(columnDefinition = "TEXT",name = "remark")
+    @Column(columnDefinition = "TEXT", name = "remark")
     private String remark;
-   @Column(name = "related")
+    @Column(name = "related")
     private InvoiceRelated related = InvoiceRelated.NONE;
-   @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id_createdby", nullable = false)
     private users createdby;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id_relatedto", nullable = false)
     private users relatedto;
+
     public Invoice() {
         this.timestamp = new Date();
     }
 
-    public Invoice(Integer invoicenumber, Date invoicedate, Date duedate, String currency, String suppliername, String supplierzipcode, String supplierstreetadress, String supplierphonenumber, String bankname, String bankzipcode, String bankstreetadress, String bankphonenumber, String vehicleregistration, String vehiclecolor, String vehiclevin, String vehiclemodel, String vehiclemark, String vehiclemileage, String vehiclemotexpiry, String vehicleenginesize, Set<Product> products,users createdby,InvoiceRelated related,users relatedto) {
+    public Invoice(Integer invoicenumber, Date invoicedate, Date duedate, String currency, String suppliername, String supplierzipcode, String supplierstreetadress, String supplierphonenumber, String bankname, String bankzipcode, String bankstreetadress, String bankphonenumber, String vehicleregistration, String vehiclecolor, String vehiclevin, String vehiclemodel, String vehiclemark, String vehiclemileage, String vehiclemotexpiry, String vehicleenginesize, Set<Product> products, users createdby, InvoiceRelated related, users relatedto) {
         this.invoicenumber = invoicenumber;
         this.invoicedate = invoicedate;
         this.duedate = duedate;
@@ -114,7 +116,7 @@ public class Invoice implements Serializable {
         this.products = products;
         this.createdby = createdby;
         this.relatedto = relatedto;
-        this.related=related;
+        this.related = related;
         this.timestamp = new Date();
     }
 

@@ -14,13 +14,8 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<users, Long> {
 
-    @Query("SELECT u FROM users u WHERE u.phonenumber IN " +
-            "(SELECT phonenumber FROM users GROUP BY phonenumber HAVING COUNT(phonenumber) > 1)")
-    List<users> findUsersWithDuplicatePhoneNumbers();
 
 
-    @Query("SELECT u.city, MIN(u.id) AS first_user_id, COUNT(u) AS user_count FROM users u GROUP BY u.city")
-    List<Object[]> getSuppliersByCity();
 
     users findByEmail(String email);
 
@@ -34,7 +29,6 @@ public interface UserRepository extends JpaRepository<users, Long> {
 
     users findByUsername(String username);
 
-    users findTopByOrderByIdDesc();
 
 
 
@@ -44,9 +38,7 @@ public interface UserRepository extends JpaRepository<users, Long> {
 
     Page<users> findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(Pageable page, Role role, String name, Boolean delete, String userNaMe);
 
-    Page<users> findAllByRoleAndCountryLikeIgnoreCaseOrderByTimestmpDesc(Pageable page, Role role, String name);
 
-    Page<users> findAllByRoleAndCountryLikeIgnoreCaseOrderBySupplier_RatingsDesc(Pageable page, Role role, String name);
 
     Page<users> findByRoleAndActiveAndDeletedOrderByTimestmpDesc(Pageable page, Role role, Boolean active, Boolean deleted);
 
@@ -55,12 +47,6 @@ public interface UserRepository extends JpaRepository<users, Long> {
     Page<users> findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(Pageable page, Role role, Boolean active, String name, Boolean deleted);
 
     Page<users> findAllByRoleAndNameContainingIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(Pageable page, Role role, String name, Boolean delete, String userName);
-
-    Page<users> findAllByRoleAndActiveAndCountryContainingIgnoreCaseOrderByTimestmpDesc(Pageable page, Role role, Boolean active, String name);
-
-    Page<users> findAllByRoleAndActiveAndCountryContainingIgnoreCaseOrderBySupplier_RatingsDesc(Pageable page, Role role, Boolean active, String name);
-
-    users findTopByRoleOrderByTimestmp(Role role);
 
     Page<users> findByRoleOrderByTimestmpDesc(Pageable page, Role role);
 

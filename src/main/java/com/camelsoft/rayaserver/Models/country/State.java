@@ -1,10 +1,13 @@
 package com.camelsoft.rayaserver.Models.country;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "state")
@@ -30,6 +33,9 @@ public class State implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "file_id")
     private File_model image;
+    @JsonIgnore
+    @OneToMany(mappedBy = "city")
+    private Set<Address> addresses = new HashSet<>();
     public State() {
     }
 
@@ -39,6 +45,14 @@ public class State implements Serializable {
         this.latitude = latitude;
         this.longitude = longitude;
         this.type = type;
+    }
+
+    public Set<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Set<Address> addresses) {
+        this.addresses = addresses;
     }
 
     public File_model getImage() {

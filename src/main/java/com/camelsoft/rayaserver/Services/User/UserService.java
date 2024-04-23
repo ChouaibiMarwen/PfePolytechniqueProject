@@ -1,10 +1,12 @@
 package com.camelsoft.rayaserver.Services.User;
 
 
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
+import com.camelsoft.rayaserver.Repository.Tools.PersonalInformationRepository;
 import com.camelsoft.rayaserver.Repository.User.UserRepository;
 import com.camelsoft.rayaserver.Request.User.SignInRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -44,6 +46,8 @@ public class UserService extends BaseController implements UserDetailsService {
     private final Log logger = LogFactory.getLog(UserService.class);
     @Autowired
     private UserRepository userRepository;
+   @Autowired
+    private PersonalInformationRepository personalInformationRepository;
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
@@ -58,7 +62,6 @@ public class UserService extends BaseController implements UserDetailsService {
     private AuthenticationManager authenticationManager;
 
 
-
     public void update_password(users user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -68,23 +71,11 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
-    public List<Object[]> getSuppliersByCity() {
-        try {
-
-
-            List<Object[]> pckge = this.userRepository.getSuppliersByCity();
-            return pckge;
-
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(String.format("No file found with id [%s] in our data base"));
-        }
-
-    }
 
     public users saveUser(users user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            Role userRole = roleRepository.findByRole("ROLE_USER");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
             user.setRole(userRole);
             return userRepository.save(user);
         } catch (NoSuchElementException ex) {
@@ -111,7 +102,7 @@ public class UserService extends BaseController implements UserDetailsService {
     public users saveSupplier(users user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            Role userRole = roleRepository.findByRole("ROLE_SUPPLIER");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
             user.setRole(userRole);
             return userRepository.save(user);
         } catch (NoSuchElementException ex) {
@@ -131,7 +122,7 @@ public class UserService extends BaseController implements UserDetailsService {
         try {
             users.setPassword(passwordEncoder.encode(users.getPassword()));
             users.setActive(true);
-            Role userRole = roleRepository.findByRole("ROLE_ADMIN");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_ADMIN);
             users.setRole(userRole);
             return userRepository.save(users);
         } catch (NoSuchElementException ex) {
@@ -157,7 +148,7 @@ public class UserService extends BaseController implements UserDetailsService {
             user.setUsername(name);
             user.setName(name);
             user.setActive(true);
-            Role userRole = roleRepository.findByRole("ROLE_USER");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
             user.setRole(userRole);
             user = this.userRepository.save(user);
         }
@@ -185,7 +176,7 @@ public class UserService extends BaseController implements UserDetailsService {
     private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
         Set<GrantedAuthority> roles = new HashSet<GrantedAuthority>();
         for (Role role : userRoles) {
-            roles.add(new SimpleGrantedAuthority(role.getRole()));
+            roles.add(new SimpleGrantedAuthority(role.getRole().name()));
         }
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>(roles);
         return grantedAuthorities;
@@ -249,7 +240,7 @@ public class UserService extends BaseController implements UserDetailsService {
 
     public Long totalUsers() {
         try {
-            Role userRole = roleRepository.findByRole("ROLE_USER");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
             return this.userRepository.countAllByRole(userRole);
         } catch (NoSuchElementException ex) {
             throw new NotFoundException("hourbor id not found data");
@@ -258,7 +249,7 @@ public class UserService extends BaseController implements UserDetailsService {
 
     public Long totalUsersByState(Boolean state) {
         try {
-            Role userRole = roleRepository.findByRole("ROLE_USER");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
             return this.userRepository.countAllByRoleAndActive(userRole, state);
         } catch (NoSuchElementException ex) {
             throw new NotFoundException("hourbor id not found data");
@@ -267,7 +258,7 @@ public class UserService extends BaseController implements UserDetailsService {
 
     public Long totalSuppliers(Boolean active) {
         try {
-            Role userRole = roleRepository.findByRole("ROLE_SUPPLIER");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
             return this.userRepository.countAllByRoleAndActive(userRole, active);
         } catch (NoSuchElementException ex) {
             throw new NotFoundException("hourbor id not found data");
@@ -277,15 +268,13 @@ public class UserService extends BaseController implements UserDetailsService {
 
     public List<users> allUsers(Boolean active) {
         try {
-            Role userRole = roleRepository.findByRole("ROLE_USER");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
 
             return this.userRepository.findAllByRoleAndActive(userRole, active);
         } catch (NoSuchElementException ex) {
             throw new NotFoundException("hourbor id not found data");
         }
     }
-
-
 
 
     public users findbyemail(String email) {
@@ -298,19 +287,18 @@ public class UserService extends BaseController implements UserDetailsService {
     }
 
 
-
     public DynamicResponse findAllUsers(int page, int size, Boolean active, String name) {
         try {
-            Role userRole = roleRepository.findByRole("ROLE_USER");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
             Page<users> user = null;
             if (name == null && active == null)
-                user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole,true,false);
-            else if (name != null && active == null)
-                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%",false,"%DELETED%");
-            else if (name == null && active != null)
-                user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active,false);
+                user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, true, false);
+            else if (name != null && active == null) {
+                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%", false, "%DELETED%");
+            } else if (name == null && active != null)
+                user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, false);
             else if (name != null && active != null)
-                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, "%" + name + "%",false);
+                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, "%" + name + "%", false);
             return new DynamicResponse(user.getContent(), user.getNumber(), user.getTotalElements(), user.getTotalPages());
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(String.format("No data found"));
@@ -321,14 +309,14 @@ public class UserService extends BaseController implements UserDetailsService {
 
     public DynamicResponse findAllDeletedUsers(int page, int size, String name) {
         try {
-            Role userRole = roleRepository.findByRole("ROLE_USER");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
             Page<users> user = null;
             if (name == null)
-                user = this.userRepository.findByRoleAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, true,"%DELETED%");
+                user = this.userRepository.findByRoleAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, true, "%DELETED%");
             else if (name != null)
-                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%", true,"%DELETED%");
+                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%", true, "%DELETED%");
             else
-                user = this.userRepository.findAllByRoleAndNameContainingIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, name, false,"%DELETED%");
+                user = this.userRepository.findAllByRoleAndNameContainingIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, name, false, "%DELETED%");
 
             return new DynamicResponse(user.getContent(), user.getNumber(), user.getTotalElements(), user.getTotalPages());
         } catch (NoSuchElementException ex) {
@@ -340,16 +328,16 @@ public class UserService extends BaseController implements UserDetailsService {
 
     public DynamicResponse findAllAdmins(int page, int size, Boolean active, String name) {
         try {
-            Role userRole = roleRepository.findByRole("ROLE_ADMIN");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_ADMIN);
             Page<users> user = null;
             if (name == null && active == null)
                 user = this.userRepository.findByRoleOrderByTimestmpDesc(PageRequest.of(page, size), userRole);
             else if (name != null && active == null)
-                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%", false,"%DELETED%");
+                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%", false, "%DELETED%");
             else if (name == null && active != null)
-                user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active,false);
+                user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, false);
             else
-                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, "%" + name + "%",false);
+                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, "%" + name + "%", false);
 
             return new DynamicResponse(user.getContent(), user.getNumber(), user.getTotalElements(), user.getTotalPages());
         } catch (NoSuchElementException ex) {
@@ -357,22 +345,20 @@ public class UserService extends BaseController implements UserDetailsService {
         }
 
     }
-
-
 
 
     public DynamicResponse findAllSupplierac(int page, int size, Boolean active, String name) {
         try {
-            Role userRole = roleRepository.findByRole("ROLE_SUPPLIER");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
             Page<users> user = null;
             if (name == null && active == null)
-                user = this.userRepository.findByRoleAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole,false,"%DELETED%");
+                user = this.userRepository.findByRoleAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, false, "%DELETED%");
             else if (name != null && active == null)
-                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%",false,"%DELETED%");
+                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%", false, "%DELETED%");
             else if (name == null && active != null)
-                user = this.userRepository.findAllByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active,false);
+                user = this.userRepository.findAllByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, false);
             else
-                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, name,false);
+                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, name, false);
 
             return new DynamicResponse(user.getContent(), user.getNumber(), user.getTotalElements(), user.getTotalPages());
         } catch (NoSuchElementException ex) {
@@ -381,29 +367,11 @@ public class UserService extends BaseController implements UserDetailsService {
 
     }
 
-    public DynamicResponse findAllSupplierByCountries(int page, int size, Boolean active, String countrie) {
-        try {
-            Role userRole = roleRepository.findByRole("ROLE_SUPPLIER");
-            Page<users> user = null;
-            if (countrie == null && active == null)
-                user = this.userRepository.findByRoleOrderBySupplier_RatingsDesc(PageRequest.of(page, size), userRole);
-            else if (countrie != null && active == null)
-                user = this.userRepository.findAllByRoleAndCountryLikeIgnoreCaseOrderBySupplier_RatingsDesc(PageRequest.of(page, size), userRole, "%" + countrie + "%");
-            else if (countrie == null && active != null)
-                user = this.userRepository.findByRoleAndActiveOrderBySupplier_RatingsDesc(PageRequest.of(page, size), userRole, active);
-            else
-                user = this.userRepository.findAllByRoleAndActiveAndCountryContainingIgnoreCaseOrderBySupplier_RatingsDesc(PageRequest.of(page, size), userRole, active, countrie);
 
-            return new DynamicResponse(user.getContent(), user.getNumber(), user.getTotalElements(), user.getTotalPages());
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(String.format("No data found"));
-        }
-
-    }
 
     public List<users> findAllAdmin() {
         try {
-            Role userRole = roleRepository.findByRole("ROLE_ADMIN");
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_ADMIN);
             return this.userRepository.findAllByRole(userRole);
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(String.format("No data found"));
@@ -411,26 +379,9 @@ public class UserService extends BaseController implements UserDetailsService {
 
     }
 
-    public users findTopByRole() {
-        try {
-            Role userRole = roleRepository.findByRole("ROLE_ADMIN");
-            return this.userRepository.findTopByRole(userRole);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(String.format("No data found"));
-        }
-
-    }
 
 
-    public Long countAllByRoleAndVerified(String s, Boolean verif) {
-        try {
-            Role userRole = roleRepository.findByRole(s);
-            return this.userRepository.countAllByRoleAndVerified(userRole, verif);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(String.format("No data found"));
-        }
 
-    }
 
     public int countusers() {
         try {
@@ -440,7 +391,8 @@ public class UserService extends BaseController implements UserDetailsService {
             throw new NotFoundException(String.format("No data found"));
         }
     }
- public Long Count() {
+
+    public Long Count() {
         try {
             return userRepository.count();
 
@@ -449,14 +401,14 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
-    public users saveUserotp(users user, String role) {
+    public users saveUserotp(users user, RoleEnum role) {
 
         user.setActive(true);
         Role userRole = null;
-        if (role == null || role.equals("ROLE_USER"))
-            userRole = roleRepository.findByRole("ROLE_USER");
+        if (role == null || role.equals(RoleEnum.ROLE_USER))
+            userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
         else
-            userRole = roleRepository.findByRole("ROLE_SUPPLIER");
+            userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
 
         user.setRole(userRole);
         return userRepository.save(user);
@@ -497,7 +449,6 @@ public class UserService extends BaseController implements UserDetailsService {
     }
 
 
-
     public List<users> findAll() {
         try {
             return this.userRepository.findAll();
@@ -506,23 +457,9 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
-    public List<users> findAllbyTitle() {
-        try {
 
 
-            return this.userRepository.findAll();
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(String.format("No data found"));
-        }
-    }
 
-    public users findTop() {
-        try {
-            return this.userRepository.findTopByOrderByIdDesc();
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(String.format("No data found"));
-        }
-    }
 
     public boolean existbyemail(String email) {
         try {

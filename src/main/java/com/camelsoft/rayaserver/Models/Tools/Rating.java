@@ -61,7 +61,7 @@ public class Rating implements Serializable {
         userName = user.getName();
         userId = user.getId();
         phoneNumber = user.getPhonenumber();
-        userImage = user.getImage();
+        userImage = user.getProfileimage();
     }
 
     public Long getId() {

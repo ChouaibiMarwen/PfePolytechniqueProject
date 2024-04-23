@@ -5,11 +5,12 @@ import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Auth.Role;
+import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
-import com.camelsoft.rayaserver.Repository.User.UserRepository;
 import com.camelsoft.rayaserver.Services.Country.CountriesServices;
+import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
+import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.auth.PrivilegeService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import org.apache.juli.logging.Log;
@@ -25,9 +26,9 @@ import java.util.*;
 public class FirstTimeInitializer implements CommandLineRunner {
     private final Log logger = LogFactory.getLog(FirstTimeInitializer.class);
     @Autowired
-    private UserRepository userRepository;
+    private PersonalInformationService personalInformationService;
     @Autowired
-    private RoleRepository roleRepository;
+    private RoleService roleService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -58,14 +59,15 @@ public class FirstTimeInitializer implements CommandLineRunner {
         initPriveleges();
         initUser();
         countriesServices.ParseCountry();
+
     }
 
     void Roleinit() {
         for (RoleEnum model : RoleEnum.values()) {
-            if (!roleRepository.existsByRole(model.name())) {
+            if (!this.roleService.existsByRole(model)) {
                 Role rolemodel = new Role();
-                rolemodel.setRole(model.name());
-                roleRepository.save(rolemodel);
+                rolemodel.setRole(model);
+                this.roleService.save(rolemodel);
             }
         }
     }
@@ -99,7 +101,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
             privilegeService.save(new Privilege("PRIVILEGE_READ"));
 
 
-        if (userRepository.existsByEmail("info@camel-soft.com")) {
+        if (this.userService.existbyemail("info@camel-soft.com")) {
             users user = userService.findbyemail("info@camel-soft.com");
             List<Privilege> privilegeList = this.privilegeService.findAll();
             Set<Privilege> privileges = user.getPrivileges();
@@ -116,69 +118,63 @@ public class FirstTimeInitializer implements CommandLineRunner {
 
 
     void initUser() {
-        if (!userRepository.existsByEmail("admin@camel-soft.com")) {
+        if (!userService.existbyemail("admin@camel-soft.com")) {
             logger.info("No users found creating some users ...");
+            PersonalInformation personalInformation = new PersonalInformation();
+            personalInformation.setFirstnameen("CAMELSOFT");
+            personalInformation.setFirstnamear("كامل سوفت");
+            personalInformation.setLastnameen("ADMIN");
+            personalInformation.setLastnamear("مشرف");
+            PersonalInformation information = this.personalInformationService.save(personalInformation);
             users users = new users(
-                    "CAADMINSO1234",
+                    "CAMELSOFTADMIN",
                     "admin@camel-soft.com",
                     "aze",
-                    "camelsoft llc",
-                    Gender.MALE,
-                    "93831879",
-                    "Tunisia"
+                    "+21612345678",
+                    information
+            );
+
+            userService.saveAdmin(users);
+
+        }
+
+        if (!this.userService.existbyemail("contact@camel-soft.com")) {
+            logger.info("No users found creating some users ...");
+            PersonalInformation personalInformation = new PersonalInformation();
+            personalInformation.setFirstnameen("CAMELSOFT");
+            personalInformation.setFirstnamear("كامل سوفت");
+            personalInformation.setLastnameen("SUPPLIER");
+            personalInformation.setLastnamear("المورد");
+            PersonalInformation information = this.personalInformationService.save(personalInformation);
+            users users = new users(
+                    "CAMELSOFTSUPPLIER",
+                    "contact@camel-soft.com",
+                    "aze",
+                    "+21699999999",
+                    information
+            );
+
+            userService.saveSupplier(users);
+        }
+
+        if (!this.userService.existbyemail("info@camel-soft.com")) {
+            logger.info("No users found creating some users ...");
+            PersonalInformation personalInformation = new PersonalInformation();
+            personalInformation.setFirstnameen("CAMELSOFT");
+            personalInformation.setFirstnamear("كامل سوفت");
+            personalInformation.setLastnameen("USER");
+            personalInformation.setLastnamear("مستخدم");
+            PersonalInformation information = this.personalInformationService.save(personalInformation);
+            users users = new users(
+                    "CAMELSOFTUSER",
+                    "info@camel-soft.com",
+                    "aze",
+                    "+21688888888",
+                    information
             );
 
             userService.saveUser(users);
-
         }
-
-        if (!userRepository.existsByEmail("info@camel-soft.com")) {
-            logger.info("No users found creating some users ...");
-            users users = new users(
-                    "CASOZ1234",
-                    "info@camel-soft.com",
-                    "aze",
-                    "info llc",
-                    Gender.MALE,
-                    "93831879",
-                    "Tunisia"
-            );
-            userService.saveAdmin(users);
-        }
-
-        if (!userRepository.existsByEmail("hr@camel-soft.com")) {
-            users useruser = new users(
-                    "CASO0051234",
-                    "hr@camel-soft.com",
-                    "aze",
-                    "hr llc",
-                    Gender.MALE,
-                    "93831879",
-                    "Tunisia"
-            );
-            Supplier supplier = new Supplier();
-            useruser.setSupplier(supplier);
-            supplier.setUser(useruser);
-            userService.saveSupplier(useruser);
-        }
-
-
-        if (!userRepository.existsByEmail("hr1@camel-soft.com")) {
-            users useruser = new users(
-                    "CAS1O0051234",
-                    "hr1@camel-soft.com",
-                    "aze",
-                    "hr llc",
-                    Gender.MALE,
-                    "93831879",
-                    "Tunisia"
-            );
-            Supplier supplier = new Supplier();
-            useruser.setSupplier(supplier);
-            supplier.setUser(useruser);
-            userService.saveSupplier(useruser);
-        }
-
 
     }
 }

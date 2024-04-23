@@ -45,7 +45,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         Set<GrantedAuthority> roles = new HashSet<GrantedAuthority>();
         Set<Role> userRoles = new HashSet<Role>(Arrays.asList(user.getRole()));
         for (Role role : userRoles) {
-            roles.add(new SimpleGrantedAuthority(role.getRole()));
+            roles.add(new SimpleGrantedAuthority(role.getRole().name()));
         }
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>(roles);
