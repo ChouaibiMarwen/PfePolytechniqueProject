@@ -46,7 +46,7 @@ public class UserService extends BaseController implements UserDetailsService {
     private final Log logger = LogFactory.getLog(UserService.class);
     @Autowired
     private UserRepository userRepository;
-   @Autowired
+    @Autowired
     private PersonalInformationRepository personalInformationRepository;
     @Autowired
     private RoleRepository roleRepository;
@@ -61,17 +61,6 @@ public class UserService extends BaseController implements UserDetailsService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-
-    public void update_password(users user) {
-        try {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            this.userRepository.save(user);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("not found data");
-        }
-    }
-
-
     public users saveUser(users user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -82,6 +71,58 @@ public class UserService extends BaseController implements UserDetailsService {
             throw new NotFoundException("not found data");
         }
     }
+
+    public users saveAgent(users user) {
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_AGENT);
+            user.setRole(userRole);
+            return userRepository.save(user);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("not found data");
+        }
+    }
+
+    public users saveSupplier(users user) {
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
+            user.setRole(userRole);
+            return userRepository.save(user);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("not found data");
+        }
+    }
+
+    public users saveAdmin(users users) {
+        try {
+            users.setPassword(passwordEncoder.encode(users.getPassword()));
+            users.setActive(true);
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_ADMIN);
+            users.setRole(userRole);
+            return userRepository.save(users);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("not found data");
+        }
+    }
+
+    public users UpdateUser(users users) {
+        try {
+            return userRepository.save(users);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("not found data");
+        }
+    }
+
+    public void update_password(users user) {
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            this.userRepository.save(user);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("not found data");
+        }
+    }
+
 
     public static String generateRandomNumberString(int length) {
         // Define characters for digits (0-9)
@@ -99,36 +140,6 @@ public class UserService extends BaseController implements UserDetailsService {
         return sb.toString();
     }
 
-    public users saveSupplier(users user) {
-        try {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
-            user.setRole(userRole);
-            return userRepository.save(user);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("not found data");
-        }
-    }
-
-    public users UpdateUser(users users) {
-        try {
-            return userRepository.save(users);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("not found data");
-        }
-    }
-
-    public users saveAdmin(users users) {
-        try {
-            users.setPassword(passwordEncoder.encode(users.getPassword()));
-            users.setActive(true);
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_ADMIN);
-            users.setRole(userRole);
-            return userRepository.save(users);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("not found data");
-        }
-    }
 
     @Override
     @Transactional
@@ -287,9 +298,9 @@ public class UserService extends BaseController implements UserDetailsService {
     }
 
 
-    public DynamicResponse findAllUsers(int page, int size, Boolean active, String name) {
+    public DynamicResponse filterAllUser(int page, int size, Boolean active, String name,RoleEnum role) {
         try {
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
+            Role userRole = roleRepository.findByRole(role);
             Page<users> user = null;
             if (name == null && active == null)
                 user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, true, false);
@@ -347,26 +358,6 @@ public class UserService extends BaseController implements UserDetailsService {
     }
 
 
-    public DynamicResponse findAllSupplierac(int page, int size, Boolean active, String name) {
-        try {
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
-            Page<users> user = null;
-            if (name == null && active == null)
-                user = this.userRepository.findByRoleAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, false, "%DELETED%");
-            else if (name != null && active == null)
-                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%", false, "%DELETED%");
-            else if (name == null && active != null)
-                user = this.userRepository.findAllByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, false);
-            else
-                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, name, false);
-
-            return new DynamicResponse(user.getContent(), user.getNumber(), user.getTotalElements(), user.getTotalPages());
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(String.format("No data found"));
-        }
-
-    }
-
 
 
     public List<users> findAllAdmin() {
@@ -378,9 +369,6 @@ public class UserService extends BaseController implements UserDetailsService {
         }
 
     }
-
-
-
 
 
     public int countusers() {
@@ -456,9 +444,6 @@ public class UserService extends BaseController implements UserDetailsService {
             throw new NotFoundException(String.format("No data found"));
         }
     }
-
-
-
 
 
     public boolean existbyemail(String email) {

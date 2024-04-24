@@ -1,13 +1,13 @@
-package com.camelsoft.rayaserver.Controller.Project;
+package com.camelsoft.rayaserver.Controller.User;
 
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
-import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
-import com.camelsoft.rayaserver.Request.auth.SupplierSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
-import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -23,17 +23,16 @@ import java.io.IOException;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api/v1/suppliers")
-public class SupplierController {
+@RequestMapping(value = "/api/v1/customers")
+public class CustomerController {
     @Autowired
     private UserService userService;
     @Autowired
     private PersonalInformationService personalInformationService;
-    @Autowired
-    private SupplierServices supplierServices;
+
     @PostMapping(value = {"/add"})
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "add suppliers for admin", notes = "Endpoint to add suppliers")
+    @ApiOperation(value = "add customers for admin", notes = "Endpoint to add customers")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
             @ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
@@ -41,7 +40,7 @@ public class SupplierController {
             @ApiResponse(code = 409, message = "Conflict, phone-number or email or user-name is already exists"),
             @ApiResponse(code = 406, message = "Not Acceptable , the email is not valid")
     })
-    public ResponseEntity<users> add_supplier(@RequestBody SupplierSingUpRequest request) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<users> add_customer(@RequestBody CustomerSingUpRequest request) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
@@ -56,15 +55,14 @@ public class SupplierController {
         if (request.getInformationRequest().getLastnamear() == null)
             return new ResponseEntity("last-name-ar", HttpStatus.BAD_REQUEST);
 
+        // Check email format
+        if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
+            return new ResponseEntity("email", HttpStatus.NOT_ACCEPTABLE);
         String phonenumber = request.getPhonenumber().replaceAll("[\\s()]", "");
         if (userService.existbyphonenumber(phonenumber))
             return new ResponseEntity("phone-number", HttpStatus.CONFLICT);
         if (userService.existbyemail(request.getEmail().toLowerCase()))
             return new ResponseEntity("email", HttpStatus.CONFLICT);
-        // Check email format
-        if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
-            return new ResponseEntity("email", HttpStatus.NOT_ACCEPTABLE);
-
         String name = request.getInformationRequest().getFirstnameen() + request.getInformationRequest().getLastnameen();
         String username = userService.GenerateUserName(name, userService.Count());
         users existingUserByUsername = userService.findByUserName(username);
@@ -101,27 +99,22 @@ public class SupplierController {
             information.setMaritalstatus(request.getInformationRequest().getMaritalstatus());
         // Set user details
         PersonalInformation resultinformation = this.personalInformationService.save(information);
-        Supplier supplier = new Supplier();
-        supplier.setSuppliernumber(request.getSuppliernumber());
-        Supplier resultsupplier = this.supplierServices.save(supplier);
         user.setUsername(username);
         user.setEmail(request.getEmail().toLowerCase());
         user.setPassword(request.getPassword());
         user.setPersonalinformation(resultinformation);
-        user.setSupplier(resultsupplier);
         // Save the user
-        users result = userService.saveSupplier(user);
+        users result = userService.saveUser(user);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
     @GetMapping(value = {"/all"})
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "get all supplier by status for admin", notes = "Endpoint to get vehicles")
+    @ApiOperation(value = "get all customer by status for admin", notes = "Endpoint to get vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
     })
     public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name) throws IOException {
-        return new ResponseEntity<>(this.userService.findAllSupplierac(
-                page, size,active,name), HttpStatus.OK);
+        return new ResponseEntity<>(this.userService.filterAllUser(page, size,active,name, RoleEnum.ROLE_USER), HttpStatus.OK);
     }
 }
