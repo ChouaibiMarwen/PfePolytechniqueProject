@@ -33,7 +33,15 @@ public class SupplierController {
     private SupplierServices supplierServices;
     @PostMapping(value = {"/add"})
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<users> add_customer(@RequestBody SupplierSingUpRequest request) throws IOException, InterruptedException, MessagingException {
+    @ApiOperation(value = "add suppliers for admin", notes = "Endpoint to add suppliers")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully add"),
+            @ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @ApiResponse(code = 409, message = "Conflict, phone-number or email or user-name is already exists"),
+            @ApiResponse(code = 406, message = "Not Acceptable , the email is not valid")
+    })
+    public ResponseEntity<users> add_supplier(@RequestBody SupplierSingUpRequest request) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
@@ -48,14 +56,15 @@ public class SupplierController {
         if (request.getInformationRequest().getLastnamear() == null)
             return new ResponseEntity("last-name-ar", HttpStatus.BAD_REQUEST);
 
-        // Check email format
-        if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
-            return new ResponseEntity("email", HttpStatus.NOT_ACCEPTABLE);
         String phonenumber = request.getPhonenumber().replaceAll("[\\s()]", "");
         if (userService.existbyphonenumber(phonenumber))
             return new ResponseEntity("phone-number", HttpStatus.CONFLICT);
         if (userService.existbyemail(request.getEmail().toLowerCase()))
             return new ResponseEntity("email", HttpStatus.CONFLICT);
+        // Check email format
+        if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
+            return new ResponseEntity("email", HttpStatus.NOT_ACCEPTABLE);
+
         String name = request.getInformationRequest().getFirstnameen() + request.getInformationRequest().getLastnameen();
         String username = userService.GenerateUserName(name, userService.Count());
         users existingUserByUsername = userService.findByUserName(username);

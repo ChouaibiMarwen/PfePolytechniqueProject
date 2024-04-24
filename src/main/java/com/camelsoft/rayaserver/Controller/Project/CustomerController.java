@@ -31,6 +31,14 @@ public class CustomerController {
 
     @PostMapping(value = {"/add"})
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "add customers for supplier", notes = "Endpoint to add customers")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully add"),
+            @ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @ApiResponse(code = 409, message = "Conflict, phone-number or email or user-name is already exists"),
+            @ApiResponse(code = 406, message = "Not Acceptable , the email is not valid")
+    })
     public ResponseEntity<users> add_customer(@RequestBody CustomerSingUpRequest request) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
         if (request.getEmail() == null)

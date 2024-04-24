@@ -109,27 +109,7 @@ public class UsersController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PatchMapping(value = {"/update_profile_image"})
-    @PreAuthorize("hasRole('ADMIN')  or hasRole('SUPPLIER') ")
-    public ResponseEntity<users> update_profile_image(@RequestParam(required = false, name = "file") MultipartFile file) throws IOException {
-        users user = this.userService.findByUserName(getCurrentUser().getUsername());
-        File_model imagepath = user.getProfileimage();
-        if (file != null) {
-            String extention = file.getContentType().substring(file.getContentType().indexOf("/") + 1);
-            if (!image_accepte_type.contains(extention))
-                return new ResponseEntity("this type is not acceptable : " + extention, HttpStatus.BAD_REQUEST);
-            File_model resource_media = filesStorageService.save_file(file, "profile");
-            if (user.getProfileimage() != null)
-                this.filesStorageService.delete_file_by_path_from_cdn(user.getProfileimage().getUrl(), user.getProfileimage().getId());
 
-            if (resource_media == null)
-                return new ResponseEntity("image not valid", HttpStatus.BAD_REQUEST);
-            imagepath = resource_media;
-        }
-        user.setProfileimage(imagepath);
-        users result = userService.UpdateUser(user);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
 
     @PutMapping("/logout")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER') ")
