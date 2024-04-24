@@ -163,7 +163,7 @@ public class LoanController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/remove_loan/{id}")
+    @DeleteMapping("/remove_loan/{id}")
     @PreAuthorize("hasRole('SUPPLIER')")
     @ApiOperation(value = "Remove loan request from the supplier", notes = "Endpoint to remove a loan request")
     @ApiResponses(value = {
@@ -180,6 +180,33 @@ public class LoanController extends BaseController {
         } else {
             return ResponseEntity.badRequest().body("This loan request does not exist");
         }
+    }
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('ADIMN')")
+    @ApiOperation(value = "Remove loan request from the supplier", notes = "Endpoint to remove a loan request")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully removed the loan request"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 406, message = "Not Acceptable,this request is not related to supplier"),
+            @ApiResponse(code = 403, message = "Forbidden")
+    })
+    public ResponseEntity<Loan> get_loan_by_id(@PathVariable Long id) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if(!this.Services.ExistById(id))
+            return new ResponseEntity("this id is not found in the system", HttpStatus.BAD_REQUEST);
+        Loan result = this.Services.FindById(id);
+        if(user.getSupplier()!=null){
+            Supplier supplier = user.getSupplier();
+            if (this.Services.ExistByIdAndSupplier(id, supplier)) {
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                return new ResponseEntity("this invoice is not related to this supplier", HttpStatus.NOT_ACCEPTABLE);
+            }
+        }else{
+            return new ResponseEntity<>(result, HttpStatus.OK);
+
+        }
+
     }
 
 }

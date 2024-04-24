@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Models.Project;
 
+import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -17,8 +18,8 @@ public class Product implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
     @Column(name = "name")
-    private String name ;
-   @Column(name = "quantity")
+    private String name;
+    @Column(name = "quantity")
     private Double quantity = 0D;
     @Column(name = "unitprice")
     private Double unitprice = 0D;
@@ -29,26 +30,29 @@ public class Product implements Serializable {
     @Column(name = "subtotal")
     private Double subtotal = 0D;
     @Column(name = "timestamp")
-    private Date timestamp;
+    private Date timestamp = new Date();
     @ManyToMany(mappedBy = "products")
     @JsonIgnore
     private Set<Invoice> invoice;
     @JsonIgnore
     @Column(name = "archive")
     private Boolean archive = false;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @JoinColumn(name = "supplier_id_product", nullable = false)
+    private Supplier supplier;
 
     public Product() {
-        this.timestamp = new Date();
+
     }
 
-    public Product(String name,Double quantity, Double unitprice, Double taxespercentage, Double discountpercentage, Double subtotal) {
+    public Product(String name, Double quantity, Double unitprice, Double taxespercentage, Double discountpercentage, Double subtotal) {
         this.name = name;
         this.quantity = quantity;
         this.unitprice = unitprice;
         this.taxespercentage = taxespercentage;
         this.discountpercentage = discountpercentage;
         this.subtotal = subtotal;
-        this.timestamp = new Date();
+
     }
 
     public String getName() {

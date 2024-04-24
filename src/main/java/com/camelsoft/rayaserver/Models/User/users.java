@@ -110,4 +110,10 @@ public class users implements Serializable {
         this.phonenumber = phonenumber;
         this.personalinformation = personalinformation;
     }
+    @PostLoad
+    private void afterload(){
+        if(this.personalinformation!=null){
+            this.name = this.personalinformation.getFirstnameen()+" "+this.personalinformation.getLastnameen();
+        }
+    }
 }

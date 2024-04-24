@@ -81,12 +81,12 @@ public class InvoiceController extends BaseController {
         if (request.getRelated() == null || request.getRelated() == InvoiceRelated.NONE) {
             return new ResponseEntity("you need to defined the invoice relation " + request.getRelated(), HttpStatus.NOT_ACCEPTABLE);
         }
-        if(relatedto.getSupplier()!=null){
-            if(request.getRelated()!= InvoiceRelated.SUPPLIER)
+        if (relatedto.getSupplier() != null) {
+            if (request.getRelated() != InvoiceRelated.SUPPLIER)
                 return new ResponseEntity("the related to is a supplier and the related is not a supplier", HttpStatus.NOT_ACCEPTABLE);
 
-        }else{
-            if(request.getRelated()!= InvoiceRelated.CUSTOMER)
+        } else {
+            if (request.getRelated() != InvoiceRelated.CUSTOMER)
                 return new ResponseEntity("the related to is a customer and the related is not a customer", HttpStatus.NOT_ACCEPTABLE);
         }
         Set<Product> products = this.productservice.SaveProductList(request.getProducts());
@@ -144,6 +144,50 @@ public class InvoiceController extends BaseController {
 
 
     }
+
+    @GetMapping(value = {"/admin/{invoice_id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get invoice for admin", notes = "Endpoint to get invoice")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
+            @ApiResponse(code = 404, message = "Not found, check invoice id")
+    })
+    public ResponseEntity<Invoice> admin_get_invoice_by_id(@PathVariable Long invoice_id) throws IOException {
+        //users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (this.service.FindById(invoice_id) == null) {
+            return new ResponseEntity(invoice_id + " is not found in the system!", HttpStatus.NOT_FOUND);
+        }
+        Invoice result = this.service.FindById(invoice_id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+
+    }
+
+    @GetMapping(value = {"/supplier/{invoice_id}"})
+    @PreAuthorize("hasRole('SUPPLIER')")
+    @ApiOperation(value = "get invoice for supplier", notes = "Endpoint to get invoice")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, this request not related to this user"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
+            @ApiResponse(code = 404, message = "Not found, check invoice id")
+    })
+    public ResponseEntity<Invoice> supplier_get_invoice_by_id(@PathVariable Long invoice_id) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (this.service.FindById(invoice_id) == null) {
+            return new ResponseEntity(invoice_id + " is not found in the system!", HttpStatus.NOT_FOUND);
+        }
+        Invoice result = this.service.FindById(invoice_id);
+        if (result.getCreatedby() != user && result.getRelatedto() != user)
+            return new ResponseEntity(invoice_id + "you not related or the owner of this invoice", HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+
+    }
+
     @GetMapping(value = {"/invoice_report_admin"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all invoice by status for admin", notes = "Endpoint to get vehicles")
@@ -153,17 +197,17 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<InvoiceReport> invoice_report_admin(@ModelAttribute Date date,@ModelAttribute InvoiceRelated related) throws IOException {
+    public ResponseEntity<InvoiceReport> invoice_report_admin(@ModelAttribute Date date, @ModelAttribute InvoiceRelated related) throws IOException {
         InvoiceReport report = new InvoiceReport();
         report.setDate(date);
-        report.setInvoicepermonth(this.service.countInvoicePerMonth(date,related));
-        report.setRefundbymonth(this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.REFUNDS,related));
-        report.setPaymentbymonth(this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.PAID,related)+this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.UNPAID,related));
+        report.setInvoicepermonth(this.service.countInvoicePerMonth(date, related));
+        report.setRefundbymonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS, related));
+        report.setPaymentbymonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.UNPAID, related));
         report.setPurshaseorderrequest(0); // need to added later
         report.setRequestdone(0); // need to added later
         report.setRequestpending(0); // need to added later
-        report.setSoldcars(this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.PAID,related));
-        report.setInvoicepermonth(this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.PAID,related)+this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.UNPAID,related)+this.service.countInvoicePerMonthAndStatus(date,InvoiceStatus.REFUNDS,related));
+        report.setSoldcars(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related));
+        report.setInvoicepermonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.UNPAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS, related));
         return new ResponseEntity<>(report, HttpStatus.OK);
 
 
