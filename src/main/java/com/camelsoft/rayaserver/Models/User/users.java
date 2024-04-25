@@ -116,4 +116,8 @@ public class users implements Serializable {
             this.name = this.personalinformation.getFirstnameen()+" "+this.personalinformation.getLastnameen();
         }
     }
+    @Override
+    public int hashCode() {
+        return 31; // Replace with any prime number
+    }
 }

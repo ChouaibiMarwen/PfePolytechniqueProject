@@ -22,7 +22,7 @@ public class Role implements Serializable {
     @Column(name = "role")
     private RoleEnum role;
     @JsonIgnore
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private Set<users> user = new HashSet<>();
     public Role() {
     }

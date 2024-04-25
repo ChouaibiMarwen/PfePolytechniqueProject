@@ -105,8 +105,13 @@ public class AuthController extends BaseController {
         String refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername()).getToken();
         String roles;
         try {
-            roles = userDetails.getAuthorities().stream().findFirst().get().toString();
+
+                roles = userDetails.getAuthorities().stream().findFirst().get().toString();
+                System.out.println("roles");
+                System.out.println(roles);
         } catch (NoSuchElementException ex) {
+            System.out.println("role33s");
+            System.out.println(ex);
             throw new NotFoundException(String.format("user messing data"));
         }
         UserDevice device = new UserDevice(user, signInRequest.getDeviceType(), signInRequest.getDeviceId(), signInRequest.getIp(), token, signInRequest.getTokendevice());
