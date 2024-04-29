@@ -2,7 +2,6 @@ package com.camelsoft.rayaserver.Services.User;
 
 
 import com.camelsoft.rayaserver.Models.User.Supplier;
-import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.User.SupplierRepository;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,13 +75,6 @@ public class SupplierServices {
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(String.format("No file found with id [%s] in our data base", id));
         }
-    }
-
-    public Supplier updateVerified(Long id){
-        Supplier supplier =  findbyid(id);
-        supplier.setVerified(!supplier.isVerified());
-        return this.repository.save(supplier);
-
     }
 
 }

@@ -1,10 +1,11 @@
 package com.camelsoft.rayaserver.Controller.User;
 
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
+import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
+import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Request.auth.SupplierSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
@@ -128,7 +129,7 @@ public class SupplierController {
     }
 
 
-  @PutMapping(value = {"/verified/{id}"})
+  @PatchMapping(value = {"/verified/{id}"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "update supplier verified to the opposit", notes = "Endpoint to update supplier's verified attribute")
     @ApiResponses(value = {
@@ -137,10 +138,40 @@ public class SupplierController {
     @ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
     @ApiResponse(code = 404, message = "Supllier not found with that id")
     })
-    public ResponseEntity<Supplier> updateUserVerification(@PathVariable Long id){
-        Supplier  supplier =  this.supplierServices.updateVerified(id);
-        return new ResponseEntity<>(supplier, HttpStatus.OK);
+    public ResponseEntity<users> updateUserVerification(@PathVariable Long id){
+        users  user =  this.userService.updateVerifiedUser(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
+
+    @PostMapping(value = {"/add_Billing_Address/{id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "add Billing address", notes = "Endpoint to add billing address to a supplier")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully add"),
+            @ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
+    })
+    public ResponseEntity<users> addSupplierBillingAddress(@PathVariable Long id,  @RequestBody BillingAddressRequest request) throws IOException, InterruptedException, MessagingException {
+       /* if (request.getEmail() == null)
+            return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
+        .
+        .
+        .
+*/
+        users user = this.userService.findById(id);
+        if (user == null) {
+            return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
+        }
+        users updatedUser = this.userService.addBillingAddres(user, request);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return new ResponseEntity("Failed to add billing address", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 
 }

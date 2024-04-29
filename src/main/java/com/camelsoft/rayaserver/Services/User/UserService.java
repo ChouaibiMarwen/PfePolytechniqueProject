@@ -4,13 +4,16 @@ package com.camelsoft.rayaserver.Services.User;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
+import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Tools.PersonalInformationRepository;
 import com.camelsoft.rayaserver.Repository.User.UserRepository;
+import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Request.User.SignInRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Auth.JwtResponse;
+import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.auth.RefreshTokenService;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -60,6 +63,8 @@ public class UserService extends BaseController implements UserDetailsService {
     private RefreshTokenService refreshTokenService;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private BillingAddressService billingAddressService;
 
     public users saveUser(users user) {
         try {
@@ -494,6 +499,32 @@ public class UserService extends BaseController implements UserDetailsService {
     public void updatepassword(users user, String password) {
         user.setPassword(passwordEncoder.encode(password));
         this.userRepository.save(user);
+    }
+
+    public users updateVerifiedUser(Long userid){
+        users user =  findById(userid);
+        user.setVerified(!user.getVerified());
+        return this.userRepository.save(user);
+
+    }
+
+
+    public users addBillingAddres(users user, BillingAddressRequest billingAddressRequest) {
+        BillingAddress billingAddress = new BillingAddress();
+        billingAddress.setFirstname(billingAddressRequest.getFirstname());
+        billingAddress.setLastname(billingAddressRequest.getLastname());
+        billingAddress.setEmail(billingAddressRequest.getEmail());
+        billingAddress.setCountry(billingAddressRequest.getCountry());
+        billingAddress.setZipcode(billingAddressRequest.getZipcode());
+        billingAddress.setState(billingAddressRequest.getState());
+        billingAddress.setPhonenumber(billingAddressRequest.getPhonenumber());
+        billingAddress.setBillingaddress(billingAddressRequest.getBillingaddress());
+        billingAddress.setCity(billingAddressRequest.getCity());
+
+        user.setBillingAddress(this.billingAddressService.saveBiLLAddress(billingAddress));
+        return userRepository.save(user);
+
+
     }
 
 }
