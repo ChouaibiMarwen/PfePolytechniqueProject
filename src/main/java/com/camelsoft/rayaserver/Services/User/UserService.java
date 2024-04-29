@@ -4,15 +4,18 @@ package com.camelsoft.rayaserver.Services.User;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
+import com.camelsoft.rayaserver.Models.Tools.BankInformation;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Tools.PersonalInformationRepository;
 import com.camelsoft.rayaserver.Repository.User.UserRepository;
+import com.camelsoft.rayaserver.Request.Tools.BankInformationRequest;
 import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Request.User.SignInRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Auth.JwtResponse;
+import com.camelsoft.rayaserver.Services.Tools.BankAccountService;
 import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.auth.RefreshTokenService;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
@@ -65,6 +68,8 @@ public class UserService extends BaseController implements UserDetailsService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private BillingAddressService billingAddressService;
+    @Autowired
+    private BankAccountService bankAccountService;
 
     public users saveUser(users user) {
         try {
@@ -526,5 +531,30 @@ public class UserService extends BaseController implements UserDetailsService {
 
 
     }
+
+
+    public users addBankAccounToUser(users user, BankInformationRequest bankInformationRequest) {
+        BankInformation bankInformation = new BankInformation();
+        bankInformation.setBankname(bankInformationRequest.getBank_name());
+        bankInformation.setAccountname(bankInformationRequest.getAccountHolderName());
+        bankInformation.setIban(bankInformationRequest.getIBAN());
+        bankInformation.setRip(bankInformationRequest.getAcountNumber());
+        /*user.setBankinformations(this.bankAccountService.saveBankInformation(bankInformation));
+        return userRepository.save(user);*/
+
+        Set<BankInformation> bankInformations = user.getBankinformations();
+
+        // Add the new BankInformation object to the set
+        bankInformations.add(bankInformation);
+
+        // Set the updated set of bankinformations back to the user
+        user.setBankinformations(bankInformations);
+
+        // Save and return the updated user
+        return userRepository.save(user);
+
+
+    }
+
 
 }

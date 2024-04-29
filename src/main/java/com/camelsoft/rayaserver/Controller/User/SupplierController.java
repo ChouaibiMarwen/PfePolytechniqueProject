@@ -5,6 +5,7 @@ import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Request.Tools.BankInformationRequest;
 import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Request.auth.SupplierSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -165,6 +166,35 @@ public class SupplierController {
             return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
         }
         users updatedUser = this.userService.addBillingAddres(user, request);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return new ResponseEntity("Failed to add billing address", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @PostMapping(value = {"/add_Bank_account/{id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "add Billing address", notes = "Endpoint to add billing address to a supplier")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully add"),
+            @ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
+    })
+    public ResponseEntity<users> addSupplierBankAccount(@PathVariable Long id,  @RequestBody BankInformationRequest request) throws IOException, InterruptedException, MessagingException {
+       /* if (request.getEmail() == null)
+            return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
+        .
+        .
+        .
+*/
+        users user = this.userService.findById(id);
+        if (user == null) {
+            return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
+        }
+        users updatedUser = this.userService.addBankAccounToUser(user, request);
         if (updatedUser != null) {
             return ResponseEntity.ok(updatedUser);
         } else {
