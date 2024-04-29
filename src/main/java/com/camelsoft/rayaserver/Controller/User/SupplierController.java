@@ -32,6 +32,7 @@ public class SupplierController {
     private PersonalInformationService personalInformationService;
     @Autowired
     private SupplierServices supplierServices;
+
     @PostMapping(value = {"/add"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "add suppliers for admin", notes = "Endpoint to add suppliers")
@@ -115,6 +116,7 @@ public class SupplierController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
+
     @GetMapping(value = {"/all"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all supplier by status for admin", notes = "Endpoint to get vehicles")
@@ -122,6 +124,23 @@ public class SupplierController {
             @ApiResponse(code = 200, message = "Successfully get"),
     })
     public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name) throws IOException {
-        return new ResponseEntity<>(this.userService.filterAllUser(page, size,active,name, RoleEnum.ROLE_SUPPLIER), HttpStatus.OK);
+        return new ResponseEntity<>(this.userService.filterAllUser(page, size, active, name, RoleEnum.ROLE_SUPPLIER), HttpStatus.OK);
     }
+
+
+  @PutMapping(value = {"/verified/{id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "update supplier verified to the opposit", notes = "Endpoint to update supplier's verified attribute")
+    @ApiResponses(value = {
+    @ApiResponse(code = 200, message = "Successfully add"),
+    @ApiResponse(code = 400, message = "Bad request, check the id supplier "),
+    @ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+    @ApiResponse(code = 404, message = "Supllier not found with that id")
+    })
+    public ResponseEntity<Supplier> updateUserVerification(@PathVariable Long id){
+        Supplier  supplier =  this.supplierServices.updateVerified(id);
+        return new ResponseEntity<>(supplier, HttpStatus.OK);
+    }
+
+
 }
