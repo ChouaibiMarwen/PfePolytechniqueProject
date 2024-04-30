@@ -175,8 +175,8 @@ public class UsersController extends BaseController {
             @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, access denied. Requires admin role"),
             @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
-    public ResponseEntity<users> getUserById(@PathVariable Long userid) throws IOException {
-        users result = this.userService.findById(userid);
+    public ResponseEntity<users> getUserById(@PathVariable Long id) throws IOException {
+        users result = this.userService.findById(id);
 
         if (result != null) {
             return ResponseEntity.ok(result);
