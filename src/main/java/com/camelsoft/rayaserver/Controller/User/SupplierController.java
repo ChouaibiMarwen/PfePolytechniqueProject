@@ -81,6 +81,7 @@ public class SupplierController {
         information.setLastnameen(request.getInformationRequest().getLastnameen());
         information.setFirstnamear(request.getInformationRequest().getLastnamear());
         information.setLastnamear(request.getInformationRequest().getLastnamear());
+        information.setPhonenumber(phonenumber);
         if (request.getInformationRequest().getBirthDate() != null)
             information.setBirthDate(request.getInformationRequest().getBirthDate());
         if (request.getInformationRequest().getSecondnameen() != null)
@@ -125,8 +126,8 @@ public class SupplierController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
     })
-    public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name) throws IOException {
-        return new ResponseEntity<>(this.userService.filterAllUser(page, size, active, name, RoleEnum.ROLE_SUPPLIER), HttpStatus.OK);
+    public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) boolean verified) throws IOException {
+        return new ResponseEntity<>(this.userService.filterAllUser(page, size, active, name, RoleEnum.ROLE_SUPPLIER, verified), HttpStatus.OK);
     }
 
 
@@ -155,12 +156,6 @@ public class SupplierController {
             @ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
     public ResponseEntity<users> addSupplierBillingAddress(@PathVariable Long id,  @RequestBody BillingAddressRequest request) throws IOException, InterruptedException, MessagingException {
-       /* if (request.getEmail() == null)
-            return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
-        .
-        .
-        .
-*/
         users user = this.userService.findById(id);
         if (user == null) {
             return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
@@ -184,12 +179,6 @@ public class SupplierController {
             @ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
     public ResponseEntity<users> addSupplierBankAccount(@PathVariable Long id,  @RequestBody BankInformationRequest request) throws IOException, InterruptedException, MessagingException {
-       /* if (request.getEmail() == null)
-            return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
-        .
-        .
-        .
-*/
         users user = this.userService.findById(id);
         if (user == null) {
             return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);

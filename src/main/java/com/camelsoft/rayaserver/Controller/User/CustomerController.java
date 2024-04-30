@@ -115,6 +115,6 @@ public class CustomerController {
             @ApiResponse(code = 200, message = "Successfully get"),
     })
     public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name) throws IOException {
-        return new ResponseEntity<>(this.userService.filterAllUser(page, size,active,name, RoleEnum.ROLE_USER), HttpStatus.OK);
+        return new ResponseEntity<>(this.userService.filterAllUser(page, size,active,name, RoleEnum.ROLE_USER, null), HttpStatus.OK);
     }
 }

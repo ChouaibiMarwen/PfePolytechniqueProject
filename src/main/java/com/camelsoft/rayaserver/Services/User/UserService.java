@@ -308,18 +308,26 @@ public class UserService extends BaseController implements UserDetailsService {
     }
 
 
-    public DynamicResponse filterAllUser(int page, int size, Boolean active, String name,RoleEnum role) {
+    public DynamicResponse filterAllUser(int page, int size, Boolean active, String name,RoleEnum role, Boolean verified) {
         try {
             Role userRole = roleRepository.findByRole(role);
             Page<users> user = null;
-            if (name == null && active == null)
+            if (name == null && active == null && verified == null)
                 user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, true, false);
-            else if (name != null && active == null) {
+            else if (name == null && active == null && verified != null)
+                user = this.userRepository.findByRoleAndActiveAndDeletedAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, true, false, verified);
+            else if (name != null && active == null && verified == null)
                 user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%", false, "%DELETED%");
-            } else if (name == null && active != null)
+            else if (name != null && active == null && verified != null)
+                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%", false, "%DELETED%", verified);
+            else if (name == null && active != null && verified == null)
                 user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, false);
-            else if (name != null && active != null)
+            else if (name == null && active != null && verified != null)
+                user = this.userRepository.findByRoleAndActiveAndDeletedAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, false, verified);
+            else if (name != null && active != null && verified == null)
                 user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, "%" + name + "%", false);
+            else if (name != null && active != null && verified != null)
+                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, "%" + name + "%", false, verified);
             return new DynamicResponse(user.getContent(), user.getNumber(), user.getTotalElements(), user.getTotalPages());
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(String.format("No data found"));
@@ -492,12 +500,27 @@ public class UserService extends BaseController implements UserDetailsService {
 
     }
 
-    public users findById(Long userid) {
+    /*public users findById(Long userid) {
         try {
+            if(!this.userRepository.existsById(userid))
+                throw new NotFoundException(String.format("user with id " + userid + " is not found " ));
             return userRepository.findById(userid).get();
 
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(String.format("No data found"));
+        }
+    }*/
+
+    public users findById(Long id) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid user ID provided");
+        }
+
+        Optional<users> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            return optionalUser.get();
+        } else {
+            throw new NotFoundException("User with ID " + id + " not found");
         }
     }
 

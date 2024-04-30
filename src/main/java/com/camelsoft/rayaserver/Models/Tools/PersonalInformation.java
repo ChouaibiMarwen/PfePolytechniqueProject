@@ -36,6 +36,8 @@ public class PersonalInformation implements Serializable {
     private Date birthDate=new Date();
     @Column(name = "second_name_ar")
     private String secondnamear;
+    @Column(name = "phone_number")
+    private String phonenumber;
     @Column(name = "third_name_ar")
     private String thirdnamear;
     @Column(name = "grand_father_name_ar")

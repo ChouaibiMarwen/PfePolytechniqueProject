@@ -23,6 +23,7 @@ import com.camelsoft.rayaserver.Services.User.UserSessionService;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
 import com.camelsoft.rayaserver.Tools.Exception.UserLogoutException;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
+import io.swagger.annotations.ApiResponses;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,5 +165,26 @@ public class UsersController extends BaseController {
         users result = this.userService.findById(userid);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
+    @GetMapping(value= {"/{id}"})
+    @PreAuthorize("hasRole('ADMIN')  or hasRole('SUPPLIER')")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully retrieved user details"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, access denied. Requires admin role"),
+            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
+    })
+    public ResponseEntity<users> getUserById(@PathVariable Long userid) throws IOException {
+        users result = this.userService.findById(userid);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+    }
+
+
+
+
+
+
 
 }

@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Models.Tools;
 
 import com.camelsoft.rayaserver.Models.User.users;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
@@ -36,6 +37,7 @@ public class BillingAddress implements Serializable {
     @Column(name = "phonenumber")
     private String phonenumber;
     @OneToOne(mappedBy = "billingAddress", fetch = FetchType.LAZY)
+    @JsonIgnore
     private users user;
     @Column(name = "timestmp")
     private Date timestmp = new Date();
