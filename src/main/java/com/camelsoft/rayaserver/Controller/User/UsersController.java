@@ -12,6 +12,7 @@ import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.UserSession;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Request.Tools.AddressRequest;
 import com.camelsoft.rayaserver.Request.Tools.BankInformationRequest;
 import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Request.User.LogOutRequest;
@@ -275,6 +276,29 @@ public class UsersController extends BaseController {
     }
 
 
+    @PostMapping(value = {"/add_Address/{id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "add user address ", notes = "Endpoint to add address to user")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
+    })
+    public ResponseEntity<users> AddUserAddress(@PathVariable Long id,  @RequestBody AddressRequest request) throws IOException, InterruptedException, MessagingException {
+        users user = this.userService.findById(id);
+        if (user == null) {
+            return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
+        }
+        users updatedUser = this.userService.addAddressToUser(user, request);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return new ResponseEntity("Failed to add billing address", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     @PatchMapping(value = {"/activated/{id}"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "update user activation to the opposit", notes = "Endpoint to update user's activate attribute")
@@ -288,11 +312,6 @@ public class UsersController extends BaseController {
         users  user =  this.userService.updateActivatedUser(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
-
-
-
-
 
 
 

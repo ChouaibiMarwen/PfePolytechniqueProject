@@ -4,17 +4,22 @@ package com.camelsoft.rayaserver.Services.User;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
+import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
+import com.camelsoft.rayaserver.Repository.Country.CityRepository;
 import com.camelsoft.rayaserver.Repository.Tools.PersonalInformationRepository;
 import com.camelsoft.rayaserver.Repository.User.UserRepository;
+import com.camelsoft.rayaserver.Request.Tools.AddressRequest;
 import com.camelsoft.rayaserver.Request.Tools.BankInformationRequest;
 import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Request.User.SignInRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Auth.JwtResponse;
+import com.camelsoft.rayaserver.Services.Country.CountriesServices;
+import com.camelsoft.rayaserver.Services.Tools.AddressServices;
 import com.camelsoft.rayaserver.Services.Tools.BankAccountService;
 import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.auth.RefreshTokenService;
@@ -70,6 +75,12 @@ public class UserService extends BaseController implements UserDetailsService {
     private BillingAddressService billingAddressService;
     @Autowired
     private BankAccountService bankAccountService;
+    @Autowired
+    private CityRepository cityRepository;
+    @Autowired
+    private CountriesServices  countriesServices;
+    @Autowired
+    private AddressServices addressServices;
 
     public users saveUser(users user) {
         try {
@@ -564,28 +575,38 @@ public class UserService extends BaseController implements UserDetailsService {
 
 
     }
-
-
     public users addBankAccounToUser(users user, BankInformationRequest bankInformationRequest) {
         BankInformation bankInformation = new BankInformation();
         bankInformation.setBankname(bankInformationRequest.getBank_name());
         bankInformation.setAccountname(bankInformationRequest.getAccountHolderName());
         bankInformation.setIban(bankInformationRequest.getIBAN());
         bankInformation.setRip(bankInformationRequest.getAcountNumber());
-        /*user.setBankinformations(this.bankAccountService.saveBankInformation(bankInformation));
-        return userRepository.save(user);*/
-
         Set<BankInformation> bankInformations = user.getBankinformations();
-
-        // Add the new BankInformation object to the set
         bankInformations.add(bankInformation);
-
-        // Set the updated set of bankinformations back to the user
         user.setBankinformations(bankInformations);
-
-        // Save and return the updated user
         return userRepository.save(user);
 
+
+    }
+
+
+
+    public users addAddressToUser(users user, AddressRequest addressRequest) {
+        Address address = new Address();
+        address.setAddressline1(addressRequest.getAddressline1());
+        address.setAddressline2(addressRequest.getAddressline2());
+        address.setPostcode(addressRequest.getPostcode());
+        address.setBuilding(addressRequest.getBuilding());
+        address.setUnitnumber(addressRequest.getUnitnumber());
+        address.setStreetname(addressRequest.getStreetname());
+        address.setPrimaryaddress(addressRequest.getPrimaryaddress());
+        address.setCity(this.countriesServices.Statebyname(addressRequest.getCityName()));
+        address.setCountry(this.countriesServices.countrybyname(addressRequest.getCountryName()));
+        this.addressServices.save(address);
+        Set<Address> addressSet = user.getAddresses();
+        addressSet.add(address);
+        user.setAddresses(addressSet);
+        return this.userRepository.save(user);
 
     }
 

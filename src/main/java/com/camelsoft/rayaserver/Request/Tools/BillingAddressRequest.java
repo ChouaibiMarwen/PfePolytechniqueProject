@@ -1,5 +1,8 @@
 package com.camelsoft.rayaserver.Request.Tools;
 
+import lombok.Data;
+
+@Data
 public class BillingAddressRequest {
     private String email;
     private String firstname;
