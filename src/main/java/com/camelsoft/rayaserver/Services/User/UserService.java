@@ -500,7 +500,7 @@ public class UserService extends BaseController implements UserDetailsService {
 
     }
 
-    /*public users findById(Long userid) {
+    public users findById(Long userid) {
         try {
             if(!this.userRepository.existsById(userid))
                 throw new NotFoundException(String.format("user with id " + userid + " is not found " ));
@@ -509,9 +509,9 @@ public class UserService extends BaseController implements UserDetailsService {
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(String.format("No data found"));
         }
-    }*/
+    }
 
-    public users findById(Long id) {
+    /*public users findById(Long id) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("Invalid user ID provided");
         }
@@ -522,7 +522,7 @@ public class UserService extends BaseController implements UserDetailsService {
         } else {
             throw new NotFoundException("User with ID " + id + " not found");
         }
-    }
+    }*/
 
     public void updatepassword(users user, String password) {
         user.setPassword(passwordEncoder.encode(password));

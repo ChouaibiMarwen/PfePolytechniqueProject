@@ -168,7 +168,7 @@ public class UsersController extends BaseController {
 
 
     @GetMapping(value= {"/{id}"})
-    @PreAuthorize("hasRole('ADMIN')  or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully retrieved user details"),
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
