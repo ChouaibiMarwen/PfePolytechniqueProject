@@ -206,7 +206,7 @@ public class UsersController extends BaseController {
     public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5")  int size, @RequestParam String role,  @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) Boolean verified) throws IOException {
         boolean exist = this.roleService.existsByRole(RoleEnum.valueOf(role));
         if(!exist)
-            return new ResponseEntity("the Role "+ role  + " is not found" , HttpStatus.CONFLICT);
+            return new ResponseEntity("the Role "+ role  + " is not found" , HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(this.userService.filterAllUser(page, size, active, name, RoleEnum.valueOf(role), verified), HttpStatus.OK);
     }
 
