@@ -44,6 +44,10 @@ public interface UserRepository extends JpaRepository<users, Long> {
 
     Page<users> findByRoleAndActiveAndDeletedOrderByTimestmpDesc(Pageable page, Role role, Boolean active, Boolean deleted);
 
+    Page<users> findByRoleAndDeletedOrderByTimestmpDesc(Pageable page, Role role, Boolean deleted);
+
+    Page<users> findByRoleAndDeletedAndVerifiedOrderByTimestmpDesc(Pageable page, Role role, Boolean deleted, Boolean verified);
+
     Page<users> findByRoleAndActiveAndDeletedAndVerifiedOrderByTimestmpDesc(Pageable page, Role role, Boolean active, Boolean deleted, Boolean verified);
 
     Page<users> findByRoleAndActiveOrderBySupplier_RatingsDesc(Pageable page, Role role, Boolean active);
