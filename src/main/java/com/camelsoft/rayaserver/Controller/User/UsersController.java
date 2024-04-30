@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.SessionAction;
+import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
@@ -22,6 +23,7 @@ import com.camelsoft.rayaserver.Response.Tools.ApiResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
+import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.User.UserSessionService;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
@@ -73,6 +75,8 @@ public class UsersController extends BaseController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private PersonalInformationService personalInformationService;
+    @Autowired
+    private RoleService roleService;
 
     @GetMapping(value = {"/current_user"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER') ")
@@ -195,11 +199,14 @@ public class UsersController extends BaseController {
 
     @GetMapping(value = {"/all"})
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "get all supplier by status for admin", notes = "Endpoint to get vehicles")
+    @ApiOperation(value = "get all users by role and status for admin", notes = "Endpoint to get users")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
     })
     public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5")  int size, @RequestParam String role,  @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) Boolean verified) throws IOException {
+        boolean exist = this.roleService.existsByRole(RoleEnum.valueOf(role));
+        if(!exist)
+            return new ResponseEntity("the Role "+ role  + " is not found" , HttpStatus.CONFLICT);
         return new ResponseEntity<>(this.userService.filterAllUser(page, size, active, name, RoleEnum.valueOf(role), verified), HttpStatus.OK);
     }
 
