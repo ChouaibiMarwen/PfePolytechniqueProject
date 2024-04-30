@@ -504,8 +504,7 @@ public class UserService extends BaseController implements UserDetailsService {
         try {
             if(!this.userRepository.existsById(userid))
                 throw new NotFoundException(String.format("user with id " + userid + " is not found " ));
-            return userRepository.findById(userid)
-                    .orElseThrow(() -> new NotFoundException("User with id " + userid + " is not found"));
+            return userRepository.findById(userid).get();
 
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(String.format("No data found"));

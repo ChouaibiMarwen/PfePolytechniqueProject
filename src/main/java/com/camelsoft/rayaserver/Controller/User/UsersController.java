@@ -177,7 +177,13 @@ public class UsersController extends BaseController {
     })
     public ResponseEntity<users> getUserById(@PathVariable Long userid) throws IOException {
         users result = this.userService.findById(userid);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+
+        if (result != null) {
+            return ResponseEntity.ok(result);
+        } else {
+            return new ResponseEntity("Failed to fetch user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
 
     }
 
