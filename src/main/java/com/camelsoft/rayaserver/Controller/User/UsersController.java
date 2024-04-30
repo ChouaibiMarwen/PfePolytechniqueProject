@@ -4,16 +4,20 @@ package com.camelsoft.rayaserver.Controller.User;
 import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.SessionAction;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.UserSession;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Request.Tools.BankInformationRequest;
+import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Request.User.LogOutRequest;
 import com.camelsoft.rayaserver.Request.User.PersonalInformationRequest;
 
 import com.camelsoft.rayaserver.Response.Auth.OnUserLogoutSuccessEvent;
+import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Tools.ApiResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 
@@ -23,6 +27,7 @@ import com.camelsoft.rayaserver.Services.User.UserSessionService;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
 import com.camelsoft.rayaserver.Tools.Exception.UserLogoutException;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponses;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
@@ -37,6 +42,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Arrays;
@@ -186,6 +192,80 @@ public class UsersController extends BaseController {
 
 
     }
+
+    @GetMapping(value = {"/all"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all supplier by status for admin", notes = "Endpoint to get vehicles")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
+    })
+    public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5")  int size, @RequestParam String role,  @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) Boolean verified) throws IOException {
+        return new ResponseEntity<>(this.userService.filterAllUser(page, size, active, name, RoleEnum.valueOf(role), verified), HttpStatus.OK);
+    }
+
+
+
+    @PatchMapping(value = {"/verified/{id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "update supplier verified to the opposit", notes = "Endpoint to update supplier's verified attribute")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, check the id supplier "),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @io.swagger.annotations.ApiResponse(code = 404, message = "Supllier not found with that id")
+    })
+    public ResponseEntity<users> updateUserVerification(@PathVariable Long id){
+        users  user =  this.userService.updateVerifiedUser(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = {"/add_Billing_Address/{id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "add Billing address", notes = "Endpoint to add billing address to a supplier")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
+    })
+    public ResponseEntity<users> addUserBillingAddress(@PathVariable Long id,  @RequestBody BillingAddressRequest request) throws IOException, InterruptedException, MessagingException {
+        users user = this.userService.findById(id);
+        if (user == null) {
+            return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
+        }
+        users updatedUser = this.userService.addBillingAddres(user, request);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return new ResponseEntity("Failed to add billing address", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @PostMapping(value = {"/add_Bank_account/{id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "add Billing address", notes = "Endpoint to add billing address to a supplier")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
+    })
+    public ResponseEntity<users> addUserBankAccount(@PathVariable Long id,  @RequestBody BankInformationRequest request) throws IOException, InterruptedException, MessagingException {
+        users user = this.userService.findById(id);
+        if (user == null) {
+            return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
+        }
+        users updatedUser = this.userService.addBankAccounToUser(user, request);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return new ResponseEntity("Failed to add billing address", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
 
 

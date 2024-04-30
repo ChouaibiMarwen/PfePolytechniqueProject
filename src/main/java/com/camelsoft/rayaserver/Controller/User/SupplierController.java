@@ -120,76 +120,7 @@ public class SupplierController {
 
     }
 
-    @GetMapping(value = {"/all"})
-    @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "get all supplier by status for admin", notes = "Endpoint to get vehicles")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully get"),
-    })
-    public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) Boolean verified) throws IOException {
-        return new ResponseEntity<>(this.userService.filterAllUser(page, size, active, name, RoleEnum.ROLE_SUPPLIER, verified), HttpStatus.OK);
-    }
 
-
-  @PatchMapping(value = {"/verified/{id}"})
-    @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "update supplier verified to the opposit", notes = "Endpoint to update supplier's verified attribute")
-    @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Successfully add"),
-    @ApiResponse(code = 400, message = "Bad request, check the id supplier "),
-    @ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
-    @ApiResponse(code = 404, message = "Supllier not found with that id")
-    })
-    public ResponseEntity<users> updateUserVerification(@PathVariable Long id){
-        users  user =  this.userService.updateVerifiedUser(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-
-    @PostMapping(value = {"/add_Billing_Address/{id}"})
-    @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "add Billing address", notes = "Endpoint to add billing address to a supplier")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully add"),
-            @ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
-            @ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
-            @ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
-    })
-    public ResponseEntity<users> addSupplierBillingAddress(@PathVariable Long id,  @RequestBody BillingAddressRequest request) throws IOException, InterruptedException, MessagingException {
-        users user = this.userService.findById(id);
-        if (user == null) {
-            return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
-        }
-        users updatedUser = this.userService.addBillingAddres(user, request);
-        if (updatedUser != null) {
-            return ResponseEntity.ok(updatedUser);
-        } else {
-            return new ResponseEntity("Failed to add billing address", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-    @PostMapping(value = {"/add_Bank_account/{id}"})
-    @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "add Billing address", notes = "Endpoint to add billing address to a supplier")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully add"),
-            @ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
-            @ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
-            @ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
-    })
-    public ResponseEntity<users> addSupplierBankAccount(@PathVariable Long id,  @RequestBody BankInformationRequest request) throws IOException, InterruptedException, MessagingException {
-        users user = this.userService.findById(id);
-        if (user == null) {
-            return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
-        }
-        users updatedUser = this.userService.addBankAccounToUser(user, request);
-        if (updatedUser != null) {
-            return ResponseEntity.ok(updatedUser);
-        } else {
-            return new ResponseEntity("Failed to add billing address", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
 
 
