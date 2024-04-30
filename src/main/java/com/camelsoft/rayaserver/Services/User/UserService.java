@@ -312,8 +312,7 @@ public class UserService extends BaseController implements UserDetailsService {
         try {
             Role userRole = roleRepository.findByRole(role);
             Page<users> user = null;
-            user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, true, false);
-          /*  if (name == null && active == null && verified == null)
+            if (name == null && active == null && verified == null)
                 user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, true, false);
             else if (name == null && active == null && verified != null)
                 user = this.userRepository.findByRoleAndActiveAndDeletedAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, true, false, verified);
@@ -328,7 +327,7 @@ public class UserService extends BaseController implements UserDetailsService {
             else if (name != null && active != null && verified == null)
                 user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, "%" + name + "%", false);
             else if (name != null && active != null && verified != null)
-                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, "%" + name + "%", false, verified);*/
+                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, "%" + name + "%", false, verified);
             return new DynamicResponse(user.getContent(), user.getNumber(), user.getTotalElements(), user.getTotalPages());
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(String.format("No data found"));
