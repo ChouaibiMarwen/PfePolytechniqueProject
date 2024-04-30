@@ -539,6 +539,13 @@ public class UserService extends BaseController implements UserDetailsService {
 
     }
 
+    public users updateActivatedUser(Long userid){
+        users user =  findById(userid);
+        user.setActive(!user.getActive());
+        return this.userRepository.save(user);
+
+    }
+
 
     public users addBillingAddres(users user, BillingAddressRequest billingAddressRequest) {
         BillingAddress billingAddress = new BillingAddress();

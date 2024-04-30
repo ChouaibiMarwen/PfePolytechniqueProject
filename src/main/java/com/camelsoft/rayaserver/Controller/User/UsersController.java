@@ -27,6 +27,7 @@ import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.User.UserSessionService;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
+import com.camelsoft.rayaserver.Tools.Exception.ResourceNotFoundException;
 import com.camelsoft.rayaserver.Tools.Exception.UserLogoutException;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
@@ -207,7 +208,7 @@ public class UsersController extends BaseController {
     public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5")  int size, @RequestParam String role,  @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) Boolean verified) throws IOException {
         boolean exist = this.roleService.existsByRole(RoleEnum.valueOf(role));
         if(!exist)
-            return new ResponseEntity<>(new DynamicResponse(), HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("ROLE " + role + " Is Not Found");
         return new ResponseEntity<>(this.userService.filterAllUser(page, size, active, name, RoleEnum.valueOf(role), verified), HttpStatus.OK);
     }
 
@@ -215,7 +216,7 @@ public class UsersController extends BaseController {
 
     @PatchMapping(value = {"/verified/{id}"})
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "update supplier verified to the opposit", notes = "Endpoint to update supplier's verified attribute")
+    @ApiOperation(value = "update user verified to the opposit", notes = "Endpoint to update user's verified attribute")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, check the id supplier "),
@@ -274,20 +275,19 @@ public class UsersController extends BaseController {
     }
 
 
-  /*  @PatchMapping(value = {"/verified/{id}"})
+    @PatchMapping(value = {"/activated/{id}"})
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "update supplier verified to the opposit", notes = "Endpoint to update supplier's verified attribute")
+    @ApiOperation(value = "update user activation to the opposit", notes = "Endpoint to update user's activate attribute")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, check the id supplier "),
             @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
             @io.swagger.annotations.ApiResponse(code = 404, message = "Supllier not found with that id")
     })
-    public ResponseEntity<users> updateUserVerification(@PathVariable Long id){
-        users  user =  this.userService.updateVerifiedUser(id);
+    public ResponseEntity<users> updateUserActivation(@PathVariable Long id){
+        users  user =  this.userService.updateActivatedUser(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-*/
 
 
 
