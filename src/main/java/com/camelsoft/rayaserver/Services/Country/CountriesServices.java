@@ -421,4 +421,10 @@ public class CountriesServices {
     }
 
 
+    public List<State> getStatesOfCOuntry(Long idCountry) {
+       Root root =  this.rootRepository.findById(idCountry).get();
+        return root.getStates();
+    }
+
+
 }

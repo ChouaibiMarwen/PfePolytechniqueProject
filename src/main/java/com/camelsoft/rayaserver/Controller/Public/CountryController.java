@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Controller.Public;
 
 
 import com.camelsoft.rayaserver.Models.country.Root;
+import com.camelsoft.rayaserver.Models.country.State;
 import com.camelsoft.rayaserver.Response.Country.CountryResponse;
 import com.camelsoft.rayaserver.Response.Country.CountryResult;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -49,4 +51,15 @@ public class CountryController {
         Root root = this.countriesServices.countrybyname(country_name);
         return new ResponseEntity<>(root.getPhone_code(), HttpStatus.OK);
     }
+
+
+    @GetMapping(value = {"/city_by_country/{id}"})
+        public ResponseEntity<List<State>> getStatesByCountry(@PathVariable Long id) throws IOException {
+        List<State> result = this.countriesServices.getStatesOfCOuntry(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
+
+
 }
