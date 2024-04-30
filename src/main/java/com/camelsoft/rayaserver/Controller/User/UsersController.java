@@ -9,6 +9,7 @@ import com.camelsoft.rayaserver.Enum.User.SessionAction;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.UserSession;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -49,10 +50,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -312,6 +310,29 @@ public class UsersController extends BaseController {
         users  user =  this.userService.updateActivatedUser(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
+
+    @GetMapping(value= {"address/{id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully retrieved user details"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, access denied. Requires admin role"),
+            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
+    })
+    public ResponseEntity<Set<Address>> getAddressUser(@PathVariable Long id) throws IOException {
+        Set<Address> result = this.userService.getUserAddress(id);
+
+        if (result != null) {
+            return ResponseEntity.ok(result);
+        } else {
+            return new ResponseEntity("Failed to fetch user address", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+    }
+
+
 
 
 

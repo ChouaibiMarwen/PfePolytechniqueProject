@@ -558,6 +558,13 @@ public class UserService extends BaseController implements UserDetailsService {
     }
 
 
+    public Set<Address> getUserAddress(Long iduser){
+       users user = findById(iduser);
+       return  user.getAddresses();
+
+    }
+
+
     public users addBillingAddres(users user, BillingAddressRequest billingAddressRequest) {
         BillingAddress billingAddress = new BillingAddress();
         billingAddress.setFirstname(billingAddressRequest.getFirstname());
