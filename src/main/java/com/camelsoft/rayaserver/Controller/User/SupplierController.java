@@ -126,7 +126,7 @@ public class SupplierController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
     })
-    public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) boolean verified) throws IOException {
+    public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) Boolean verified) throws IOException {
         return new ResponseEntity<>(this.userService.filterAllUser(page, size, active, name, RoleEnum.ROLE_SUPPLIER, verified), HttpStatus.OK);
     }
 
