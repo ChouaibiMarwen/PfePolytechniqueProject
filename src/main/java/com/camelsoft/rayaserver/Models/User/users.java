@@ -79,7 +79,6 @@ public class users implements Serializable {
     @JsonIgnore
     private Set<Invoice> invoicesrecived = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     private Set<BankInformation> bankinformations = new HashSet<>();
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -98,7 +97,7 @@ public class users implements Serializable {
     @Column(name = "active")
     private Boolean active = true;
     @Column(name = "verified")
-    private Boolean verified = false;
+    private Boolean verified = null;
     @Column(name = "deleted")
     private Boolean deleted = false;
     @Column(name = "otp")
