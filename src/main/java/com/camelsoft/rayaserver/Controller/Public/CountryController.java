@@ -53,10 +53,12 @@ public class CountryController {
     }
 
 
-    @GetMapping(value = {"/city_by_country/{id}"})
-        public ResponseEntity<List<State>> getStatesByCountry(@PathVariable Long id) throws IOException {
-        List<State> result = this.countriesServices.getStatesOfCOuntry(id);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    @GetMapping(value = {"/cities_by_country/{country_name}"})
+        public ResponseEntity<List<State>> getCitiesByCountry(@PathVariable String country_name) throws IOException {
+      /*  List<State> result = this.countriesServices.getStatesOfCountry(country_name);
+        return new ResponseEntity<>(result, HttpStatus.OK);*/
+        Root root = this.countriesServices.countrybyname(country_name);
+        return new ResponseEntity<>(root.getStates(), HttpStatus.OK);
     }
 
 

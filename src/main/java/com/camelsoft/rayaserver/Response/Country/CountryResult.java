@@ -22,4 +22,8 @@ public class CountryResult {
         this.states = states;
     }
 
+    public CountryResult(List<State> states){
+        this.states = states;
+    }
+
 }
