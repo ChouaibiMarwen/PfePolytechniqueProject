@@ -8,6 +8,8 @@ import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Models.country.Root;
+import com.camelsoft.rayaserver.Models.country.State;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Country.CityRepository;
 import com.camelsoft.rayaserver.Repository.Tools.PersonalInformationRepository;
@@ -576,7 +578,6 @@ public class UserService extends BaseController implements UserDetailsService {
         billingAddress.setPhonenumber(billingAddressRequest.getPhonenumber());
         billingAddress.setBillingaddress(billingAddressRequest.getBillingaddress());
         billingAddress.setCity(billingAddressRequest.getCity());
-
         user.setBillingAddress(this.billingAddressService.saveBiLLAddress(billingAddress));
         return userRepository.save(user);
 
@@ -588,8 +589,6 @@ public class UserService extends BaseController implements UserDetailsService {
         bankInformation.setAccountname(bankInformationRequest.getAccountHolderName());
         bankInformation.setIban(bankInformationRequest.getIBAN());
         bankInformation.setRip(bankInformationRequest.getAcountNumber());
-       /* bankInformation.setUser(user);
-        bankInformation = this.bankAccountService.saveBankInformation(bankInformation);*/
         Set<BankInformation> bankInformations = user.getBankinformations();
         bankInformations.add(bankInformation);
         user.setBankinformations(bankInformations);
@@ -609,11 +608,10 @@ public class UserService extends BaseController implements UserDetailsService {
         address.setUnitnumber(addressRequest.getUnitnumber());
         address.setStreetname(addressRequest.getStreetname());
         address.setPrimaryaddress(addressRequest.getPrimaryaddress());
-        address.setCity(this.countriesServices.Statebyname(addressRequest.getCityName()));
-        address.setCountry(this.countriesServices.countrybyname(addressRequest.getCountryName()));
-        Set<Address> addressSet = user.getAddresses();
-        addressSet.add(address);
-        user.setAddresses(addressSet);
+        State city = this.countriesServices.Statebyname(addressRequest.getCityName());
+        Root country = this.countriesServices.countrybyname(addressRequest.getCountryName());
+        country.addAddress(address);
+        city.addAddress(address);
         return this.userRepository.save(user);
 
     }

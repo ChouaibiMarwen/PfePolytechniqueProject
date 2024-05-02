@@ -121,4 +121,11 @@ public class State implements Serializable {
     public void AddCities(City citie) {
         this.cities.add(citie);
     }
+
+
+   /* public void addAddress(Address address) {
+        this.addresses.add(address);
+        address.setCity(this);
+    }*/
+
 }

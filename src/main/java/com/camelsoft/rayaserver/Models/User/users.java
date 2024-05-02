@@ -123,8 +123,16 @@ public class users implements Serializable {
             this.name = this.personalinformation.getFirstnameen()+" "+this.personalinformation.getLastnameen();
         }
     }
+
+    public void addAddress(Address address) {
+        this.addresses.add(address);
+        address.setUser(this);
+    }
+
     @Override
     public int hashCode() {
         return 31; // Replace with any prime number
     }
+
+
 }
