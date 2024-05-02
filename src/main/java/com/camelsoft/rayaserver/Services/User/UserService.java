@@ -610,8 +610,9 @@ public class UserService extends BaseController implements UserDetailsService {
         address.setPrimaryaddress(addressRequest.getPrimaryaddress());
         State city = this.countriesServices.Statebyname(addressRequest.getCityName());
         Root country = this.countriesServices.countrybyname(addressRequest.getCountryName());
-        country.addAddress(address);
-        city.addAddress(address);
+        address.setCity(this.countriesServices.Statebyname(addressRequest.getCityName()));
+        address.setCountry(this.countriesServices.countrybyname(addressRequest.getCountryName()));
+        user.addAddress(address);
         return this.userRepository.save(user);
 
     }
