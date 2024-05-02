@@ -4,6 +4,8 @@ import com.camelsoft.rayaserver.Models.country.Root;
 import com.camelsoft.rayaserver.Models.country.State;
 import lombok.Data;
 
+import javax.persistence.Entity;
+
 @Data
 public class AddressRequest {
     private String addressline1;

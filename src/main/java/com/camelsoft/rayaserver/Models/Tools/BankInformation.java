@@ -12,7 +12,7 @@ import java.util.Date;
 @Data
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-@Table(name = "Address")
+@Table(name = "bank_information")
 public class BankInformation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

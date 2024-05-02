@@ -588,8 +588,8 @@ public class UserService extends BaseController implements UserDetailsService {
         bankInformation.setAccountname(bankInformationRequest.getAccountHolderName());
         bankInformation.setIban(bankInformationRequest.getIBAN());
         bankInformation.setRip(bankInformationRequest.getAcountNumber());
-        bankInformation.setUser(user);
-        bankInformation = this.bankAccountService.saveBankInformation(bankInformation);
+       /* bankInformation.setUser(user);
+        bankInformation = this.bankAccountService.saveBankInformation(bankInformation);*/
         Set<BankInformation> bankInformations = user.getBankinformations();
         bankInformations.add(bankInformation);
         user.setBankinformations(bankInformations);
@@ -611,7 +611,6 @@ public class UserService extends BaseController implements UserDetailsService {
         address.setPrimaryaddress(addressRequest.getPrimaryaddress());
         address.setCity(this.countriesServices.Statebyname(addressRequest.getCityName()));
         address.setCountry(this.countriesServices.countrybyname(addressRequest.getCountryName()));
-       /* address = this.addressServices.save(address);*/
         Set<Address> addressSet = user.getAddresses();
         addressSet.add(address);
         user.setAddresses(addressSet);

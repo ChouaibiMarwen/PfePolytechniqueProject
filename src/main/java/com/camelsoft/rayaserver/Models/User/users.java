@@ -65,7 +65,6 @@ public class users implements Serializable {
     @JoinColumn(name = "personal_id", referencedColumnName = "personal_information_id")
     private PersonalInformation personalinformation;
 
-
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "users_table_id")

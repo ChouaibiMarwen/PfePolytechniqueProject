@@ -55,11 +55,17 @@ public class CountryController {
 
     @GetMapping(value = {"/cities_by_country/{country_name}"})
         public ResponseEntity<List<State>> getCitiesByCountry(@PathVariable String country_name) throws IOException {
-      /*  List<State> result = this.countriesServices.getStatesOfCountry(country_name);
-        return new ResponseEntity<>(result, HttpStatus.OK);*/
         Root root = this.countriesServices.countrybyname(country_name);
         return new ResponseEntity<>(root.getStates(), HttpStatus.OK);
     }
+
+
+    @GetMapping(value = {"/get_city/{city_name}"})
+    public ResponseEntity<State> getCityByName(@PathVariable String city_name) throws IOException {
+        State root = this.countriesServices.Statebyname(city_name);
+        return new ResponseEntity<>(root, HttpStatus.OK);
+    }
+
 
 
 

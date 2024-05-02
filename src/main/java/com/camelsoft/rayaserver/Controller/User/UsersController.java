@@ -284,15 +284,16 @@ public class UsersController extends BaseController {
             @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
     public ResponseEntity<users> AddUserAddress(@PathVariable Long id,  @RequestBody AddressRequest request) throws IOException, InterruptedException, MessagingException {
-        users user = this.userService.findById(id);
-        if (user == null) {
+        boolean exist = this.userService.existbyid(id);
+        if (!exist) {
             return new ResponseEntity("User not found", HttpStatus.NOT_FOUND);
         }
+        users user = this.userService.findById(id);
         users updatedUser = this.userService.addAddressToUser(user, request);
         if (updatedUser != null) {
             return ResponseEntity.ok(updatedUser);
         } else {
-            return new ResponseEntity("Failed to add billing address", HttpStatus.CONFLICT);
+            return new ResponseEntity("Failed to add  address", HttpStatus.CONFLICT);
         }
     }
 
