@@ -617,5 +617,15 @@ public class UserService extends BaseController implements UserDetailsService {
 
     }
 
+    public users deleteUser(users user){
+        long date = new Date().getTime();
+        user.setActive(false);
+        user.setDeleted(true);
+        user.setEmail(user.getEmail()+date);
+        user.setPhonenumber(user.getPhonenumber()+date);
+        user.setUsername(user.getUsername()+date);
+         return UpdateUser(user);
+    }
+
 
 }

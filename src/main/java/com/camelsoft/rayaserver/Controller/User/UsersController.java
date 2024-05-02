@@ -178,7 +178,7 @@ public class UsersController extends BaseController {
     }
 
 
-    @GetMapping(value= {"/{id}"})
+   /* @GetMapping(value= {"/{id}"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully retrieved user details"),
@@ -196,7 +196,7 @@ public class UsersController extends BaseController {
         }
 
 
-    }
+    }*/
 
     @GetMapping(value = {"/all"})
     @PreAuthorize("hasRole('ADMIN')")
@@ -240,7 +240,7 @@ public class UsersController extends BaseController {
     public ResponseEntity<users> addUserBillingAddress(@PathVariable Long id,  @RequestBody BillingAddressRequest request) throws IOException, InterruptedException, MessagingException {
         users user = this.userService.findById(id);
         if (user == null) {
-            return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
+            return new ResponseEntity("User not found", HttpStatus.NOT_FOUND);
         }
         users updatedUser = this.userService.addBillingAddres(user, request);
         if (updatedUser != null) {
@@ -286,13 +286,13 @@ public class UsersController extends BaseController {
     public ResponseEntity<users> AddUserAddress(@PathVariable Long id,  @RequestBody AddressRequest request) throws IOException, InterruptedException, MessagingException {
         users user = this.userService.findById(id);
         if (user == null) {
-            return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
+            return new ResponseEntity("User not found", HttpStatus.NOT_FOUND);
         }
         users updatedUser = this.userService.addAddressToUser(user, request);
         if (updatedUser != null) {
             return ResponseEntity.ok(updatedUser);
         } else {
-            return new ResponseEntity("Failed to add billing address", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity("Failed to add billing address", HttpStatus.CONFLICT);
         }
     }
 
@@ -333,6 +333,22 @@ public class UsersController extends BaseController {
     }
 
 
+    @DeleteMapping(value = {"/{user_id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<users> daleteUserAddTimeStamp(@PathVariable Long user_id){
+        users me = userService.findByUserName(getCurrentUser().getUsername());
+        users user = this.userService.findById(user_id);
+        if (!this.userService.existbyid(user_id))
+            return new ResponseEntity("user not found", HttpStatus.NOT_FOUND);
+        if(user.getId() == me.getId()){
+            return new ResponseEntity("cannot be delete this user", HttpStatus.BAD_REQUEST);
+
+        }
+        user = this.userService.deleteUser(user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+
+
+    }
 
 
 
