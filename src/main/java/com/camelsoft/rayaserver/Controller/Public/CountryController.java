@@ -26,6 +26,7 @@ public class CountryController {
         DynamicResponse result = this.countriesServices.get_all_countries(page,size);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
     @GetMapping(value = {"/{country_id}"})
     public ResponseEntity<CountryResult> country_by_id(@PathVariable Long country_id) throws IOException {
         Root root = this.countriesServices.countrybyid(country_id);

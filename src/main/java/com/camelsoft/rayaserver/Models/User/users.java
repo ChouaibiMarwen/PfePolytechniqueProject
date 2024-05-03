@@ -78,7 +78,7 @@ public class users implements Serializable {
     @JsonIgnore
     private Set<Invoice> invoicesrecived = new HashSet<>();
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<BankInformation> bankinformations = new HashSet<>();
 

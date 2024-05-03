@@ -583,16 +583,17 @@ public class UserService extends BaseController implements UserDetailsService {
 
 
     }
-    public users addBankAccounToUser(users user, BankInformationRequest bankInformationRequest) {
+    public BankInformation addBankAccounToUser(users user, BankInformationRequest bankInformationRequest) {
         BankInformation bankInformation = new BankInformation();
         bankInformation.setBankname(bankInformationRequest.getBank_name());
         bankInformation.setAccountname(bankInformationRequest.getAccountHolderName());
         bankInformation.setIban(bankInformationRequest.getIBAN());
         bankInformation.setRip(bankInformationRequest.getAcountNumber());
-        Set<BankInformation> bankInformations = user.getBankinformations();
+       /* Set<BankInformation> bankInformations = user.getBankinformations();
         bankInformations.add(bankInformation);
-        user.setBankinformations(bankInformations);
-        return userRepository.save(user);
+        user.setBankinformations(bankInformations);*/
+        bankInformation.setUser(user);
+        return this.bankAccountService.saveBankInformation(bankInformation);
 
 
     }

@@ -10,6 +10,7 @@ import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Tools.Address;
+import com.camelsoft.rayaserver.Models.Tools.BankInformation;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.UserSession;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -265,9 +266,9 @@ public class UsersController extends BaseController {
         if (user == null) {
             return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
         }
-        users updatedUser = this.userService.addBankAccounToUser(user, request);
-        if (updatedUser != null) {
-            return ResponseEntity.ok(updatedUser);
+        BankInformation  b =  this.userService.addBankAccounToUser(user, request);
+        if (b != null) {
+            return ResponseEntity.ok(this.userService.findById(id));
         } else {
             return new ResponseEntity("Failed to add billing address", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -279,7 +280,7 @@ public class UsersController extends BaseController {
     @ApiOperation(value = "add user address ", notes = "Endpoint to add address to user")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
-            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, crudentials is null"),
             @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
             @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
