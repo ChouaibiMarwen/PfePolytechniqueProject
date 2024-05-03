@@ -98,10 +98,48 @@ public class UsersController extends BaseController {
     }
 
 
-    @PatchMapping(value = {"/update_personal_information"})
+    @PatchMapping(value = {"/update_current_user_personal_information"})
     @PreAuthorize("hasRole('ADMIN')  or hasRole('SUPPLIER') ")
     public ResponseEntity<PersonalInformation> update_personal_information(@ModelAttribute PersonalInformationRequest request) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
+        PersonalInformation personalInformation = new PersonalInformation();
+        if(user.getPersonalinformation()!=null) {
+            personalInformation = user.getPersonalinformation();
+        }else{
+            personalInformation = this.personalInformationService.save(personalInformation);
+            user.setPersonalinformation(personalInformation);
+            this.userService.UpdateUser(user);
+        }
+        if (request.getFirstnameen() != null) personalInformation.setFirstnameen(request.getFirstnameen());
+        if (request.getLastnameen() != null) personalInformation.setLastnameen(request.getLastnameen());
+        if (request.getFirstnamear() != null) personalInformation.setFirstnamear(request.getFirstnamear());
+        if (request.getLastnamear() != null) personalInformation.setLastnamear(request.getLastnamear());
+        if (request.getBirthDate() != null) personalInformation.setBirthDate(request.getBirthDate());
+        if (request.getSecondnamear() != null) personalInformation.setSecondnamear(request.getSecondnamear());
+        if (request.getThirdnamear() != null) personalInformation.setThirdnamear(request.getThirdnamear());
+        if (request.getGrandfathernamear() != null) personalInformation.setGrandfathernamear(request.getGrandfathernamear());
+        if (request.getSecondnameen() != null) personalInformation.setSecondnameen(request.getSecondnameen());
+        if (request.getThirdnameen() != null) personalInformation.setThirdnameen(request.getThirdnameen());
+        if (request.getGrandfathernameen() != null) personalInformation.setGrandfathernameen(request.getGrandfathernameen());
+        if (request.getNumberofdependents() != null) personalInformation.setNumberofdependents(request.getNumberofdependents());
+        if (request.getGender() != null) personalInformation.setGender(request.getGender());
+        if (request.getWorksector() != null) personalInformation.setWorksector(request.getWorksector());
+        if (request.getMaritalstatus() != null) personalInformation.setMaritalstatus(request.getMaritalstatus());
+        PersonalInformation result = this.personalInformationService.update(personalInformation);
+
+
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
+    @PatchMapping(value = {"/update_user_personal_information/{userId}"})
+    @PreAuthorize("hasRole('ADMIN')  or hasRole('SUPPLIER') ")
+    public ResponseEntity<PersonalInformation> updateUserPersonalInfo(@PathVariable Long userId , @ModelAttribute PersonalInformationRequest request) throws IOException {
+        users user = this.userService.findById(userId);
+        if(user == null ){
+            return new ResponseEntity("User is not founded", HttpStatus.BAD_REQUEST);
+        }
         PersonalInformation personalInformation = new PersonalInformation();
         if(user.getPersonalinformation()!=null) {
             personalInformation = user.getPersonalinformation();
