@@ -28,7 +28,7 @@ public class Address implements Serializable {
     private String postcode;
     @Column(name = "building")
     private String building;
-   @Column(name = "unitnumber")
+    @Column(name = "unitnumber")
     private String unitnumber;
     @Column(name = "streetname")
     private String streetname;
@@ -42,7 +42,7 @@ public class Address implements Serializable {
     @JoinColumn(name = "state_id")
     private State city;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id_owner_address")
     private users user;
     @Column(name = "timestmp")

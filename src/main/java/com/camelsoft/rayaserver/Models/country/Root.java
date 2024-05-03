@@ -18,7 +18,7 @@ import java.util.Set;
 public class Root implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "country_id" )
+    @Column(name = "country_id")
     private Long id;
     @Column(name = "name")
     private String name;
@@ -45,10 +45,10 @@ public class Root implements Serializable {
     @Column(name = "subregion")
     private String subregion;
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.DETACH)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinTable(name = "countries_timezones", joinColumns = @JoinColumn(name = "country_id"), inverseJoinColumns = @JoinColumn(name = "timezones_id"))
     private List<Timezone> timezones;
-    @OneToOne(cascade = CascadeType.MERGE,fetch = FetchType.EAGER, optional = true)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "translations_country", nullable = true, referencedColumnName = "translations_id")
     private Translations translations;
     @Column(name = "latitude")
@@ -59,15 +59,12 @@ public class Root implements Serializable {
     private String emoji;
     @Column(name = "emojiU")
     private String emojiU;
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.DETACH)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinTable(name = "countries_states", joinColumns = @JoinColumn(name = "country_id"), inverseJoinColumns = @JoinColumn(name = "state_id"))
     private List<State> states;
-    @JsonIgnore
-    @OneToMany(mappedBy = "country")
-    private Set<Address> addresses = new HashSet<>();
-     @JsonIgnore
-    @OneToMany(mappedBy = "issuingcountry")
-    private Set<IdentificationInformation> identificationInformations = new HashSet<>();
+
+
+
     public Root() {
     }
 

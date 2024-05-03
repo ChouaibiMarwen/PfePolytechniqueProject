@@ -599,7 +599,7 @@ public class UserService extends BaseController implements UserDetailsService {
 
 
 
-    public users addAddressToUser(users user, AddressRequest addressRequest) {
+    public Address addAddressToUser(users user, AddressRequest addressRequest) {
         Address address = new Address();
         address.setAddressline1(addressRequest.getAddressline1());
         address.setAddressline2(addressRequest.getAddressline2());
@@ -610,10 +610,12 @@ public class UserService extends BaseController implements UserDetailsService {
         address.setPrimaryaddress(addressRequest.getPrimaryaddress());
         State city = this.countriesServices.Statebyname(addressRequest.getCityName());
         Root country = this.countriesServices.countrybyname(addressRequest.getCountryName());
-        address.setCity(this.countriesServices.Statebyname(addressRequest.getCityName()));
-        address.setCountry(this.countriesServices.countrybyname(addressRequest.getCountryName()));
-        user.addAddress(address);
-        return this.userRepository.save(user);
+        if(city==null || country==null)
+            return null;
+        address.setCity(city);
+        address.setCountry(country);
+        address.setUser(user);
+        return this.addressServices.save(address);
 
     }
 

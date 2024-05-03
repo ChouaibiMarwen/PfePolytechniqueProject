@@ -126,7 +126,6 @@ public class users implements Serializable {
 
     public void addAddress(Address address) {
         this.addresses.add(address);
-        address.setUser(this);
     }
 
     @Override

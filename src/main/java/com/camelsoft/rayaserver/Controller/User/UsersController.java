@@ -283,15 +283,15 @@ public class UsersController extends BaseController {
             @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
             @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
-    public ResponseEntity<users> AddUserAddress(@PathVariable Long id,  @RequestBody AddressRequest request) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<Address> AddUserAddress(@PathVariable Long id,  @RequestBody AddressRequest request) throws IOException, InterruptedException, MessagingException {
         boolean exist = this.userService.existbyid(id);
         if (!exist) {
             return new ResponseEntity("User not found", HttpStatus.NOT_FOUND);
         }
         users user = this.userService.findById(id);
-        users updatedUser = this.userService.addAddressToUser(user, request);
-        if (updatedUser != null) {
-            return ResponseEntity.ok(updatedUser);
+        Address result = this.userService.addAddressToUser(user, request);
+        if (result != null) {
+            return ResponseEntity.ok(result);
         } else {
             return new ResponseEntity("Failed to add  address", HttpStatus.CONFLICT);
         }
