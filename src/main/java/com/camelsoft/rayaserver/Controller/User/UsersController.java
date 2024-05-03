@@ -606,5 +606,35 @@ public class UsersController extends BaseController {
     }
 
 
+    @DeleteMapping(value = {"bank_information/{bankInformationId}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully deleted Bank Information"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, access denied. Requires admin role"),
+            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
+    })
+    public ResponseEntity<String> deleteBankInformation(@PathVariable Long bankInformationId) throws IOException{
+        BankInformation bankInformation = this.bankAccountService.findById(bankInformationId);
+        this.bankAccountService.deleteBankInformation(bankInformation);
+        return new ResponseEntity<>("Bank Information deleted successfully", HttpStatus.OK);
+    }
+
+
+
+    @DeleteMapping(value = {"address/{addressId}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully deleted Bank Information"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, access denied. Requires admin role"),
+            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
+    })
+    public ResponseEntity<String> deleteAddress(@PathVariable Long addressId) throws IOException{
+        Address Address = this.addressServices.findById(addressId);
+        this.addressServices.deleteAddress(Address);
+        return new ResponseEntity<>("Address deleted successfully", HttpStatus.OK);
+    }
+
 
 }

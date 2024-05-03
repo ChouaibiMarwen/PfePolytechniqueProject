@@ -58,6 +58,17 @@ public class BankAccountService {
     }
 
 
+    public void deleteBankInformation(BankInformation bankInformation){
+        try {
+            users user = bankInformation.getUser();
+            user.getBankinformations().remove(bankInformation);
+            bankInformation.setUser(null);
+            bankAccountRepository.delete(bankInformation);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 

@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Services.Tools;
 
 import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Models.country.Root;
 import com.camelsoft.rayaserver.Models.country.State;
 import com.camelsoft.rayaserver.Repository.Tools.AddressRepository;
@@ -81,4 +82,18 @@ public class AddressServices {
 
         return addressRepository.save(address);
     }
+
+
+    public void deleteAddress(Address address){
+        try {
+            users user = address.getUser();
+            user.getAddresses().remove(address);
+            address.setUser(null);
+            addressRepository.delete(address);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
