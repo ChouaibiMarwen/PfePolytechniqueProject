@@ -11,6 +11,7 @@ import com.camelsoft.rayaserver.Models.Auth.UserDevice;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
+import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.UserSession;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -25,6 +26,7 @@ import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Tools.ApiResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 
+import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.User.UserService;
@@ -79,6 +81,8 @@ public class UsersController extends BaseController {
     private PersonalInformationService personalInformationService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private BillingAddressService billingAddressService;
 
     @GetMapping(value = {"/current_user"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER') ")
@@ -269,6 +273,68 @@ public class UsersController extends BaseController {
         } else {
             return new ResponseEntity("Failed to add billing address", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+
+
+    @PatchMapping(value = {"/update_Billing_Address/{userId}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Update Billing address", notes = "Endpoint to update billing address of a user")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully updated"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, no attribute provided for update"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @io.swagger.annotations.ApiResponse(code = 404, message = "billing address not found"),
+            @io.swagger.annotations.ApiResponse(code = 500, message = "Failed to update billing address")
+    })
+    public ResponseEntity<BillingAddress> updateUserBillingAddress(@PathVariable Long userId, @RequestBody BillingAddressRequest request) throws IOException, InterruptedException, MessagingException {
+        // Check if at least one attribute is provided for the update
+        if (request.getEmail() == null && request.getFirstname() == null && request.getLastname() == null &&
+                request.getBillingaddress() == null && request.getCountry() == null && request.getZipcode() == null &&
+                request.getCity() == null && request.getState() == null && request.getPhonenumber() == null)  {
+            return new ResponseEntity("At least one attribute should be provided for update", HttpStatus.BAD_REQUEST);
+        }
+        users user = this.userService.findById(userId);
+        if (user == null) {
+            return new ResponseEntity("user is not found", HttpStatus.NOT_FOUND);
+        }
+        BillingAddress billingAddress = user.getBillingAddress();
+        if(user.getBillingAddress()!=null) {
+            billingAddress = user.getBillingAddress();
+        }else{
+            billingAddress = this.billingAddressService.saveBiLLAddress(billingAddress);
+            user.setBillingAddress(billingAddress);
+            this.userService.UpdateUser(user);
+        }
+
+        billingAddress = this.billingAddressService.updateBillingAddress(billingAddress, request);
+
+        if (billingAddress != null) {
+            return ResponseEntity.ok(billingAddress);
+        } else {
+            return new ResponseEntity("Failed to update billing address", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping(value= {"billing_Address/{billingId}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully retrieved user details"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, access denied. Requires admin role"),
+            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
+    })
+    public ResponseEntity<BillingAddress> getBillingAddress(@PathVariable Long billingId) throws IOException {
+       BillingAddress billingAddress = this.billingAddressService.findBillingAddressById(billingId);
+
+        if (billingAddress != null) {
+            return ResponseEntity.ok(billingAddress);
+        } else {
+            return new ResponseEntity("Failed to fetch billing address", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
     }
 
 
