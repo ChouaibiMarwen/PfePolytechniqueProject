@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Services.Country;
 
 
+import com.camelsoft.rayaserver.Models.DTO.RootDto;
 import com.camelsoft.rayaserver.Models.country.*;
 import com.camelsoft.rayaserver.Repository.Country.*;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -367,6 +369,29 @@ public class CountriesServices {
         }
 
     }
+
+    public DynamicResponse get_all_countries_displayingDTORoot(int page, int size) {
+        try {
+            Pageable paging = PageRequest.of(page, size);
+            Page<Root> pageTuts = this.rootRepository.findAll(paging);
+            RootDto rootDto = new RootDto();
+            List<RootDto> countrieslist = pageTuts.getContent().stream()
+                    .map(rootDto::convertRootToDTO)
+                    .collect(Collectors.toList());
+
+            DynamicResponse countriesResponse = new DynamicResponse(
+                    countrieslist,
+                    pageTuts.getNumber(),
+                    pageTuts.getTotalElements(),
+                    pageTuts.getTotalPages()
+            );
+            return countriesResponse;
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("No data found");
+        }
+    }
+
+
 
     public DynamicResponse get_all_countries_search(String name, int page, int size) {
 

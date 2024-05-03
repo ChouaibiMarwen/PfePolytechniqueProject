@@ -27,6 +27,13 @@ public class CountryController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+
+    @GetMapping(value = {"/all_simplified"})
+    public ResponseEntity<DynamicResponse> all_Country_simplified(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) throws IOException {
+        DynamicResponse result = this.countriesServices.get_all_countries_displayingDTORoot(page, size);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @GetMapping(value = {"/{country_id}"})
     public ResponseEntity<CountryResult> country_by_id(@PathVariable Long country_id) throws IOException {
         Root root = this.countriesServices.countrybyid(country_id);
