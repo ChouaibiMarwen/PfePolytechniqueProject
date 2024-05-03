@@ -179,26 +179,6 @@ public class UsersController extends BaseController {
     }
 
 
-   /* @GetMapping(value= {"/{id}"})
-    @PreAuthorize("hasRole('ADMIN')")
-    @ApiResponses(value = {
-            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully retrieved user details"),
-            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
-            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, access denied. Requires admin role"),
-            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
-    })
-    public ResponseEntity<users> getUserById(@PathVariable Long id) throws IOException {
-        users result = this.userService.findById(id);
-
-        if (result != null) {
-            return ResponseEntity.ok(result);
-        } else {
-            return new ResponseEntity("Failed to fetch user", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-
-    }*/
-
     @GetMapping(value = {"/all"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all users by role and status for admin", notes = "Endpoint to get users")
@@ -239,6 +219,46 @@ public class UsersController extends BaseController {
             @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
     public ResponseEntity<users> addUserBillingAddress(@PathVariable Long id,  @RequestBody BillingAddressRequest request) throws IOException, InterruptedException, MessagingException {
+        List<String> nullFields = new ArrayList<>();
+
+        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+            nullFields.add("email");
+        }
+        if (request.getFirstname() == null || request.getFirstname().isEmpty()) {
+            nullFields.add("firstname");
+        }
+        if (request.getLastname() == null || request.getLastname().isEmpty()) {
+            nullFields.add("lastname");
+        }
+        if (request.getBillingaddress() == null || request.getBillingaddress().isEmpty()) {
+            nullFields.add("billingaddress");
+        }
+        if (request.getCountry() == null || request.getCountry().isEmpty()) {
+            nullFields.add("country");
+        }
+        if (request.getZipcode() == null || request.getZipcode().isEmpty()) {
+            nullFields.add("zipcode");
+        }
+        if (request.getCity() == null || request.getCity().isEmpty()) {
+            nullFields.add("city");
+        }
+        if (request.getState() == null || request.getState().isEmpty()) {
+            nullFields.add("state");
+        }
+        if (request.getPhonenumber() == null || request.getPhonenumber().isEmpty()) {
+            nullFields.add("phonenumber");
+        }
+        // Check if any field is null
+        if (!nullFields.isEmpty()) {
+            String errorMessage;
+            if (nullFields.size() == 1) {
+                errorMessage = "Bad request, the following field is null: " + nullFields.get(0);
+            } else {
+                errorMessage = "Bad request, the following fields are null: " + String.join(", ", nullFields);
+            }
+            return new ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+
         users user = this.userService.findById(id);
         if (user == null) {
             return new ResponseEntity("User not found", HttpStatus.NOT_FOUND);
@@ -257,14 +277,38 @@ public class UsersController extends BaseController {
     @ApiOperation(value = "add Billing address", notes = "Endpoint to add billing address to a supplier")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
-            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, check the data is null"),
             @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
             @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
     public ResponseEntity<users> addUserBankAccount(@PathVariable Long id,  @RequestBody BankInformationRequest request) throws IOException, InterruptedException, MessagingException {
+
+        List<String> nullFields = new ArrayList<>();
+
+        if (request.getBank_name() == null || request.getBank_name().isEmpty()) {
+            nullFields.add("bank_name");
+        }
+        if (request.getAccountHolderName() == null || request.getAccountHolderName().isEmpty()) {
+            nullFields.add("accountHolderName");
+        }
+        if (request.getAcountNumber() == null || request.getAcountNumber().isEmpty()) {
+            nullFields.add("acountNumber");
+        }
+        // Check if any required field is null or empty
+        if (!nullFields.isEmpty()) {
+            String errorMessage;
+            if (nullFields.size() == 1) {
+                errorMessage = "Bad request, the following field is null or empty: " + nullFields.get(0);
+            } else {
+                errorMessage = "Bad request, the following fields are null or empty: " + String.join(", ", nullFields);
+            }
+            return new ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+
+
         users user = this.userService.findById(id);
         if (user == null) {
-            return new ResponseEntity("Can't find user by that id", HttpStatus.CONFLICT);
+            return new ResponseEntity("Can't find user by that id", HttpStatus.BAD_REQUEST);
         }
         BankInformation  b =  this.userService.addBankAccounToUser(user, request);
         if (b != null) {
@@ -280,11 +324,41 @@ public class UsersController extends BaseController {
     @ApiOperation(value = "add user address ", notes = "Endpoint to add address to user")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
-            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, crudentials is null"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, check the data is null"),
             @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
             @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
     public ResponseEntity<Address> AddUserAddress(@PathVariable Long id,  @RequestBody AddressRequest request) throws IOException, InterruptedException, MessagingException {
+
+        List<String> nullFields = new ArrayList<>();
+
+        if (request.getAddressline1() == null || request.getAddressline1().isEmpty()) {
+            nullFields.add("addressline1");
+        }
+        if (request.getPostcode() == null || request.getPostcode().isEmpty()) {
+            nullFields.add("postcode");
+        }
+        if (request.getCountryName() == null || request.getCountryName().isEmpty()) {
+            nullFields.add("countryName");
+        }
+        if (request.getCityName() == null || request.getCityName().isEmpty()) {
+            nullFields.add("cityName");
+        }
+        if (request.getPrimaryaddress() == null) {
+            nullFields.add("primaryaddress");
+        }
+
+        // Check if any field is null
+        if (!nullFields.isEmpty()) {
+            String errorMessage;
+            if (nullFields.size() == 1) {
+                errorMessage = "Bad request, the following field is null: " + nullFields.get(0);
+            } else {
+                errorMessage = "Bad request, the following fields are null: " + String.join(", ", nullFields);
+            }
+            return new ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+
         boolean exist = this.userService.existbyid(id);
         if (!exist) {
             return new ResponseEntity("User not found", HttpStatus.NOT_FOUND);
