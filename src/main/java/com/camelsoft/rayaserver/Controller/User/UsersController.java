@@ -26,6 +26,8 @@ import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Tools.ApiResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 
+import com.camelsoft.rayaserver.Services.Tools.AddressServices;
+import com.camelsoft.rayaserver.Services.Tools.BankAccountService;
 import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
@@ -83,6 +85,10 @@ public class UsersController extends BaseController {
     private RoleService roleService;
     @Autowired
     private BillingAddressService billingAddressService;
+    @Autowired
+    private BankAccountService bankAccountService;
+    @Autowired
+    private AddressServices addressServices;
 
     @GetMapping(value = {"/current_user"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER') ")
@@ -385,6 +391,65 @@ public class UsersController extends BaseController {
     }
 
 
+    @PatchMapping(value = {"/update_Bank_account/{userId}/{bankInfoId}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Update Bank Account", notes = "Endpoint to update bank account of a user")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully updated"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, at least one attribute should be provided"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @io.swagger.annotations.ApiResponse(code = 404, message = "Bank information not found"),
+            @io.swagger.annotations.ApiResponse(code = 500, message = "Failed to update bank account")
+    })
+    public ResponseEntity<BankInformation> updateUserBankAccount(@PathVariable Long userId ,@PathVariable Long bankInfoId, @RequestBody BankInformationRequest request) throws IOException, InterruptedException, MessagingException {
+        // Check if at least one field is provided in the request
+        if (request.getBank_name() == null && request.getAccountHolderName() == null && request.getAcountNumber() == null && request.getIBAN() == null) {
+            String errorMessage = "At least one attribute should be provided for bank account update";
+            return new ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+        users user = this.userService.findById(userId);
+        if (user == null) {
+            return new ResponseEntity("user is not found", HttpStatus.NOT_FOUND);
+        }
+        BankInformation bankInformation = this.bankAccountService.findByIdWithoutException(bankInfoId);
+
+        // Get the bank information by id
+        if (bankInformation == null) {
+            BankInformation bankInformation1 = new BankInformation();
+            bankInformation1.setUser(user);
+            bankInformation = this.bankAccountService.saveBankInformation(bankInformation1);
+        }
+
+        bankInformation = this.bankAccountService.updateBankInfo(bankInformation, request);
+
+        if (bankInformation != null) {
+            return ResponseEntity.ok(bankInformation);
+        } else {
+            return new ResponseEntity("Failed to update billing address", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping(value= {"bank_information/{bankInformationId}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully retrieved user details"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, access denied. Requires admin role"),
+            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
+    })
+    public ResponseEntity<BankInformation> getBankInformation(@PathVariable Long bankInformationId) throws IOException {
+        BankInformation bankInformation = this.bankAccountService.findById(bankInformationId);
+
+        if (bankInformation != null) {
+            return ResponseEntity.ok(bankInformation);
+        } else {
+            return new ResponseEntity("Failed to fetch bank account", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+    }
+
     @PostMapping(value = {"/add_Address/{id}"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "add user address ", notes = "Endpoint to add address to user")
@@ -439,6 +504,54 @@ public class UsersController extends BaseController {
     }
 
 
+
+    @PatchMapping(value = {"/update_Address/{userId}/{addressId}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Update user address", notes = "Endpoint to update user address")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully updated"),
+            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, at least one attribute should be provided"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @io.swagger.annotations.ApiResponse(code = 404, message = "User not found"),
+            @io.swagger.annotations.ApiResponse(code = 500, message = "Failed to update address")
+    })
+    public ResponseEntity<Address> updateUserAddress(@PathVariable Long userId,  @PathVariable Long addressId, @RequestBody AddressRequest request) throws IOException, InterruptedException, MessagingException {
+        // Check if at least one field is provided in the request
+        if (request.getAddressline1() == null && request.getAddressline2() == null &&
+                request.getPostcode() == null && request.getBuilding() == null &&
+                request.getUnitnumber() == null && request.getStreetname() == null &&
+                request.getPrimaryaddress() == null && request.getCountryName() == null &&
+                request.getCityName() == null) {
+            String errorMessage = "At least one attribute should be provided for updating address";
+            return new ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST);
+
+        }
+
+        // Check if the user exists
+        users user = this.userService.findById(userId);
+        if (user == null ){
+            return new ResponseEntity("User not found", HttpStatus.NOT_FOUND);
+        }
+
+
+        Address address = this.addressServices.findByIdWithoutEXCEPTION(addressId);
+
+        // Get the bank information by id
+        if (address == null) {
+            Address address1 = new Address();
+            address1.setUser(user);
+            address = this.addressServices.save(address1);
+        }
+
+        // Update the address of the user
+        Address result = this.addressServices.updateAddress(address, request);
+        if (result != null) {
+            return ResponseEntity.ok(result);
+        } else {
+            return new ResponseEntity("Failed to update address", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PatchMapping(value = {"/activated/{id}"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "update user activation to the opposit", notes = "Endpoint to update user's activate attribute")
@@ -462,13 +575,13 @@ public class UsersController extends BaseController {
             @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, access denied. Requires admin role"),
             @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
-    public ResponseEntity<Set<Address>> getAddressUser(@PathVariable Long id) throws IOException {
-        Set<Address> result = this.userService.getUserAddress(id);
+    public ResponseEntity<Address> getAddressUser(@PathVariable Long id) throws IOException {
+        Address result = this.addressServices.findById(id);
 
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
-            return new ResponseEntity("Failed to fetch user address", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity("Failed to fetch address", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 

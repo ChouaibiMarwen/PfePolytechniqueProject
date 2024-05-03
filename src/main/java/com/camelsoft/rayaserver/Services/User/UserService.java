@@ -527,6 +527,7 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
+
     /*public users findById(Long id) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("Invalid user ID provided");
@@ -547,7 +548,10 @@ public class UserService extends BaseController implements UserDetailsService {
 
     public users updateVerifiedUser(Long userid){
         users user =  findById(userid);
-        user.setVerified(!user.getVerified());
+        Boolean currentVerified = user.getVerified();
+
+        user.setVerified(currentVerified == null || !currentVerified);
+
         return this.userRepository.save(user);
 
     }
@@ -589,12 +593,8 @@ public class UserService extends BaseController implements UserDetailsService {
         bankInformation.setAccountname(bankInformationRequest.getAccountHolderName());
         bankInformation.setIban(bankInformationRequest.getIBAN());
         bankInformation.setRip(bankInformationRequest.getAcountNumber());
-       /* Set<BankInformation> bankInformations = user.getBankinformations();
-        bankInformations.add(bankInformation);
-        user.setBankinformations(bankInformations);*/
         bankInformation.setUser(user);
         return this.bankAccountService.saveBankInformation(bankInformation);
-
 
     }
 
