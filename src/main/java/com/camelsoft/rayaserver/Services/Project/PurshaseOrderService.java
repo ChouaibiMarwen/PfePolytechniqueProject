@@ -1,9 +1,14 @@
 package com.camelsoft.rayaserver.Services.Project;
 
+import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
+import com.camelsoft.rayaserver.Models.Project.Product;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Repository.Project.PurshaseOrderRepository;
+import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -42,6 +47,28 @@ public class PurshaseOrderService {
         }
 
     }
+
+    public DynamicResponse findAllPgByStatus(int page, int size, String status) {
+        try {
+
+            PageRequest pg = PageRequest.of(page, size);
+            if(status == null || status.isEmpty()){
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalse(pg);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }else{
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndStatus(pg, PurshaseOrderStatus.valueOf(status));
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
+
 
 
 

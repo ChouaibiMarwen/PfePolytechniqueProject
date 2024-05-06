@@ -6,11 +6,13 @@ import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
+import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
+import com.camelsoft.rayaserver.Services.User.CustomerService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -30,6 +33,8 @@ import java.io.IOException;
 public class CustomerController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private CustomerService customerService;
     @Autowired
     private PersonalInformationService personalInformationService;
 
@@ -111,7 +116,7 @@ public class CustomerController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
-    @GetMapping(value = {"/all"})
+    /*@GetMapping(value = {"/all"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all customer by status for admin", notes = "Endpoint to get vehicles")
     @ApiResponses(value = {
@@ -119,5 +124,15 @@ public class CustomerController {
     })
     public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name) throws IOException {
         return new ResponseEntity<>(this.userService.filterAllUser(page, size,active,name, RoleEnum.ROLE_USER, null), HttpStatus.OK);
+    }*/
+
+    @GetMapping(value = {"/all"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all customers without pagination", notes = "Endpoint to get customers")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
+    })
+    public ResponseEntity<List<UserShortDto>> all(@RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) Boolean verified) throws IOException {
+        return new ResponseEntity<>(this.customerService.getAllUsersWithoutPagination(active, name, RoleEnum.ROLE_USER, verified), HttpStatus.OK);
     }
 }

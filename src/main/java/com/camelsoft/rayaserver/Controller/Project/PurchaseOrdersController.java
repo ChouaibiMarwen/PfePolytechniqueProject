@@ -2,12 +2,15 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.Project.Product;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Repository.File.FilesStorageService;
 import com.camelsoft.rayaserver.Request.project.PurshaseOrderRequest;
 import com.camelsoft.rayaserver.Request.project.VehiclesRequest;
+import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
+import com.camelsoft.rayaserver.Services.Project.PurshaseOrderService;
 import com.camelsoft.rayaserver.Services.Project.VehiclesService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -31,10 +35,12 @@ public class PurchaseOrdersController {
     @Autowired
     private VehiclesService vehiclesService;
     @Autowired
+    private PurshaseOrderService purshaseOrderService;
+    @Autowired
     private FilesStorageServiceImpl filesStorageService;
 
 
-    @PostMapping(value = "/add_purshase_order")
+    @PostMapping(value = "/add")
     @PreAuthorize("hasRole('SUPPLIER')")
     @ApiOperation(value = "add purshase order for supplier", notes = "Endpoint to add purshase order")
     @ApiResponses(value = {
@@ -73,9 +79,25 @@ public class PurchaseOrdersController {
             }
             po.setAttachments(attachmentsList);
         }
-        /*this.*/
+        PurshaseOrder purshaseOrder = this.purshaseOrderService.Save(po);
 
 
-        return  new ResponseEntity<>(po, HttpStatus.OK);
+        return  new ResponseEntity<>(purshaseOrder, HttpStatus.OK);
     }
+
+
+    @GetMapping(value = {"/all_purchase_orders_by_status"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to get purchase orders by status")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> all_purchase_oreder_by_status(int page, int size , @RequestParam(required = false) String status) throws IOException {
+        DynamicResponse result = this.purshaseOrderService.findAllPgByStatus(page, size , status);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
 }
