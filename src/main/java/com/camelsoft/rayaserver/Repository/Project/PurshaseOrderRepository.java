@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
+/*@Repository
 public interface PurshaseOrderRepository extends JpaRepository<PurshaseOrder, Long> {
     Page<PurshaseOrder> findAllByArchiveIsFalse(Pageable page);
 
-}
+}*/

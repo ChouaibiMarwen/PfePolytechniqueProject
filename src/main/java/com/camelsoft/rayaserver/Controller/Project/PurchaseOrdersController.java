@@ -33,7 +33,7 @@ public class PurchaseOrdersController {
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
 
-
+/*
     @PostMapping(value = "/add_purshase_order")
     @PreAuthorize("hasRole('SUPPLIER')")
     @ApiOperation(value = "add purshase order for supplier", notes = "Endpoint to add purshase order")
@@ -73,9 +73,9 @@ public class PurchaseOrdersController {
             }
             po.setAttachments(attachmentsList);
         }
-        /*this.*/
+        *//*this.*//*
 
 
         return  new ResponseEntity<>(po, HttpStatus.OK);
-    }
+    }*/
 }
