@@ -117,6 +117,7 @@ public class UsersController extends BaseController {
         if (request.getBirthDate() != null) personalInformation.setBirthDate(request.getBirthDate());
         if (request.getSecondnamear() != null) personalInformation.setSecondnamear(request.getSecondnamear());
         if (request.getThirdnamear() != null) personalInformation.setThirdnamear(request.getThirdnamear());
+        if (request.getPhonenumber() != null) personalInformation.setPhonenumber(request.getPhonenumber());
         if (request.getGrandfathernamear() != null) personalInformation.setGrandfathernamear(request.getGrandfathernamear());
         if (request.getSecondnameen() != null) personalInformation.setSecondnameen(request.getSecondnameen());
         if (request.getThirdnameen() != null) personalInformation.setThirdnameen(request.getThirdnameen());
@@ -155,6 +156,7 @@ public class UsersController extends BaseController {
         if (request.getBirthDate() != null) personalInformation.setBirthDate(request.getBirthDate());
         if (request.getSecondnamear() != null) personalInformation.setSecondnamear(request.getSecondnamear());
         if (request.getThirdnamear() != null) personalInformation.setThirdnamear(request.getThirdnamear());
+        if (request.getPhonenumber() != null) personalInformation.setPhonenumber(request.getPhonenumber());
         if (request.getGrandfathernamear() != null) personalInformation.setGrandfathernamear(request.getGrandfathernamear());
         if (request.getSecondnameen() != null) personalInformation.setSecondnameen(request.getSecondnameen());
         if (request.getThirdnameen() != null) personalInformation.setThirdnameen(request.getThirdnameen());

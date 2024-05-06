@@ -86,6 +86,7 @@ public class SupplierController {
         // Create a new user
         users user = new users();
         PersonalInformation information = new PersonalInformation();
+        information.setPhonenumber(phonenumber);
         information.setFirstnameen(request.getInformationRequest().getFirstnameen());
         information.setLastnameen(request.getInformationRequest().getLastnameen());
         information.setFirstnamear(request.getInformationRequest().getLastnamear());

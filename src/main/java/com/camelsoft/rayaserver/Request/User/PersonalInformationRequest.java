@@ -23,6 +23,7 @@ public class PersonalInformationRequest {
     private String grandfathernameen;
     private Integer numberofdependents;
     private String gender;
+    private String phonenumber;
     private String worksector;
     private String maritalstatus;
 }
