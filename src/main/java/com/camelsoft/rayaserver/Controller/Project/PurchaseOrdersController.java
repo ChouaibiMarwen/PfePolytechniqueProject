@@ -155,7 +155,18 @@ public class PurchaseOrdersController {
     }
 
 
-
+    @GetMapping(value = {"/purchase_order/{id]"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all purchase orders by id for admin by name", notes = "Endpoint to get purchase orders by id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<PurshaseOrder> getPurchaseOrderById(@PathVariable(required = false) Long id) throws IOException {
+        PurshaseOrder result = this.purshaseOrderService.FindById(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
 
 
