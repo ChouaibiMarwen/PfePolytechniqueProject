@@ -22,7 +22,7 @@ public class PersonalInformationRequest {
     private String thirdnameen;
     private String grandfathernameen;
     private Integer numberofdependents;
-    private Gender gender = Gender.NONE;
-    private WorkSector worksector=WorkSector.NONE;
-    private MaritalStatus maritalstatus = MaritalStatus.NONE;
+    private String gender;
+    private String worksector;
+    private String maritalstatus;
 }

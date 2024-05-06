@@ -1,5 +1,8 @@
 package com.camelsoft.rayaserver.Controller.User;
 
+import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
+import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
+import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
@@ -99,11 +102,11 @@ public class SupplierController {
         if (request.getInformationRequest().getNumberofdependents() != null)
             information.setNumberofdependents(request.getInformationRequest().getNumberofdependents());
         if (request.getInformationRequest().getGender() != null)
-            information.setGender(request.getInformationRequest().getGender());
+            information.setGender(Gender.valueOf(request.getInformationRequest().getGender()));
         if (request.getInformationRequest().getWorksector() != null)
-            information.setWorksector(request.getInformationRequest().getWorksector());
+            information.setWorksector(WorkSector.valueOf(request.getInformationRequest().getWorksector()));
         if (request.getInformationRequest().getMaritalstatus() != null)
-            information.setMaritalstatus(request.getInformationRequest().getMaritalstatus());
+            information.setMaritalstatus(MaritalStatus.valueOf(request.getInformationRequest().getMaritalstatus()));
         // Set user details
         PersonalInformation resultinformation = this.personalInformationService.save(information);
         Supplier supplier = new Supplier();

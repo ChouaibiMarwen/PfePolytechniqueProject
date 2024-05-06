@@ -122,9 +122,9 @@ public class UsersController extends BaseController {
         if (request.getThirdnameen() != null) personalInformation.setThirdnameen(request.getThirdnameen());
         if (request.getGrandfathernameen() != null) personalInformation.setGrandfathernameen(request.getGrandfathernameen());
         if (request.getNumberofdependents() != null) personalInformation.setNumberofdependents(request.getNumberofdependents());
-        if (request.getGender() != null) personalInformation.setGender(request.getGender());
-        if (request.getWorksector() != null) personalInformation.setWorksector(request.getWorksector());
-        if (request.getMaritalstatus() != null) personalInformation.setMaritalstatus(request.getMaritalstatus());
+        if (request.getGender() != null) personalInformation.setGender(Gender.valueOf(request.getGender()));
+        if (request.getWorksector() != null) personalInformation.setWorksector(WorkSector.valueOf(request.getWorksector()));
+        if (request.getMaritalstatus() != null) personalInformation.setMaritalstatus(MaritalStatus.valueOf(request.getMaritalstatus()));
         PersonalInformation result = this.personalInformationService.update(personalInformation);
 
 
@@ -160,9 +160,9 @@ public class UsersController extends BaseController {
         if (request.getThirdnameen() != null) personalInformation.setThirdnameen(request.getThirdnameen());
         if (request.getGrandfathernameen() != null) personalInformation.setGrandfathernameen(request.getGrandfathernameen());
         if (request.getNumberofdependents() != null) personalInformation.setNumberofdependents(request.getNumberofdependents());
-        if (request.getGender() != null) personalInformation.setGender(request.getGender());
-        if (request.getWorksector() != null) personalInformation.setWorksector(request.getWorksector());
-        if (request.getMaritalstatus() != null) personalInformation.setMaritalstatus(request.getMaritalstatus());
+        if (request.getGender() != null) personalInformation.setGender(Gender.valueOf(request.getGender()));
+        if (request.getWorksector() != null) personalInformation.setWorksector(WorkSector.valueOf(request.getWorksector()));
+        if (request.getMaritalstatus() != null) personalInformation.setMaritalstatus(MaritalStatus.valueOf(request.getMaritalstatus()));
         PersonalInformation result = this.personalInformationService.update(personalInformation);
 
 

@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Models.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.Getter;
@@ -50,6 +51,9 @@ public class PurshaseOrder {
     @OneToMany(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
     @JoinColumn(name = "attachments")
     private Set<File_model> attachments = new HashSet<>();
+    @JsonIgnore
+    @Column(name = "archive")
+    private Boolean archive = false;
 
     @Column(name = "timestamp")
     private Date timestamp;
