@@ -1,6 +1,8 @@
 package com.camelsoft.rayaserver.Services.Tools;
 
+import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Tools.BillingAddressRepository;
 import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -68,5 +70,16 @@ public class BillingAddressService {
             billingAddress.setPhonenumber(request.getPhonenumber());
         }
         return repository.save(billingAddress);
+    }
+
+    public void deleteBillingAddress(BillingAddress address){
+        try {
+            users user = address.getUser();
+            user.setBillingAddress(null);
+            address.setUser(null);
+            repository.delete(address);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -118,4 +118,9 @@ public DynamicResponse FindAllPgSupplier(int page, int size, Supplier supplier) 
         }
 
     }
+
+
+    public boolean inStock( Vehicles vehicles, Integer demandedQuantity ){
+        return vehicles.getStock() - demandedQuantity >= 0;
+    }
 }

@@ -23,10 +23,8 @@ public class Vehicles implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
     @Column(name = "carmodel")
-
     private String carmodel;
     @Column(name = "color")
-
     private String color;
     @Transient
     private Double price;
@@ -234,4 +232,6 @@ public class Vehicles implements Serializable {
     public void setInteriorfeatures(Set<String> interiorfeatures) {
         this.interiorfeatures = interiorfeatures;
     }
+
+
 }
