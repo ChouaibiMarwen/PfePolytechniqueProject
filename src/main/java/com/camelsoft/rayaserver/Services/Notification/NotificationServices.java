@@ -72,6 +72,7 @@ public class NotificationServices {
             throw  new NotFoundException("not found data");
         }
     }
+    /*public PaginationResponse allnotificationbyuser(int page, int size, users user) {*/
     public PaginationResponse allnotificationbyuser(int page, int size, users user) {
         try {
             List<Notification> resultlist = new ArrayList<Notification>();

@@ -100,4 +100,63 @@ public class PurchaseOrdersController {
     }
 
 
+    @PatchMapping(value ="/update_purchase_order/{purchaseOrderId}")
+    @PreAuthorize("hasRole('SUPPLIER')")
+    @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to get purchase orders by status")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<PurshaseOrder> all_purchase_oreder_by_status(@PathVariable Long purchaseOrderId, @ModelAttribute PurshaseOrderRequest request ) throws IOException{
+        PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
+        if(purchaseOrder == null)
+            return new ResponseEntity("purchase order is not found", HttpStatus.NOT_FOUND);
+        if (request.getOrderDate() != null) {
+            purchaseOrder.setOrderDate(request.getOrderDate());
+        }
+        if (request.getStatus() != null) {
+            purchaseOrder.setStatus(request.getStatus());
+        }
+        if (request.getSupplierId() != null) {
+            purchaseOrder.setSupplierId(request.getSupplierId());
+        }
+        if (request.getVehicleId() != null) {
+            purchaseOrder.setVehicleId(request.getVehicleId());
+        }
+        if (request.getQuantity() != null) {
+            purchaseOrder.setQuantity(request.getQuantity());
+        }
+        if (request.getDiscountamount() != null) {
+            purchaseOrder.setDiscountamount(request.getDiscountamount());
+        }
+        if (request.getRequestDeliveryDate() != null) {
+            purchaseOrder.setRequestDeliveryDate(request.getRequestDeliveryDate());
+        }
+        if (request.getCity() != null) {
+            purchaseOrder.setCity(request.getCity());
+        }
+        if (request.getState() != null) {
+            purchaseOrder.setState(request.getState());
+        }
+        if (request.getCodePostal() != null) {
+            purchaseOrder.setCodePostal(request.getCodePostal());
+        }
+        if (request.getCountry() != null) {
+            purchaseOrder.setCountry(request.getCountry());
+        }
+        if (request.getDescription() != null) {
+            purchaseOrder.setDescription(request.getDescription());
+        }
+
+        this.purshaseOrderService.Update(purchaseOrder);
+        return new ResponseEntity<>(purchaseOrder, HttpStatus.OK);
+
+    }
+
+
+
+
+
+
 }
