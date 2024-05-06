@@ -111,7 +111,7 @@ public class PurchaseOrdersController {
     public ResponseEntity<PurshaseOrder> all_purchase_oreder_by_status(@PathVariable Long purchaseOrderId, @ModelAttribute PurshaseOrderRequest request ) throws IOException{
         PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
         if(purchaseOrder == null)
-            return new ResponseEntity("purchase order is not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
         if (request.getOrderDate() != null) {
             purchaseOrder.setOrderDate(request.getOrderDate());
         }
