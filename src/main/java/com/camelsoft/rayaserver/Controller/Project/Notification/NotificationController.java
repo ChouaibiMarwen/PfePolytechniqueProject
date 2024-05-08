@@ -1,23 +1,10 @@
-package com.camelsoft.rayaserver.Controller.Project;
+package com.camelsoft.rayaserver.Controller.Project.Notification;
 
-import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
-import com.camelsoft.rayaserver.Models.Notification.AdminNotification;
-import com.camelsoft.rayaserver.Models.Notification.Notification;
-import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Response.Notification.AdminNotificationResponse;
-import com.camelsoft.rayaserver.Response.Tools.PaginationResponse;
 import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @CrossOrigin

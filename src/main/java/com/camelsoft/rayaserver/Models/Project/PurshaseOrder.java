@@ -29,7 +29,7 @@ public class PurshaseOrder {
     private Date orderDate;
     @Getter
     @Column(name ="order_status")
-    private PurshaseOrderStatus status = PurshaseOrderStatus.PENDING;
+    private PurshaseOrderStatus status = PurshaseOrderStatus.DRAFT;
     @Column(name ="supplier_id")
     private Long supplierId;
 

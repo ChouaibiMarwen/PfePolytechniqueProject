@@ -202,5 +202,25 @@ public class PurchaseOrdersController {
     }
 
 
+    @PatchMapping(value = "/send_purchase_order/{purchaseOrderId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "accept and send purchase order by admin", notes = "Endpoint send purchase order")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<PurchaseOrderDto> acceptAndSendPurchaseOrderr(@PathVariable Long purchaseOrderId) throws IOException {
+        PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
+        if(purchaseOrder == null)
+            return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
+        purchaseOrder.setStatus(PurshaseOrderStatus.PENDING);
+        PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
+        PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
+        return new ResponseEntity<>(po, HttpStatus.OK);
+    }
+
+
+
 
 }

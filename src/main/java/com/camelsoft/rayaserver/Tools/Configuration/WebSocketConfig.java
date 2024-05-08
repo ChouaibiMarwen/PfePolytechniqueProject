@@ -39,6 +39,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         "https://admin.camel-soft.com",
                         "https://server.camel-soft.com",
                         "https://client.camel-soft.com",
+                        "https://raya-admin.camel-soft.com",
                         "https://agent.camel-soft.com"
                 )
                 .withSockJS().setInterceptors(handshakeInterceptor);
