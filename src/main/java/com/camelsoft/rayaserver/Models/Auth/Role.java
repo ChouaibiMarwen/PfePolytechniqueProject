@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Models.Auth;
 
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
+import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -24,6 +25,10 @@ public class Role implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private Set<users> user = new HashSet<>();
+
+    @ManyToMany(mappedBy = "assignedto")
+    @JsonIgnore
+    private Set<Event> events =  new HashSet<>();
     public Role() {
     }
 

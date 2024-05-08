@@ -189,7 +189,7 @@ public class PurchaseOrdersController {
 
     @GetMapping(value = {"/purchase_order/{id]"})
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "get all purchase orders by id for admin by name", notes = "Endpoint to get purchase orders by id")
+    @ApiOperation(value = "get all purchase orders by id for admin ", notes = "Endpoint to get purchase orders by id")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request"),

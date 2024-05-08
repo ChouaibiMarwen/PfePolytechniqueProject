@@ -42,7 +42,7 @@ public class Product implements Serializable {
     private Supplier supplier;
 
     public Product() {
-
+    this.timestamp = new Date();
     }
 
     public Product(String name, Double quantity, Double unitprice, Double taxespercentage, Double discountpercentage, Double subtotal) {
@@ -52,6 +52,7 @@ public class Product implements Serializable {
         this.taxespercentage = taxespercentage;
         this.discountpercentage = discountpercentage;
         this.subtotal = subtotal;
+        this.timestamp = new Date();
 
     }
 

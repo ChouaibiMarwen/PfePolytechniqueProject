@@ -20,7 +20,7 @@ public class Privilege implements Serializable {
 
     @ManyToMany(mappedBy = "privileges")
     @JsonIgnore
-    Set<users> user;
+    private Set<users> user;
 
 
     public Privilege() {}
