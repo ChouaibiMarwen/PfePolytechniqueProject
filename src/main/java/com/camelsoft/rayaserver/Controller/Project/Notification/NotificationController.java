@@ -1,10 +1,21 @@
 package com.camelsoft.rayaserver.Controller.Project.Notification;
 
+import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
+import com.camelsoft.rayaserver.Models.Notification.Notification;
+import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Response.Tools.PaginationResponse;
 import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -16,7 +27,6 @@ public class NotificationController  extends BaseController {
     @Autowired
     private UserService userService;
 
-/*
 
     @GetMapping(value = {"/all_my_notification"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('Supplier') ")
@@ -32,13 +42,13 @@ public class NotificationController  extends BaseController {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
         PaginationResponse result = this.services.allnotificationbyuser(page, size,user);
         return new ResponseEntity<>(result, HttpStatus.OK);
-    }*/
+    }
 
-   /* @PatchMapping(value = {"/read_my_waiting_notification"})
+    @PatchMapping(value = {"/read_my_waiting_notification"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('Supplier') ")
-    public ResponseEntity<List<PaginationResponse>> read_my_waiting_notification (@RequestParam Long[] notificationid) throws IOException {
+    public ResponseEntity<List<Notification>> read_my_waiting_notification (@RequestParam Long[] notificationid) throws IOException {
 
-        List<PaginationResponse> result = new ArrayList<>();
+        List<Notification> result = new ArrayList<>();
         for (Long id: notificationid) {
 
             if(this.services.existbyid(id)){
@@ -57,7 +67,6 @@ public class NotificationController  extends BaseController {
             }
         }
 
-
         return new ResponseEntity<>(result, HttpStatus.OK);
-    }*/
+    }
 }

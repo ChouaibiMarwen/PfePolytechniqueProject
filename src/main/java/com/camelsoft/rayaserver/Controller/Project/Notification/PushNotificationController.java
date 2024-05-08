@@ -1,9 +1,13 @@
 package com.camelsoft.rayaserver.Controller.Project.Notification;
 
+import com.camelsoft.rayaserver.Models.Notification.Notification;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Models.Auth.*;
+import com.camelsoft.rayaserver.Request.Tools.Notificationrequest;
 import com.camelsoft.rayaserver.Services.Notification.FCMService;
 import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +21,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/v1/notifications")
-public class PushNotificationController {
+public class PushNotificationController extends BaseController {
 
     @Autowired
     private NotificationServices _notificationservices;
@@ -27,9 +31,9 @@ public class PushNotificationController {
     private UserService userService;
 
 
-   /* @PostMapping("/send-notification")
+    @PostMapping("/send-notification")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER')")
-    public ResponseEntity sendNotification(@RequestBody N request) throws FirebaseMessagingException {
+    public ResponseEntity sendNotification(@RequestBody Notificationrequest request) throws FirebaseMessagingException {
         if (!this.pushNotificationService.isValidFCMToken(request.getToken()))
             return new ResponseEntity("Invalid FCM Token", HttpStatus.BAD_REQUEST);
         try {
@@ -40,18 +44,18 @@ public class PushNotificationController {
         }
     }
 
-    @PostMapping("/send-notification-test")
+  /*  @PostMapping("/send-notification-test")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER')")
-    public ResponseEntity sendnotificationtest(@RequestBody notificationrequest request) throws FirebaseMessagingException {
+    public ResponseEntity sendnotificationtest(@RequestBody Notificationrequest request) throws FirebaseMessagingException {
 
 
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
 
-        notificationmodel notificationuser = new notificationmodel(user, user, "Action.IDLE","");
+        Notification notificationuser = new Notification(user, user, "Action.IDLE","");
         try {
             List<users> usersList = new ArrayList<>();
             usersList.add(user);
-            this._notificationservices.sendnotifications(notificationuser,usersList);
+            this._notificationservices.sendnotification(notificationuser,usersList);
         } catch (FirebaseMessagingException | InterruptedException ex ) {
             return new ResponseEntity("Error sending notification", HttpStatus.EXPECTATION_FAILED);
 
