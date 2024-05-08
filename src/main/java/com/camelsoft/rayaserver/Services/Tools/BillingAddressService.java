@@ -71,15 +71,4 @@ public class BillingAddressService {
         }
         return repository.save(billingAddress);
     }
-
-    public void deleteBillingAddress(BillingAddress address){
-        try {
-            users user = address.getUser();
-            user.setBillingAddress(null);
-            address.setUser(null);
-            repository.delete(address);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

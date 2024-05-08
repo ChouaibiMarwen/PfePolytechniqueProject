@@ -2,10 +2,14 @@ package com.camelsoft.rayaserver.Models.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.stripe.model.Customer;
 import lombok.Data;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -28,6 +32,21 @@ public class PurshaseOrder {
     private PurshaseOrderStatus status = PurshaseOrderStatus.PENDING;
     @Column(name ="supplier_id")
     private Long supplierId;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicles_id")
+    private Vehicles vehicles;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id_purchaseorder",nullable = false)
+    private Supplier supplier;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private users customer;
+
+
     @Column(name ="vehicule_id")
     private Long vehicleId;
     @Column(name ="quantity")
@@ -54,13 +73,32 @@ public class PurshaseOrder {
     @JsonIgnore
     @Column(name = "archive")
     private Boolean archive = false;
+    @JsonIgnore
+    @Column(name = "deleted")
+    private Boolean deleted = false;
 
+    @Transient
+    private Integer poCountBySupplier = 0;
     @Column(name = "timestamp")
     private Date timestamp;
 
     public PurshaseOrder()  {
         this.timestamp=new Date();
     }
+
+
+    @PostLoad
+    private void afterload(){
+        if(this.supplier!=null){
+            if(this.supplier.getPurchaseOrders()!=null){
+                this.poCountBySupplier = this.supplier.getPurchaseOrders().size();
+
+            }else {
+                this.poCountBySupplier = 0;
+            }
+        }
+    }
+
 
 
     public PurshaseOrder(Date orderDate, PurshaseOrderStatus status, Long supplierId, Integer quantity, Long vehicleId, Double discountamount, Date requestDeliveryDate, String streetAddress, String city, String codePostal, String state, String country, String description) {
@@ -79,4 +117,5 @@ public class PurshaseOrder {
         this.description = description;
         this.timestamp = new Date();
     }
+
 }

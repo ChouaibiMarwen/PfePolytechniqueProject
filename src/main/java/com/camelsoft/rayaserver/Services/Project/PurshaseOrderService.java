@@ -3,8 +3,14 @@ package com.camelsoft.rayaserver.Services.Project;
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Models.Project.Product;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
+import com.camelsoft.rayaserver.Models.Project.Vehicles;
+import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Project.PurshaseOrderRepository;
+import com.camelsoft.rayaserver.Request.project.PurshaseOrderRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
+import com.camelsoft.rayaserver.Services.User.SupplierServices;
+import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +24,12 @@ public class PurshaseOrderService {
 
     @Autowired
     private PurshaseOrderRepository repository;
-
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private SupplierServices supplierServices;
+    @Autowired
+    private VehiclesService vehiclesService;
 
     public PurshaseOrder Save(PurshaseOrder model) {
         try {
@@ -66,6 +77,8 @@ public class PurshaseOrderService {
         }
 
     }
+
+
 
 
 

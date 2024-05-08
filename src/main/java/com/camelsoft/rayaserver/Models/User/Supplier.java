@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Models.User;
 
 
 import com.camelsoft.rayaserver.Models.Project.Product;
+import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.Tools.Rating;
 import com.camelsoft.rayaserver.Models.File.File_model;
@@ -59,6 +60,11 @@ public class Supplier implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Vehicles> vehicles = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<PurshaseOrder> purchaseOrders = new HashSet<>();
+
     @PostLoad
     private void afterload(){
         if(this.user!=null){

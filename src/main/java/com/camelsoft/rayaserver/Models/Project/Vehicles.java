@@ -65,6 +65,9 @@ public class Vehicles implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id",nullable = false)
     private Supplier supplier;
+    @OneToMany(mappedBy = "vehicles", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<PurshaseOrder> purchaseOrder = new HashSet<>();
     @Column(name = "timestamp")
     private Date timestamp;
 
