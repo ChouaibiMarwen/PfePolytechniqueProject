@@ -29,9 +29,9 @@ public class ChatMessage implements Serializable {
     private Long senderId;
     @Column(name = "recipientId")
     private Long recipientId;
-    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     private users sender;
-    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     private users recipient;
     @Column(name = "senderName")
     private String senderName;
