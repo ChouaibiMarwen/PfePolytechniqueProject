@@ -33,12 +33,10 @@ public class ChatNotification implements Serializable {
     private Long senderid;
     @Column(name = "chatId")
     private String chatId;
-
     @OneToMany
     private List<File_model> attachments;
     @Column(name = "timestmp")
     private Date timestmp;
 
-    public ChatNotification() {
-    }
+
 }
