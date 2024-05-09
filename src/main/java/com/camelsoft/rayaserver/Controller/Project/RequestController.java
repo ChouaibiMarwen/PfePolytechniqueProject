@@ -1,5 +1,8 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
@@ -38,7 +41,7 @@ import java.util.*;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/v1/requests")
-public class RequestController extends BaseController {
+public class RequestController  extends BaseController {
 
     private static final List<String> image_accepte_type = Arrays.asList("jpeg", "jpg", "png", "gif", "bmp", "tiff", "tif", "ico", "webp", "svg", "heic", "raw");
 
@@ -49,10 +52,9 @@ public class RequestController extends BaseController {
     private InvoiceService invoiceService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
+
     @Autowired
     private UserService UserServices;
-
-
     @PostMapping(value = {"/add_Request"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Add a new request request from the admin", notes = "Endpoint to add a new request")
@@ -95,6 +97,47 @@ public class RequestController extends BaseController {
             corssspondences.setAttachment(resourceMedia);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
+
+    @GetMapping(value = {"/all_requests"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all requests by status for admin", notes = "Endpoint to get requests")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> all_requests_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) RequestState status) throws IOException {
+        if (status != null)
+            return new ResponseEntity<>(this.service.findAllByState(page, size, status), HttpStatus.OK);
+
+        return new ResponseEntity<>(this.service.findAllPg(page, size), HttpStatus.OK);
+
+    }
+
+    @GetMapping(value = {"/request/{idRequest}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all requests by status for admin", notes = "Endpoint to get requests")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<Request> all_requests_admin(@PathVariable Long idRequest) throws IOException {
+
+        boolean exist = this.service.ExistById(idRequest);
+        if(!exist)
+            return new ResponseEntity("wrong id request: id not found", HttpStatus.BAD_REQUEST);
+
+        Request req = this.service.FindById(idRequest);
+        return new ResponseEntity<>(req, HttpStatus.OK);
+
+    }
+
+
 
 
 }
