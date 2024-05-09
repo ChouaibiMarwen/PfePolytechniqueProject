@@ -19,7 +19,7 @@ public class RequestsRequest {
     private RequestState status;
     private String title;
     private String description;
-    private RequestCorrespondant correspondant;
+   /* private RequestCorrespondant correspondant;*/
     private Set<Long> invoicesId = new HashSet<>();
 
     public RequestsRequest() {

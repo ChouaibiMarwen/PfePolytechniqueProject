@@ -63,6 +63,17 @@ public class EventService {
         }
 
     }
+        public DynamicResponse FindAllByTitlePg(int page, int size , String tit) {
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Event> pckge = this.repository.findAllByTitleContainingIgnoreCaseAndArchiveIsFalse(pg,tit);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
 
 
     public List<Event> findAll() {

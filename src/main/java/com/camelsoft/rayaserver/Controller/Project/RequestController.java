@@ -19,6 +19,7 @@ import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.EventService;
 import com.camelsoft.rayaserver.Services.Project.InvoiceService;
+import com.camelsoft.rayaserver.Services.Project.RequestCorrespondenceService;
 import com.camelsoft.rayaserver.Services.Project.RequestService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -51,6 +52,8 @@ public class RequestController  extends BaseController {
     @Autowired
     private InvoiceService invoiceService;
     @Autowired
+    private RequestCorrespondenceService reqcorresservice;
+    @Autowired
     private FilesStorageServiceImpl filesStorageService;
 
     @Autowired
@@ -63,7 +66,7 @@ public class RequestController  extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Request> addEvent(@ModelAttribute RequestsRequest request) throws IOException {
+    public ResponseEntity<Request> addEvent(@ModelAttribute RequestsRequest request, @RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
 
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         Set<Invoice> invoices = new HashSet<>();
@@ -75,24 +78,30 @@ public class RequestController  extends BaseController {
         }
 
         Request requestdata = new Request(
-                request.getTitle(),
+                request.getType(),
                 request.getStatus(),
                 user,
                 invoices
         );
         Request result = this.service.Save(requestdata);
         File_model resourceMedia = null;
-        if (request.getCorrespondant().getAttachment() != null && !request.getCorrespondant().getAttachment().isEmpty()) {
-            String extension = request.getCorrespondant().getAttachment().getContentType().substring(request.getCorrespondant().getAttachment().getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+        if (attachment != null && !attachment.isEmpty()) {
+            String extension = attachment.getContentType().substring(attachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
             if (!image_accepte_type.contains(extension)) {
                 return ResponseEntity.badRequest().body(null);
             }
-            resourceMedia = filesStorageService.save_file_local(request.getCorrespondant().getAttachment(), "requests");
+            resourceMedia =  filesStorageService.save_file_local(attachment, "requests");
+            if (resourceMedia == null) {
+                return ResponseEntity.badRequest().body(null);
+            }
         }
         RequestCorrespondence corssspondences = new RequestCorrespondence();
         corssspondences.setRequest(result);
         corssspondences.setTitle(request.getTitle());
         corssspondences.setDescription(request.getDescription());
+        corssspondences.setCreator(user);
+        this.reqcorresservice.Save(corssspondences);
+
         if (resourceMedia != null)
             corssspondences.setAttachment(resourceMedia);
         return new ResponseEntity<>(result, HttpStatus.OK);
