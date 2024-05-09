@@ -46,15 +46,16 @@ public class ChatController  extends BaseController {
     @MessageMapping("/chat")
     public void processMessage(@Payload ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) throws InterruptedException {
        Thread.sleep(1000);
-        users sender = this.userService.findById(request.getSenderId());
-        users reciver = this.userService.findById(request.getRecipientId());
+
         Optional<String> chatId = chatRoomService.getChatId(request.getSenderId(), request.getRecipientId(), true);
 
        if(chatId.isPresent()){
            ChatMessage chatMessage = new ChatMessage();
+           users sender = this.userService.findById(request.getSenderId());
+           users reciver = this.userService.findById(request.getRecipientId());
            chatMessage.setChatId(chatId.get());
-           Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("sender", chatMessage.getSenderId());
-           Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("recipient", chatMessage.getRecipientId());
+           Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("sender", request.getSenderId());
+           Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("recipient", request.getRecipientId());
            chatMessage.setRecipient(reciver);
            chatMessage.setStatus(MessageStatus.SENDING);
            chatMessage.setTimestamp(new Date());
