@@ -59,7 +59,7 @@ public class EventController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping(value = {"/all_events_by_title_paginated"})
+    @GetMapping(value = {"/all_events_by_title_and_status_paginated"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all events for admin by title paginated ", notes = "Endpoint to get events by name and character paginated ")
     @ApiResponses(value = {
@@ -67,15 +67,11 @@ public class EventController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_events_by_title_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String  title) throws IOException {
+    public ResponseEntity<DynamicResponse> all_events_by_title_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String  title, @RequestParam(required = false) EventStatus  status) throws IOException {
 
-        if(title ==null || title.equals(""))
-            return new ResponseEntity<>(this.service.FindAllPg(page, size), HttpStatus.OK);
-         return new ResponseEntity<>(this.service.FindAllByTitlePg(page, size , title), HttpStatus.OK);
+         return new ResponseEntity<>(this.service.findAllByTtileOrStatusPaginated(page, size , title, status), HttpStatus.OK);
 
     }
-
-
 
     @PostMapping(value = {"/add_event"})
     @PreAuthorize("hasRole('ADMIN')")

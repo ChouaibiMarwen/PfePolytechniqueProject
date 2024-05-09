@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Services.Project;
 
+import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
 import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Repository.Project.EventRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -76,9 +77,51 @@ public class EventService {
     }
 
 
-  /*  public DynamicResponse findAllByTtileOrStatusPaginated(int page, int size , String tit, Events status){
+    public DynamicResponse FindAllByStatusPg(int page, int size , EventStatus status) {
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Event> pckge = this.repository.findAllByStatusAndArchiveIsFalse(pg,status);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
-    }*/
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
+
+    public DynamicResponse FindAllByTitleAndStatusPg(int page, int size ,String title ,EventStatus status) {
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Event> pckge = this.repository.findAllByTitleContainingIgnoreCaseAndStatusAndArchiveIsFalse(pg, title ,status);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
+    public DynamicResponse findAllByTtileOrStatusPaginated(int page, int size , String tit, EventStatus status){
+
+        try {
+            if(tit == null && status == null)
+                return  FindAllPg(page, size);
+            if(tit != null && status == null)
+                return FindAllByTitlePg(page, size, tit);
+            if(tit == null && status != null )
+                return  FindAllByStatusPg(page, size, status);
+            if(tit != null && status != null)
+                return FindAllByTitleAndStatusPg(page, size,tit,status);
+
+            return null;
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
 
 
     public List<Event> findAll() {
