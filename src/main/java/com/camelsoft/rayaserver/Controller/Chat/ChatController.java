@@ -1,11 +1,14 @@
 package com.camelsoft.rayaserver.Controller.Chat;
 
 
+import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Models.Chat.ChatMessage;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Response.Notification.AdminNotificationResponse;
 import com.camelsoft.rayaserver.Services.Chat.ChatMessageService;
 import com.camelsoft.rayaserver.Services.Chat.ChatRoomService;
 import com.camelsoft.rayaserver.Services.Notification.AdminNotificationServices;
+import com.camelsoft.rayaserver.Services.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -28,17 +32,30 @@ public class ChatController {
     @Autowired private SimpMessagingTemplate messagingTemplate;
     @Autowired private ChatMessageService chatMessageService;
     @Autowired private ChatRoomService chatRoomService;
-
+    @Autowired
+    private UserService userService;
     @Autowired private AdminNotificationServices adminNotificationServices;
 
     @MessageMapping("/chat")
     public void processMessage(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) throws InterruptedException {
        Thread.sleep(1000);
+        users sender = this.userService.findById(chatMessage.getSenderId());
+        users reciver = this.userService.findById(chatMessage.getRecipientId());
         Optional<String> chatId = chatRoomService.getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true);
+
        if(chatId.isPresent()){
            chatMessage.setChatId(chatId.get());
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("sender", chatMessage.getSenderId());
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("recipient", chatMessage.getRecipientId());
+           chatMessage.setRecipient(reciver);
+           chatMessage.setStatus(MessageStatus.SENDING);
+           chatMessage.setTimestamp(new Date());
+           chatMessage.setSender(sender);
+           chatMessage.setRecipientName(reciver.getName());
+           chatMessage.setSenderName(sender.getName());
+           chatMessage.setChatId(chatId.get());
+           chatMessage.setContent(chatMessage.getContent());
+           chatMessage.setAttachments(chatMessage.getAttachments());
            ChatMessage saved = chatMessageService.save(chatMessage);
            messagingTemplate.convertAndSendToUser(saved.getRecipientId().toString(),"/queue/chat",saved );
        }

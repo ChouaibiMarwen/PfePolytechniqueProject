@@ -4,6 +4,7 @@ package com.camelsoft.rayaserver.Models.Chat;
 
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.User.users;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,11 @@ public class ChatMessage implements Serializable {
     private Long senderId;
     @Column(name = "recipientId")
     private Long recipientId;
+
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private users sender;
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private users recipient;
     @Column(name = "senderName")
     private String senderName;
     @Column(name = "recipientName")
