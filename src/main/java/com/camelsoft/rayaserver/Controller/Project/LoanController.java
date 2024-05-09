@@ -1,7 +1,9 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -209,6 +211,51 @@ public class LoanController extends BaseController {
             return new ResponseEntity<>(result, HttpStatus.OK);
 
         }
+
+    }
+
+
+
+    @PatchMapping(value = {"/approve_loan/{loan_id}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @ApiOperation(value = "approve loan for admin ", notes = "Endpoint approve loan for admin ")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
+            @ApiResponse(code = 404, message = "Not found, check invoice id")
+    })
+    public ResponseEntity<Loan> approve_loan(@PathVariable Long loan_id) throws IOException {
+        if (this.Services.FindById(loan_id)== null) {
+            return new ResponseEntity(loan_id + " is not found in the system!", HttpStatus.NOT_FOUND);
+        }
+        Loan loan = this.Services.FindById(loan_id);
+        loan.setStatus(LoanStatus.APPROVED);
+        Loan result = this.Services.Update(loan);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+
+    }
+
+
+    @PatchMapping(value = {"/reject_loan/{loan_id}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @ApiOperation(value = "reject loan for admin ", notes = "Endpoint reject loan for admin ")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
+            @ApiResponse(code = 404, message = "Not found, check invoice id")
+    })
+    public ResponseEntity<Loan> reject_loan(@PathVariable Long loan_id) throws IOException {
+        if (this.Services.FindById(loan_id)== null) {
+            return new ResponseEntity(loan_id + " is not found in the system!", HttpStatus.NOT_FOUND);
+        }
+        Loan loan = this.Services.FindById(loan_id);
+        loan.setStatus(LoanStatus.REJECTED);
+        Loan result = this.Services.Update(loan);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
 
     }
 
