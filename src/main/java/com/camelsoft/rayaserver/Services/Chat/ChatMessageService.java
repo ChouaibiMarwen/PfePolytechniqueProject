@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -33,13 +34,19 @@ public class ChatMessageService {
     private NotificationServices _notificationservices;
     @Autowired
     private UserService userService;
+    @Autowired
+    private EntityManager entityManager; // Inject EntityManager
     public ChatMessage save(ChatMessage chatMessage) throws InterruptedException {
         chatMessage.setStatus(MessageStatus.RECEIVED);
-        ChatMessage result = repository.save(chatMessage);
+        // Reattach detached entity to the persistence context
+        ChatMessage managedChatMessage = entityManager.merge(chatMessage);
+        // Persist the managed entity
+        entityManager.persist(managedChatMessage);
+
         Notification notificationuser = new Notification(
                 this.userService.findById(chatMessage.getSenderId()),
                 this.userService.findById(chatMessage.getRecipientId())  ,
-                result,
+                managedChatMessage,
                 Action.MESSAGE
 
         );
