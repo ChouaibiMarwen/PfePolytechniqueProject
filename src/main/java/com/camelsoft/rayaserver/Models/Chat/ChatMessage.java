@@ -3,13 +3,16 @@ package com.camelsoft.rayaserver.Models.Chat;
 
 
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
+import com.camelsoft.rayaserver.Models.File.File_model;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "ChatMessage")
@@ -35,6 +38,8 @@ public class ChatMessage implements Serializable {
     private Date timestamp;
     @Column(name = "status")
     private MessageStatus status = MessageStatus.SENDING;
+    @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true)
+    private List<File_model> attachments=new ArrayList<>();
 
     public ChatMessage() {
         this.timestamp = new Date();
