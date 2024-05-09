@@ -3,12 +3,15 @@ package com.camelsoft.rayaserver.Controller.Chat;
 
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Models.Chat.ChatMessage;
+import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Response.Notification.AdminNotificationResponse;
 import com.camelsoft.rayaserver.Services.Chat.ChatMessageService;
 import com.camelsoft.rayaserver.Services.Chat.ChatRoomService;
+import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Notification.AdminNotificationServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +22,15 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
 
 @Controller
 @CrossOrigin
 @RequestMapping(value = "/api/v1/chat")
-public class ChatController {
+public class ChatController  extends BaseController {
 
     @Autowired private SimpMessagingTemplate messagingTemplate;
     @Autowired private ChatMessageService chatMessageService;
@@ -35,6 +38,9 @@ public class ChatController {
     @Autowired
     private UserService userService;
     @Autowired private AdminNotificationServices adminNotificationServices;
+
+    @Autowired
+    private FilesStorageServiceImpl filesStorageService;
 
     @MessageMapping("/chat")
     public void processMessage(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) throws InterruptedException {
@@ -109,6 +115,23 @@ public class ChatController {
     public ResponseEntity<?> findMessage ( @PathVariable Long id) {
         return ResponseEntity
                 .ok(chatMessageService.findById(id));
+    }
+
+
+    @PostMapping("/add_files")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER')")
+    public ResponseEntity<List<File_model>> add_files(@RequestParam(value = "files") List<MultipartFile> files) throws IOException {
+        users user = this.userService.findByUserName(getCurrentUser().getUsername());
+        List<File_model> filesw = new ArrayList<>();
+        for (MultipartFile file:files) {
+            String extention = file.getContentType().substring(file.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+            File_model resource_media = filesStorageService.save_file(file,  "messages");
+            user.getDocuments().add(resource_media);
+            filesw.add(resource_media);
+            userService.UpdateUser(user);
+
+        }
+        return ResponseEntity.ok(filesw);
     }
 
 
