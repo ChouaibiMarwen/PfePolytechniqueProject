@@ -174,6 +174,9 @@ public class UsersController extends BaseController {
 
 
 
+
+
+
     @PutMapping("/logout")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER') ")
     public ResponseEntity<ApiResponse> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
