@@ -1,6 +1,9 @@
 package com.camelsoft.rayaserver.Controller.Project.Notification;
 
 
+import com.camelsoft.rayaserver.Enum.Tools.Action;
+import com.camelsoft.rayaserver.Models.Notification.Notification;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.Tools.Notificationrequest;
 import com.camelsoft.rayaserver.Services.Notification.FCMService;
 import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
@@ -42,23 +45,22 @@ public class PushNotificationController extends BaseController {
         }
     }
 
-  /*  @PostMapping("/send-notification-test")
+    @PostMapping("/send-notification-test")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER')")
     public ResponseEntity sendnotificationtest(@RequestBody Notificationrequest request) throws FirebaseMessagingException {
-
-
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
+        Action action=Action.IDLE;
+        Notification notificationuser = new Notification(user, user, null, action );
 
-        Notification notificationuser = new Notification(user, user, "Action.IDLE","");
         try {
             List<users> usersList = new ArrayList<>();
             usersList.add(user);
-            this._notificationservices.sendnotification(notificationuser,usersList);
+            this._notificationservices.sendnotification(notificationuser, notificationuser);
         } catch (FirebaseMessagingException | InterruptedException ex ) {
             return new ResponseEntity("Error sending notification", HttpStatus.EXPECTATION_FAILED);
 
         }
         return new ResponseEntity("Notification Sent", HttpStatus.OK);
 
-    }*/
+    }
 }
