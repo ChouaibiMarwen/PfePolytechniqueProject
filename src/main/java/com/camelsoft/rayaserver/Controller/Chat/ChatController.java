@@ -47,9 +47,18 @@ public class ChatController  extends BaseController {
     @MessageMapping("/chat")
     public ChatMessage processMessage(@Payload ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) throws InterruptedException {
        Thread.sleep(1000);
+        ChatMessage chatMessage = new ChatMessage();
+
+        if (request.getSenderId() == null) {
+            chatMessage.setContent("cant send to same user");
+            return chatMessage;
+        }
+        if ( request.getRecipientId()== null) {
+            chatMessage.setContent("cant send to same user");
+            return chatMessage;
+        }
 
         Optional<String> chatId = chatRoomService.getChatId(request.getSenderId(), request.getRecipientId(), true);
-        ChatMessage chatMessage = new ChatMessage();
 
         if (request.getSenderId() == request.getRecipientId()) {
             chatMessage.setContent("cant send to same user");
