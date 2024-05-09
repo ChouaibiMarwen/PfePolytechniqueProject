@@ -3,6 +3,7 @@ package com.camelsoft.rayaserver.Controller.Chat;
 
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Models.Chat.ChatMessage;
+import com.camelsoft.rayaserver.Models.Chat.ChatNotification;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.chat.ChatMessageRequest;
@@ -44,13 +45,19 @@ public class ChatController  extends BaseController {
     private FilesStorageServiceImpl filesStorageService;
 
     @MessageMapping("/chat")
-    public void processMessage(@Payload ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) throws InterruptedException {
+    public ChatMessage processMessage(@Payload ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) throws InterruptedException {
        Thread.sleep(1000);
 
         Optional<String> chatId = chatRoomService.getChatId(request.getSenderId(), request.getRecipientId(), true);
+        ChatMessage chatMessage = new ChatMessage();
+
+        if (request.getSenderId() == request.getRecipientId()) {
+            chatMessage.setContent("cant send to same user");
+            return chatMessage;
+        }
+
 
        if(chatId.isPresent()){
-           ChatMessage chatMessage = new ChatMessage();
            users sender = this.userService.findById(request.getSenderId());
            users reciver = this.userService.findById(request.getRecipientId());
            chatMessage.setChatId(chatId.get());
@@ -66,7 +73,21 @@ public class ChatController  extends BaseController {
            chatMessage.setContent(chatMessage.getContent());
            chatMessage.setAttachments(chatMessage.getAttachments());
            ChatMessage saved = chatMessageService.save(chatMessage);
-           messagingTemplate.convertAndSendToUser(saved.getRecipientId().toString(),"/queue/chat",saved );
+           messagingTemplate.convertAndSendToUser(saved.getRecipient().getId().toString(), "/queue/chat",
+                   new ChatNotification(
+                           saved.getId(),
+                           saved.getSender().getProfileimage() != null ? saved.getSender().getProfileimage().getUrl() : "",
+                           saved.getSender().getName(),
+                           request.getContent(),
+                           saved.getSender().getId(),
+                           saved.getChatId(),
+                           saved.getAttachments(),
+                           new Date())
+           );
+           return chatMessage;
+       }else{
+           chatMessage.setContent("can't create chat room");
+           return chatMessage;
        }
 
 
