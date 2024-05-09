@@ -5,6 +5,7 @@ import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Models.Chat.ChatMessage;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Request.chat.ChatMessageRequest;
 import com.camelsoft.rayaserver.Response.Notification.AdminNotificationResponse;
 import com.camelsoft.rayaserver.Services.Chat.ChatMessageService;
 import com.camelsoft.rayaserver.Services.Chat.ChatRoomService;
@@ -43,13 +44,14 @@ public class ChatController  extends BaseController {
     private FilesStorageServiceImpl filesStorageService;
 
     @MessageMapping("/chat")
-    public void processMessage(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) throws InterruptedException {
+    public void processMessage(@Payload ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) throws InterruptedException {
        Thread.sleep(1000);
-        users sender = this.userService.findById(chatMessage.getSenderId());
-        users reciver = this.userService.findById(chatMessage.getRecipientId());
-        Optional<String> chatId = chatRoomService.getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true);
+        users sender = this.userService.findById(request.getSenderId());
+        users reciver = this.userService.findById(request.getRecipientId());
+        Optional<String> chatId = chatRoomService.getChatId(request.getSenderId(), request.getRecipientId(), true);
 
        if(chatId.isPresent()){
+           ChatMessage chatMessage = new ChatMessage();
            chatMessage.setChatId(chatId.get());
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("sender", chatMessage.getSenderId());
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("recipient", chatMessage.getRecipientId());
