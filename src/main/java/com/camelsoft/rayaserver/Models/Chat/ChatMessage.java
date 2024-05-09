@@ -29,10 +29,10 @@ public class ChatMessage implements Serializable {
     private Long senderId;
     @Column(name = "recipientId")
     private Long recipientId;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH},targetEntity = users.class, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.DETACH,targetEntity = users.class, fetch = FetchType.EAGER)
     @JoinColumn( name = "user_id_sender")
     private users sender;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH},targetEntity = users.class, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.DETACH,targetEntity = users.class, fetch = FetchType.EAGER)
     @JoinColumn( name = "user_id_recipient")
     private users recipient;
     @Column(name = "senderName")
