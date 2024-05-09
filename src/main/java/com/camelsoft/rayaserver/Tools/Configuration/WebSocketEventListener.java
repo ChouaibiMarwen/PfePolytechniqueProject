@@ -56,7 +56,7 @@ public class WebSocketEventListener {
             ChatMessage saved = chatMessageService.save(chatMessage);
 
             logger.info("User Disconnected : " + userssender);
-            Optional<String> chatId = chatRoomService.getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true);
+            Optional<String> chatId = chatRoomService.getChatId(saved.getSender(), saved.getRecipient(), saved.getContent(),true);
             chatMessage.setChatId(chatId.get());
 
             messagingTemplate.convertAndSendToUser(chatMessage.getRecipientId().toString(),"/queue/chat",

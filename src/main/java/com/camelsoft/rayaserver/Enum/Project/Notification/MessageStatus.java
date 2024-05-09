@@ -6,5 +6,6 @@ public enum MessageStatus {
     READ,
     WAITING,
     SENDING,
+    REPORTED,
     OUT
 }

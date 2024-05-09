@@ -57,8 +57,17 @@ public class ChatController  extends BaseController {
             chatMessage.setContent("cant send to same user");
             return chatMessage;
         }
-
-        Optional<String> chatId = chatRoomService.getChatId(request.getSenderId(), request.getRecipientId(), true);
+        users sender = this.userService.findById(request.getSenderId());
+        users reciver = this.userService.findById(request.getRecipientId());
+        if(sender==null){
+            chatMessage.setContent("cant send to null user sender");
+            return chatMessage;
+        }
+        if(reciver==null){
+            chatMessage.setContent("cant send to null user receiver");
+            return chatMessage;
+        }
+        Optional<String> chatId = chatRoomService.getChatId(sender, reciver, request.getContent(),true);
 
         if (request.getSenderId() == request.getRecipientId()) {
             chatMessage.setContent("cant send to same user");
@@ -69,16 +78,7 @@ public class ChatController  extends BaseController {
        if(chatId.isPresent()){
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("sender", request.getSenderId());
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("recipient", request.getRecipientId());
-           users sender = this.userService.findById(request.getSenderId());
-           users reciver = this.userService.findById(request.getRecipientId());
-           if(sender==null){
-                   chatMessage.setContent("cant send to null user sender");
-                   return chatMessage;
-               }
-         if(reciver==null){
-                   chatMessage.setContent("cant send to null user receiver");
-                   return chatMessage;
-               }
+
            chatMessage.setChatId(chatId.get());
            chatMessage.setRecipientName(reciver.getName());
            chatMessage.setSenderName(sender.getName());
@@ -122,12 +122,11 @@ public class ChatController  extends BaseController {
     }
 
     @GetMapping("/messages/{senderId}/{recipientId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('DRIVER')")
-    public ResponseEntity<?> findChatMessages ( @PathVariable Long senderId,
-                                                @PathVariable Long recipientId) {
-        return ResponseEntity
-                .ok(chatMessageService.findChatMessages(senderId, recipientId));
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER')")
+    public ResponseEntity<?> findChatMessages(@PathVariable Long senderId, @PathVariable Long recipientId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) {
+        return ResponseEntity.ok(chatMessageService.findChatMessages(page, size, senderId, recipientId,false));
     }
+
     @PatchMapping("/seenallmessage/{senderId}/{recipientId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('DRIVER')")
     public ResponseEntity seenallmessage ( @PathVariable Long senderId,
