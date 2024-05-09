@@ -39,5 +39,6 @@ public class ChatNotification implements Serializable {
     @Column(name = "timestmp")
     private Date timestmp;
 
-
+    public ChatNotification() {
+    }
 }
