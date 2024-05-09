@@ -61,7 +61,7 @@ public class users implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
     @JoinColumn(name = "profileimage")
     private File_model profileimage;
     @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
@@ -75,7 +75,7 @@ public class users implements Serializable {
     @OneToMany(mappedBy = "createdby", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Invoice> invoicescreated = new HashSet<>();
-    @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = { CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.LAZY)
     private Set<Address> addresses = new HashSet<>();
     @OneToMany(mappedBy = "relatedto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -94,10 +94,10 @@ public class users implements Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<BankInformation> bankinformations = new HashSet<>();
 
-    @OneToOne( cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_address_id")
     private BillingAddress billingAddress;
-    @ManyToMany( cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_privileges",
             joinColumns =
             @JoinColumn(name = "usar_id", referencedColumnName = "user_id"),
@@ -109,7 +109,7 @@ public class users implements Serializable {
     private Supplier supplier;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<PurshaseOrder> purchaseOrders = new HashSet<>();
 
     @Column(name = "active")
