@@ -24,7 +24,7 @@ public class ChatRoomService {
                         return  Optional.empty();
                     }
                     var chatId =
-                            String.format("%s_%s", sender.getName(), recipient.getId());
+                            String.format("%s_%s", sender.getId(), recipient.getId());
 
                     ChatRoom senderRecipient = ChatRoom
                             .builder()
