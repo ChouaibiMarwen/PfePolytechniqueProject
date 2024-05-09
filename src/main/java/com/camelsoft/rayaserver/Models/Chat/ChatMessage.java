@@ -44,7 +44,7 @@ public class ChatMessage implements Serializable {
     private Date timestamp;
     @Column(name = "status")
     private MessageStatus status = MessageStatus.SENDING;
-    @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     private List<File_model> attachments=new ArrayList<>();
 
     public ChatMessage() {

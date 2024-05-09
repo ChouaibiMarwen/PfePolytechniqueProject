@@ -41,11 +41,11 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) throws InterruptedException, FirebaseMessagingException {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String sender = (String) headerAccessor.getSessionAttributes().get("sender");
-        String recipient = (String) headerAccessor.getSessionAttributes().get("recipient");
+        Long sender = (Long) headerAccessor.getSessionAttributes().get("sender");
+        Long recipient = (Long) headerAccessor.getSessionAttributes().get("recipient");
         if(sender != null) {
-            users userssender = userService.findByUserName(sender);
-            users usersrecipient = userService.findByUserName(recipient);
+            users userssender = userService.findById(sender);
+            users usersrecipient = userService.findById(recipient);
 
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setContent("User Disconnected : " + userssender);
