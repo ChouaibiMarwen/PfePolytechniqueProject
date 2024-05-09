@@ -15,22 +15,22 @@ public class ChatRoomService {
 
     @Autowired private ChatRoomRepository chatRoomRepository;
 
-    public Optional<String> getChatId(users senderId, users recipientId, String lastMessage, boolean createIfNotExist) {
+    public Optional<String> getChatId(users sender, users recipient, String lastMessage, boolean createIfNotExist) {
 
         return chatRoomRepository
-                .findBySenderAndRecipient(senderId,recipientId)
+                .findBySenderAndRecipient(sender,recipient)
                 .map(ChatRoom::getChatId).or(() -> {
                     if(!createIfNotExist) {
                         return  Optional.empty();
                     }
                     var chatId =
-                            String.format("%s_%s", senderId, recipientId);
+                            String.format("%s_%s", sender.getName(), recipient.getId());
 
                     ChatRoom senderRecipient = ChatRoom
                             .builder()
                             .chatId(chatId)
-                            .sender(senderId)
-                            .recipient(recipientId)
+                            .sender(sender)
+                            .recipient(recipient)
                             .lastmessage(lastMessage)
                             .timestmp(new Date())
                             .build();
@@ -38,8 +38,8 @@ public class ChatRoomService {
                     ChatRoom recipientSender = ChatRoom
                             .builder()
                             .chatId(chatId)
-                            .sender(recipientId)
-                            .recipient(senderId)
+                            .sender(recipient)
+                            .recipient(sender)
                             .lastmessage(lastMessage)
                             .timestmp(new Date())
                             .build();
