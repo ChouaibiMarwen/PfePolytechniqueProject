@@ -61,9 +61,15 @@ public class WebSocketEventListener {
 
             messagingTemplate.convertAndSendToUser(chatMessage.getRecipientId().toString(),"/queue/chat",
                     new ChatNotification(
-                    saved.getId(),
-                    saved.getSenderId(),
-                    saved.getSenderName()));
+                            saved.getId(),
+                            saved.getSender().getProfileimage() != null ? saved.getSender().getProfileimage().getUrl() : "",
+                            saved.getSender().getName(),
+                            "connection closed",
+                            saved.getSender().getId(),
+                            saved.getChatId(),
+                            saved.getAttachments(),
+                            new Date())
+            );
         }
     }
 
