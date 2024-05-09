@@ -167,9 +167,8 @@ public class ChatController  extends BaseController {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
         List<File_model> filesw = new ArrayList<>();
         for (MultipartFile file:files) {
-
             File_model resource_media = filesStorageService.save_file_local(file,  "messages");
-            user.getDocuments().add(resource_media);
+            user.getAttachmentchat().add(resource_media);
             filesw.add(resource_media);
             this.userService.UpdateUser(user);
 

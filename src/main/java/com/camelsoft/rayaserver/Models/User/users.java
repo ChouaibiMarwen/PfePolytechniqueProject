@@ -72,6 +72,10 @@ public class users implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "users_table_id")
     private Set<File_model> documents = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "users_table_attachmentchat")
+    private Set<File_model> attachmentchat = new HashSet<>();
     @OneToMany(mappedBy = "createdby", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Invoice> invoicescreated = new HashSet<>();
@@ -364,5 +368,13 @@ public class users implements Serializable {
 
     public void setTimestmp(Date timestmp) {
         this.timestmp = timestmp;
+    }
+
+    public Set<File_model> getAttachmentchat() {
+        return attachmentchat;
+    }
+
+    public void setAttachmentchat(Set<File_model> attachmentchat) {
+        this.attachmentchat = attachmentchat;
     }
 }
