@@ -43,7 +43,7 @@ public class Event implements Serializable {
             joinColumns =
             @JoinColumn(name = "event_id", referencedColumnName = "id"),
             inverseJoinColumns =
-            @JoinColumn(name = "role_event_id", referencedColumnName = "role_id"))
+            @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
     private Set<Role> assignedto = new HashSet<>();
 
 
