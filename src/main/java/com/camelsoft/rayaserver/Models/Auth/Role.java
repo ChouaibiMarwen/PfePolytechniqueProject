@@ -26,9 +26,6 @@ public class Role implements Serializable {
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private Set<users> user = new HashSet<>();
 
-    @ManyToMany(mappedBy = "assignedto")
-    @JsonIgnore
-    private Set<Event> events =  new HashSet<>();
     public Role() {
     }
 

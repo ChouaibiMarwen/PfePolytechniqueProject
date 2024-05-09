@@ -104,17 +104,13 @@ public class EventController {
             }
         }
 
-        Set<Role> roles = new HashSet<>();
-        for(RoleEnum enums : request.getAssignedto() ){
-            Role userRole = this.roleService.findbyRole(enums);
-            roles.add(userRole);
-        }
+
         Event  event  = new Event(
                 request.getTitle(),
                 request.getDescription(),
                 request.getEventDate(),
                 resourceMedia,
-                roles
+                request.getAssignedto()
         );
         Event result = this.service.Save(event);
         return new ResponseEntity<>(result, HttpStatus.OK);
