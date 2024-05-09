@@ -5,17 +5,24 @@ import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Enum.Tools.Action;
 import com.camelsoft.rayaserver.Models.Chat.ChatMessage;
 import com.camelsoft.rayaserver.Models.Notification.Notification;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Chat.ChatMessageRepository;
+import com.camelsoft.rayaserver.Response.Chat.ChatMessageResponse;
 import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import com.camelsoft.rayaserver.Tools.Exception.ResourceNotFoundException;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class ChatMessageService {
@@ -49,29 +56,50 @@ public class ChatMessageService {
         return  repository.countBySenderIdAndRecipientIdAndStatus( senderId, recipientId, MessageStatus.RECEIVED);
     }
 
-    public List<ChatMessage> findChatMessages(Long senderId, Long recipientId) {
-        var chatId = chatRoomService.getChatId(senderId, recipientId, false);
+    public ChatMessageResponse findChatMessages(int page, int size, Long senderId, Long recipientId, Boolean createifnotexist) {
+        try {
 
-        var messages =
-                chatId.map(cId -> repository.findByChatIdOrderByTimestampAsc(cId)).orElse(new ArrayList<>());
+            users sender = this.userService.findById(senderId);
+            users reciver = this.userService.findById(recipientId);
+            var chatId = chatRoomService.getChatId(sender, reciver,null, createifnotexist);
+            String roomid = "";
+            if (chatId.isPresent())
+                roomid = chatId.get();
+            else
+                throw new NotFoundException(String.format("not chat found !!"));
+            List<ChatMessage> chat_content = new ArrayList<ChatMessage>();
+            Pageable paging = PageRequest.of(page, size);
+            Page<ChatMessage> pageTuts = this.repository.findByChatIdAndStatusNotOrderByTimestampDesc(paging, roomid,MessageStatus.REPORTED);
+            chat_content = pageTuts.getContent();
+            ChatMessageResponse chatresponse = new ChatMessageResponse(
+                    chat_content,
+                    pageTuts.getNumber(),
+                    pageTuts.getTotalElements(),
+                    pageTuts.getTotalPages()
+            );
+            if (pageTuts.getTotalElements() > 0) {
+                updateStatuses(senderId, recipientId, MessageStatus.DELIVERED);
+            }
 
-        if(messages.size() > 0) {
-            updateStatuses(senderId, recipientId, MessageStatus.DELIVERED);
+            return chatresponse;
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(String.format("chat id not found"));
         }
 
-        return messages;
     }
     public void seenAllMessage(Long senderId, Long recipientId) {
-        var chatId = chatRoomService.getChatId(senderId, recipientId, false);
+        users sender = this.userService.findById(senderId);
+        users reciver = this.userService.findById(recipientId);
+        var chatId = chatRoomService.getChatId(sender, reciver,null, false);
 
         var messages =
-                chatId.map(cId -> repository.findByChatIdOrderByTimestampAsc(cId)).orElse(new ArrayList<>());
+                chatId.map(cId -> repository.findByChatIdAndStatusNot(cId,MessageStatus.REPORTED)).orElse(new ArrayList<>());
 
-        if(messages.size() > 0) {
+        if (messages.size() > 0) {
             updateStatuses(senderId, recipientId, MessageStatus.DELIVERED);
         }
 
-     }
+    }
 
     public ChatMessage findById(Long id) {
         return repository
