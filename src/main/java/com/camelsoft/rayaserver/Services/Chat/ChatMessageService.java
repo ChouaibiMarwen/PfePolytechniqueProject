@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -33,6 +34,7 @@ public class ChatMessageService {
     private NotificationServices _notificationservices;
     @Autowired
     private UserService userService;
+    @Transactional
     public ChatMessage save(ChatMessage chatMessage) throws InterruptedException {
         chatMessage.setStatus(MessageStatus.RECEIVED);
         ChatMessage result = repository.save(chatMessage);
