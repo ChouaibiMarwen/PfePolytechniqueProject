@@ -78,7 +78,7 @@ public class EventController {
             if (!image_accepte_type.contains(extension)) {
                 return ResponseEntity.badRequest().body(null);
             }
-            resourceMedia = filesStorageService.save_file(attachment, "events");
+            resourceMedia = filesStorageService.save_file_local(attachment, "events");
             if (resourceMedia == null) {
                 return ResponseEntity.badRequest().body(null);
             }

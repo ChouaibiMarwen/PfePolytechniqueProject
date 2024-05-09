@@ -124,8 +124,8 @@ public class ChatController  extends BaseController {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
         List<File_model> filesw = new ArrayList<>();
         for (MultipartFile file:files) {
-            String extention = file.getContentType().substring(file.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
-            File_model resource_media = filesStorageService.save_file(file,  "messages");
+
+            File_model resource_media = filesStorageService.save_file_local(file,  "messages");
             user.getDocuments().add(resource_media);
             filesw.add(resource_media);
             userService.UpdateUser(user);

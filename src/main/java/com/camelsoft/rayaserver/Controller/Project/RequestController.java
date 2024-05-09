@@ -85,7 +85,7 @@ public class RequestController extends BaseController {
             if (!image_accepte_type.contains(extension)) {
                 return ResponseEntity.badRequest().body(null);
             }
-            resourceMedia = filesStorageService.save_file(request.getCorrespondant().getAttachment(), "requests");
+            resourceMedia = filesStorageService.save_file_local(request.getCorrespondant().getAttachment(), "requests");
         }
         RequestCorrespondence corssspondences = new RequestCorrespondence();
         corssspondences.setRequest(result);

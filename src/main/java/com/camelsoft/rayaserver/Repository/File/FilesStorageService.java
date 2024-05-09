@@ -9,10 +9,15 @@ import java.util.Set;
 
 public interface FilesStorageService {
     public File_model save_file(MultipartFile file, String directory) throws IOException;
-    public File_model save_file(MultipartFile file, String directory,File_model media) throws IOException;
     public File_model save_fileBMP(MultipartFile file, String directory, String filename, String extention);
     public Set<File_model> save_all(Set<MultipartFile> file, String directory);
     public void delete_file_by_paths(Long imageid);
     public void delete_file_by_path_from_cdn(String filename,Long imageid);
     public void delete_all_file_by_path(Set<File_model> images);
+
+
+    public File_model save_file_local(MultipartFile file, String directory);
+    public Set<File_model> save_all_local(List<MultipartFile> file, String directory);
+    public void delete_file_by_path_local(String filename,Long imageid);
+    public void delete_all_file_by_path_local(Set<File_model> images);
 }
