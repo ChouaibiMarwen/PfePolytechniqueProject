@@ -15,36 +15,36 @@ public class ChatRoomService {
 
     @Autowired private ChatRoomRepository chatRoomRepository;
 
-    public Optional<String> getChatId(users senderId, users recipientId, String lastMessage, boolean createIfNotExist) {
+    public Optional<String> getChatId(users sender, users recipient, String lastMessage, boolean createIfNotExist) {
 
-         return chatRoomRepository
-                .findBySenderAndRecipient(senderId, recipientId)
+        return chatRoomRepository
+                .findBySenderAndRecipient(sender,recipient)
                 .map(ChatRoom::getChatId).or(() -> {
                     if(!createIfNotExist) {
                         return  Optional.empty();
                     }
-                     var chatId =
-                            String.format("%s_%s", senderId, recipientId);
+                    var chatId =
+                            String.format("%s_%s", sender.getName(), recipient.getId());
 
-                     ChatRoom senderRecipient = ChatRoom
-                             .builder()
-                             .chatId(chatId)
-                             .sender(senderId)
-                             .recipient(recipientId)
-                             .lastmessage(lastMessage)
-                             .timestmp(new Date())
-                             .build();
+                    ChatRoom senderRecipient = ChatRoom
+                            .builder()
+                            .chatId(chatId)
+                            .sender(sender)
+                            .recipient(recipient)
+                            .lastmessage(lastMessage)
+                            .timestmp(new Date())
+                            .build();
 
-                     ChatRoom recipientSender = ChatRoom
-                             .builder()
-                             .chatId(chatId)
-                             .sender(recipientId)
-                             .recipient(senderId)
-                             .lastmessage(lastMessage)
-                             .timestmp(new Date())
-                             .build();
-                     chatRoomRepository.save(senderRecipient);
-                     chatRoomRepository.save(recipientSender);
+                    ChatRoom recipientSender = ChatRoom
+                            .builder()
+                            .chatId(chatId)
+                            .sender(recipient)
+                            .recipient(sender)
+                            .lastmessage(lastMessage)
+                            .timestmp(new Date())
+                            .build();
+                    chatRoomRepository.save(senderRecipient);
+                    chatRoomRepository.save(recipientSender);
 
                     return Optional.of(chatId);
                 });
