@@ -33,7 +33,7 @@ public class ChatMessageRequest implements Serializable {
 
     @Column(name = "content")
     private String content;
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany
     private List<File_model> attachments=new ArrayList<>();
 
 }

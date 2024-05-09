@@ -60,6 +60,14 @@ public class ChatController  extends BaseController {
        if(chatId.isPresent()){
            users sender = this.userService.findById(request.getSenderId());
            users reciver = this.userService.findById(request.getRecipientId());
+           if(sender==null){
+                   chatMessage.setContent("cant send to null user sender");
+                   return chatMessage;
+               }
+         if(reciver==null){
+                   chatMessage.setContent("cant send to null user receiver");
+                   return chatMessage;
+               }
            chatMessage.setChatId(chatId.get());
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("sender", request.getSenderId());
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("recipient", request.getRecipientId());
