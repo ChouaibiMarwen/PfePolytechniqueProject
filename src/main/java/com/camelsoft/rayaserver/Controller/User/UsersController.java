@@ -128,8 +128,6 @@ public class UsersController extends BaseController {
         if (request.getMaritalstatus() != null) personalInformation.setMaritalstatus(MaritalStatus.valueOf(request.getMaritalstatus()));
         PersonalInformation result = this.personalInformationService.update(personalInformation);
 
-
-
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

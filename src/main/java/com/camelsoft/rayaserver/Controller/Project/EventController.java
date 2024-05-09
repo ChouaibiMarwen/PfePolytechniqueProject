@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
@@ -11,6 +12,7 @@ import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.EventRequest;
 import com.camelsoft.rayaserver.Request.project.LoanRequest;
 import com.camelsoft.rayaserver.Request.project.RequestOfEvents;
+import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.EventService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
@@ -53,6 +55,24 @@ public class EventController {
     public ResponseEntity<List<Event>> all_events_by_title(@ModelAttribute String title) throws IOException {
         List<Event> result = this.service.findAllByName(title);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping(value = {"/all_events_by_title_paginated"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all events for admin by title paginated ", notes = "Endpoint to get events by name and character paginated ")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> all_events_by_title_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String  title) throws IOException {
+        List<Event> result = this.service.findAllByName(title);
+        if(title ==null || title.equals(""))
+            return new ResponseEntity<>(this.service.FindAllPg(page, size), HttpStatus.OK);
+         return new ResponseEntity<>(this.service.FindAllByTitlePg(page, size , title), HttpStatus.OK);
+
+       // return new ResponseEntity<>(result, HttpStatus.OK);
+        /*return new ResponseEntity<>(result, HttpStatus.OK);*/
     }
 
 

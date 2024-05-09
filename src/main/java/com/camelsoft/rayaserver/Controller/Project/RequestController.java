@@ -19,6 +19,7 @@ import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.EventService;
 import com.camelsoft.rayaserver.Services.Project.InvoiceService;
+import com.camelsoft.rayaserver.Services.Project.RequestCorrespondenceService;
 import com.camelsoft.rayaserver.Services.Project.RequestService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -51,6 +52,8 @@ public class RequestController  extends BaseController {
     @Autowired
     private InvoiceService invoiceService;
     @Autowired
+    private RequestCorrespondenceService reqcorresservice;
+    @Autowired
     private FilesStorageServiceImpl filesStorageService;
 
     @Autowired
@@ -82,13 +85,6 @@ public class RequestController  extends BaseController {
         );
         Request result = this.service.Save(requestdata);
         File_model resourceMedia = null;
-        /*if (attachment != null && !attachment.isEmpty()) {
-            String extension = request.getCorrespondant().getAttachment().getContentType().substring(request.getCorrespondant().getAttachment().getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
-            if (!image_accepte_type.contains(extension)) {
-                return ResponseEntity.badRequest().body(null);
-            }
-            resourceMedia = filesStorageService.save_file_local(request.getCorrespondant().getAttachment(), "requests");
-        }*/
         if (attachment != null && !attachment.isEmpty()) {
             String extension = attachment.getContentType().substring(attachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
             if (!image_accepte_type.contains(extension)) {
@@ -103,6 +99,9 @@ public class RequestController  extends BaseController {
         corssspondences.setRequest(result);
         corssspondences.setTitle(request.getTitle());
         corssspondences.setDescription(request.getDescription());
+        corssspondences.setCreator(user);
+        this.reqcorresservice.Save(corssspondences);
+
         if (resourceMedia != null)
             corssspondences.setAttachment(resourceMedia);
         return new ResponseEntity<>(result, HttpStatus.OK);

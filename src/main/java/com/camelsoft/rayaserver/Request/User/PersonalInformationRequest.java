@@ -27,3 +27,6 @@ public class PersonalInformationRequest {
     private String worksector;
     private String maritalstatus;
 }
+
+
+
