@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
+import com.camelsoft.rayaserver.Models.Project.Request;
 import com.camelsoft.rayaserver.Models.Project.RequestCorrespondence;
 import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
@@ -81,13 +82,12 @@ public class users implements Serializable {
     private Set<Invoice> invoicesrecived = new HashSet<>();
 
 
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<RequestCorrespondence> requestcorrespendencessended = new HashSet<>();
-
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "creatorrequest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private Set<RequestCorrespondence> requestcorrespendencesreceived = new HashSet<>();
+    private Set<Request> requests = new HashSet<>();
 
 
 

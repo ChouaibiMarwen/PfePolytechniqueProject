@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Models.Project;
 
 
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,9 +22,15 @@ public class Request implements Serializable {
     @Column(name = "type")
     private String type ;
     @Column(name = "status")
-    private InvoiceStatus status = InvoiceStatus.UNPAID;
+    private RequestState status = RequestState.NONE;
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<RequestCorrespondence> corssspondences = new ArrayList<>();
+    private Set<RequestCorrespondence> corssspondences = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "user_id_creatorrequest", nullable = false)
+    private users creatorrequest;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "request_invoices",
@@ -43,6 +50,11 @@ public class Request implements Serializable {
     }
 
 
-
-
+    public Request(String type, RequestState status, users creatorrequest, Set<Invoice> invoices) {
+        this.type = type;
+        this.status = status;
+        this.creatorrequest = creatorrequest;
+        this.invoices = invoices;
+        this.timestamp = new Date();
+    }
 }

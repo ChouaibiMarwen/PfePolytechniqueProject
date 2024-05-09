@@ -57,7 +57,6 @@ public class EventController {
 
 
 
-
     @PostMapping(value = {"/add_event"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Add a new event request from the admin", notes = "Endpoint to add a new event")

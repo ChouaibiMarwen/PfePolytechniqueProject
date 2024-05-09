@@ -24,13 +24,9 @@ public class RequestCorrespondence implements Serializable {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "user_id_sender", nullable = false)
-    private users sender;
+    @JoinColumn(name = "user_id_creator", nullable = false)
+    private users creator;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "user_id_receiver", nullable = false)
-    private users receiver;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
