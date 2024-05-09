@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Models.Project;
 
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
 
@@ -37,14 +38,9 @@ public class Event implements Serializable {
     @Column(name = "archive")
     private Boolean archive = false;
 
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "event_assignedto",
-            joinColumns =
-            @JoinColumn(name = "event_id", referencedColumnName = "id"),
-            inverseJoinColumns =
-            @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
-    private Set<Role> assignedto = new HashSet<>();
+    @ElementCollection
+    @Column(name = "assignedto")
+    private Set<RoleEnum> assignedto = new HashSet<>();
 
 
     public Event() {
@@ -54,7 +50,7 @@ public class Event implements Serializable {
     public int hashCode() {
         return 33; // Replace with any prime number
     }
-    public Event(String title, String description, Date eventDate, File_model attachment, Set<Role> assignedto) {
+    public Event(String title, String description, Date eventDate, File_model attachment, Set<RoleEnum> assignedto) {
         this.title = title;
         this.description = description;
         this.eventDate = eventDate;
