@@ -56,16 +56,16 @@ public class WebSocketEventListener {
             ChatMessage saved = chatMessageService.save(chatMessage);
 
             logger.info("User Disconnected : " + userssender);
-            Optional<String> chatId = chatRoomService.getChatId(saved.getSender(), saved.getRecipient(), saved.getContent(),true);
+            Optional<String> chatId = chatRoomService.getChatId(saved.getSenderId(), saved.getRecipientId(), saved.getContent(),true);
             chatMessage.setChatId(chatId.get());
 
             messagingTemplate.convertAndSendToUser(chatMessage.getRecipientId().toString(),"/queue/chat",
                     new ChatNotification(
                             saved.getId(),
-                            saved.getSender().getProfileimage() != null ? saved.getSender().getProfileimage().getUrl() : "",
-                            saved.getSender().getName(),
+                            userssender.getProfileimage() != null ? userssender.getProfileimage().getUrl() : "",
+                            userssender.getName(),
                             "connection closed",
-                            saved.getSender().getId(),
+                            userssender.getId(),
                             saved.getChatId(),
                             saved.getAttachments(),
                             new Date())

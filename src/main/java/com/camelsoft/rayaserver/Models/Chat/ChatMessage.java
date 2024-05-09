@@ -1,7 +1,6 @@
 package com.camelsoft.rayaserver.Models.Chat;
 
 
-
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -29,24 +28,22 @@ public class ChatMessage implements Serializable {
     private Long senderId;
     @Column(name = "recipientId")
     private Long recipientId;
-    @ManyToOne(fetch = FetchType.EAGER)
-    private users sender;
-    @ManyToOne(fetch = FetchType.EAGER)
-    private users recipient;
     @Column(name = "senderName")
     private String senderName;
     @Column(name = "recipientName")
     private String recipientName;
+    @Column(name = "senderprofileimage")
+    private String senderprofileimage;
+    @Column(name = "recipientprofileimage")
+    private String recipientprofileimage;
     @Column(name = "content")
     private String content;
     @Column(name = "timestamp")
     private Date timestamp = new Date();
     @Column(name = "status")
     private MessageStatus status = MessageStatus.SENDING;
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<File_model> attachments=new ArrayList<>();
-
-
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<File_model> attachments = new ArrayList<>();
 
 
 }

@@ -67,7 +67,7 @@ public class ChatController  extends BaseController {
             chatMessage.setContent("cant send to null user receiver");
             return chatMessage;
         }
-        Optional<String> chatId = chatRoomService.getChatId(sender, reciver, request.getContent(),true);
+        Optional<String> chatId = chatRoomService.getChatId(sender.getId(), reciver.getId(), request.getContent(),true);
 
         if (request.getSenderId() == request.getRecipientId()) {
             chatMessage.setContent("cant send to same user");
@@ -82,8 +82,10 @@ public class ChatController  extends BaseController {
            chatMessage.setChatId(chatId.get());
            chatMessage.setRecipientName(reciver.getName());
            chatMessage.setSenderName(sender.getName());
-           chatMessage.setRecipient(reciver);
-           chatMessage.setSender(sender);
+           if(reciver.getProfileimage()!=null)
+           chatMessage.setRecipientprofileimage(reciver.getProfileimage().getUrl());
+           if(sender.getProfileimage()!=null)
+           chatMessage.setSenderprofileimage(sender.getProfileimage().getUrl());
            chatMessage.setRecipientId(request.getRecipientId());
            chatMessage.setSenderId(request.getSenderId());
            chatMessage.setStatus(MessageStatus.SENDING);
@@ -91,13 +93,13 @@ public class ChatController  extends BaseController {
            chatMessage.setContent(request.getContent());
            chatMessage.setAttachments(chatMessage.getAttachments());
            ChatMessage saved = chatMessageService.save(chatMessage);
-           messagingTemplate.convertAndSendToUser(saved.getRecipient().getId().toString(), "/queue/chat",
+           messagingTemplate.convertAndSendToUser(reciver.getId().toString(), "/queue/chat",
                    new ChatNotification(
                            saved.getId(),
-                           saved.getSender().getProfileimage() != null ? saved.getSender().getProfileimage().getUrl() : "",
-                           saved.getSender().getName(),
+                           sender.getProfileimage() != null ? sender.getProfileimage().getUrl() : "",
+                           sender.getName(),
                            request.getContent(),
-                           saved.getSender().getId(),
+                           sender.getId(),
                            saved.getChatId(),
                            saved.getAttachments(),
                            new Date())

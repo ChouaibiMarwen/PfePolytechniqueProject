@@ -61,9 +61,8 @@ public class ChatMessageService {
     public ChatMessageResponse findChatMessages(int page, int size, Long senderId, Long recipientId, Boolean createifnotexist) {
         try {
 
-            users sender = this.userService.findById(senderId);
-            users reciver = this.userService.findById(recipientId);
-            var chatId = chatRoomService.getChatId(sender, reciver,null, createifnotexist);
+
+            var chatId = chatRoomService.getChatId(senderId, recipientId,null, createifnotexist);
             String roomid = "";
             if (chatId.isPresent())
                 roomid = chatId.get();
@@ -90,9 +89,7 @@ public class ChatMessageService {
 
     }
     public void seenAllMessage(Long senderId, Long recipientId) {
-        users sender = this.userService.findById(senderId);
-        users reciver = this.userService.findById(recipientId);
-        var chatId = chatRoomService.getChatId(sender, reciver,null, false);
+        var chatId = chatRoomService.getChatId(senderId, recipientId,null, false);
 
         var messages =
                 chatId.map(cId -> repository.findByChatIdAndStatusNot(cId,MessageStatus.REPORTED)).orElse(new ArrayList<>());
