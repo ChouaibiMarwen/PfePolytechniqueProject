@@ -1,6 +1,8 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
+import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
@@ -107,7 +109,8 @@ public class EventController {
                 request.getDescription(),
                 request.getEventDate(),
                 resourceMedia,
-                request.getAssignedto()
+                request.getAssignedto(),
+                EventStatus.PUBLISHED
         );
         Event result = this.service.Save(event);
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -124,6 +127,31 @@ public class EventController {
     public ResponseEntity<Event> geteventById(@PathVariable(required = false) Long id) throws IOException {
         Event result = this.service.FindById(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
+    @PatchMapping(value = {"/inverse_status_event/{event_id}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @ApiOperation(value = "inverse status of event  for admin ", notes = "Endpoint update status event for admin ")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
+            @ApiResponse(code = 404, message = "Not found, check invoice id")
+    })
+    public ResponseEntity<Event> update_status_event(@PathVariable Long event_id) throws IOException {
+        if (this.service.FindById(event_id)== null) {
+            return new ResponseEntity(event_id + " is not found in the system!", HttpStatus.NOT_FOUND);
+        }
+        Event event = this.service.FindById(event_id);
+        if(event.getStatus() == EventStatus.PUBLISHED)
+            event.setStatus(EventStatus.DRAFT);
+        if(event.getStatus() == EventStatus.DRAFT)
+            event.setStatus(EventStatus.PUBLISHED);
+        Event result = this.service.Update(event);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+
     }
 
 }

@@ -1,5 +1,7 @@
 package com.camelsoft.rayaserver.Models.Project;
 
+import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
+import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
@@ -33,6 +35,9 @@ public class Event implements Serializable {
     @Column(name = "event_date")
     private Date eventDate;
 
+    @Column(name = "status")
+    private EventStatus status = EventStatus.PUBLISHED;
+
     @Column(name = "timestamp")
     private Date timestamp;
     @Column(name = "archive")
@@ -50,13 +55,14 @@ public class Event implements Serializable {
     public int hashCode() {
         return 33; // Replace with any prime number
     }
-    public Event(String title, String description, Date eventDate, File_model attachment, Set<RoleEnum> assignedto) {
+    public Event(String title, String description, Date eventDate, File_model attachment, Set<RoleEnum> assignedto, EventStatus status) {
         this.title = title;
         this.description = description;
         this.eventDate = eventDate;
         this.attachment = attachment;
         this.timestamp = new Date();
         this.assignedto = assignedto;
+        this.status = status;
         this.timestamp = new Date();
     }
 }
