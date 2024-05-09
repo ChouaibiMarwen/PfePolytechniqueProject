@@ -98,7 +98,7 @@ public class LoanController extends BaseController {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         Supplier supplier = user.getSupplier();
         if(supplier == null){
-            return new ResponseEntity("supplier not founded",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("supplier not founded",HttpStatus.NOT_ACCEPTABLE);
         }
         // Processing attachment if provided
         File_model resourceMedia = null;

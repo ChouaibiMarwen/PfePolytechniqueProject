@@ -76,6 +76,11 @@ public class EventService {
     }
 
 
+  /*  public DynamicResponse findAllByTtileOrStatusPaginated(int page, int size , String tit, Events status){
+
+    }*/
+
+
     public List<Event> findAll() {
         try {
             return this.repository.findAll();
