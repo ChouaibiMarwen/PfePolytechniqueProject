@@ -41,6 +41,13 @@ public class RoleService {
             throw new NotFoundException(ex.getMessage());
         }
     }
+    public Role findbyRole(RoleEnum role) {
+        try {
+            return this.repository.findByRole(role);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+    }
     public boolean existsByRole(RoleEnum role) {
         try {
             return repository.existsByRole(role);

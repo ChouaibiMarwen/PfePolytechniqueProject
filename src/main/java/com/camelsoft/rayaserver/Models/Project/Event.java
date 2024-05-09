@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +18,7 @@ import java.util.Set;
 
 @Data
 @Entity
-public class Event {
+public class Event implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -59,5 +60,6 @@ public class Event {
         this.attachment = attachment;
         this.timestamp = new Date();
         this.assignedto = assignedto;
+        this.timestamp = new Date();
     }
 }

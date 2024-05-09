@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Request.project;
 
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,14 +9,13 @@ import lombok.Data;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
 @Data
-public class EventRequest {
-    @ApiModelProperty(notes = "Title of the event", required = true)
+public class RequestOfEvents {
     private String title;
     private String description;
-    @ApiModelProperty(notes = "Date of the event", required = true)
     private Date eventDate;
-    private File_model attachment;
-    private Set<Role> assignedto = new HashSet<>();
+    private Set<RoleEnum> assignedto = new HashSet<>();
+
+    public RequestOfEvents() {
+    }
 }

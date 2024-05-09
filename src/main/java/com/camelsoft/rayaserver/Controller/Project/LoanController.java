@@ -95,6 +95,9 @@ public class LoanController extends BaseController {
             @RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         Supplier supplier = user.getSupplier();
+        if(supplier == null){
+            return new ResponseEntity("supplier not founded",HttpStatus.BAD_REQUEST);
+        }
         // Processing attachment if provided
         File_model resourceMedia = null;
         if (attachment != null && !attachment.isEmpty()) {

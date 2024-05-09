@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Event;
@@ -9,8 +10,10 @@ import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.EventRequest;
 import com.camelsoft.rayaserver.Request.project.LoanRequest;
+import com.camelsoft.rayaserver.Request.project.RequestOfEvents;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.EventService;
+import com.camelsoft.rayaserver.Services.User.RoleService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -22,10 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -36,6 +36,8 @@ public class EventController {
 
     @Autowired
     private EventService service;
+    @Autowired
+    private RoleService roleService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
 
@@ -56,7 +58,7 @@ public class EventController {
 
 
 
-    @PostMapping("/add_event")
+    @PostMapping(value = {"/add_event"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Add a new event request from the admin", notes = "Endpoint to add a new event")
     @ApiResponses(value = {
@@ -64,7 +66,7 @@ public class EventController {
             @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Event> addEvent(@ModelAttribute EventRequest request, @RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
+    public ResponseEntity<Event> addEvent(@ModelAttribute RequestOfEvents request, @RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
         if (request.getTitle() == null || request.getTitle().equals(""))
             return new ResponseEntity("Title can't be null or empty", HttpStatus.BAD_REQUEST);
         if (request.getEventDate() == null)
@@ -82,18 +84,24 @@ public class EventController {
                 return ResponseEntity.badRequest().body(null);
             }
         }
+
+        Set<Role> roles = new HashSet<>();
+        for(RoleEnum enums : request.getAssignedto() ){
+            Role userRole = this.roleService.findbyRole(enums);
+            roles.add(userRole);
+        }
         Event  event  = new Event(
                 request.getTitle(),
-                 request.getDescription(),
-                 request.getEventDate(),
+                request.getDescription(),
+                request.getEventDate(),
                 resourceMedia,
-                request.getAssignedto()
+                roles
         );
         Event result = this.service.Save(event);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping(value = {"/event/{id]"})
+    @GetMapping(value = {"/event/{id}"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get event by id for admin ", notes = "Endpoint to get event by id")
     @ApiResponses(value = {

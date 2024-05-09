@@ -88,6 +88,11 @@ public class Invoice implements Serializable {
     @JoinColumn(name = "user_id_relatedto", nullable = false)
     private users relatedto;
 
+    @ManyToMany(mappedBy = "invoices")
+    @JsonIgnore
+    private Set<Request> requests =  new HashSet<>();
+
+
     public Invoice() {
         this.timestamp = new Date();
     }

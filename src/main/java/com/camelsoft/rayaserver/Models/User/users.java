@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
+import com.camelsoft.rayaserver.Models.Project.RequestCorrespondence;
 import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
@@ -78,6 +79,16 @@ public class users implements Serializable {
     @OneToMany(mappedBy = "relatedto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Invoice> invoicesrecived = new HashSet<>();
+
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<RequestCorrespondence> requestcorrespendencessended = new HashSet<>();
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<RequestCorrespondence> requestcorrespendencesreceived = new HashSet<>();
+
 
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
