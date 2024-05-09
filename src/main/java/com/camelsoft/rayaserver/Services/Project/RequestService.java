@@ -72,14 +72,7 @@ public class RequestService {
 
     }
 
-    public List<Request> findAllByName(String name) {
-        try {
-            return this.repository.findAllByTitleContainingIgnoreCaseAndArchiveIsFalse(name);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(ex.getMessage());
-        }
 
-    }
 
 
     public boolean ExistById(Long id) {

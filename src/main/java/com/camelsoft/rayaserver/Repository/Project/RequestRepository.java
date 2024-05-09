@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
-    List<Request> findAllByTitleContainingIgnoreCaseAndArchiveIsFalse(String name);
+
 }
