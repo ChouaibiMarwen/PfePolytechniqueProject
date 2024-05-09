@@ -11,6 +11,8 @@ import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Repository.File.File_Repository;
 import com.camelsoft.rayaserver.Repository.File.FilesStorageService;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -41,6 +43,11 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     private static final List<String> image_accepte_type = Arrays.asList("jpeg", "jpg", "png", "gif", "bmp", "tiff", "tif", "ico", "webp", "svg", "heic", "raw");
     private final AmazonS3 space;
     private final String bucketName = "bucketName";
+    private static final List<String> image_accepted_types = Arrays.asList(
+            "JPEG", "jpeg", "svg", "png", "SVG", "PNG", "JPG", "jpg", "pdf", "mp4",
+            "avi", "mpg", "mpeg", "mov", "mkv", "flv", "wmv", "webm", "3gp", "ogv"
+    );
+    private final Log logger = LogFactory.getLog(FilesStorageServiceImpl.class);
 
     public FilesStorageServiceImpl() {
         AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(new BasicAWSCredentials("AccessKey", "SecretKey"));
@@ -112,6 +119,8 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         return this.repository.save(fileresult);
     }
 
+
+
     public File_model save_file001(MultipartFile file, String folderName) throws IOException {
 
         // Create a new PutObjectRequest object.
@@ -160,53 +169,6 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         }
     }
 
-    private String generateUniqueFileName(String folderName, String originalFileName) {
-        String sanitizedOriginalFileName = originalFileName.replaceAll("\\s", "_"); // Replace spaces with underscores
-        String objectKey = folderName.replaceAll("\\s+", "") + "/" + sanitizedOriginalFileName;
-
-
-        // A file with the same name already exists, generate a unique name
-        String baseName = FilenameUtils.getBaseName(sanitizedOriginalFileName);
-        String fileExtension = FilenameUtils.getExtension(sanitizedOriginalFileName);
-
-        objectKey = folderName.replaceAll("\\s+", "") + "/" + baseName + "_" + (new Date()).getTime() + "." + fileExtension;
-
-
-        return objectKey;
-    }
-
-    @Override
-    public File_model save_file(MultipartFile file, String folderName, File_model media) throws IOException {
-
-        // Create a new PutObjectRequest object.
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.getSize());
-        metadata.setContentType(file.getContentType());
-        // Check if the folder exists, and create it if it doesn'
-//        createFolderIfNotExists(bucketName, folderName);
-
-        String fileName = ((new Date()).getTime() + file.getOriginalFilename()).replaceAll("\\s+", "");
-        String objectKey = folderName.replaceAll("\\s+", "") + "/" + fileName; // Include the folder in the object key
-
-        PutObjectRequest putObjectRequest = new PutObjectRequest(
-                bucketName,
-                objectKey,
-                file.getInputStream(), metadata);
-        // Set the object's ACL to public read
-        AccessControlList acl = new AccessControlList();
-        acl.grantPermission(GroupGrantee.AllUsers, Permission.Read); // Public-read permission
-
-        putObjectRequest.setAccessControlList(acl);
-//        this.delete_file_by_path(media.getUrl());
-        // Upload the object to DigitalOcean Spaces.
-        space.putObject(putObjectRequest);
-        media.setName(file.getOriginalFilename());
-        media.setUrl(objectKey);
-        media.setType(file.getContentType());
-        media.setSize(file.getSize());
-
-        return this.repository.save(media);
-    }
 
 
 
@@ -343,5 +305,92 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         }
 
     }
+
+
+    /******************************************************************************************/
+    @Override
+    public File_model save_file_local(MultipartFile file, String directory) {
+
+        try {
+            String name = ((new Date()).getTime() + file.getOriginalFilename()).replaceAll("\\s+", "");
+            String extention = file.getContentType().substring(file.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+            Path root = Paths.get("WebContent/"+directory);
+            if(!Files.exists(root))
+                Files.createDirectories(root);
+
+
+            String namesaved = ((name+(new Date()).getTime()).replaceAll("\\s+","")+"."+extention);
+            Path filepath = root.resolve(namesaved);
+            Resource resourcepast = new UrlResource(filepath.toUri());
+            if (resourcepast.exists() || resourcepast.isReadable())
+                FileSystemUtils.deleteRecursively(filepath.toFile());
+
+            Files.copy(file.getInputStream(), root.resolve(namesaved));
+            Path file_info = root.resolve(namesaved);
+            Resource resource = new UrlResource(file_info.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                File_model fileresult = new File_model(
+                        name,
+                        resource.getURI().getPath(),
+                        file.getContentType(),
+                        file.getSize()
+                );
+
+                return this.repository.save(fileresult);
+
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+        }
+
+    }
+
+
+
+    @Override
+    public void delete_file_by_path_local(String path,Long imageid) {
+        Path root_local= Paths.get(path);
+        if(this.repository.existsById(imageid))
+            this.repository.deleteById(imageid);
+        FileSystemUtils.deleteRecursively(root_local.toFile());
+    }
+
+    @Override
+    public void delete_all_file_by_path_local(Set<File_model> images) {
+        for(int i = 0 ; i<images.size();i++){
+            Path root_local= Paths.get(images.iterator().next().getUrl());
+            if(this.repository.existsById(images.iterator().next().getId()))
+                this.repository.deleteById(images.iterator().next().getId());
+            FileSystemUtils.deleteRecursively(root_local.toFile());
+        }
+
+    }
+
+    @Override
+    public Set<File_model> save_all_local(List<MultipartFile> file, String directory){
+        try {
+            Set<File_model> images = new HashSet<>();
+            for(int i = 0 ; i<file.size();i++){
+                String extention = file.get(i).getContentType().substring(file.get(i).getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+                if (extention.contains("+xml") && extention.contains("svg"))
+                    extention = "svg";
+                logger.error(extention);
+
+                if (!image_accepted_types.contains(extention))
+                    throw new RuntimeException("Could not read the file!");
+                File_model   resource_media = this.save_file_local(file.get(i), directory);
+                resource_media.setRange(i);
+                images.add(resource_media);
+            }
+            return images;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+        }
+
+    }
+    /******************************************************************************************/
 
 }

@@ -28,11 +28,11 @@ public class ChatMessageService {
     private UserService userService;
     public ChatMessage save(ChatMessage chatMessage) throws InterruptedException {
         chatMessage.setStatus(MessageStatus.RECEIVED);
-        repository.save(chatMessage);
+        ChatMessage result = repository.save(chatMessage);
         Notification notificationuser = new Notification(
                 this.userService.findById(chatMessage.getSenderId()),
                 this.userService.findById(chatMessage.getRecipientId())  ,
-                chatMessage,
+                result,
                 Action.MESSAGE
 
         );

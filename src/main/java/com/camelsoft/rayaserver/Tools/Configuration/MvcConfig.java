@@ -29,7 +29,6 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         exposeDirectory("WebContent", registry);
-        exposeDirectory("/WebContent/course_videos_file", registry);
         exposeDirectory("/var/lib/jenkins/workspace/server/src/main/resources", registry);
         registry.addResourceHandler("/**").addResourceLocations("");
         registry.addResourceHandler("**/swagger-ui.html/**")
