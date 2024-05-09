@@ -67,6 +67,8 @@ public class ChatController  extends BaseController {
 
 
        if(chatId.isPresent()){
+           Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("sender", request.getSenderId());
+           Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("recipient", request.getRecipientId());
            users sender = this.userService.findById(request.getSenderId());
            users reciver = this.userService.findById(request.getRecipientId());
            if(sender==null){
@@ -78,16 +80,15 @@ public class ChatController  extends BaseController {
                    return chatMessage;
                }
            chatMessage.setChatId(chatId.get());
-           Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("sender", request.getSenderId());
-           Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("recipient", request.getRecipientId());
-           chatMessage.setRecipient(reciver);
-           chatMessage.setStatus(MessageStatus.SENDING);
-           chatMessage.setTimestamp(new Date());
-           chatMessage.setSender(sender);
            chatMessage.setRecipientName(reciver.getName());
            chatMessage.setSenderName(sender.getName());
-           chatMessage.setChatId(chatId.get());
-           chatMessage.setContent(chatMessage.getContent());
+           chatMessage.setRecipient(reciver);
+           chatMessage.setSender(sender);
+           chatMessage.setRecipientId(request.getRecipientId());
+           chatMessage.setSenderId(request.getSenderId());
+           chatMessage.setStatus(MessageStatus.SENDING);
+           chatMessage.setTimestamp(new Date());
+           chatMessage.setContent(request.getContent());
            chatMessage.setAttachments(chatMessage.getAttachments());
            ChatMessage saved = chatMessageService.save(chatMessage);
            messagingTemplate.convertAndSendToUser(saved.getRecipient().getId().toString(), "/queue/chat",
