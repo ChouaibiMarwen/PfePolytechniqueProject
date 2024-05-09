@@ -170,7 +170,7 @@ public class ChatController  extends BaseController {
             File_model resource_media = filesStorageService.save_file_local(file,  "messages");
             user.getDocuments().add(resource_media);
             filesw.add(resource_media);
-            userService.UpdateUser(user);
+            this.userService.UpdateUser(user);
 
         }
         return ResponseEntity.ok(filesw);

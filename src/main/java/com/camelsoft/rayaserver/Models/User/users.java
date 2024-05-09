@@ -58,7 +58,7 @@ public class users implements Serializable {
     private Provider provider = Provider.local;
     @Column(name = "suspend_reason")
     private String suspendraison = "NO RAISON FOUND";
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
