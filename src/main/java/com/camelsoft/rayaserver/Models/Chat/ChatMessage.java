@@ -29,11 +29,9 @@ public class ChatMessage implements Serializable {
     private Long senderId;
     @Column(name = "recipientId")
     private Long recipientId;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH},targetEntity = users.class, fetch = FetchType.EAGER)
-    @JoinColumn( name = "user_id_sender")
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private users sender;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH},targetEntity = users.class, fetch = FetchType.EAGER)
-    @JoinColumn( name = "user_id_recipient")
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private users recipient;
     @Column(name = "senderName")
     private String senderName;

@@ -47,9 +47,18 @@ public class ChatController  extends BaseController {
     @MessageMapping("/chat")
     public ChatMessage processMessage(@Payload ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) throws InterruptedException {
        Thread.sleep(1000);
+        ChatMessage chatMessage = new ChatMessage();
+
+        if (request.getSenderId() == null) {
+            chatMessage.setContent("cant send to same user");
+            return chatMessage;
+        }
+        if ( request.getRecipientId()== null) {
+            chatMessage.setContent("cant send to same user");
+            return chatMessage;
+        }
 
         Optional<String> chatId = chatRoomService.getChatId(request.getSenderId(), request.getRecipientId(), true);
-        ChatMessage chatMessage = new ChatMessage();
 
         if (request.getSenderId() == request.getRecipientId()) {
             chatMessage.setContent("cant send to same user");
@@ -58,19 +67,28 @@ public class ChatController  extends BaseController {
 
 
        if(chatId.isPresent()){
-           users sender = this.userService.findById(request.getSenderId());
-           users reciver = this.userService.findById(request.getRecipientId());
-           chatMessage.setChatId(chatId.get());
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("sender", request.getSenderId());
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("recipient", request.getRecipientId());
-           chatMessage.setRecipient(reciver);
-           chatMessage.setStatus(MessageStatus.SENDING);
-           chatMessage.setTimestamp(new Date());
-           chatMessage.setSender(sender);
+           users sender = this.userService.findById(request.getSenderId());
+           users reciver = this.userService.findById(request.getRecipientId());
+           if(sender==null){
+                   chatMessage.setContent("cant send to null user sender");
+                   return chatMessage;
+               }
+         if(reciver==null){
+                   chatMessage.setContent("cant send to null user receiver");
+                   return chatMessage;
+               }
+           chatMessage.setChatId(chatId.get());
            chatMessage.setRecipientName(reciver.getName());
            chatMessage.setSenderName(sender.getName());
-           chatMessage.setChatId(chatId.get());
-           chatMessage.setContent(chatMessage.getContent());
+           chatMessage.setRecipient(reciver);
+           chatMessage.setSender(sender);
+           chatMessage.setRecipientId(request.getRecipientId());
+           chatMessage.setSenderId(request.getSenderId());
+           chatMessage.setStatus(MessageStatus.SENDING);
+           chatMessage.setTimestamp(new Date());
+           chatMessage.setContent(request.getContent());
            chatMessage.setAttachments(chatMessage.getAttachments());
            ChatMessage saved = chatMessageService.save(chatMessage);
            messagingTemplate.convertAndSendToUser(saved.getRecipient().getId().toString(), "/queue/chat",
@@ -152,7 +170,7 @@ public class ChatController  extends BaseController {
             File_model resource_media = filesStorageService.save_file_local(file,  "messages");
             user.getDocuments().add(resource_media);
             filesw.add(resource_media);
-            userService.UpdateUser(user);
+            this.userService.UpdateUser(user);
 
         }
         return ResponseEntity.ok(filesw);
