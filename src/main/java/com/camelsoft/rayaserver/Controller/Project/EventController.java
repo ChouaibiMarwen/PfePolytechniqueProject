@@ -66,6 +66,7 @@ public class EventController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<DynamicResponse> all_events_by_title_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String  title) throws IOException {
+
         if(title ==null || title.equals(""))
             return new ResponseEntity<>(this.service.FindAllPg(page, size), HttpStatus.OK);
          return new ResponseEntity<>(this.service.FindAllByTitlePg(page, size , title), HttpStatus.OK);
