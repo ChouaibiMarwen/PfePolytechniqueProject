@@ -36,7 +36,7 @@ public class Event implements Serializable {
     private Date eventDate;
 
     @Column(name = "status")
-    private EventStatus status = EventStatus.PUBLISHED;
+    private EventStatus status = EventStatus.DRAFT;
 
     @Column(name = "timestamp")
     private Date timestamp;

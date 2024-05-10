@@ -149,5 +149,21 @@ public class LoanServices {
 
     }
 
+    public long countByStatus(LoanStatus status) {
+        return this.repository.countByStatus(status);
+    }
+
+
+    public Double sumLoanAmountForDoneLoans() {
+        Double sum = this.repository.sumLoanAmountByStatus(LoanStatus.DONE);
+        return sum != null ? sum : 0.0;
+    }
+
+
+    public Double sumLoanAmountByStatus(LoanStatus status) {
+        Double sum = this.repository.sumLoanAmountByStatus(status);
+        return sum != null ? sum : 0.0;
+
+    }
 
 }
