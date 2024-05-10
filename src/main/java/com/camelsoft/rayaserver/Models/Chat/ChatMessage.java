@@ -42,7 +42,7 @@ public class ChatMessage implements Serializable {
     private Date timestamp = new Date();
     @Column(name = "status")
     private MessageStatus status = MessageStatus.SENDING;
-    @OneToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST}, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File_model> attachments = new ArrayList<>();
 
 
