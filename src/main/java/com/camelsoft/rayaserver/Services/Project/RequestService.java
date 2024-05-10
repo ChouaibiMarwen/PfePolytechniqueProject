@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Services.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Project.Request;
 import com.camelsoft.rayaserver.Repository.Project.RequestRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -51,6 +52,23 @@ public class RequestService {
 
     public DynamicResponse findAllByState(int page, int size, RequestState status) {
         try {
+
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Request> pckge = this.repository.findAllByStatusAndArchiveIsFalse(pg, status);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
+    public DynamicResponse findAllByStateAndRole(int page, int size, RequestState status, RoleEnum role) {
+        try {
+
+
+            if()
 
             PageRequest pg = PageRequest.of(page, size);
             Page<Request> pckge = this.repository.findAllByStatusAndArchiveIsFalse(pg, status);

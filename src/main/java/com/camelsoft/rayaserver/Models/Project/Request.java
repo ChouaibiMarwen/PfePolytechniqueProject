@@ -32,6 +32,7 @@ public class Request implements Serializable {
     private users creatorrequest;
 
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "request_invoices",
             joinColumns =
@@ -45,9 +46,22 @@ public class Request implements Serializable {
     private Date timestamp;
 
 
+    @Transient
+    private Set<Long> invoicesid = new HashSet<>();
+
+
     public Request() {
         this.timestamp = new Date();
     }
+
+
+    @PostLoad
+    public void AfterLoad() {
+        for(Invoice model: invoices ){
+            invoicesid.add(model.getId());
+        }
+    }
+
 
 
     public Request(String type, RequestState status, users creatorrequest, Set<Invoice> invoices) {
