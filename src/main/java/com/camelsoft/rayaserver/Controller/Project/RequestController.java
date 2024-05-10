@@ -60,7 +60,7 @@ public class RequestController  extends BaseController {
     @Autowired
     private UserService UserServices;
     @PostMapping(value = {"/add_Request"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER') or hasRole('USER')")
     @ApiOperation(value = "Add a new request request from the admin", notes = "Endpoint to add a new request")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added the loan request"),
