@@ -6,6 +6,7 @@ import javax.persistence.Column;
 
 @Data
 public class ProductRequest {
+    private Long id ;
     private String name ;
     private Double quantity = 0D;
     private Double unitprice = 0D;

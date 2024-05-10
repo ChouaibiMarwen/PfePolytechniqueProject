@@ -34,6 +34,13 @@ public class ProductService {
         try {
             Set<Product> products = new HashSet<>();
             for (ProductRequest req: models) {
+                if(req.getId() !=null) {
+                    Product res = this.FindById(req.getId());
+                    if(res==null)
+                        continue;
+                    products.add(res);
+                    continue;
+                }
                 Product product = new Product(
                         req.getName(),
                         req.getQuantity(),
