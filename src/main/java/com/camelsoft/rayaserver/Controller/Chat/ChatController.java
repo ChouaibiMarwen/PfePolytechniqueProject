@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Controller.Chat;
 
 
+import com.camelsoft.rayaserver.Controller.Project.LoanController;
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Models.Chat.ChatMessage;
 import com.camelsoft.rayaserver.Models.Chat.ChatNotification;
@@ -14,6 +15,8 @@ import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Notification.AdminNotificationServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +36,7 @@ import java.util.*;
 @CrossOrigin
 @RequestMapping(value = "/api/v1/chat")
 public class ChatController  extends BaseController {
+    private final Log logger = LogFactory.getLog(ChatController.class);
 
     @Autowired private SimpMessagingTemplate messagingTemplate;
     @Autowired private ChatMessageService chatMessageService;
@@ -73,7 +77,7 @@ public class ChatController  extends BaseController {
             chatMessage.setContent("cant send to same user");
             return chatMessage;
         }
-
+        logger.error("attachment size : "+chatMessage.getAttachments().size());
 
        if(chatId.isPresent()){
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("sender", request.getSenderId());
