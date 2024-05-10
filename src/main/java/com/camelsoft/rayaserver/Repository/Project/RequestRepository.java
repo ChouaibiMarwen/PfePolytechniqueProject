@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Repository.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
+import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.Project.Request;
@@ -17,6 +18,8 @@ import java.util.List;
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
     Page<Request> findAllByStatusAndArchiveIsFalse(Pageable page, RequestState status);
+    Page<Request> findAllByStatusAndCreatorrequest_RoleArchiveIsFalse(Pageable page, RequestState status, Role role);
+    Page<Request> findAllByCreatorrequest_RoleArchiveIsFalse(Pageable page,Role role);
     Page<Request> findAllByArchiveIsFalse(Pageable page);
 
 

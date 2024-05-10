@@ -118,11 +118,14 @@ public class RequestController  extends BaseController {
             @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_requests_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) RequestState status, @RequestParam(required = false) RoleEnum role) throws IOException {
-        if (status != null)
-            return new ResponseEntity<>(this.service.findAllByState(page, size, status), HttpStatus.OK);
+    public ResponseEntity<DynamicResponse> all_requests_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) RequestState status, @RequestParam(required = true) RoleEnum role) throws IOException {
+        if(role == null)
+            return new ResponseEntity("role is required", HttpStatus.BAD_REQUEST);
 
-        return new ResponseEntity<>(this.service.findAllPg(page, size), HttpStatus.OK);
+        if (status != null)
+            return new ResponseEntity<>(this.service.findAllByStateAndRole(page, size, status, role), HttpStatus.OK);
+
+        return new ResponseEntity<>(this.service.findAllByRole(page, size, role), HttpStatus.OK);
 
     }
 

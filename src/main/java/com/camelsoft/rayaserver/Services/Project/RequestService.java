@@ -2,7 +2,9 @@ package com.camelsoft.rayaserver.Services.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
+import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Project.Request;
+import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Project.RequestRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -19,6 +21,8 @@ public class RequestService {
 
     @Autowired
     private RequestRepository repository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     public Request Save(Request model) {
         try {
@@ -62,16 +66,12 @@ public class RequestService {
         }
 
     }
-
-
-  /*  public DynamicResponse findAllByStateAndRole(int page, int size, RequestState status, RoleEnum role) {
+        public DynamicResponse findAllByStateAndRole(int page, int size, RequestState status, RoleEnum role) {
         try {
-
-
-            if()
+            Role userRole = roleRepository.findByRole(role);
 
             PageRequest pg = PageRequest.of(page, size);
-            Page<Request> pckge = this.repository.findAllByStatusAndArchiveIsFalse(pg, status);
+            Page<Request> pckge = this.repository.findAllByStatusAndCreatorrequest_RoleArchiveIsFalse(pg, status, userRole);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {
@@ -79,7 +79,23 @@ public class RequestService {
         }
 
     }
-*/
+
+  public DynamicResponse findAllByRole(int page, int size,RoleEnum role) {
+        try {
+            Role userRole = roleRepository.findByRole(role);
+
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Request> pckge = this.repository.findAllByCreatorrequest_RoleArchiveIsFalse(pg,userRole);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
+
 
     public List<Request> findAll() {
         try {
