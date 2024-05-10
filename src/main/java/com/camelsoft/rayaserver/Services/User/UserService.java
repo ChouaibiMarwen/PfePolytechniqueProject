@@ -283,6 +283,15 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
+    public Long totalSupplier() {
+        try {
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
+            return this.userRepository.countAllByRole(userRole);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("hourbor id not found data");
+        }
+    }
+
     public Long totalUsersByState(Boolean state) {
         try {
             Role userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
