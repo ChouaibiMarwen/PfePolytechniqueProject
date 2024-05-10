@@ -80,7 +80,7 @@ public class RequestController  extends BaseController {
 
         Request requestdata = new Request(
                 request.getType(),
-                request.getStatus(),
+                request.getStatus()==null ? RequestState.NONE : request.getStatus(),
                 user,
                 invoices
         );

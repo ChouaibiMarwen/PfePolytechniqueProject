@@ -16,7 +16,7 @@ import java.util.Set;
 public class RequestsRequest {
 
     private String type ;
-    private RequestState status;
+    private RequestState status =  RequestState.NONE;
     private String title;
     private String description;
    /* private RequestCorrespondant correspondant;*/
