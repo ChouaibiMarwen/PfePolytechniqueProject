@@ -96,7 +96,7 @@ public class ChatController  extends BaseController {
            chatMessage.setStatus(MessageStatus.SENDING);
            chatMessage.setTimestamp(new Date());
            chatMessage.setContent(request.getContent());
-           chatMessage.setAttachments(request.getAttachments());
+           chatMessage.getAttachments().addAll(request.getAttachments());
            ChatMessage saved = chatMessageService.save(chatMessage);
            messagingTemplate.convertAndSendToUser(reciver.getId().toString(), "/queue/chat",
                    new ChatNotification(
