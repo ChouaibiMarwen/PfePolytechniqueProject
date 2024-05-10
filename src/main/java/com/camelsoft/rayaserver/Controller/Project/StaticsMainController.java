@@ -46,12 +46,12 @@ public class StaticsMainController   extends BaseController {
     public ResponseEntity<StatisticResponse> all_statistics_admin() throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         StatisticResponse response = new StatisticResponse();
-        response.setTotalsupplier(this.UserServices.totalSupplier()); // need update to the correct value
-        response.setTotalusers(this.UserServices.totalUsers());// need update to the correct value
-        response.setTotalrevenue(this.invoiceService.getTotalRevenueFromPaidInvoices());// need update to the correct value
-        response.setTotalloanissued(this.loanServices.Count());// need update to the correct value
-        response.setTotalloaninprogress( loanServices.countByStatus(LoanStatus.IN_PROGRESS));// need update to the correct value
-        response.setTotalloandone(loanServices.countByStatus(LoanStatus.DONE));// need update to the correct value
+        response.setTotalsupplier(this.UserServices.totalSupplier());
+        response.setTotalusers(this.UserServices.totalUsers());
+        response.setTotalrevenue(this.invoiceService.getTotalRevenueFromPaidInvoices());
+        response.setTotalloanissued(this.loanServices.Count());
+        response.setTotalloaninprogress( loanServices.countByStatus(LoanStatus.IN_PROGRESS));
+        response.setTotalloandone(loanServices.countByStatus(LoanStatus.DONE));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 
