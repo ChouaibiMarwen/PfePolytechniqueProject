@@ -81,8 +81,8 @@ public class EventController {
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity<Event> addEvent(@ModelAttribute RequestOfEvents request,@RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
-        if (request.getTitle() == null || request.getTitle().equals(""))
-            return new ResponseEntity("Title can't be null or empty", HttpStatus.BAD_REQUEST);
+        /*if (request.getTitle() == null)
+            return new ResponseEntity("Title can't be null or empty", HttpStatus.BAD_REQUEST);*/
         if (request.getEventDate() == null)
             return new ResponseEntity("Event date can't be null", HttpStatus.BAD_REQUEST);
         if (request.getAssignedto() == null || request.getAssignedto().isEmpty())
