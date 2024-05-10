@@ -140,10 +140,11 @@ public class EventController {
             return new ResponseEntity(event_id + " is not found in the system!", HttpStatus.NOT_FOUND);
         }
         Event event = this.service.FindById(event_id);
-        if(event.getStatus() == EventStatus.PUBLISHED)
+        if (event.getStatus() == EventStatus.PUBLISHED) {
             event.setStatus(EventStatus.DRAFT);
-        if(event.getStatus() == EventStatus.DRAFT)
+        } else if (event.getStatus() == EventStatus.DRAFT) {
             event.setStatus(EventStatus.PUBLISHED);
+        }
         Event result = this.service.Update(event);
         return new ResponseEntity<>(result, HttpStatus.OK);
 

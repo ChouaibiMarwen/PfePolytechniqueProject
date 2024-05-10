@@ -121,4 +121,9 @@ public class SupplierServices {
 
     }
 
+
+    public Long countSuppliers() {
+        return this.repository.count();
+    }
+
 }
