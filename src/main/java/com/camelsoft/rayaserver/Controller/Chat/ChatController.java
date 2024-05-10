@@ -77,7 +77,7 @@ public class ChatController  extends BaseController {
             chatMessage.setContent("cant send to same user");
             return chatMessage;
         }
-        logger.error("attachment size : "+chatMessage.getAttachments().size());
+
 
        if(chatId.isPresent()){
            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("sender", request.getSenderId());
@@ -95,7 +95,7 @@ public class ChatController  extends BaseController {
            chatMessage.setStatus(MessageStatus.SENDING);
            chatMessage.setTimestamp(new Date());
            chatMessage.setContent(request.getContent());
-           chatMessage.setAttachments(chatMessage.getAttachments());
+           chatMessage.setAttachments(request.getAttachments());
            ChatMessage saved = chatMessageService.save(chatMessage);
            messagingTemplate.convertAndSendToUser(reciver.getId().toString(), "/queue/chat",
                    new ChatNotification(
