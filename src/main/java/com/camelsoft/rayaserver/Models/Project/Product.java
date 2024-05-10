@@ -37,9 +37,6 @@ public class Product implements Serializable {
     @JsonIgnore
     @Column(name = "archive")
     private Boolean archive = false;
-    @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
-    @JoinColumn(name = "supplier_id_product", nullable = false)
-    private Supplier supplier;
 
     public Product() {
     this.timestamp = new Date();

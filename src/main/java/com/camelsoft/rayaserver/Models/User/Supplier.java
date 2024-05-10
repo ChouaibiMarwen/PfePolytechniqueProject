@@ -29,9 +29,7 @@ public class Supplier implements Serializable {
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Loan> loans = new HashSet<>();
-    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Set<Product> products = new HashSet<>();
+
     @Transient
     private String name;
 
