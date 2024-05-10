@@ -5,6 +5,7 @@ import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Response.Project.RequestInvoiceResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -47,7 +48,7 @@ public class Request implements Serializable {
 
 
     @Transient
-    private Set<Long> invoicesid = new HashSet<>();
+    private Set<RequestInvoiceResponse> ivoicedetails = new HashSet<>();
 
 
     public Request() {
@@ -58,7 +59,11 @@ public class Request implements Serializable {
     @PostLoad
     public void AfterLoad() {
         for(Invoice model: invoices ){
-            invoicesid.add(model.getId());
+            RequestInvoiceResponse obj = new RequestInvoiceResponse();
+            obj.setId(model.getId());
+            obj.setStatus(model.getStatus());
+            obj.setInvoicenumber(model.getInvoicenumber());
+            ivoicedetails.add(obj);
         }
     }
 
