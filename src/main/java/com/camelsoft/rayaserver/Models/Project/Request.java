@@ -13,7 +13,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
-@Data
+
 @Entity
 public class Request implements Serializable {
     @Id
@@ -63,5 +63,69 @@ public class Request implements Serializable {
         this.creatorrequest = creatorrequest;
         this.invoices = invoices;
         this.timestamp = new Date();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public RequestState getStatus() {
+        return status;
+    }
+
+    public void setStatus(RequestState status) {
+        this.status = status;
+    }
+
+    public Set<RequestCorrespondence> getCorssspondences() {
+        return corssspondences;
+    }
+
+    public void setCorssspondences(Set<RequestCorrespondence> corssspondences) {
+        this.corssspondences = corssspondences;
+    }
+
+    public users getCreatorrequest() {
+        return creatorrequest;
+    }
+
+    public void setCreatorrequest(users creatorrequest) {
+        this.creatorrequest = creatorrequest;
+    }
+
+    public Set<Invoice> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(Set<Invoice> invoices) {
+        this.invoices = invoices;
+    }
+
+    public Boolean getArchive() {
+        return archive;
+    }
+
+    public void setArchive(Boolean archive) {
+        this.archive = archive;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }
