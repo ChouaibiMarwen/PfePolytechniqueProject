@@ -64,7 +64,7 @@ public class RequestService {
     }
 
 
-    public DynamicResponse findAllByStateAndRole(int page, int size, RequestState status, RoleEnum role) {
+  /*  public DynamicResponse findAllByStateAndRole(int page, int size, RequestState status, RoleEnum role) {
         try {
 
 
@@ -79,7 +79,7 @@ public class RequestService {
         }
 
     }
-
+*/
 
     public List<Request> findAll() {
         try {
