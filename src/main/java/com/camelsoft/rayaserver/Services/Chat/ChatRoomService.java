@@ -4,6 +4,7 @@ package com.camelsoft.rayaserver.Services.Chat;
 import com.camelsoft.rayaserver.Models.Chat.ChatRoom;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Chat.ChatRoomRepository;
+import com.camelsoft.rayaserver.Services.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,23 +15,27 @@ import java.util.Optional;
 public class ChatRoomService {
 
     @Autowired private ChatRoomRepository chatRoomRepository;
+    @Autowired
+    private UserService userService;
 
-    public Optional<String> getChatId(users sender, users recipient, String lastMessage, boolean createIfNotExist) {
+    public Optional<String> getChatId(Long sender, Long recipient, String lastMessage, boolean createIfNotExist) {
 
         return chatRoomRepository
-                .findBySenderAndRecipient(sender,recipient)
+                .findBySenderIdAndRecipientId(sender,recipient)
                 .map(ChatRoom::getChatId).or(() -> {
                     if(!createIfNotExist) {
                         return  Optional.empty();
                     }
+                    users sendermodel = this.userService.findById(sender);
+                    users recivermodel = this.userService.findById(recipient);
                     var chatId =
-                            String.format("%s_%s", sender.getId(), recipient.getId());
+                            String.format("%s_%s", sender, recipient);
 
                     ChatRoom senderRecipient = ChatRoom
                             .builder()
                             .chatId(chatId)
-                            .sender(sender)
-                            .recipient(recipient)
+                            .sender(sendermodel)
+                            .recipient(recivermodel)
                             .lastmessage(lastMessage)
                             .timestmp(new Date())
                             .build();
@@ -38,8 +43,8 @@ public class ChatRoomService {
                     ChatRoom recipientSender = ChatRoom
                             .builder()
                             .chatId(chatId)
-                            .sender(recipient)
-                            .recipient(sender)
+                            .sender(recivermodel)
+                            .recipient(sendermodel)
                             .lastmessage(lastMessage)
                             .timestmp(new Date())
                             .build();

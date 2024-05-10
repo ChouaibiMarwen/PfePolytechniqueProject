@@ -23,7 +23,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.*;
 
-@Data
+
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "users_table",
@@ -72,6 +72,10 @@ public class users implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "users_table_id")
     private Set<File_model> documents = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "users_table_attachmentchat")
+    private Set<File_model> attachmentchat = new HashSet<>();
     @OneToMany(mappedBy = "createdby", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Invoice> invoicescreated = new HashSet<>();
@@ -150,5 +154,227 @@ public class users implements Serializable {
         return 31; // Replace with any prime number
     }
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhonenumber() {
+        return phonenumber;
+    }
+
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
+    }
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
+    }
+
+    public String getSuspendraison() {
+        return suspendraison;
+    }
+
+    public void setSuspendraison(String suspendraison) {
+        this.suspendraison = suspendraison;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public File_model getProfileimage() {
+        return profileimage;
+    }
+
+    public void setProfileimage(File_model profileimage) {
+        this.profileimage = profileimage;
+    }
+
+    public PersonalInformation getPersonalinformation() {
+        return personalinformation;
+    }
+
+    public void setPersonalinformation(PersonalInformation personalinformation) {
+        this.personalinformation = personalinformation;
+    }
+
+    public Set<File_model> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(Set<File_model> documents) {
+        this.documents = documents;
+    }
+
+    public Set<Invoice> getInvoicescreated() {
+        return invoicescreated;
+    }
+
+    public void setInvoicescreated(Set<Invoice> invoicescreated) {
+        this.invoicescreated = invoicescreated;
+    }
+
+    public Set<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Set<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    public Set<Invoice> getInvoicesrecived() {
+        return invoicesrecived;
+    }
+
+    public void setInvoicesrecived(Set<Invoice> invoicesrecived) {
+        this.invoicesrecived = invoicesrecived;
+    }
+
+    public Set<RequestCorrespondence> getRequestcorrespendencessended() {
+        return requestcorrespendencessended;
+    }
+
+    public void setRequestcorrespendencessended(Set<RequestCorrespondence> requestcorrespendencessended) {
+        this.requestcorrespendencessended = requestcorrespendencessended;
+    }
+
+    public Set<Request> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(Set<Request> requests) {
+        this.requests = requests;
+    }
+
+    public Set<BankInformation> getBankinformations() {
+        return bankinformations;
+    }
+
+    public void setBankinformations(Set<BankInformation> bankinformations) {
+        this.bankinformations = bankinformations;
+    }
+
+    public BillingAddress getBillingAddress() {
+        return billingAddress;
+    }
+
+    public void setBillingAddress(BillingAddress billingAddress) {
+        this.billingAddress = billingAddress;
+    }
+
+    public Set<Privilege> getPrivileges() {
+        return privileges;
+    }
+
+    public void setPrivileges(Set<Privilege> privileges) {
+        this.privileges = privileges;
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+
+    public Set<PurshaseOrder> getPurchaseOrders() {
+        return purchaseOrders;
+    }
+
+    public void setPurchaseOrders(Set<PurshaseOrder> purchaseOrders) {
+        this.purchaseOrders = purchaseOrders;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public String getLastotp() {
+        return lastotp;
+    }
+
+    public void setLastotp(String lastotp) {
+        this.lastotp = lastotp;
+    }
+
+    public Date getTimestmp() {
+        return timestmp;
+    }
+
+    public void setTimestmp(Date timestmp) {
+        this.timestmp = timestmp;
+    }
+
+    public Set<File_model> getAttachmentchat() {
+        return attachmentchat;
+    }
+
+    public void setAttachmentchat(Set<File_model> attachmentchat) {
+        this.attachmentchat = attachmentchat;
+    }
 }

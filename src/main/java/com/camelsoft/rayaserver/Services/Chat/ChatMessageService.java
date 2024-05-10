@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -33,6 +34,7 @@ public class ChatMessageService {
     private NotificationServices _notificationservices;
     @Autowired
     private UserService userService;
+    @Transactional
     public ChatMessage save(ChatMessage chatMessage) throws InterruptedException {
         chatMessage.setStatus(MessageStatus.RECEIVED);
         ChatMessage result = repository.save(chatMessage);
@@ -59,9 +61,8 @@ public class ChatMessageService {
     public ChatMessageResponse findChatMessages(int page, int size, Long senderId, Long recipientId, Boolean createifnotexist) {
         try {
 
-            users sender = this.userService.findById(senderId);
-            users reciver = this.userService.findById(recipientId);
-            var chatId = chatRoomService.getChatId(sender, reciver,null, createifnotexist);
+
+            var chatId = chatRoomService.getChatId(senderId, recipientId,null, createifnotexist);
             String roomid = "";
             if (chatId.isPresent())
                 roomid = chatId.get();
@@ -88,9 +89,7 @@ public class ChatMessageService {
 
     }
     public void seenAllMessage(Long senderId, Long recipientId) {
-        users sender = this.userService.findById(senderId);
-        users reciver = this.userService.findById(recipientId);
-        var chatId = chatRoomService.getChatId(sender, reciver,null, false);
+        var chatId = chatRoomService.getChatId(senderId, recipientId,null, false);
 
         var messages =
                 chatId.map(cId -> repository.findByChatIdAndStatusNot(cId,MessageStatus.REPORTED)).orElse(new ArrayList<>());
