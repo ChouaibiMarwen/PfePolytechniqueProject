@@ -65,8 +65,8 @@ public class StaticsMainController   extends BaseController {
 
     @GetMapping("/total")
     public ResponseEntity<Map<String, Double>> getTotalRevenueByMonth(
-            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd")  Date endDate) {
+            @RequestParam("startDate") Date startDate,
+            @RequestParam("endDate") Date endDate) {
 
         Map<String, Double> totalRevenueByMonth = this.invoiceService.getTotalRevenueByMonth(startDate, endDate);
         return ResponseEntity.ok(totalRevenueByMonth);

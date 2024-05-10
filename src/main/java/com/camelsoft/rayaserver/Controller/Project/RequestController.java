@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Enum.Project.Request.RequestCorrespondant;
 import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
@@ -12,6 +13,7 @@ import com.camelsoft.rayaserver.Models.Project.Request;
 import com.camelsoft.rayaserver.Models.Project.RequestCorrespondence;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Project.RequestRepository;
+import com.camelsoft.rayaserver.Request.project.CorrespendanceRequest;
 import com.camelsoft.rayaserver.Request.project.EventRequest;
 import com.camelsoft.rayaserver.Request.project.RequestOfEvents;
 import com.camelsoft.rayaserver.Request.project.RequestsRequest;
@@ -25,6 +27,7 @@ import com.camelsoft.rayaserver.Services.Project.RequestService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
+import com.google.firestore.v1.CommitRequest;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -101,10 +104,50 @@ public class RequestController  extends BaseController {
         corssspondences.setTitle(request.getTitle());
         corssspondences.setDescription(request.getDescription());
         corssspondences.setCreator(user);
-        this.reqcorresservice.Save(corssspondences);
+
 
         if (resourceMedia != null)
             corssspondences.setAttachment(resourceMedia);
+        this.reqcorresservice.Save(corssspondences);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    @PostMapping(value = {"/add_correspondance/{requestId}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER') or hasRole('USER')")
+    @ApiOperation(value = "Add a new correspendance  request from the admin", notes = "Endpoint to add a new  correspendance request")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully added the loan request"),
+            @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
+            @ApiResponse(code = 403, message = "Forbidden")
+    })
+    public ResponseEntity<RequestCorrespondence> add_correspondance(@PathVariable Long requestId , @ModelAttribute CorrespendanceRequest request, @RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
+
+        Request model =  this.service.FindById(requestId);
+        if(model == null)
+            return new ResponseEntity("this request is not found", HttpStatus.NOT_FOUND);
+
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+
+        File_model resourceMedia = null;
+        if (attachment != null && !attachment.isEmpty()) {
+            String extension = attachment.getContentType().substring(attachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+            if (!image_accepte_type.contains(extension)) {
+                return ResponseEntity.badRequest().body(null);
+            }
+            resourceMedia =  filesStorageService.save_file_local(attachment, "requests");
+            if (resourceMedia == null) {
+                return ResponseEntity.badRequest().body(null);
+            }
+        }
+        RequestCorrespondence corssspondences = new RequestCorrespondence();
+        corssspondences.setRequest(model);
+        corssspondences.setTitle(request.getTitle());
+        corssspondences.setDescription(request.getDescription());
+        corssspondences.setCreator(user);
+
+
+        if (resourceMedia != null)
+            corssspondences.setAttachment(resourceMedia);
+        RequestCorrespondence result =  this.reqcorresservice.Save(corssspondences);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -168,6 +211,11 @@ public class RequestController  extends BaseController {
         return new ResponseEntity<>(req.getCorssspondences(), HttpStatus.OK);
 
     }
+
+
+
+
+
 
 
 
