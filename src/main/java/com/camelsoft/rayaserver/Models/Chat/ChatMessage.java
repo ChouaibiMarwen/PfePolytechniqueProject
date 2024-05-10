@@ -36,13 +36,13 @@ public class ChatMessage implements Serializable {
     private String senderprofileimage;
     @Column(name = "recipientprofileimage")
     private String recipientprofileimage;
-    @Column(name = "content")
+    @Column(columnDefinition = "TEXT",name = "content")
     private String content;
     @Column(name = "timestamp")
     private Date timestamp = new Date();
     @Column(name = "status")
     private MessageStatus status = MessageStatus.SENDING;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST}, orphanRemoval = true)
     private List<File_model> attachments = new ArrayList<>();
 
 
