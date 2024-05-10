@@ -148,7 +148,10 @@ public class EventController {
         Event result = this.service.Update(event);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
-
     }
+
+
+
+
 
 }
