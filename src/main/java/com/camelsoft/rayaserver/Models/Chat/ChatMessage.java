@@ -36,7 +36,7 @@ public class ChatMessage implements Serializable {
     private String senderprofileimage;
     @Column(name = "recipientprofileimage")
     private String recipientprofileimage;
-    @Column(name = "content")
+    @Column(columnDefinition = "TEXT",name = "content")
     private String content;
     @Column(name = "timestamp")
     private Date timestamp = new Date();

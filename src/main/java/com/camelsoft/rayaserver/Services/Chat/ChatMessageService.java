@@ -1,18 +1,23 @@
 package com.camelsoft.rayaserver.Services.Chat;
 
 
+import com.camelsoft.rayaserver.Controller.Chat.ChatController;
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Enum.Tools.Action;
 import com.camelsoft.rayaserver.Models.Chat.ChatMessage;
+import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Notification.Notification;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Chat.ChatMessageRepository;
 import com.camelsoft.rayaserver.Response.Chat.ChatMessageResponse;
+import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import com.camelsoft.rayaserver.Tools.Exception.ResourceNotFoundException;
 import com.google.firebase.messaging.FirebaseMessagingException;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +38,28 @@ public class ChatMessageService {
     @Autowired private NamedParameterJdbcTemplate jdbcTemplate;
     @Autowired
     private NotificationServices _notificationservices;
+  @Autowired
+    private EntityManager entityManager;
     @Autowired
     private UserService userService;
+   @Autowired
+    private FilesStorageServiceImpl filesStorageService;
+    private final Log logger = LogFactory.getLog(ChatController.class);
+
     @Transactional
     public ChatMessage save(ChatMessage chatMessage) throws InterruptedException {
         chatMessage.setStatus(MessageStatus.RECEIVED);
+
+        List<File_model> attachedFiles = new ArrayList<>();
+        for (File_model fileId : chatMessage.getAttachments()) {
+            // Pre-load File_model objects from repository (replace with your logic)
+            File_model attachedFile = this.filesStorageService.findbyid(fileId.getId());
+            attachedFiles.add(attachedFile);
+        }
+        chatMessage.setAttachments(attachedFiles);
+
         ChatMessage result = repository.save(chatMessage);
+
         Notification notificationuser = new Notification(
                 this.userService.findById(chatMessage.getSenderId()),
                 this.userService.findById(chatMessage.getRecipientId())  ,
