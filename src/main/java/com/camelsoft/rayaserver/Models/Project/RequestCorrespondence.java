@@ -41,6 +41,17 @@ public class RequestCorrespondence implements Serializable {
     @Column(name = "timestamp")
     private Date timestamp;
 
+    @Transient
+    private String sender;
+
+    @PostLoad
+    private void afterload(){
+        if(this.creator!=null){
+            this.sender = this.creator.getRole().getRole().name();
+        }
+    }
+
+
     public RequestCorrespondence() {
         this.timestamp = new Date();
     }

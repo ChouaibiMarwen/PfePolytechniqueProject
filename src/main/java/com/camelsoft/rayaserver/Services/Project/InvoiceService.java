@@ -15,10 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
 public class InvoiceService {
@@ -185,4 +182,41 @@ public class InvoiceService {
         }
         return totalRevenue;
     }
+
+
+
+    //get totla revevenu by date :
+    public Map<String, Double> getTotalRevenueByMonth(Date startDate, Date endDate) {
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.setTime(startDate);
+        Calendar endCalendar = Calendar.getInstance();
+        endCalendar.setTime(endDate);
+
+        Map<String, Double> totalRevenueByMonth = new LinkedHashMap<>();
+
+        while (startCalendar.before(endCalendar) || startCalendar.equals(endCalendar)) {
+            Date monthStart = startCalendar.getTime();
+            startCalendar.set(Calendar.DAY_OF_MONTH, startCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+            Date monthEnd = startCalendar.getTime();
+
+            Double totalRevenue = this.repository.sumSubtotalOfProductsByInvoiceDateBetween(monthStart, monthEnd);
+            totalRevenueByMonth.put(formatMonth(monthStart), totalRevenue);
+
+            startCalendar.add(Calendar.DAY_OF_MONTH, 1); // Move to the next month
+            startCalendar.set(Calendar.DAY_OF_MONTH, 1); // Set the day to the first day of the next month
+        }
+
+        return totalRevenueByMonth;
+    }
+
+    private String formatMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int month = calendar.get(Calendar.MONTH) + 1; // Calendar months are zero-based
+        int year = calendar.get(Calendar.YEAR);
+        return String.format("%04d-%02d", year, month);
+    }
+
+
+
 }

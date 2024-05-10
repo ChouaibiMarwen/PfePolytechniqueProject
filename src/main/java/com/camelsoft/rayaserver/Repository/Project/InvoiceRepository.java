@@ -8,6 +8,7 @@ import com.camelsoft.rayaserver.Models.Project.Loan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -23,5 +24,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     Integer countByTimestampBetweenAndStatusAndRelated(Date startDate, Date endDate,InvoiceStatus status,InvoiceRelated related);
     List<Invoice> findByStatus(InvoiceStatus status);
 
+    @Query("SELECT SUM(p.subtotal) FROM Invoice i JOIN i.products p WHERE i.invoicedate BETWEEN :startDate AND :endDate AND i.status = 'PAID'")
+    Double sumSubtotalOfProductsByInvoiceDateBetween(Date startDate, Date endDate);
 
 }
