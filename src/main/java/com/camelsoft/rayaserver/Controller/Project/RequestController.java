@@ -201,7 +201,7 @@ public class RequestController  extends BaseController {
             @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity< Set<RequestCorrespondence>> all_corssspondences_request(@PathVariable Long idRequest) throws IOException {
+    public ResponseEntity<Set<RequestCorrespondence>> all_corssspondences_request(@PathVariable Long idRequest) throws IOException {
 
         boolean exist = this.service.ExistById(idRequest);
         if(!exist)
