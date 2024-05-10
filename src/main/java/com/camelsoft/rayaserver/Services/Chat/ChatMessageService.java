@@ -10,6 +10,7 @@ import com.camelsoft.rayaserver.Models.Notification.Notification;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Chat.ChatMessageRepository;
 import com.camelsoft.rayaserver.Response.Chat.ChatMessageResponse;
+import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -41,17 +42,24 @@ public class ChatMessageService {
     private EntityManager entityManager;
     @Autowired
     private UserService userService;
+   @Autowired
+    private FilesStorageServiceImpl filesStorageService;
     private final Log logger = LogFactory.getLog(ChatController.class);
 
     @Transactional
     public ChatMessage save(ChatMessage chatMessage) throws InterruptedException {
         chatMessage.setStatus(MessageStatus.RECEIVED);
-        for (File_model file : chatMessage.getAttachments()) {
-            entityManager.persist(file); // Persist File_model objects before ChatMessage
-            logger.error("done persist : "+file.getId());
+
+        List<File_model> attachedFiles = new ArrayList<>();
+        for (File_model fileId : chatMessage.getAttachments()) {
+            // Pre-load File_model objects from repository (replace with your logic)
+            File_model attachedFile = this.filesStorageService.findbyid(fileId.getId());
+            attachedFiles.add(attachedFile);
         }
+        chatMessage.setAttachments(attachedFiles);
 
         ChatMessage result = repository.save(chatMessage);
+
         Notification notificationuser = new Notification(
                 this.userService.findById(chatMessage.getSenderId()),
                 this.userService.findById(chatMessage.getRecipientId())  ,
