@@ -24,6 +24,7 @@ public class Request implements Serializable {
     private String type ;
     @Column(name = "status")
     private RequestState status = RequestState.NONE;
+    @JsonIgnore
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<RequestCorrespondence> corssspondences = new HashSet<>();
 
@@ -33,7 +34,7 @@ public class Request implements Serializable {
     private users creatorrequest;
 
 
-    @JsonIgnore
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "request_invoices",
             joinColumns =
@@ -47,25 +48,12 @@ public class Request implements Serializable {
     private Date timestamp;
 
 
-    @Transient
-    private Set<RequestInvoiceResponse> ivoicedetails = new HashSet<>();
-
 
     public Request() {
         this.timestamp = new Date();
     }
 
 
-    @PostLoad
-    public void AfterLoad() {
-        for(Invoice model: invoices ){
-            RequestInvoiceResponse obj = new RequestInvoiceResponse();
-            obj.setId(model.getId());
-            obj.setStatus(model.getStatus());
-            obj.setInvoicenumber(model.getInvoicenumber());
-            ivoicedetails.add(obj);
-        }
-    }
 
 
 

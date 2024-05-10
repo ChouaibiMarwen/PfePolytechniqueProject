@@ -7,12 +7,14 @@ import com.camelsoft.rayaserver.Models.Project.Request;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Project.RequestRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
+import com.camelsoft.rayaserver.Response.Project.RequestResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -66,13 +68,21 @@ public class RequestService {
         }
 
     }
-        public DynamicResponse findAllByStateAndRole(int page, int size, RequestState status, RoleEnum role) {
+        public RequestResponse findAllByStateAndRole(int page, int size, RequestState status, RoleEnum role) {
         try {
             Role userRole = roleRepository.findByRole(role);
+            List<Request> allrequest = new ArrayList<Request>();
 
             PageRequest pg = PageRequest.of(page, size);
-            Page<Request> pckge = this.repository.findAllByStatusAndCreatorrequest_RoleAndArchiveIsFalse(pg, status, userRole);
-            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            Page<Request> pageTuts = this.repository.findAllByStatusAndCreatorrequest_RoleAndArchiveIsFalse(pg, status, userRole);
+            allrequest= pageTuts.getContent();
+            RequestResponse response = new RequestResponse(
+                    allrequest,
+                    pageTuts.getNumber(),
+                    pageTuts.getTotalElements(),
+                    pageTuts.getTotalPages()
+            );
+            return response;
 
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
@@ -80,14 +90,22 @@ public class RequestService {
 
     }
 
-  public DynamicResponse findAllByRole(int page, int size,RoleEnum role) {
+  public RequestResponse findAllByRole(int page, int size,RoleEnum role) {
         try {
+
             Role userRole = roleRepository.findByRole(role);
+            List<Request> allrequest = new ArrayList<Request>();
 
             PageRequest pg = PageRequest.of(page, size);
-            Page<Request> pckge = this.repository.findAllByCreatorrequest_RoleAndArchiveIsFalse(pg,userRole);
-            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
-
+            Page<Request> pageTuts = this.repository.findAllByCreatorrequest_RoleAndArchiveIsFalse(pg,  userRole);
+            allrequest= pageTuts.getContent();
+            RequestResponse response = new RequestResponse(
+                    allrequest,
+                    pageTuts.getNumber(),
+                    pageTuts.getTotalElements(),
+                    pageTuts.getTotalPages()
+            );
+            return response;
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
