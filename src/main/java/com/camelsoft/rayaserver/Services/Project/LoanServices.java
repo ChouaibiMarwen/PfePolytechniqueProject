@@ -158,4 +158,9 @@ public class LoanServices {
         return this.repository.sumLoanAmountByStatus(LoanStatus.DONE);
     }
 
+
+    public Double sumLoanAmountByStatus(LoanStatus status) {
+        return this.repository.sumLoanAmountByStatus(status);
+    }
+
 }

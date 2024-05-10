@@ -81,7 +81,7 @@ public class EventController {
             @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Event> addEvent(@ModelAttribute RequestOfEvents request, @RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
+    public ResponseEntity<Event> addEvent(@ModelAttribute RequestOfEvents request,@RequestParam EventStatus status ,@RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
         if (request.getTitle() == null || request.getTitle().equals(""))
             return new ResponseEntity("Title can't be null or empty", HttpStatus.BAD_REQUEST);
         if (request.getEventDate() == null)
@@ -106,7 +106,7 @@ public class EventController {
                 request.getEventDate(),
                 resourceMedia,
                 request.getAssignedto(),
-                EventStatus.PUBLISHED
+                status
         );
         Event result = this.service.Save(event);
         return new ResponseEntity<>(result, HttpStatus.OK);
