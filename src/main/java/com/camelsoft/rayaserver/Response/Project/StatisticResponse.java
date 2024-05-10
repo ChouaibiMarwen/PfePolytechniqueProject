@@ -7,10 +7,11 @@ import java.util.Set;
 
 @Data
 public class StatisticResponse {
-    private Integer totalsupplier=0;
-    private Integer totalusers=0;
+    private Long totalsupplier=0L;
+    private Long totalusers=0L;
     private Double totalrevenue = 0D;
-    private Integer totalloanissued = 0;
-    private Integer totalloaninprogress = 0;
-    private Integer totalloandone = 0;
+    private Long totalloanissued = 0L;
+    private Long totalloaninprogress = 0L;
+    private Long totalloandone = 0L;
+
 }

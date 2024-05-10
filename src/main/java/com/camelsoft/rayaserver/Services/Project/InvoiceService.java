@@ -5,6 +5,7 @@ import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Loan;
+import com.camelsoft.rayaserver.Models.Project.Product;
 import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
 import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -171,5 +172,17 @@ public class InvoiceService {
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
+    }
+
+
+    public double getTotalRevenueFromPaidInvoices() {
+        List<Invoice> paidInvoices = this.repository.findByStatus(InvoiceStatus.PAID);
+        double totalRevenue = 0.0;
+        for (Invoice invoice : paidInvoices) {
+            for (Product product : invoice.getProducts()) {
+                totalRevenue += product.getSubtotal();
+            }
+        }
+        return totalRevenue;
     }
 }

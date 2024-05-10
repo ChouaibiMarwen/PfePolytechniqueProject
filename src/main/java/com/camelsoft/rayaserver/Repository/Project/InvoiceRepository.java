@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
@@ -20,6 +21,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     boolean existsByInvoicenumber(Integer invoicenumber);
     Integer countByTimestampBetweenAndRelated(Date startDate, Date endDate,InvoiceRelated related);
     Integer countByTimestampBetweenAndStatusAndRelated(Date startDate, Date endDate,InvoiceStatus status,InvoiceRelated related);
+    List<Invoice> findByStatus(InvoiceStatus status);
 
 
 }
