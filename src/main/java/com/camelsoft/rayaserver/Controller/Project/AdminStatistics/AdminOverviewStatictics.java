@@ -44,8 +44,6 @@ public class AdminOverviewStatictics {
         return new ResponseEntity<>( participation , HttpStatus.OK);
     }
 
-
-
     @GetMapping("/loan_amount_count_by_status")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "total loans count by status for admin ", notes = "Endpoint get total loans count by status for admin ")
@@ -89,5 +87,7 @@ public class AdminOverviewStatictics {
         double sum = this.loanServices.sumLoanAmountByStatus(status);
         return new ResponseEntity<>( sum , HttpStatus.OK);
     }
+
+
 }
 

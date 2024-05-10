@@ -5,10 +5,9 @@ import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
+import com.camelsoft.rayaserver.Models.DTO.PurchaseOrderDto;
 import com.camelsoft.rayaserver.Models.File.File_model;
-import com.camelsoft.rayaserver.Models.Project.Event;
-import com.camelsoft.rayaserver.Models.Project.Loan;
-import com.camelsoft.rayaserver.Models.Project.Product;
+import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.EventRequest;
@@ -150,6 +149,78 @@ public class EventController {
 
     }
 
+
+
+    @PatchMapping(value = {"/update_event/{idEvent}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "update an event from the admin", notes = "Endpoint to update an event")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully added the loan request"),
+            @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
+            @ApiResponse(code = 403, message = "Forbidden")
+    })
+    public ResponseEntity<Event> updateevnt( @PathVariable Long idEvent,  @ModelAttribute RequestOfEvents request,@RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
+
+        boolean exist = this.service.ExistById(idEvent);
+        if(!exist)
+            return new ResponseEntity("envent by this id :" + idEvent + "is not founded ", HttpStatus.NOT_ACCEPTABLE);
+
+        Event event =  this.service.FindById(idEvent);
+
+        File_model resourceMedia = null;
+        if (attachment != null && !attachment.isEmpty()) {
+
+            if(event.getAttachment() != null){
+                File_model model = this.filesStorageService.findbyid(event.getAttachment().getId());
+                /*if (model == null)
+                    return new ResponseEntity("media si not found in the system", HttpStatus.NOT_FOUND);*/
+                this.filesStorageService.delete_file_by_path_from_cdn(model.getUrl(), event.getAttachment().getId());
+            }
+
+            String extension = attachment.getContentType().substring(attachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+            if (!image_accepte_type.contains(extension)) {
+                return ResponseEntity.badRequest().body(null);
+            }
+            resourceMedia = filesStorageService.save_file_local(attachment, "events");
+            if (resourceMedia == null) {
+                return ResponseEntity.badRequest().body(null);
+            }
+        }
+        if (request.getAssignedto() != null) {
+            event.setAssignedto(request.getAssignedto());
+        }
+        if (request.getStatus() != null) {
+            event.setStatus(request.getStatus());
+        }
+        if (request.getTitle() != null) {
+            event.setTitle(request.getTitle());
+        }
+        if (request.getEventDate() != null) {
+            event.setEventDate(request.getEventDate());
+        }
+        if (request.getDescription() != null) {
+            event.setDescription(request.getDescription());
+        }
+        if (resourceMedia != null) {
+            event.setAttachment(resourceMedia);
+        }
+        Event result = this.service.Update(event);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+    }
+    @DeleteMapping(value = {"/{event_id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Event> daleteEvent(@PathVariable Long event_id){
+        boolean exist = this.service.ExistById(event_id);
+        if(!exist)
+            return new ResponseEntity("envent by this id :" + event_id + "is not founded ", HttpStatus.NOT_ACCEPTABLE);
+
+        Event event =  this.service.FindById(event_id);
+        event.setArchive(true);
+        event = this.service.Update(event);
+        return new ResponseEntity<>(event, HttpStatus.OK);
+
+    }
 
 
 
