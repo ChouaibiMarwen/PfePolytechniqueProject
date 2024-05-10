@@ -59,14 +59,14 @@ public class RequestController  extends BaseController {
     @Autowired
     private UserService UserServices;
     @PostMapping(value = {"/add_Request"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
     @ApiOperation(value = "Add a new request request from the admin", notes = "Endpoint to add a new request")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added the loan request"),
             @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Request> addEvent(@ModelAttribute RequestsRequest request, @RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
+    public ResponseEntity<Request> add_Request(@ModelAttribute RequestsRequest request, @RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
 
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         Set<Invoice> invoices = new HashSet<>();
