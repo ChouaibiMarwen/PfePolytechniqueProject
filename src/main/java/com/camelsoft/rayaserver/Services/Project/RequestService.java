@@ -71,7 +71,7 @@ public class RequestService {
             Role userRole = roleRepository.findByRole(role);
 
             PageRequest pg = PageRequest.of(page, size);
-            Page<Request> pckge = this.repository.findAllByStatusAndCreatorrequest_RoleArchiveIsFalse(pg, status, userRole);
+            Page<Request> pckge = this.repository.findAllByStatusAndCreatorrequest_RoleAndArchiveIsFalse(pg, status, userRole);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {
@@ -85,7 +85,7 @@ public class RequestService {
             Role userRole = roleRepository.findByRole(role);
 
             PageRequest pg = PageRequest.of(page, size);
-            Page<Request> pckge = this.repository.findAllByCreatorrequest_RoleArchiveIsFalse(pg,userRole);
+            Page<Request> pckge = this.repository.findAllByCreatorrequest_RoleAndArchiveIsFalse(pg,userRole);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {

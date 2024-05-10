@@ -18,8 +18,8 @@ import java.util.List;
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
     Page<Request> findAllByStatusAndArchiveIsFalse(Pageable page, RequestState status);
-    Page<Request> findAllByStatusAndCreatorrequest_RoleArchiveIsFalse(Pageable page, RequestState status, Role role);
-    Page<Request> findAllByCreatorrequest_RoleArchiveIsFalse(Pageable page,Role role);
+    Page<Request> findAllByStatusAndCreatorrequest_RoleAndArchiveIsFalse(Pageable page, RequestState status, Role role);
+    Page<Request> findAllByCreatorrequest_RoleAndArchiveIsFalse(Pageable page,Role role);
     Page<Request> findAllByArchiveIsFalse(Pageable page);
 
 
