@@ -72,6 +72,20 @@ public class EventController {
 
     }
 
+    @GetMapping(value = {"/all_events_by_title_and_date_paginated"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all events for admin by title and date paginated ", notes = "Endpoint to get events by name character and date paginated ")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> all_events_by_title__and_date_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String  title, @RequestParam(required = false) Date  creationdate) throws IOException {
+
+        return new ResponseEntity<>(this.service.findAllByTtileOrDatePaginated(page, size , title, creationdate), HttpStatus.OK);
+
+    }
+
     @PostMapping(value = {"/add_event"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Add a new event request from the admin", notes = "Endpoint to add a new event")

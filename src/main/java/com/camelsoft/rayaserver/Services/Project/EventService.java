@@ -10,10 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class EventService {
@@ -115,6 +112,32 @@ public class EventService {
                 return  FindAllByStatusPg(page, size, status);
             if(tit != null && status != null)
                 return FindAllByTitleAndStatusPg(page, size,tit,status);
+
+            return null;
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
+    public DynamicResponse findAllByTtileOrDatePaginated(int page, int size , String tit, Date date){
+
+        try {
+            if(tit == null && date == null)
+                return  FindAllPg(page, size);
+            if(tit != null && date == null)
+                return FindAllByTitlePg(page, size, tit);
+            if(tit == null && date != null ){
+                PageRequest pg = PageRequest.of(page, size);
+                Page<Event> pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,date);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            if(tit != null && date != null){
+                PageRequest pg = PageRequest.of(page, size);
+                Page<Event> pckge = this.repository.findAllByArchiveIsFalseAndTitleContainingIgnoreCaseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,tit, date);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
 
             return null;
         } catch (NoSuchElementException ex) {
