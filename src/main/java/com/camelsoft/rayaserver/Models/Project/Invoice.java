@@ -88,6 +88,11 @@ public class Invoice implements Serializable {
     @JoinColumn(name = "user_id_relatedto", nullable = false)
     private users relatedto;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<RefundInvoice> refunds = new HashSet<>();
+
+
     @ManyToMany(mappedBy = "invoices")
     @JsonIgnore
     private Set<Request> requests =  new HashSet<>();
@@ -355,5 +360,21 @@ public class Invoice implements Serializable {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Set<RefundInvoice> getRefunds() {
+        return refunds;
+    }
+
+    public void setRefunds(Set<RefundInvoice> refunds) {
+        this.refunds = refunds;
+    }
+
+    public Set<Request> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(Set<Request> requests) {
+        this.requests = requests;
     }
 }

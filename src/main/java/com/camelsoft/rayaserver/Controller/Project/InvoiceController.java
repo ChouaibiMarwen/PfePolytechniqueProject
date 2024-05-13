@@ -4,12 +4,15 @@ import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Product;
+import com.camelsoft.rayaserver.Models.Project.RefundInvoice;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.InvoiceRequest;
+import com.camelsoft.rayaserver.Request.project.RefundInvoiceRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.InvoiceReport;
 import com.camelsoft.rayaserver.Services.Project.InvoiceService;
 import com.camelsoft.rayaserver.Services.Project.ProductService;
+import com.camelsoft.rayaserver.Services.Project.RefundInvoiceService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +43,8 @@ public class InvoiceController extends BaseController {
     private ProductService productservice;
     @Autowired
     private UserService UserServices;
+    @Autowired
+    private RefundInvoiceService refundInvoiceService;
 
     @GetMapping(value = {"/all_invoice"})
     @PreAuthorize("hasRole('ADMIN')")
@@ -210,7 +215,66 @@ public class InvoiceController extends BaseController {
         report.setInvoicepermonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.UNPAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS, related));
         return new ResponseEntity<>(report, HttpStatus.OK);
 
+    }
+
+    @PatchMapping(value = {"/add_refund_invoice/{idInvoice}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @ApiOperation(value = "add refund invoice for admin", notes = "Endpoint to add refund invoice for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 406, message = "Not acceptable , you need to defined the invoice relation"),
+            @ApiResponse(code = 302, message = "the invoice number is already in use"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<RefundInvoice> add_refund_invoice(@PathVariable Long idInvoice, @ModelAttribute RefundInvoiceRequest request) throws IOException {
+
+        Invoice invoice = this.service.FindById(idInvoice);
+        if (invoice == null)
+            return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_FOUND);
+
+        if(invoice.getStatus() != InvoiceStatus.PAID)
+            return new ResponseEntity("The invoice is not paid yet", HttpStatus.NOT_ACCEPTABLE);
+
+
+        RefundInvoice refund = new RefundInvoice();
+        refund.setAmount(request.getAmount());
+        refund.setReason(request.getReason());
+        refund.setInvoice(invoice);
+        RefundInvoice result  = this.refundInvoiceService.Save(refund);
+
+        invoice.setStatus(InvoiceStatus.REFUNDS);
+        this.service.Update(invoice);
+        return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
+
+
+    @PatchMapping(value = {"/confirm_invoice/{idInvoice}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to confirm invoice for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 406, message = "Not acceptable , you need to defined the invoice relation"),
+            @ApiResponse(code = 302, message = "the invoice number is already in use"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity confirm_invoice(@PathVariable Long idInvoice) throws IOException {
+
+        Invoice invoice = this.service.FindById(idInvoice);
+        if (invoice == null)
+            return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_FOUND);
+
+        if(invoice.getStatus() == InvoiceStatus.PAID)
+            return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
+
+        invoice.setStatus(InvoiceStatus.PAID);
+        this.service.Update(invoice);
+        return new ResponseEntity(HttpStatus.OK);
+
+    }
+
+
 
 }
