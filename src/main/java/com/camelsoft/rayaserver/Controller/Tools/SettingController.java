@@ -1,10 +1,15 @@
 package com.camelsoft.rayaserver.Controller.Tools;
 
-import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
-import com.camelsoft.rayaserver.Models.Project.Invoice;
+import com.camelsoft.rayaserver.Enum.Tools.Language;
 import com.camelsoft.rayaserver.Models.Tools.RayaSettings;
+import com.camelsoft.rayaserver.Models.Tools.UserConfiguration;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.Tools.RayaSetiingRequest;
+import com.camelsoft.rayaserver.Request.Tools.UserConfigurationRequest;
 import com.camelsoft.rayaserver.Services.Tools.RayaSettingService;
+import com.camelsoft.rayaserver.Services.Tools.UserConfigurationService;
+import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -18,15 +23,17 @@ import java.io.IOException;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api/v1/raya_settings")
-public class RayaSettingController {
+@RequestMapping(value = "/api/v1/settings")
+public class SettingController  extends BaseController {
 
     @Autowired
-    private RayaSettingService service;
+    private UserConfigurationService service;
+    @Autowired
+    private UserService userService;
 
-    @PatchMapping(value = {"/raya_settings"})
+    @PatchMapping(value = {"/my_settings"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
-    @ApiOperation(value = "update general settings for admin", notes = "Endpoint to update general settings for admin")
+    @ApiOperation(value = "update user settings for admin", notes = "Endpoint to update user settings for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request, check data"),
@@ -34,29 +41,37 @@ public class RayaSettingController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<RayaSettings> UpdateRayaSettings(@ModelAttribute RayaSetiingRequest request) throws IOException {
+    public ResponseEntity<UserConfiguration> my_settings(@ModelAttribute UserConfigurationRequest request) throws IOException {
+        users users = userService.findByUserName(getCurrentUser().getUsername());
 
-        RayaSettings settings = this.service.FindFirst();
+
+
+        UserConfiguration settings = users.getUserconfiguration();
         if(settings == null)
-            settings = new RayaSettings(true,true);
+            settings = new UserConfiguration(true,true, Language.ENGLISH);
 
 
-        if(request.getAllowresetpassword() != null){
-            settings.setAllowresetpassword(request.getAllowresetpassword());
+        if(request.getNotificationEmail() != null){
+            settings.setNotificationemail(request.getNotificationEmail());
         }
 
-        if(request.getAllowsignup() != null){
-            settings.setAllowsignup(request.getAllowsignup());
+        if(request.getNotificationFcm() != null){
+            settings.setNotificationfcm(request.getNotificationFcm());
 
         }
 
-        RayaSettings result =  this.service.Update(settings);
+        if(request.getLanguage() != null){
+            settings.setLanguage(request.getLanguage());
+
+        }
+
+        UserConfiguration result =  this.service.Update(settings);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
 
 
- @GetMapping(value = {"/settings"})
+    @GetMapping(value = {"/settings"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
     @ApiOperation(value = "get general settings for admin", notes = "Endpoint to get general settings for admin")
     @ApiResponses(value = {
@@ -66,12 +81,15 @@ public class RayaSettingController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<RayaSettings> get_settings() throws IOException {
+    public ResponseEntity<UserConfiguration> get_settings() throws IOException {
+        users users = userService.findByUserName(getCurrentUser().getUsername());
 
-        RayaSettings settings = this.service.FindFirst();
+
+
+        UserConfiguration settings = users.getUserconfiguration();
         if(settings == null) {
-            settings = new RayaSettings(true, true);
-            RayaSettings result =  this.service.Update(settings);
+            settings = new UserConfiguration(true,true, Language.ENGLISH);
+            UserConfiguration result =  this.service.Update(settings);
             return new ResponseEntity<>(result, HttpStatus.OK);
 
 
@@ -81,5 +99,4 @@ public class RayaSettingController {
         }
 
     }
-
 }

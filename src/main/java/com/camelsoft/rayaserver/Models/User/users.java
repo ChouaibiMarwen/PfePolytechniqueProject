@@ -8,10 +8,7 @@ import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.Request;
 import com.camelsoft.rayaserver.Models.Project.RequestCorrespondence;
-import com.camelsoft.rayaserver.Models.Tools.Address;
-import com.camelsoft.rayaserver.Models.Tools.BankInformation;
-import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
-import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
+import com.camelsoft.rayaserver.Models.Tools.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -67,6 +64,9 @@ public class users implements Serializable {
     @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "personal_id", referencedColumnName = "personal_information_id")
     private PersonalInformation personalinformation;
+@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "configuration_user_id", referencedColumnName = "configuration_id")
+    private UserConfiguration userconfiguration;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -147,6 +147,14 @@ public class users implements Serializable {
 
     public void addAddress(Address address) {
         this.addresses.add(address);
+    }
+
+    public UserConfiguration getUserconfiguration() {
+        return userconfiguration;
+    }
+
+    public void setUserconfiguration(UserConfiguration userconfiguration) {
+        this.userconfiguration = userconfiguration;
     }
 
     @Override

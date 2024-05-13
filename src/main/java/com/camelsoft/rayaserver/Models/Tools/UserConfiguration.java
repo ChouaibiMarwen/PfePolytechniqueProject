@@ -1,6 +1,8 @@
 package com.camelsoft.rayaserver.Models.Tools;
 
 import com.camelsoft.rayaserver.Enum.Tools.Language;
+import com.camelsoft.rayaserver.Models.User.users;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -16,16 +18,24 @@ public class UserConfiguration  implements Serializable {
     @Column(name = "configuration_id")
     private Long id;
     @Column(name = "notification_email")
-    private Boolean notificationEmail = false;
+    private Boolean notificationemail = false;
     @Column(name = "notification_fcm")
-    private Boolean notificationFcm = false;
+    private Boolean notificationfcm = false;
     @Column(name = "language")
     private Language language = Language.ENGLISH;
     @Column(name = "timestmp")
     private Date timestmp = new Date();
-
+    @OneToOne(mappedBy = "userconfiguration")
+    @JsonIgnore
+    private users user;
     public UserConfiguration() {
 
+    }
+
+    public UserConfiguration(Boolean notificationEmail, Boolean notificationFcm, Language language) {
+        this.notificationemail = notificationEmail;
+        this.notificationfcm = notificationFcm;
+        this.language = language;
     }
 
     public Long getId() {
@@ -36,20 +46,20 @@ public class UserConfiguration  implements Serializable {
         this.id = id;
     }
 
-    public Boolean getNotificationEmail() {
-        return notificationEmail;
+    public Boolean getNotificationemail() {
+        return notificationemail;
     }
 
-    public void setNotificationEmail(Boolean notificationEmail) {
-        this.notificationEmail = notificationEmail;
+    public void setNotificationemail(Boolean notificationemail) {
+        this.notificationemail = notificationemail;
     }
 
-    public Boolean getNotificationFcm() {
-        return notificationFcm;
+    public Boolean getNotificationfcm() {
+        return notificationfcm;
     }
 
-    public void setNotificationFcm(Boolean notificationFcm) {
-        this.notificationFcm = notificationFcm;
+    public void setNotificationfcm(Boolean notificationfcm) {
+        this.notificationfcm = notificationfcm;
     }
 
     public Language getLanguage() {
@@ -66,5 +76,13 @@ public class UserConfiguration  implements Serializable {
 
     public void setTimestmp(Date timestmp) {
         this.timestmp = timestmp;
+    }
+
+    public users getUser() {
+        return user;
+    }
+
+    public void setUser(users user) {
+        this.user = user;
     }
 }
