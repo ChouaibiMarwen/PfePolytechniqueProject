@@ -58,6 +58,20 @@ public class ProductService {
         }
 
     }
+public Set<Product> GetProductList(List<Long> models) {
+        try {
+            Set<Product> products = new HashSet<>();
+            for (Long req: models) {
+                Product result = this.FindById(req);
+                if(result!=null)
+                    products.add(result);
+            }
+            return products;
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
 
     public Product Update(Product model) {
         try {

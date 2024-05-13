@@ -94,7 +94,7 @@ public class InvoiceController extends BaseController {
             if (request.getRelated() != InvoiceRelated.CUSTOMER)
                 return new ResponseEntity("the related to is a customer and the related is not a customer", HttpStatus.NOT_ACCEPTABLE);
         }
-        Set<Product> products = this.productservice.SaveProductList(request.getProducts());
+        Set<Product> products = this.productservice.GetProductList(request.getProducts());
         Invoice invoice = new Invoice(
                 request.getInvoicenumber(),
                 request.getInvoicedate(),
