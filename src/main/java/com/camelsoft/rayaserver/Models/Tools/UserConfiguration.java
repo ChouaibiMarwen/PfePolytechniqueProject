@@ -27,4 +27,44 @@ public class UserConfiguration  implements Serializable {
     public UserConfiguration() {
 
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Boolean getNotificationEmail() {
+        return notificationEmail;
+    }
+
+    public void setNotificationEmail(Boolean notificationEmail) {
+        this.notificationEmail = notificationEmail;
+    }
+
+    public Boolean getNotificationFcm() {
+        return notificationFcm;
+    }
+
+    public void setNotificationFcm(Boolean notificationFcm) {
+        this.notificationFcm = notificationFcm;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    public Date getTimestmp() {
+        return timestmp;
+    }
+
+    public void setTimestmp(Date timestmp) {
+        this.timestmp = timestmp;
+    }
 }
