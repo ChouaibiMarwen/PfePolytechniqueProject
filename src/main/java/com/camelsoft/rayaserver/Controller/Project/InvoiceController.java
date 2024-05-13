@@ -76,7 +76,7 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<Invoice> add_invoice(@ModelAttribute InvoiceRequest request) throws IOException {
+    public ResponseEntity<Invoice> add_invoice(@RequestBody InvoiceRequest request) throws IOException {
         users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
         users relatedto = UserServices.findById(request.getRelatedtouserid());
 
