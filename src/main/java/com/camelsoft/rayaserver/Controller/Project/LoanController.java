@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,16 +53,15 @@ public class LoanController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_loans_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) LoanStatus status) throws IOException {
+    public ResponseEntity<DynamicResponse> all_loans_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) LoanStatus status,  @RequestParam(required = false) Date creationdate) throws IOException {
         // users user = UserServices.findByUserName(getCurrentUser().getUsername());
-        DynamicResponse result = new DynamicResponse();
-        if (status != null) {
-            result = this.Services.FindAllByState(page, size, status);
+        //DynamicResponse result = new DynamicResponse();
+       /* if (status != null) {
+            result = this.Services.FindAllByState(page, size, status, creationdate);
         } else {
             result = this.Services.FindAllPg(page, size);
-        }
-
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        }*/
+        return new ResponseEntity<>(this.Services.FindAllByStateAndDatenNewerThen(page, size, status, creationdate), HttpStatus.OK);
     }
 
     @GetMapping(value = {"/all_loans_supplier"})

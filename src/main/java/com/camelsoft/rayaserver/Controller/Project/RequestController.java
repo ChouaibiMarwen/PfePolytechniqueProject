@@ -42,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -209,7 +210,12 @@ public class RequestController  extends BaseController {
             return new ResponseEntity("wrong id request: id not found", HttpStatus.BAD_REQUEST);
 
         Request req = this.service.FindById(idRequest);
-        return new ResponseEntity<>(req.getCorssspondences(), HttpStatus.OK);
+    // Get the set of RequestCorrespondence entities ordered by timestamp in descending order
+    Set<RequestCorrespondence> correspondences = req.getCorssspondences()
+            .stream()
+            .sorted(Comparator.comparing(RequestCorrespondence::getTimestamp).reversed())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+        return new ResponseEntity<>(correspondences, HttpStatus.OK);
 
     }
 

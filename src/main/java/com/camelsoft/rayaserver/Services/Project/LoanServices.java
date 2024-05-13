@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -113,12 +114,22 @@ public class LoanServices {
 
     }
 
-    public DynamicResponse FindAllByState(int page, int size, LoanStatus status) {
+    public DynamicResponse FindAllByStateAndDatenNewerThen(int page, int size, LoanStatus status , Date date) {
         try {
             PageRequest pg = PageRequest.of(page, size);
-            Page<Loan> pckge = this.repository.findAllByStatusAndArchiveIsFalse(pg, status);
-            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
-
+            if (status == null &&  date == null){
+               return  FindAllPg(page, size);
+            }
+            else if(status != null &&  date == null){
+                Page<Loan> pckge = this.repository.findAllByStatusAndArchiveIsFalse(pg, status);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }else if (status == null && date != null ) {
+                Page<Loan> pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,date);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            } else{
+                Page<Loan> pckge = this.repository.findAllByStatusAndArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg, status, date);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }

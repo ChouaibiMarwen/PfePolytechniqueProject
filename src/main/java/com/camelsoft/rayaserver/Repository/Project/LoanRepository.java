@@ -10,9 +10,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+
 @Repository
 public interface LoanRepository extends JpaRepository<Loan,Long> {
     Page<Loan> findAllByStatusAndArchiveIsFalse(Pageable page, LoanStatus status);
+    Page<Loan> findAllByStatusAndArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable pageable, LoanStatus status, Date timestamp);
+    Page<Loan> findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable pageable,Date timestamp);
     boolean existsByIdAndSupplier(Long id , Supplier supplier);
     Page<Loan> findAllByStatusAndSupplierAndArchiveIsFalse(Pageable page, LoanStatus status,Supplier supplier);
     Page<Loan> findAllBySupplierAndArchiveIsFalse(Pageable page, Supplier supplier);
