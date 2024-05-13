@@ -126,6 +126,20 @@ public class PurchaseOrdersController {
     }
 
 
+    @GetMapping(value = {"/all_purchase_orders_by_status_and_date"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all purchase orders by status and date for admin by name", notes = "Endpoint to get purchase orders by status and date")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> all_purchase_oreder_byStatus_And_date(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate) throws IOException {
+        DynamicResponse result = this.purshaseOrderService.findAllPgByStatusAndDate(page, size , status , creationdate);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
     @PatchMapping(value ="/update_purchase_order/{purchaseOrderId}")
     @PreAuthorize("hasRole('SUPPLIER')")
     @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to get purchase orders by status")
