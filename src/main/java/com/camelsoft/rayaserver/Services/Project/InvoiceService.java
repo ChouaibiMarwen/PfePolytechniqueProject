@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -186,7 +187,7 @@ public class InvoiceService {
 
 
     //get totla revevenu by date :
-    public Map<String, Double> getTotalRevenueByMonth(Date startDate, Date endDate) {
+   /* public Map<String, Double> getTotalRevenueByMonth(Date startDate, Date endDate) {
         Calendar startCalendar = Calendar.getInstance();
         startCalendar.setTime(startDate);
         Calendar endCalendar = Calendar.getInstance();
@@ -215,7 +216,82 @@ public class InvoiceService {
         int month = calendar.get(Calendar.MONTH) + 1; // Calendar months are zero-based
         int year = calendar.get(Calendar.YEAR);
         return String.format("%04d-%02d", year, month);
+    }*/
+
+  /*  public List<Map<String, Double>> calculateRevenueByMonth(Date startDate, Date endDate) {
+        List<Invoice> paidInvoices = this.repository.findByStatusAndArchiveIsFalseAndTimestampBetween(InvoiceStatus.PAID, startDate, endDate);
+
+        Map<String, Double> revenueByMonth = new HashMap<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+
+        while (calendar.getTime().before(endDate) || calendar.getTime().equals(endDate)) {
+            double totalRevenue = 0.0;
+            int month = calendar.get(Calendar.MONTH);
+            String monthName = new SimpleDateFormat("MMMM").format(calendar.getTime());
+
+            for (Invoice invoice : paidInvoices) {
+                if (isSameMonth(invoice.getTimestamp(), calendar.getTime())) {
+                    for (Product product : invoice.getProducts()) {
+                        totalRevenue += product.getSubtotal();
+                    }
+                }
+            }
+
+            revenueByMonth.put(monthName, totalRevenue);
+            calendar.add(Calendar.MONTH, 1);
+        }
+
+        List<Map<String, Double>> result = new ArrayList<>();
+        result.add(revenueByMonth);
+        return result;
     }
+
+    private boolean isSameMonth(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date2);
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
+    }*/
+
+    public List<Map<String, Double>> calculateRevenueByMonth(Date startDate, Date endDate) {
+        List<Invoice> paidInvoices = this.repository.findByStatusAndArchiveIsFalseAndTimestampBetween(InvoiceStatus.PAID, startDate, endDate);
+
+        List<Map<String, Double>> revenueByMonth = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+
+        while (calendar.getTime().before(endDate) || calendar.getTime().equals(endDate)) {
+            double totalRevenue = 0.0;
+            int month = calendar.get(Calendar.MONTH);
+            String monthName = new SimpleDateFormat("MMMM").format(calendar.getTime());
+
+            for (Invoice invoice : paidInvoices) {
+                if (isSameMonth(invoice.getTimestamp(), calendar.getTime())) {
+                    for (Product product : invoice.getProducts()) {
+                        totalRevenue += product.getSubtotal();
+                    }
+                }
+            }
+
+            Map<String, Double> monthlyRevenue = new HashMap<>();
+            monthlyRevenue.put(monthName, totalRevenue);
+            revenueByMonth.add(monthlyRevenue);
+            calendar.add(Calendar.MONTH, 1);
+        }
+
+        return revenueByMonth;
+    }
+
+    private boolean isSameMonth(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date2);
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
+    }
+
 
 
 

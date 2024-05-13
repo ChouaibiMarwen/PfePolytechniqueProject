@@ -80,6 +80,8 @@ public class PurchaseOrdersController {
         purshaseOrder.setStatus(request.getStatus());
         purshaseOrder.setSupplier(supplier);
         purshaseOrder.setVehicles(vehicles);
+        if( vehicles.getStock() - request.getQuantity() < 0)
+            return new ResponseEntity(" vehiclas Quantity demanded is not founded in stock", HttpStatus.NOT_ACCEPTABLE);
         purshaseOrder.setQuantity(request.getQuantity());
         purshaseOrder.setDiscountamount(request.getDiscountamount());
         purshaseOrder.setRequestDeliveryDate(request.getRequestDeliveryDate());
@@ -89,7 +91,7 @@ public class PurchaseOrdersController {
         purshaseOrder.setCodePostal(request.getCodePostal());
         purshaseOrder.setCountry(request.getCountry());
         purshaseOrder.setDescription(request.getDescription());
-        if(request.getAttachments() != null){
+        if(request.getAttachments() != null || !request.getAttachments().isEmpty()){
             Set<File_model> attachmentsList = new HashSet<>();
             if (this.filesStorageService.checkformatList(request.getAttachments())) {
                 attachmentsList = filesStorageService.save_all(request.getAttachments(), "purshase_order");
@@ -100,6 +102,10 @@ public class PurchaseOrdersController {
             purshaseOrder.setAttachments(attachmentsList);
         }
         PurshaseOrder po = this.purshaseOrderService.Save(purshaseOrder);
+
+        // update vihicles stock
+        vehicles.setStock(vehicles.getStock() - po.getQuantity());
+        this.vehiclesService.Update(vehicles);
         PurchaseOrderDto purchaseOrderDto = PurchaseOrderDto.PurchaseOrderToDto(po);
 
         return  new ResponseEntity<>(purchaseOrderDto, HttpStatus.OK);

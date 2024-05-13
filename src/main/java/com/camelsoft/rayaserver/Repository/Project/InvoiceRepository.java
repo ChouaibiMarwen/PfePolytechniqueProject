@@ -27,4 +27,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     @Query("SELECT SUM(p.subtotal) FROM Invoice i JOIN i.products p WHERE i.invoicedate BETWEEN :startDate AND :endDate AND i.status = 'PAID'")
     Double sumSubtotalOfProductsByInvoiceDateBetween(Date startDate, Date endDate);
 
+    List<Invoice> findByStatusAndArchiveIsFalseAndTimestampBetween(InvoiceStatus status, Date startDate, Date endDate);
+
 }

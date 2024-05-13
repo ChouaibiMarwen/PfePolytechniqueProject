@@ -88,6 +88,10 @@ public class VehiclesController extends BaseController {
     })
     public ResponseEntity<Vehicles> add_vehicle(@ModelAttribute VehiclesRequest request) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        Supplier supplier = user.getSupplier();
+        if (supplier == null)
+            return new ResponseEntity(" supplier not found or null in the system", HttpStatus.NOT_FOUND);
+
         Vehicles model = new Vehicles(
                 request.getCarmodel(),
                 request.getColor(),
@@ -99,7 +103,7 @@ public class VehiclesController extends BaseController {
                 request.getInteriorfeatures(),
                 request.getDescription(),
                 request.getStock(),
-                user.getSupplier()
+                supplier
         );
         Vehicles result = this.Services.Save(model);
         return new ResponseEntity<>(result, HttpStatus.OK);

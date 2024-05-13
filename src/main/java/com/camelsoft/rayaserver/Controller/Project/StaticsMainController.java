@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -63,13 +64,31 @@ public class StaticsMainController   extends BaseController {
 
     //add sales by month api for the admin
 
-    @GetMapping("/total")
+    /*@GetMapping("/total")
     public ResponseEntity<Map<String, Double>> getTotalRevenueByMonth(
             @RequestParam("startDate") Date startDate,
             @RequestParam("endDate") Date endDate) {
 
         Map<String, Double> totalRevenueByMonth = this.invoiceService.getTotalRevenueByMonth(startDate, endDate);
         return ResponseEntity.ok(totalRevenueByMonth);
+    }*/
+
+    @GetMapping("/revenue-by-month")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all statistics for admin main dashboard", notes = "Endpoint to get statistics")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, "),
+            @ApiResponse(code = 406, message = "NOT ACCEPTABLE"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<List<Map<String, Double>>> getRevenueByMonth(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+
+        List<Map<String, Double>> revenueByMonth = this.invoiceService.calculateRevenueByMonth(startDate, endDate);
+        return ResponseEntity.ok(revenueByMonth);
     }
+
 
 }
