@@ -88,7 +88,6 @@ public class Invoice implements Serializable {
     @JoinColumn(name = "user_id_relatedto", nullable = false)
     private users relatedto;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<RefundInvoice> refunds = new HashSet<>();
 
