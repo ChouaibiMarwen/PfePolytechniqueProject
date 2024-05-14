@@ -5,9 +5,7 @@ import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Models.Project.Product;
 import lombok.Data;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Data
 public class InvoiceRequest {
@@ -34,5 +32,5 @@ public class InvoiceRequest {
     private String vehicleenginesize;
     private InvoiceRelated related=InvoiceRelated.NONE;
     private Long relatedtouserid;
-    private Set<ProductRequest> products = new HashSet<>();
+    private List<Long> products = new ArrayList<>();
 }

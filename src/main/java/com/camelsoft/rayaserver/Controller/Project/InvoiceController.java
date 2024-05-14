@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Product;
 import com.camelsoft.rayaserver.Models.Project.RefundInvoice;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Request.project.InvoiceRepportRequest;
 import com.camelsoft.rayaserver.Request.project.InvoiceRequest;
 import com.camelsoft.rayaserver.Request.project.RefundInvoiceRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -76,7 +77,7 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<Invoice> add_invoice(@ModelAttribute InvoiceRequest request) throws IOException {
+    public ResponseEntity<Invoice> add_invoice(@RequestBody InvoiceRequest request) throws IOException {
         users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
         users relatedto = UserServices.findById(request.getRelatedtouserid());
 
@@ -94,7 +95,7 @@ public class InvoiceController extends BaseController {
             if (request.getRelated() != InvoiceRelated.CUSTOMER)
                 return new ResponseEntity("the related to is a customer and the related is not a customer", HttpStatus.NOT_ACCEPTABLE);
         }
-        Set<Product> products = this.productservice.SaveProductList(request.getProducts());
+        Set<Product> products = this.productservice.GetProductList(request.getProducts());
         Invoice invoice = new Invoice(
                 request.getInvoicenumber(),
                 request.getInvoicedate(),
@@ -202,8 +203,14 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<InvoiceReport> invoice_report_admin(@ModelAttribute Date date, @ModelAttribute InvoiceRelated related) throws IOException {
+    public ResponseEntity<InvoiceReport> invoice_report_admin(@ModelAttribute InvoiceRepportRequest request) throws IOException {
         InvoiceReport report = new InvoiceReport();
+        Date date = request.getDate();
+        InvoiceRelated related = request.getRelated();
+        if(date==null)
+            date=new Date();
+
+        System.out.println(date);
         report.setDate(date);
         report.setInvoicepermonth(this.service.countInvoicePerMonth(date, related));
         report.setRefundbymonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS, related));
