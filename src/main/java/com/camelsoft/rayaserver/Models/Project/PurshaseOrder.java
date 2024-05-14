@@ -12,6 +12,7 @@ import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +21,7 @@ import java.util.Set;
 
 @Data
 @Entity
-public class PurshaseOrder {
+public class PurshaseOrder  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -38,6 +39,7 @@ public class PurshaseOrder {
     @JoinColumn(name = "vehicles_id")
     private Vehicles vehicles;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id_purchaseorder",nullable = false)
     private Supplier supplier;

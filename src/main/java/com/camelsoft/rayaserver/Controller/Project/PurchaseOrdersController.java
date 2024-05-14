@@ -160,7 +160,6 @@ public class PurchaseOrdersController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
     @PatchMapping(value ="/update_purchase_order/{purchaseOrderId}")
     @PreAuthorize("hasRole('SUPPLIER')")
     @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to get purchase orders by status")

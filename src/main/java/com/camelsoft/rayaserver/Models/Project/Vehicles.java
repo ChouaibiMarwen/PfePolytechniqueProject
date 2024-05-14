@@ -61,6 +61,7 @@ public class Vehicles implements Serializable {
     @JsonIgnore
     @Column(name = "archive")
     private Boolean archive = false;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id",nullable = false)
@@ -236,5 +237,11 @@ public class Vehicles implements Serializable {
         this.interiorfeatures = interiorfeatures;
     }
 
+    public Set<PurshaseOrder> getPurchaseOrder() {
+        return purchaseOrder;
+    }
 
+    public void setPurchaseOrder(Set<PurshaseOrder> purchaseOrder) {
+        this.purchaseOrder = purchaseOrder;
+    }
 }

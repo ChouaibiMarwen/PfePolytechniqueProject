@@ -15,7 +15,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
-@Data
+
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "supplier")
@@ -84,4 +84,115 @@ public class Supplier implements Serializable {
 
     }
 
+    public Integer getAvailableVehiclesCountBySupplier() {
+        return availableVehiclesCountBySupplier;
+    }
+
+    public void setAvailableVehiclesCountBySupplier(Integer availableVehiclesCountBySupplier) {
+        this.availableVehiclesCountBySupplier = availableVehiclesCountBySupplier;
+    }
+
+    public Set<PurshaseOrder> getPurchaseOrders() {
+        return purchaseOrders;
+    }
+
+    public void setPurchaseOrders(Set<PurshaseOrder> purchaseOrders) {
+        this.purchaseOrders = purchaseOrders;
+    }
+
+    public Set<Vehicles> getVehicles() {
+        return vehicles;
+    }
+
+    public void setVehicles(Set<Vehicles> vehicles) {
+        this.vehicles = vehicles;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public users getUser() {
+        return user;
+    }
+
+    public void setUser(users user) {
+        this.user = user;
+    }
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
+    public Set<File_model> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<File_model> images) {
+        this.images = images;
+    }
+
+    public Integer getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(Integer ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public Double getRatingAverage() {
+        return ratingAverage;
+    }
+
+    public void setRatingAverage(Double ratingAverage) {
+        this.ratingAverage = ratingAverage;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<Loan> getLoans() {
+        return loans;
+    }
+
+    public void setLoans(Set<Loan> loans) {
+        this.loans = loans;
+    }
+
+    public Long getSuppliernumber() {
+        return suppliernumber;
+    }
+
+    public void setSuppliernumber(Long suppliernumber) {
+        this.suppliernumber = suppliernumber;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
