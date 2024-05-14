@@ -249,7 +249,7 @@ public class PurchaseOrdersController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<PurchaseOrderDto> updatePurchaseOrderStatus(@PathVariable Long purchaseOrderId, @ModelAttribute PurshaseOrderStatus status) throws IOException {
+    public ResponseEntity<PurchaseOrderDto> updatePurchaseOrderStatus(@PathVariable Long purchaseOrderId, @RequestParam PurshaseOrderStatus status) throws IOException {
         PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
         if(purchaseOrder == null)
             return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
