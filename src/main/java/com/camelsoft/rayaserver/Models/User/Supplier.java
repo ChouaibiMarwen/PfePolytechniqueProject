@@ -64,7 +64,7 @@ public class Supplier implements Serializable {
     private Set<PurshaseOrder> purchaseOrders = new HashSet<>();
 
     @Transient
-    private Integer VehiclesCountBySupplier = 0;
+    private Integer availableVehiclesCountBySupplier = 0;
 
     @PostLoad
     private void afterload(){
@@ -75,9 +75,11 @@ public class Supplier implements Serializable {
             }
         }
         if(this.vehicles!=null){
-                this.VehiclesCountBySupplier = this.vehicles.size();
+            for (Vehicles vehicles1 :vehicles) {
+                this.availableVehiclesCountBySupplier+= vehicles1.getStock();
+            }
         }else{
-            this.VehiclesCountBySupplier = 0;
+            this.availableVehiclesCountBySupplier = 0;
         }
 
     }
