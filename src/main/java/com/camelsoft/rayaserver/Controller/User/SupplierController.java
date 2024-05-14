@@ -158,7 +158,7 @@ public class SupplierController {
             @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_suppliers_by_purchase_order_status(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = true) String name) throws IOException {
+    public ResponseEntity<DynamicResponse> all_suppliers_by_purchase_order_status(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) String name) throws IOException {
 
         return new ResponseEntity<>(this.suppliersServices.DynamicResponsefindyNameorPurshaseOrderStatus(page, size, name, status), HttpStatus.OK);
 

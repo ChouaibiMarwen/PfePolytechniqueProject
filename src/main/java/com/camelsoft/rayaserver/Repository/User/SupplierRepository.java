@@ -19,13 +19,6 @@ public interface SupplierRepository extends JpaRepository<Supplier,Long> {
     @NotNull
     Page<Supplier> findAll(@NotNull Pageable pageable);
 
-   /* @Query("SELECT DISTINCT u FROM Supplier s " +
-            "JOIN s.user u " +
-            "JOIN u.purchaseOrders po " +
-            "WHERE (:name IS NULL OR CONCAT(u.personalinformation.firstnameen, ' ', u.personalinformation.lastnameen) LIKE %:name%) " +
-            "AND po.status = :status " +
-            "AND u.active = true")
-    Page<users> findUsersByPurchaseOrderStatusAndName(Pageable pageable, String name, PurshaseOrderStatus status);*/
    @Query("SELECT DISTINCT u FROM Supplier s " +
            "JOIN s.user u " +
            "JOIN u.personalinformation pi " +
@@ -34,7 +27,7 @@ public interface SupplierRepository extends JpaRepository<Supplier,Long> {
            "AND (:status IS NULL OR po.status = :status) " +
            "AND u.active = true")
    Page<users> findUsersByNameAndPurchaseOrderStatus(Pageable pageable,String name, PurshaseOrderStatus status);
-   // Page<users> findAll(@NotNull Pageable pageable);
+
 
     @Query("SELECT DISTINCT u FROM Supplier s " +
             "JOIN s.user u " +
