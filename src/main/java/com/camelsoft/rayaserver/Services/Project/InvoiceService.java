@@ -184,6 +184,20 @@ public class InvoiceService {
         return totalRevenue;
     }
 
+    public double getTotalRevenueFromOnePaidInvoice(Invoice invoice) {
+       // List<Invoice> paidInvoices = this.repository.findByStatus(InvoiceStatus.PAID);
+        double totalRevenue = 0.0;
+        if(invoice.getProducts() == null || invoice.getProducts().isEmpty())
+            return 0;
+        for (Product product : invoice.getProducts()) {
+            totalRevenue += product.getSubtotal();
+        }
+        return totalRevenue;
+    }
+
+
+
+
 
 
     //get totla revevenu by date :
