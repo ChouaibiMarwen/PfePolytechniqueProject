@@ -2,6 +2,8 @@ package com.camelsoft.rayaserver.Services.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
+import com.camelsoft.rayaserver.Models.Project.Vehicles;
+import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Repository.Project.PurshaseOrderRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
@@ -101,7 +103,32 @@ public class PurshaseOrderService {
 
 
 
+    public DynamicResponse FindAllVehiclesPgBySupplierAndCarvinAndPurchaseOrderStatus(int page, int size, Supplier supplier, String carvin , PurshaseOrderStatus status) {
+        try {
 
+            if(status == null && carvin == null){
+                PageRequest pg = PageRequest.of(page, size);
+                Page<Vehicles> pckge = this.repository.findVehiclesBySupplier(pg,supplier);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }else if (status != null && carvin == null ){
+                PageRequest pg = PageRequest.of(page, size);
+                Page<Vehicles> pckge = this.repository.findVehiclesBySupplierAndStatus(pg,supplier, status);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }else if(status == null && carvin != null){
+                PageRequest pg = PageRequest.of(page, size);
+                Page<Vehicles> pckge = this.repository.findVehiclesBySupplierAndCarvinContaining(pg,supplier, carvin);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }else{
+                PageRequest pg = PageRequest.of(page, size);
+                Page<Vehicles> pckge = this.repository.findVehiclesBySupplierAndStatusAndCarvinContaining(pg,supplier, status, carvin);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
 
 
 

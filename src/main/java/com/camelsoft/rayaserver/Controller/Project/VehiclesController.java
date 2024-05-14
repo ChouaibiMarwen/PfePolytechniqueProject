@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
+import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.VehiclesPostStatus;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
@@ -13,10 +14,7 @@ import com.camelsoft.rayaserver.Request.project.VehiclesPriceFinancingRequest;
 import com.camelsoft.rayaserver.Request.project.VehiclesRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
-import com.camelsoft.rayaserver.Services.Project.LoanServices;
-import com.camelsoft.rayaserver.Services.Project.VehiclesMediaService;
-import com.camelsoft.rayaserver.Services.Project.VehiclesPriceFinancingService;
-import com.camelsoft.rayaserver.Services.Project.VehiclesService;
+import com.camelsoft.rayaserver.Services.Project.*;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
@@ -46,6 +44,8 @@ public class VehiclesController extends BaseController {
     private VehiclesPriceFinancingService vehiclesPriceFinancingService;
     @Autowired
     private UserService UserServices;
+    @Autowired
+    private PurshaseOrderService purshaseOrderService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
 
@@ -98,7 +98,7 @@ public class VehiclesController extends BaseController {
     }
 
 
-   /* @GetMapping(value = {"/all_vehicles_by_supplier_and_vin_and_purchase_order_status/{idSupplier}"})
+    @GetMapping(value = {"/all_vehicles_by_supplier_and_vin_and_purchase_order_status/{idSupplier}"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all vehicles by supplier for admin", notes = "Endpoint to get a supllier's vehicles")
     @ApiResponses(value = {
@@ -106,19 +106,17 @@ public class VehiclesController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the supplier")
     })
-    public ResponseEntity<DynamicResponse> allvehiclesbysupplierAndVinAndPoStatus(@PathVariable Long idSupplier ,@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String  vin) throws IOException {
+    public ResponseEntity<DynamicResponse> allvehiclesbysupplierAndVinAndPoStatus(@PathVariable Long idSupplier ,@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String vin, @RequestParam(required = false) PurshaseOrderStatus status) throws IOException {
         users user = UserServices.findById(idSupplier);
         if (user == null)
             return new ResponseEntity(" supplier not found or null in the system", HttpStatus.NOT_FOUND);
         if (user.getSupplier() == null)
             return new ResponseEntity(" id provided is not for a supplier", HttpStatus.NOT_FOUND);
 
-        DynamicResponse result = this.Services.FindAllPgSupplier(page, size, user.getSupplier());
+        // DynamicResponse result = this.Services.FindAllPgSupplier(page, size, user.getSupplier());
+       DynamicResponse result = this.purshaseOrderService.FindAllVehiclesPgBySupplierAndCarvinAndPurchaseOrderStatus(page, size, user.getSupplier(), vin, status);
         return new ResponseEntity<>(result, HttpStatus.OK);
-    }*/
-
-
-
+    }
 
 
 
