@@ -60,9 +60,10 @@ public class InvoiceController extends BaseController {
         if (related == InvoiceRelated.NONE)
             return new ResponseEntity("you need to choose related NONE not a related", HttpStatus.NOT_ACCEPTABLE);
         if (status != null)
-            return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
+            return new ResponseEntity<>(this.service.FindAllByState(page, size, status, related), HttpStatus.OK);
 
-        return new ResponseEntity<>(this.service.FindAllByState(page, size, status, related), HttpStatus.OK);
+           // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
+        return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
 
 
     }
