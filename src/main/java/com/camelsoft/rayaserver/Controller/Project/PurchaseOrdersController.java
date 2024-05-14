@@ -91,7 +91,7 @@ public class PurchaseOrdersController {
         purshaseOrder.setCodePostal(request.getCodePostal());
         purshaseOrder.setCountry(request.getCountry());
         purshaseOrder.setDescription(request.getDescription());
-        if(request.getAttachments() != null){
+       /* if(request.getAttachments() != null){
             Set<File_model> attachmentsList = new HashSet<>();
             if (this.filesStorageService.checkformatList(request.getAttachments())) {
                 attachmentsList = filesStorageService.save_all(request.getAttachments(), "purshase_order");
@@ -100,7 +100,7 @@ public class PurchaseOrdersController {
                 }
             }
             purshaseOrder.setAttachments(attachmentsList);
-        }
+        }*/
         PurshaseOrder po = this.purshaseOrderService.Save(purshaseOrder);
 
         // update vihicles stock
