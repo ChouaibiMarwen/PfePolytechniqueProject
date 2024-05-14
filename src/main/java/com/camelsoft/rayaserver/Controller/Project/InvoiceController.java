@@ -227,7 +227,7 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<RefundInvoice> add_refund_invoice(@PathVariable Long idInvoice, @ModelAttribute RefundInvoiceRequest request) throws IOException {
+    public ResponseEntity<Invoice> add_refund_invoice(@PathVariable Long idInvoice, @ModelAttribute RefundInvoiceRequest request) throws IOException {
 
         Invoice invoice = this.service.FindById(idInvoice);
         if (invoice == null)
@@ -241,10 +241,10 @@ public class InvoiceController extends BaseController {
         refund.setAmount(request.getAmount());
         refund.setReason(request.getReason());
         refund.setInvoice(invoice);
-        RefundInvoice result  = this.refundInvoiceService.Save(refund);
+        this.refundInvoiceService.Save(refund);
 
         invoice.setStatus(InvoiceStatus.REFUNDS);
-        this.service.Update(invoice);
+        Invoice result  = this.service.Update(invoice);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
@@ -260,7 +260,7 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity confirm_invoice(@PathVariable Long idInvoice) throws IOException {
+    public ResponseEntity<Invoice> confirm_invoice(@PathVariable Long idInvoice) throws IOException {
 
         Invoice invoice = this.service.FindById(idInvoice);
         if (invoice == null)
@@ -270,8 +270,8 @@ public class InvoiceController extends BaseController {
             return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
 
         invoice.setStatus(InvoiceStatus.PAID);
-        this.service.Update(invoice);
-        return new ResponseEntity(HttpStatus.OK);
+        Invoice result  = this.service.Update(invoice);
+        return new ResponseEntity<>(result,HttpStatus.OK);
 
     }
 
