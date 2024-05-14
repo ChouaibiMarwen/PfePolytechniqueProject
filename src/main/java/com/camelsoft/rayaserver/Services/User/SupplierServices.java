@@ -1,15 +1,18 @@
 package com.camelsoft.rayaserver.Services.User;
 
 
+import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
+import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Tools.PersonalInformationRepository;
 import com.camelsoft.rayaserver.Repository.User.SupplierRepository;
 import com.camelsoft.rayaserver.Repository.User.UserRepository;
+import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -125,5 +128,39 @@ public class SupplierServices {
     public Long countSuppliers() {
         return this.repository.count();
     }
+
+
+   public DynamicResponse DynamicResponsefindyNameorPurshaseOrderStatus(int page,int size, String tit, PurshaseOrderStatus status){
+
+       try {
+           if(tit == null && status == null){
+               PageRequest pg = PageRequest.of(page, size);
+               Page<Supplier> pckge = this.repository.findAll(pg);
+               return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+           }
+              // return  findAll(page, size);
+           if(tit != null && status == null){
+               PageRequest pg = PageRequest.of(page, size);
+               Page<users> pckge = this.repository.findUsersByNameContaining(pg,tit);
+               return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+           }
+              // return FindAllByTitlePg(page, size, tit);
+           if(tit == null && status != null ){
+               PageRequest pg = PageRequest.of(page, size);
+               Page<users> pckge = this.repository.findUsersByPurchaseOrderStatus(pg,status);
+               return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+           }
+           if(tit != null && status != null){
+               PageRequest pg = PageRequest.of(page, size);
+               Page<users> pckge = this.repository.findUsersByNameAndPurchaseOrderStatus(pg,tit, status);
+               return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+           }
+
+           return null;
+       } catch (NoSuchElementException ex) {
+           throw new NotFoundException(ex.getMessage());
+       }
+
+   }
 
 }

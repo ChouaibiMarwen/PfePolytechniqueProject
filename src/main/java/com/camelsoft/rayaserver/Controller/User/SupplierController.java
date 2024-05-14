@@ -2,6 +2,8 @@ package com.camelsoft.rayaserver.Controller.User;
 
 import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
+import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
+import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
@@ -13,6 +15,7 @@ import com.camelsoft.rayaserver.Request.Tools.BankInformationRequest;
 import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Request.auth.SupplierSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
+import com.camelsoft.rayaserver.Response.Project.RequestResponse;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
@@ -37,6 +40,8 @@ import java.util.List;
 public class SupplierController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private SupplierServices suppliersServices;
     @Autowired
     private PersonalInformationService personalInformationService;
     @Autowired
@@ -141,6 +146,24 @@ public class SupplierController {
     public ResponseEntity<List<UserShortDto>> all(@RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) Boolean verified) throws IOException {
         return new ResponseEntity<>(this.supplierServices.getAllUsersWithoutPagination(active, name, RoleEnum.ROLE_SUPPLIER, verified), HttpStatus.OK);
     }
+
+
+
+    @GetMapping(value = {"/all_suppliers_by_purchase_order_status"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all suppliers by purchases order status for admin", notes = "Endpoint toby purchases order status for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> all_suppliers_by_purchase_order_status(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = true) String name) throws IOException {
+
+        return new ResponseEntity<>(this.suppliersServices.DynamicResponsefindyNameorPurshaseOrderStatus(page, size, name, status), HttpStatus.OK);
+
+    }
+
 
 
 
