@@ -63,6 +63,9 @@ public class Supplier implements Serializable {
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<PurshaseOrder> purchaseOrders = new HashSet<>();
 
+    @Transient
+    private Integer VehiclesCountBySupplier = 0;
+
     @PostLoad
     private void afterload(){
         if(this.user!=null){
@@ -71,6 +74,12 @@ public class Supplier implements Serializable {
                 this.userId = this.getUser().getId();
             }
         }
+        if(this.vehicles!=null){
+                this.VehiclesCountBySupplier = this.vehicles.size();
+        }else{
+            this.VehiclesCountBySupplier = 0;
+        }
+
     }
 
 }
