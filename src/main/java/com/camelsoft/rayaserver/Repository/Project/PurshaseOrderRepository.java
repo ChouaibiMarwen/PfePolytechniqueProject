@@ -22,9 +22,12 @@ public interface PurshaseOrderRepository extends JpaRepository<PurshaseOrder, Lo
     Page<PurshaseOrder> findAllByArchiveIsFalseAndStatus(Pageable page, PurshaseOrderStatus status);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndSupplier(Pageable page, PurshaseOrderStatus status, Supplier supplier);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,Date date);
+    Page<PurshaseOrder> findAllByArchiveIsFalseAndSupplierAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,Supplier supplier,Date date);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(Pageable page,Date date, Vehicles vehicle);
+    Page<PurshaseOrder> findAllByArchiveIsFalseAndSupplierAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(Pageable page, Supplier supplier ,Date date, Vehicles vehicle);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status , Date date, Vehicles vehicle);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndVehiclesContainingOrderByTimestampDesc(Pageable page,Vehicles vehicle);
+    Page<PurshaseOrder> findAllByArchiveIsFalseAndSupplierAndVehiclesContainingOrderByTimestampDesc(Pageable page,Supplier supplier, Vehicles vehicle);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status, Date date);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndSupplierAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status, Supplier supplier, Date date);
 

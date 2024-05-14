@@ -214,16 +214,24 @@ public class PurshaseOrderService {
                 Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,date);
                 return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
             }
-            else if (status == null && date != null && vehicles == null && supplier = null) {
-                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,date);
+            else if (status == null && date != null && vehicles == null && supplier != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndSupplierAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,supplier,date);
                 return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
             }
-            else if (status == null && date != null && vehicles != null) {
+            else if (status == null && date != null && vehicles != null && supplier == null) {
                 Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(pg,date , vehicles);
                 return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
             }
-            else if (status == null && date == null && vehicles != null) {
+            else if (status == null && date != null && vehicles != null && supplier != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndSupplierAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(pg,supplier , date , vehicles);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status == null && date == null && vehicles != null && supplier == null) {
                 Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndVehiclesContainingOrderByTimestampDesc(pg,vehicles);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status == null && date == null && vehicles != null && supplier != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndSupplierAndVehiclesContainingOrderByTimestampDesc(pg,supplier, vehicles);
                 return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
             }
             else if (status != null && date != null && vehicles != null) {
@@ -237,10 +245,10 @@ public class PurshaseOrderService {
             throw new NotFoundException(ex.getMessage());
         }
 
-
     }
-
 */
+
+
 
 
 
