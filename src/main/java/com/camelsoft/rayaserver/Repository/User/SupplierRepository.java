@@ -36,7 +36,7 @@ public interface SupplierRepository extends JpaRepository<Supplier,Long> {
    Page<users> findUsersByNameAndPurchaseOrderStatus(Pageable pageable,String name, PurshaseOrderStatus status);
    // Page<users> findAll(@NotNull Pageable pageable);
 
-    @Query("SELECT DISTINCT u FROM Supplu.personalinformation.firstnameenier s " +
+    @Query("SELECT DISTINCT u FROM Supplier s " +
             "JOIN s.user u " +
             "JOIN u.purchaseOrders po " +
             "WHERE po.status = :status " +
