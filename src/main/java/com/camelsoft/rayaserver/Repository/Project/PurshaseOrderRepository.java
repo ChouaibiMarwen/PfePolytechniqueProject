@@ -17,15 +17,19 @@ import java.util.Date;
 @Repository
 public interface PurshaseOrderRepository extends JpaRepository<PurshaseOrder, Long> {
     Page<PurshaseOrder> findAllByArchiveIsFalse(Pageable page);
+    Page<PurshaseOrder> findAllByArchiveIsFalseAndSupplier(Pageable page, Supplier supplier);
 
     Page<PurshaseOrder> findAllByArchiveIsFalseAndStatus(Pageable page, PurshaseOrderStatus status);
+    Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndSupplier(Pageable page, PurshaseOrderStatus status, Supplier supplier);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,Date date);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(Pageable page,Date date, Vehicles vehicle);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status , Date date, Vehicles vehicle);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndVehiclesContainingOrderByTimestampDesc(Pageable page,Vehicles vehicle);
     Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status, Date date);
+    Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndSupplierAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status, Supplier supplier, Date date);
 
     Page<PurshaseOrder> findAllByStatusAndVehiclesContainingAndArchiveIsFalse(Pageable pageable,  PurshaseOrderStatus status, Vehicles vehicle);
+    Page<PurshaseOrder> findAllByStatusAndSupplierAndVehiclesContainingAndArchiveIsFalse(Pageable pageable,  PurshaseOrderStatus status,Supplier supplier, Vehicles vehicle);
 
 
 

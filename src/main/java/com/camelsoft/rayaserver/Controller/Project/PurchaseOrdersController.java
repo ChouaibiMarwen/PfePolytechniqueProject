@@ -52,7 +52,7 @@ public class PurchaseOrdersController {
 
 
     @PostMapping(value = "/add")
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "add purshase order for supplier", notes = "Endpoint to add purshase order")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),

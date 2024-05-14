@@ -173,8 +173,74 @@ public class PurshaseOrderService {
 
 
 
+/*
+
+    public DynamicResponse FindAllPurchaseOrderPgByVehecleAndDateAndPurchaseOrderStatusAndSupplier(int page, int size, Vehicles vehicles, PurshaseOrderStatus status , Date date , Supplier supplier) {
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+            if(status == null && date == null && vehicles == null&&supplier == null){
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalse(pg);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if(status == null && date == null && vehicles == null&&supplier != null){
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndSupplier(pg, supplier);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status != null && date == null && vehicles == null && supplier == null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndStatus(pg,status);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status != null && date == null && vehicles == null && supplier != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndStatusAndSupplier(pg,status, supplier);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status != null && date != null && vehicles == null && supplier == null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,status,date);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status != null && date != null && vehicles == null && supplier != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndStatusAndSupplierAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,status,date);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status != null && date == null && vehicles != null && supplier == null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByStatusAndVehiclesContainingAndArchiveIsFalse(pg,status, vehicles);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status != null && date == null && vehicles != null && supplier != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByStatusAndSupplierAndVehiclesContainingAndArchiveIsFalse(pg,status, supplier , vehicles);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status == null && date != null && vehicles == null && supplier == null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,date);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status == null && date != null && vehicles == null && supplier = null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,date);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status == null && date != null && vehicles != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(pg,date , vehicles);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status == null && date == null && vehicles != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndVehiclesContainingOrderByTimestampDesc(pg,vehicles);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status != null && date != null && vehicles != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(pg, status , date , vehicles);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+
+            return null;
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
 
 
+    }
+
+*/
 
 
 
