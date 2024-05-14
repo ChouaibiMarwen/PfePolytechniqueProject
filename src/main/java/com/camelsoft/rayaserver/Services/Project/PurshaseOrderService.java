@@ -114,9 +114,7 @@ public class PurshaseOrderService {
                 Page<Vehicles> pckge = this.repository.findVehiclesBySupplierAndStatus(pg,supplier, status);
                 return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
             }else if(status == null && carvin != null){
-                PageRequest pg = PageRequest.of(page, size);
-                Page<Vehicles> pckge = this.repository.findVehiclesBySupplierAndCarvinContaining(pg,supplier, carvin);
-                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+                return this.vehiclesService.FindAllPgByCarVinSupplier(page,size,carvin,supplier);
             }else{
                 PageRequest pg = PageRequest.of(page, size);
                 Page<Vehicles> pckge = this.repository.findVehiclesBySupplierAndStatusAndCarvinContaining(pg,supplier, status, carvin);

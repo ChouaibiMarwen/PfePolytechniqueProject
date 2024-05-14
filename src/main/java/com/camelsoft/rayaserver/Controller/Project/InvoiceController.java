@@ -243,7 +243,8 @@ public class InvoiceController extends BaseController {
 
         if(invoice.getStatus() != InvoiceStatus.PAID)
             return new ResponseEntity("The invoice is not paid yet", HttpStatus.NOT_ACCEPTABLE);
-
+        if(this.service.getTotalRevenueFromOnePaidInvoice(invoice) - request.getAmount() <0)
+            return new ResponseEntity("refunded amount is bigger then invoice amount ", HttpStatus.NOT_ACCEPTABLE);
 
         RefundInvoice refund = new RefundInvoice();
         refund.setAmount(request.getAmount());
@@ -256,7 +257,6 @@ public class InvoiceController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
-
 
     @PatchMapping(value = {"/confirm_invoice/{idInvoice}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")

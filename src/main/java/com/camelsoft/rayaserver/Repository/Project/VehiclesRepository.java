@@ -13,5 +13,6 @@ import org.springframework.stereotype.Repository;
 public interface VehiclesRepository extends JpaRepository<Vehicles,Long> {
     Page<Vehicles> findAllByArchiveIsFalse(Pageable page);
     Page<Vehicles> findAllByArchiveIsFalseAndSupplier(Pageable page, Supplier supplier);
+    Page<Vehicles> findAllByArchiveIsFalseAndCarvinContainingIgnoreCaseAndSupplier(Pageable page, String carvin,Supplier supplier);
 
 }
