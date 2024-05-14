@@ -101,14 +101,12 @@ public class PurshaseOrderService {
 
     }
 
-
-
     public DynamicResponse FindAllVehiclesPgBySupplierAndCarvinAndPurchaseOrderStatus(int page, int size, Supplier supplier, String carvin , PurshaseOrderStatus status) {
         try {
 
             if(status == null && carvin == null){
 
-               return this.vehiclesService.FindAllPgSupplier(page, size, supplier);
+                return this.vehiclesService.FindAllPgSupplier(page, size, supplier);
             }else if (status != null && carvin == null ){
                 PageRequest pg = PageRequest.of(page, size);
                 Page<Vehicles> pckge = this.repository.findVehiclesBySupplierAndStatus(pg,supplier, status);
@@ -126,6 +124,55 @@ public class PurshaseOrderService {
         }
 
     }
+
+
+
+    public DynamicResponse FindAllPurchaseOrderPgByVehecleAndDateAndPurchaseOrderStatus(int page, int size, Vehicles vehicles, PurshaseOrderStatus status , Date date) {
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+            if(status == null && date == null && vehicles == null){
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalse(pg);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status != null && date == null && vehicles == null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndStatus(pg,status);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status != null && date != null && vehicles == null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,status,date);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status != null && date == null && vehicles != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByStatusAndVehiclesContainingAndArchiveIsFalse(pg,status, vehicles);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status == null && date != null && vehicles == null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,date);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status == null && date != null && vehicles != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(pg,date , vehicles);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+            else if (status == null && date == null && vehicles != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndVehiclesContainingOrderByTimestampDesc(pg,vehicles);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+           else if (status != null && date != null && vehicles != null) {
+                Page<PurshaseOrder> pckge = this.repository.findAllByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(pg, status , date , vehicles);
+                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            }
+
+           return null;
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
+
 
 
 

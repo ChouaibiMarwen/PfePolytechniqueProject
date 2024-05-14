@@ -139,6 +139,27 @@ public class PurchaseOrdersController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping(value = {"/all_purchase_orders_by_status_and_date_and_vehicle"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all purchase orders by status and date and vehicle for admin by name", notes = "Endpoint to get purchase orders by status and date and vehicle")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> all_purchase_oreder_byStatus_And_date_and_vehicle(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idVehicles) throws IOException {
+        if(idVehicles != null){
+            Vehicles vehicles = this.vehiclesService.FindById(idVehicles);
+            if (vehicles == null)
+                return new ResponseEntity("Vehecle is not founded by that id", HttpStatus.NOT_FOUND);
+            DynamicResponse result = this.purshaseOrderService.FindAllPurchaseOrderPgByVehecleAndDateAndPurchaseOrderStatus(page, size , vehicles ,status , creationdate);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+
+        DynamicResponse result = this.purshaseOrderService.findAllPgByStatusAndDate(page, size ,status , creationdate);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 
     @PatchMapping(value ="/update_purchase_order/{purchaseOrderId}")
     @PreAuthorize("hasRole('SUPPLIER')")
