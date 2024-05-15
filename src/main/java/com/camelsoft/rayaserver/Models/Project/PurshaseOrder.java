@@ -34,12 +34,12 @@ public class PurshaseOrder  implements Serializable {
     @Column(name ="supplier_id")
     private Long supplierId;
 
-    @JsonIgnore
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicles_id")
     private Vehicles vehicles;
 
-    @JsonIgnore
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id_purchaseorder",nullable = false)
     private Supplier supplier;

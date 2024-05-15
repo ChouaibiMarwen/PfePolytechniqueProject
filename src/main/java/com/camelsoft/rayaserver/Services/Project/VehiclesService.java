@@ -52,8 +52,6 @@ public class VehiclesService {
 
     public DynamicResponse FindAllPg(int page, int size) {
         try {
-
-
             PageRequest pg = PageRequest.of(page, size);
             Page<Vehicles> pckge = this.repository.findAllByArchiveIsFalse(pg);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());

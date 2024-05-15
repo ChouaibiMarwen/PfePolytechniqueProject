@@ -33,16 +33,16 @@ public class Vehicles implements Serializable {
     private String carvin;
     @Column(name = "enginesize")
 
-    private Double enginesize=0D;
+    private Double enginesize = 0D;
     @Column(name = "fueltype")
 
     private FuelType fueltype = FuelType.NONE;
     @Column(name = "bodystyle")
 
     private BodyStyle bodystyle = BodyStyle.NONE;
-   @Column(name = "post_status")
+    @Column(name = "post_status")
     private VehiclesPostStatus status = VehiclesPostStatus.DRAFT;
-   @Column(name = "stock")
+    @Column(name = "stock")
     private Integer stock = 0;
     @Column(name = "exteriorfeatures")
     @ElementCollection
@@ -50,12 +50,12 @@ public class Vehicles implements Serializable {
     @Column(name = "interiorfeatures")
     @ElementCollection
     private Set<String> interiorfeatures = new HashSet<>();
-    @Column(columnDefinition = "TEXT",name = "description")
+    @Column(columnDefinition = "TEXT", name = "description")
     private String description;
-    @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "carimages_id")
     private VehiclesMedia carimages;
-    @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "VehiclesPriceFinancing_id")
     private VehiclesPriceFinancing Vehiclespricefinancing;
     @JsonIgnore
@@ -64,7 +64,7 @@ public class Vehicles implements Serializable {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supplier_id",nullable = false)
+    @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
     @OneToMany(mappedBy = "vehicles", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -76,7 +76,7 @@ public class Vehicles implements Serializable {
         this.timestamp = new Date();
     }
 
-    public Vehicles(String carmodel, String color, String carvin, Double enginesize, FuelType fueltype, BodyStyle bodystyle, Set<String> exteriorfeatures, Set<String> interiorfeatures, String description, Integer stock,Supplier supplier) {
+    public Vehicles(String carmodel, String color, String carvin, Double enginesize, FuelType fueltype, BodyStyle bodystyle, Set<String> exteriorfeatures, Set<String> interiorfeatures, String description, Integer stock, Supplier supplier) {
         this.carmodel = carmodel;
         this.color = color;
         this.carvin = carvin;
@@ -86,9 +86,9 @@ public class Vehicles implements Serializable {
         this.exteriorfeatures = exteriorfeatures;
         this.interiorfeatures = interiorfeatures;
         this.description = description;
-        this.stock=stock;
-        this.supplier=supplier;
-        this.timestamp=new Date();
+        this.stock = stock;
+        this.supplier = supplier;
+        this.timestamp = new Date();
     }
 
     public Integer getStock() {
