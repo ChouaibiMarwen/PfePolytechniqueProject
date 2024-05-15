@@ -155,6 +155,23 @@ public class PurchaseOrdersController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping(value = {"/all_purchase_orders_by_status_and_date_and_vehicle_and_supplier"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all purchase orders by status and date and vehicle and supplier  for admin by name", notes = "Endpoint to get purchase orders by status and date and vehicle and supplier for admin ")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> allPurchaseOrdersByStatusAndDateAndVehicleAndSupplier(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idVehicles,  @RequestParam(required = false) Long idSupplier) throws IOException {
+
+        DynamicResponse result = this.purshaseOrderService.FindAllPurchaseOrderPgByVehecleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idVehicles,status , creationdate, idSupplier);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
+
+
     @PatchMapping(value ="/update_purchase_order/{purchaseOrderId}")
     @PreAuthorize("hasRole('SUPPLIER')")
     @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to get purchase orders by status")
