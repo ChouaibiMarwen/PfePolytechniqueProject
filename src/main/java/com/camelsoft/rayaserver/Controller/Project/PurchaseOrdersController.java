@@ -50,7 +50,6 @@ public class PurchaseOrdersController {
     private SupplierServices supplierServices;
 
 
-
     @PostMapping(value = "/add")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "add purshase order for supplier", notes = "Endpoint to add purshase order")
@@ -102,10 +101,6 @@ public class PurchaseOrdersController {
             purshaseOrder.setAttachments(attachmentsList);
         }
         PurshaseOrder po = this.purshaseOrderService.Save(purshaseOrder);
-
-        // update vihicles stock
-        vehicles.setStock(vehicles.getStock() - po.getQuantity());
-        this.vehiclesService.Update(vehicles);
         PurchaseOrderDto purchaseOrderDto = PurchaseOrderDto.PurchaseOrderToDto(po);
 
         return  new ResponseEntity<>(purchaseOrderDto, HttpStatus.OK);
@@ -279,7 +274,80 @@ public class PurchaseOrdersController {
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 
+    @PatchMapping(value = "/accept_purchase_order_by_Supplier/{purchaseOrderId}")
+    @PreAuthorize("hasRole('SUPPLIER')")
+    @ApiOperation(value = "accept purchase order status by supplier", notes = "Endpoint to accept purchase order status by supplier")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<PurchaseOrderDto> acceptPurchaseOrderBySupplier(@PathVariable Long purchaseOrderId) throws IOException {
+        PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
+        if(purchaseOrder == null)
+            return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
+        purchaseOrder.setStatus(PurshaseOrderStatus.ACCEPTED);
+        PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
+        PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
+        return new ResponseEntity<>(po, HttpStatus.OK);
+    }
 
+    @PatchMapping(value = "/reject_purchase_order/{purchaseOrderId}")
+    @PreAuthorize("hasRole('SUPPLIER')")
+    @ApiOperation(value = "reject purchase order status by supplier", notes = "Endpoint to reject purchase order status by supplier")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<PurchaseOrderDto> rejectPurchaseOrderBySupplier(@PathVariable Long purchaseOrderId) throws IOException {
+        PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
+        if(purchaseOrder == null)
+            return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
+        purchaseOrder.setStatus(PurshaseOrderStatus.REJECTED);
+        PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
+        PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
+        return new ResponseEntity<>(po, HttpStatus.OK);
+    }
+
+
+    @PatchMapping(value = "/accept_purchase_order_by_Admin/{purchaseOrderId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "accept purchase order status by admin", notes = "Endpoint to accept purchase order status by admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<PurchaseOrderDto> acceptPurchaseOrderByAdmin(@PathVariable Long purchaseOrderId) throws IOException {
+        PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
+        if(purchaseOrder == null)
+            return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
+        purchaseOrder.setStatus(PurshaseOrderStatus.IN_PROGRESS);
+        PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
+        PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
+        return new ResponseEntity<>(po, HttpStatus.OK);
+    }
+
+
+
+    @PatchMapping(value = "/cancel_purchase_order/{purchaseOrderId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "cancel purchase order status by admin", notes = "Endpoint to cancel purchase order status by admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<PurchaseOrderDto> cancelPurchaseOrderByAdmin(@PathVariable Long purchaseOrderId) throws IOException {
+        PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
+        if(purchaseOrder == null)
+            return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
+        purchaseOrder.setStatus(PurshaseOrderStatus.CANCELED);
+        PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
+        PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
+        return new ResponseEntity<>(po, HttpStatus.OK);
+    }
 
 
 }

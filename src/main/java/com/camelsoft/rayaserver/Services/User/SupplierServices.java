@@ -163,4 +163,18 @@ public class SupplierServices {
 
    }
 
+
+    public DynamicResponse getAllSuppliersHavingAvailbalVeheclesStock(int page,int size){
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Supplier> pckge = this.repository.findSuppliersWithAvailableVehicles(pg);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
+
 }

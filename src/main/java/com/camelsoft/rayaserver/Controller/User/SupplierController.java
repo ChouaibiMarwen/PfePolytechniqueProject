@@ -151,7 +151,7 @@ public class SupplierController {
 
     @GetMapping(value = {"/all_suppliers_by_purchase_order_status"})
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "get all suppliers by purchases order status for admin", notes = "Endpoint toby purchases order status for admin")
+    @ApiOperation(value = "get all suppliers by purchases order status for admin", notes = "Endpoint to get all suppliers by purchases order status for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
@@ -161,6 +161,23 @@ public class SupplierController {
     public ResponseEntity<DynamicResponse> all_suppliers_by_purchase_order_status(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) String name) throws IOException {
 
         return new ResponseEntity<>(this.suppliersServices.DynamicResponsefindyNameorPurshaseOrderStatus(page, size, name, status), HttpStatus.OK);
+
+    }
+
+
+
+    @GetMapping(value = {"/all_suppliers_with_available_vehecles_stock"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all suppliers that have available stock for admin", notes = "Endpoint get all suppliers that have available vehecles' stock for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> all_suppliers_with_available_vehecles_stock(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) String name) throws IOException {
+
+        return new ResponseEntity<>(this.suppliersServices.getAllSuppliersHavingAvailbalVeheclesStock(page, size), HttpStatus.OK);
 
     }
 

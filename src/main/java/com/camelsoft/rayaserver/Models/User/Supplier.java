@@ -15,7 +15,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
-
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "supplier")
@@ -41,7 +40,6 @@ public class Supplier implements Serializable {
 
     @Transient
     private Integer ratingCount;
-
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST}, orphanRemoval = true)
     @JoinColumn(name = "supplier_files_id")

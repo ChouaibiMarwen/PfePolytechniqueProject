@@ -47,5 +47,10 @@ public interface SupplierRepository extends JpaRepository<Supplier,Long> {
 
 
 
+    @Query(value = "SELECT s FROM Supplier s JOIN FETCH s.vehicles v WHERE v.stock > 0 GROUP BY s HAVING COUNT(v) > 0",
+            countQuery = "SELECT COUNT(DISTINCT s) FROM Supplier s JOIN s.vehicles v WHERE v.stock > 0")
+    Page<Supplier> findSuppliersWithAvailableVehicles(Pageable pageable);
+
+
 
 }

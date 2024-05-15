@@ -202,6 +202,31 @@ public class VehiclesController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+
+    @GetMapping(value = {"/vehecles_available_stock_by_supplier/{idSupplier} "})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('ADIMN')")
+    @ApiOperation(value = "get vehecles with available stock by supplier for admin ", notes = "vehecles with available stock by supplier for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully update"),
+            @ApiResponse(code = 400, message = "Bad request, check the data"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
+    })
+    public ResponseEntity<DynamicResponse> vehecles_available_stock_by_supplier(@PathVariable Long idSupplier, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) throws IOException {
+       // users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        users user =  this.UserServices.findById(idSupplier);
+        if(user == null)
+            return new ResponseEntity("user " + idSupplier + " not found in the system", HttpStatus.NOT_FOUND);
+        Supplier supplier = user.getSupplier();
+        if(supplier == null)
+            return new ResponseEntity("supplier not found in the system", HttpStatus.NOT_FOUND);
+        DynamicResponse result =  this.Services.findAllPgBySupplierAndAvailableStock(page, size, supplier);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
+
+
     @PostMapping(value = {"/add_vehicle_price_financing/{id_vehicle}"})
     @PreAuthorize("hasRole('SUPPLIER')")
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")

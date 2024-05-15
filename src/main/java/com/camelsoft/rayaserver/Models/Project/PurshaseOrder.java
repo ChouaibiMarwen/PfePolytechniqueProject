@@ -30,7 +30,7 @@ public class PurshaseOrder  implements Serializable {
     private Date orderDate;
     @Getter
     @Column(name ="order_status")
-    private PurshaseOrderStatus status = PurshaseOrderStatus.DRAFT;
+    private PurshaseOrderStatus status = PurshaseOrderStatus.PENDING;
     @Column(name ="supplier_id")
     private Long supplierId;
 
