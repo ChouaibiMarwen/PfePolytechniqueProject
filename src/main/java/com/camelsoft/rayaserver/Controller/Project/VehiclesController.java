@@ -180,7 +180,7 @@ public class VehiclesController extends BaseController {
     }
 
     @GetMapping(value = {"/{id_vehicle}"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('ADIMN')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('ADMIN')")
     @ApiOperation(value = "update vehicles for supplier", notes = "Endpoint to update vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully update"),
@@ -204,7 +204,7 @@ public class VehiclesController extends BaseController {
 
 
     @GetMapping(value = {"/vehecles_available_stock_by_supplier/{idSupplier} "})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('ADIMN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get vehecles with available stock by supplier for admin ", notes = "vehecles with available stock by supplier for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully update"),
