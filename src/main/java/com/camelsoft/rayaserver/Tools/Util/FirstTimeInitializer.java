@@ -100,9 +100,77 @@ public class FirstTimeInitializer implements CommandLineRunner {
         if (!privilegeService.existsByName("PRIVILEGE_READ"))
             privilegeService.save(new Privilege("PRIVILEGE_READ"));
 
+        if (!privilegeService.existsByName("LOAN_READ"))
+            privilegeService.save(new Privilege("LOAN_READ"));
 
-        if (this.userService.existbyemail("info@camel-soft.com")) {
-            users user = userService.findbyemail("info@camel-soft.com");
+        if (!privilegeService.existsByName("LOAN_READ"))
+            privilegeService.save(new Privilege("LOAN_WRITE"));
+
+        if (!privilegeService.existsByName("INVOICE_READ"))
+            privilegeService.save(new Privilege("INVOICE_READ"));
+
+        if (!privilegeService.existsByName("INVOICE_READ"))
+            privilegeService.save(new Privilege("INVOICE_WRITE"));
+
+        if (!privilegeService.existsByName("CUSTOMER_READ"))
+            privilegeService.save(new Privilege("CUSTOMER_READ"));
+
+        if (!privilegeService.existsByName("CUSTOMER_WRITE"))
+            privilegeService.save(new Privilege("CUSTOMER_WRITE"));
+
+        if (!privilegeService.existsByName("PURCHASE_ORDER_READ"))
+            privilegeService.save(new Privilege("PURCHASE_ORDER_READ"));
+
+        if (!privilegeService.existsByName("PURCHASE_ORDER_WRITE"))
+            privilegeService.save(new Privilege("PURCHASE_ORDER_WRITE"));
+
+        if (!privilegeService.existsByName("CHAT_READ"))
+            privilegeService.save(new Privilege("CHAT_READ"));
+
+        if (!privilegeService.existsByName("CHAT_WRITE"))
+            privilegeService.save(new Privilege("CHAT_WRITE"));
+
+        if (!privilegeService.existsByName("AGENT_READ"))
+            privilegeService.save(new Privilege("AGENT_READ"));
+
+        if (!privilegeService.existsByName("AGENT_WRITE"))
+            privilegeService.save(new Privilege("AGENT_WRITE"));
+
+        if (!privilegeService.existsByName("EVENT_READ"))
+            privilegeService.save(new Privilege("EVENT_READ"));
+
+        if (!privilegeService.existsByName("EVENT_WRITE"))
+            privilegeService.save(new Privilege("EVENT_WRITE"));
+
+        if (!privilegeService.existsByName("REQUEST_READ"))
+            privilegeService.save(new Privilege("REQUEST_READ"));
+
+        if (!privilegeService.existsByName("REQUEST_WRITE"))
+            privilegeService.save(new Privilege("REQUEST_WRITE"));
+
+        if (!privilegeService.existsByName("GLOBAL_SETTINGS_READ"))
+            privilegeService.save(new Privilege("GLOBAL_SETTINGS_READ"));
+
+        if (!privilegeService.existsByName("GLOBAL_SETTINGS_WRITE"))
+            privilegeService.save(new Privilege("GLOBAL_SETTINGS_WRITE"));
+
+
+        if (this.userService.existbyemail("admin@camel-soft.com")) {
+            users user = userService.findbyemail("admin@camel-soft.com");
+            List<Privilege> privilegeList = this.privilegeService.findAll();
+            Set<Privilege> privileges = user.getPrivileges();
+            for (Privilege privilege : privilegeList) {
+                if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
+                    logger.error(privilege.getId());
+                    user.getPrivileges().add(privilege);
+                }
+            }
+            userService.UpdateUser(user);
+
+        }
+
+        if (this.userService.existbyemail("contact@camel-soft.com")) {
+            users user = userService.findbyemail("contact@camel-soft.com");
             List<Privilege> privilegeList = this.privilegeService.findAll();
             Set<Privilege> privileges = user.getPrivileges();
             for (Privilege privilege : privilegeList) {

@@ -119,11 +119,43 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
+    public users findTop() {
+        try {
+            return this.userRepository.findTopByOrderByIdDesc();
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(String.format("No data found"));
+        }
+    }
+
     public users saveAdmin(users users) {
         try {
             users.setPassword(passwordEncoder.encode(users.getPassword()));
             users.setActive(true);
             Role userRole = roleRepository.findByRole(RoleEnum.ROLE_ADMIN);
+            users.setRole(userRole);
+            return userRepository.save(users);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("not found data");
+        }
+    }
+
+    public users saveSubAdmin(users users) {
+        try {
+            users.setPassword(passwordEncoder.encode(users.getPassword()));
+            users.setActive(true);
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_ADMIN);
+            users.setRole(userRole);
+            return userRepository.save(users);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("not found data");
+        }
+    }
+
+    public users saveSubSupplier(users users) {
+        try {
+            users.setPassword(passwordEncoder.encode(users.getPassword()));
+            users.setActive(true);
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_SUPPLIER);
             users.setRole(userRole);
             return userRepository.save(users);
         } catch (NoSuchElementException ex) {

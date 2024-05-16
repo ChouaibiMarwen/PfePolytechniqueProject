@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<users, Long> {
     boolean existsById(Long id);
 
     users findByUsername(String username);
-
+    users findTopByOrderByIdDesc();
 
 
 
