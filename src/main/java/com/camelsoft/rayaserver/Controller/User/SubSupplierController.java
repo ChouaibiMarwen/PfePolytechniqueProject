@@ -92,7 +92,7 @@ public class SubSupplierController extends BaseController {
                 user.getPrivileges().add(privilege);
             }
         }
-        users result = userService.saveAdmin(user);
+        users result = userService.saveSubSupplier(user);
         PersonalInformation pinfo = new PersonalInformation();
         pinfo.setGender(request.getGender());
         pinfo.setPhonenumber(request.getPhonenumber());
