@@ -20,7 +20,7 @@ public class MvcConfig implements WebMvcConfigurer {
 
     public @Override void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:4200","https://profile.rayafinancing.com","https://development.rayafinancing.com","https://appleid.apple.com","https://admin.rayafinancing.com","https://raya-admin.camel-soft.com","http://localhost:4201","https://dashboard.rayafinancing.com","https://server.rayafinancing.com","https://www.rayafinancing.com","https://admin.camel-soft.com","https://client.camel-soft.com","https://agent.camel-soft.com","https://server.camel-soft.com","https://server-raya.camel-soft.com","https://rayafinancing.com","https://rayafinancing.com")
+                .allowedOrigins("http://localhost:4200","https://raya-supplier.camel-soft.com","https://profile.rayafinancing.com","https://development.rayafinancing.com","https://appleid.apple.com","https://admin.rayafinancing.com","https://raya-admin.camel-soft.com","http://localhost:4201","https://dashboard.rayafinancing.com","https://server.rayafinancing.com","https://www.rayafinancing.com","https://admin.camel-soft.com","https://client.camel-soft.com","https://agent.camel-soft.com","https://server.camel-soft.com","https://server-raya.camel-soft.com","https://rayafinancing.com","https://rayafinancing.com")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*");
     }

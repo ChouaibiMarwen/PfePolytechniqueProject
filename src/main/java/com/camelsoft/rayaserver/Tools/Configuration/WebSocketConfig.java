@@ -35,6 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .addEndpoint("/ws")
                 .setAllowedOrigins(
                         "http://localhost:4200",
+                        "https://raya-supplier.camel-soft.com",
                         "http://localhost:4201",
                         "https://admin.camel-soft.com",
                         "https://server.camel-soft.com",
