@@ -163,9 +163,9 @@ public class PurchaseOrdersController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> allPurchaseOrdersByStatusAndDateAndVehicleAndSupplier(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idVehicles,  @RequestParam(required = false) Long idSupplier) throws IOException {
+    public ResponseEntity<DynamicResponse> allPurchaseOrdersByStatusAndDateAndVehicleAndSupplier(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idvehecle,  @RequestParam(required = false) Long idSupplier) throws IOException {
 
-        DynamicResponse result = this.purshaseOrderService.FindAllPurchaseOrderPgByVehecleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idVehicles,status , creationdate, idSupplier);
+        DynamicResponse result = this.purshaseOrderService.FindAllPurchaseOrderPgByVehecleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

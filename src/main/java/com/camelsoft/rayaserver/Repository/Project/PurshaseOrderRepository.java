@@ -16,24 +16,24 @@ import java.util.Date;
 
 @Repository
 public interface PurshaseOrderRepository extends JpaRepository<PurshaseOrder, Long> {
-    Page<PurshaseOrder> findAllByArchiveIsFalse(Pageable page);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndSupplier(Pageable page, Supplier supplier);
+    Page<PurshaseOrder> findByArchiveIsFalse(Pageable page);
+    Page<PurshaseOrder> findByArchiveIsFalseAndSupplier(Pageable page, Supplier supplier);
 
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndStatus(Pageable page, PurshaseOrderStatus status);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndSupplier(Pageable page, PurshaseOrderStatus status, Supplier supplier);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,Date date);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndSupplierAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,Supplier supplier,Date date);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(Pageable page,Date date, Vehicles vehicle);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndSupplierAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(Pageable page, Supplier supplier ,Date date, Vehicles vehicle);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status , Date date, Vehicles vehicle);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndSupplierAndStatusAndTimestampGreaterThanEqualAndVehiclesContainingOrderByTimestampDesc(Pageable page,Supplier supplier, PurshaseOrderStatus status , Date date, Vehicles vehicle);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndVehiclesContainingOrderByTimestampDesc(Pageable page,Vehicles vehicle);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndSupplierAndVehiclesContainingOrderByTimestampDesc(Pageable page,Supplier supplier, Vehicles vehicle);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status, Date date);
-    Page<PurshaseOrder> findAllByArchiveIsFalseAndStatusAndSupplierAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status, Supplier supplier, Date date);
+    Page<PurshaseOrder> findByArchiveIsFalseAndStatus(Pageable page, PurshaseOrderStatus status);
+    Page<PurshaseOrder> findByArchiveIsFalseAndStatusAndSupplier(Pageable page, PurshaseOrderStatus status, Supplier supplier);
+    Page<PurshaseOrder> findByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,Date date);
+    Page<PurshaseOrder> findByArchiveIsFalseAndSupplierAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,Supplier supplier,Date date);
+    Page<PurshaseOrder> findByArchiveIsFalseAndTimestampGreaterThanEqualAndVehiclesOrderByTimestampDesc(Pageable page,Date date, Vehicles vehicle);
+    Page<PurshaseOrder> findByArchiveIsFalseAndSupplierAndTimestampGreaterThanEqualAndVehiclesOrderByTimestampDesc(Pageable page, Supplier supplier ,Date date, Vehicles vehicle);
+    Page<PurshaseOrder> findByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualAndVehiclesOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status , Date date, Vehicles vehicle);
+    Page<PurshaseOrder> findByArchiveIsFalseAndSupplierAndStatusAndTimestampGreaterThanEqualAndVehiclesOrderByTimestampDesc(Pageable page,Supplier supplier, PurshaseOrderStatus status , Date date, Vehicles vehicle);
+    Page<PurshaseOrder> findByArchiveIsFalseAndVehiclesOrderByTimestampDesc(Pageable page,Vehicles vehicle);
+    Page<PurshaseOrder> findByArchiveIsFalseAndSupplierAndVehiclesOrderByTimestampDesc(Pageable page,Supplier supplier, Vehicles vehicle);
+    Page<PurshaseOrder> findByArchiveIsFalseAndStatusAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status, Date date);
+    Page<PurshaseOrder> findByArchiveIsFalseAndStatusAndSupplierAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page,PurshaseOrderStatus status, Supplier supplier, Date date);
 
-    Page<PurshaseOrder> findAllByStatusAndVehiclesContainingAndArchiveIsFalse(Pageable pageable,  PurshaseOrderStatus status, Vehicles vehicle);
-    Page<PurshaseOrder> findAllByStatusAndSupplierAndVehiclesContainingAndArchiveIsFalse(Pageable pageable,  PurshaseOrderStatus status,Supplier supplier, Vehicles vehicle);
+    Page<PurshaseOrder> findByStatusAndVehiclesAndArchiveIsFalse(Pageable pageable,  PurshaseOrderStatus status, Vehicles vehicle);
+    Page<PurshaseOrder> findByStatusAndSupplierAndVehiclesAndArchiveIsFalse(Pageable pageable,  PurshaseOrderStatus status,Supplier supplier, Vehicles vehicle);
 
 
 

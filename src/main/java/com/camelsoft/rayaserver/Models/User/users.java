@@ -119,7 +119,7 @@ public class users implements Serializable {
     @Column(name = "active")
     private Boolean active = true;
     @Column(name = "verified")
-    private Boolean verified = null;
+    private Boolean verified = false;
     @Column(name = "deleted")
     private Boolean deleted = false;
     @Column(name = "otp")
@@ -138,6 +138,16 @@ public class users implements Serializable {
         this.phonenumber = phonenumber;
         this.personalinformation = personalinformation;
     }
+
+    public users(String username, String email, String password, String phonenumber) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.phonenumber = phonenumber;
+        this.timestmp = new Date();
+    }
+
+
     @PostLoad
     private void afterload(){
         if(this.personalinformation!=null){
