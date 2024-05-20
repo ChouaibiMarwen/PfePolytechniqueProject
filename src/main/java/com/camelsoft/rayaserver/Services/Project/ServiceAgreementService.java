@@ -38,6 +38,10 @@ public class ServiceAgreementService {
 
     }
 
+    public void deleteServiceAgreement(Service_Agreement model) {
+        this.repository.delete(model);
+    }
+
 
     public Service_Agreement FindById(Long id) {
         try {

@@ -76,13 +76,20 @@ public class ServiceAgreementController {
             @ApiResponse(code = 400, message = "Bad request, empty or null title or empty and null content in request"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Service_Agreement> daleteServiceAgreement(@PathVariable Long serviceAgreementId){
+    public ResponseEntity daleteServiceAgreement(@PathVariable Long serviceAgreementId){
         Service_Agreement serviceAgreement =  this.service.FindById(serviceAgreementId);
-        if(serviceAgreement == null || serviceAgreement.getDeleted())
+      /*  if(serviceAgreement == null)
             return new ResponseEntity("Service agreement by this id :" + serviceAgreementId + "is not founded ", HttpStatus.NOT_FOUND);
+        PurshaseOrder purchaseOrder = serviceAgreement.getPurchaseorder();
+        if (purchaseOrder != null) {
+            purchaseOrder.getServiceagreements().remove(serviceAgreement);
+            this.purchaseorderservice.Save(purchaseOrder);
+        }
         serviceAgreement.setDeleted(true);
-        serviceAgreement = this.service.Update(serviceAgreement);
-        return new ResponseEntity<>(serviceAgreement, HttpStatus.OK);
+        serviceAgreement.setPurchaseorder(null);
+        serviceAgreement = this.service.Update(serviceAgreement);*/
+        this.service.deleteServiceAgreement(serviceAgreement);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 
