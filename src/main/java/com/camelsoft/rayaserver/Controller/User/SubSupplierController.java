@@ -48,7 +48,7 @@ public class SubSupplierController extends BaseController {
 
 
     @GetMapping(value = {"/search_supplier"})
-    @PreAuthorize("hasRole('SUPPLIER') and hasAuthority('SUB_SUPPLIER_READ')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') and hasAuthority('SUB_SUPPLIER_READ')")
     public ResponseEntity<DynamicResponse> search_admin(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean active) throws IOException {
         List<String> list = new ArrayList<>(Arrays.asList("ROLE_SUPPLIER", "ROLE_SUB_SUPPLIER"));
         Page<users> user = this.criteriaService.UsersSearchCreatiriaRolesList(page, size, active, false, name, list );
@@ -58,7 +58,7 @@ public class SubSupplierController extends BaseController {
 
 
     @PostMapping(value = {"/add_sub_supplier"})
-    @PreAuthorize("hasRole('SUPPLIER') and hasAuthority('SUB_SUPPLIER_WRITE')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') and hasAuthority('SUB_SUPPLIER_WRITE')")
     public ResponseEntity<users> add_sub_admin(@ModelAttribute SignupRequest request, @RequestParam List<Long> idList) throws IOException, InterruptedException, MessagingException {
         users usersList = this.userService.findTop();
         Long lastuserid = usersList.getId() + 1;

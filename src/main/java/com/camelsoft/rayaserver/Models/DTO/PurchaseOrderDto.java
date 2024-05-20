@@ -3,6 +3,7 @@ package com.camelsoft.rayaserver.Models.DTO;
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
+import com.camelsoft.rayaserver.Models.Project.Service_Agreement;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import lombok.Data;
 import java.util.Date;
@@ -28,6 +29,7 @@ public class PurchaseOrderDto {
         private Set<File_model> attachments = new HashSet<>();
         private Boolean archive = false;
         private Integer poCountBySupplier;
+        private Set<Service_Agreement> serviceagreements = new HashSet<>();
         private Date timestamp;
 
 
@@ -52,6 +54,7 @@ public class PurchaseOrderDto {
                 dto.setArchive(purchaseOrder.getArchive());
                 dto.setTimestamp(purchaseOrder.getTimestamp());
                 dto.setPoCountBySupplier(purchaseOrder.getPoCountBySupplier());
+                dto.setServiceagreements(purchaseOrder.getServiceagreements());
                 return dto;
         }
 

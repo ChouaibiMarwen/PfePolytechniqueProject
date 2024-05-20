@@ -4,12 +4,9 @@ import com.camelsoft.rayaserver.Models.Auth.PasswordResetToken;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Request.User.SignInRequest;
 import com.camelsoft.rayaserver.Request.User.SignupRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
-import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
-import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.auth.PasswordResetTokenServices;
 import com.camelsoft.rayaserver.Services.auth.PrivilegeService;
@@ -50,7 +47,7 @@ public class SubAdminController extends BaseController {
 
 
     @GetMapping(value = {"/search_admin"})
-    @PreAuthorize("hasRole('ADMIN') and hasAuthority('SUB_ADMIN_READ')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') and hasAuthority('SUB_ADMIN_READ')")
     public ResponseEntity<DynamicResponse> search_admin(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean active) throws IOException {
         List<String> list = new ArrayList<>(Arrays.asList("ROLE_ADMIN", "ROLE_SUB_ADMIN"));
         Page<users> user = this.criteriaService.UsersSearchCreatiriaRolesList(page, size, active, false, name, list );
@@ -60,7 +57,7 @@ public class SubAdminController extends BaseController {
 
 
     @PostMapping(value = {"/add_sub_admin"})
-    @PreAuthorize("hasRole('ADMIN') and hasAuthority('SUB_ADMIN_WRITE')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') and hasAuthority('SUB_ADMIN_WRITE')")
     public ResponseEntity<users> add_sub_admin(@ModelAttribute SignupRequest request, @RequestParam List<Long> idList) throws IOException, InterruptedException, MessagingException {
         users usersList = this.userService.findTop();
         Long lastuserid = usersList.getId() + 1;
