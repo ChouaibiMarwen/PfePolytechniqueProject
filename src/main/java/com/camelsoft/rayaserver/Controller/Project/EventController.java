@@ -86,6 +86,23 @@ public class EventController {
 
     }
 
+
+    @GetMapping(value = {"/all_events_by_role_assignedto"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @ApiOperation(value = "get all events  by assignedto role paginated ", notes = "Endpoint to get events by  by assignedto role paginated ")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> all_events_by_role_assignedto(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam RoleEnum role) throws IOException {
+
+        return new ResponseEntity<>(this.service.FindEventAssignedToByRole(page, size ,role), HttpStatus.OK);
+
+    }
+
+
+
     @PostMapping(value = {"/add_event"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "Add a new event request from the admin", notes = "Endpoint to add a new event")

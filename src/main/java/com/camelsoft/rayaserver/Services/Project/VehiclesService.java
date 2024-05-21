@@ -91,7 +91,7 @@ public DynamicResponse FindAllPgSupplier(int page, int size, Supplier supplier) 
     public DynamicResponse findAllPgBySupplierAndAvailableStock(int page, int size ,Supplier supplier) {
         try {
             PageRequest pg = PageRequest.of(page, size);
-            Page<Vehicles> pckge = this.repository.findVehiclesBySupplierAndStockGreaterThan(pg,supplier);
+            Page<Vehicles> pckge = this.repository.findVehiclesBySupplierAndStockGreaterThanAndArchiveFalse(pg,supplier);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {

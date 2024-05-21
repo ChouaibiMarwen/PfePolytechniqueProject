@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Services.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Repository.Project.EventRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -61,6 +62,22 @@ public class EventService {
         }
 
     }
+
+    public DynamicResponse FindEventAssignedToByRole(int page, int size, RoleEnum role) {
+        try {
+
+
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Event> pckge = this.repository.findByAssignedtoContaining(pg, role);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
         public DynamicResponse FindAllByTitlePg(int page, int size , String tit) {
         try {
             PageRequest pg = PageRequest.of(page, size);
@@ -194,5 +211,6 @@ public class EventService {
         }
 
     }
+
     
 }

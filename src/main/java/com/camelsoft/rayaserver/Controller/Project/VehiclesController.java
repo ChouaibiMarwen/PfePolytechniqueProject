@@ -181,7 +181,7 @@ public class VehiclesController extends BaseController {
 
     @GetMapping(value = {"/{id_vehicle}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
-    @ApiOperation(value = "update vehicles for supplier", notes = "Endpoint to update vehicles")
+    @ApiOperation(value = "get vehicles by id for supplier", notes = "Endpoint get vehicles by id")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully update"),
             @ApiResponse(code = 400, message = "Bad request, check the data"),
@@ -432,5 +432,31 @@ public class VehiclesController extends BaseController {
         VehiclesMedia result = this.vehiclesMediaService.Update(vehiclesmedia);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @PatchMapping(value = {"delete_vehicle/{id_vehicle}"})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @ApiOperation(value = "delete vehicle for supplier", notes = "Endpoint delete vehicles by supplier")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted"),
+            @ApiResponse(code = 400, message = "Bad request, check the data"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not a supplier or sub_supplier")
+    })
+    public ResponseEntity<Vehicles> delete_vehicle(@PathVariable Long id_vehicle) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (!this.Services.ExistById(id_vehicle))
+            return new ResponseEntity("vehicle " + id_vehicle + " not found in the system", HttpStatus.NOT_FOUND);
+        Vehicles result = this.Services.FindById(id_vehicle);
+        if (user.getSupplier() != null) {
+            Supplier supplier = user.getSupplier();
+            if (result.getSupplier().getId() != supplier.getId())
+                return new ResponseEntity("this vehicle " + id_vehicle + " you don't have it", HttpStatus.BAD_REQUEST);
+
+        }
+        result.setArchive(true);
+        result = this.Services.Update(result);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 
 }

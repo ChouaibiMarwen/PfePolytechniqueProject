@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Repository.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.Project.Product;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
@@ -20,6 +21,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAllByArchiveIsFalseAndTitleContainingIgnoreCaseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page, String name, Date date);
     Page<Event> findAllByStatusAndArchiveIsFalse(Pageable page, EventStatus status);
     Page<Event> findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page, Date date);
+
+    Page<Event> findByAssignedtoContaining(Pageable page, RoleEnum role);
+
+
 
 }
 
