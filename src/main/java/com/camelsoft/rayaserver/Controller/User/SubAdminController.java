@@ -1,10 +1,14 @@
 package com.camelsoft.rayaserver.Controller.User;
 
+import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
+import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
+import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Models.Auth.PasswordResetToken;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.User.SignupRequest;
+import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.UserService;
@@ -58,62 +62,72 @@ public class SubAdminController extends BaseController {
 
     @PostMapping(value = {"/add_sub_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') and hasAuthority('SUB_ADMIN_WRITE')")
-    public ResponseEntity<users> add_sub_admin(@ModelAttribute SignupRequest request, @RequestParam List<Long> idList) throws IOException, InterruptedException, MessagingException {
-        users usersList = this.userService.findTop();
-        Long lastuserid = usersList.getId() + 1;
-        String token = generateRandomResetCode(4);
-        if (request.getEmail() == null && !request.getEmail().contains(" "))
-            return new ResponseEntity("null email", HttpStatus.CONFLICT);
-        if (!UserService.isValidEmail(request.getEmail()))
-            return new ResponseEntity("data missing", HttpStatus.CONFLICT);
-        users user = userService.findbyemail(request.getEmail().toLowerCase());
-        if (user != null && user.getVerified())
-            return new ResponseEntity("Account already exist.", HttpStatus.CONFLICT);
-        String username = userService.GenerateUserName(request.getName(), lastuserid);
-
+    public ResponseEntity<users> add_sub_admin(@RequestBody CustomerSingUpRequest request) throws IOException, InterruptedException, MessagingException {
+        // Check if email is null
+        if (request.getEmail() == null)
+            return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
         if (request.getPhonenumber() == null)
-            return new ResponseEntity("phone-number is null", HttpStatus.BAD_REQUEST);
-        String phoneNUmber = request.getPhonenumber().replaceAll("[\\s()]", "");
+            return new ResponseEntity("phone-number", HttpStatus.BAD_REQUEST);
+        if (request.getInformationRequest().getFirstnameen() == null)
+            return new ResponseEntity("first-name-en", HttpStatus.BAD_REQUEST);
+        if (request.getInformationRequest().getFirstnamear() == null)
+            return new ResponseEntity("first-name-ar", HttpStatus.BAD_REQUEST);
+        if (request.getInformationRequest().getLastnameen() == null)
+            return new ResponseEntity("last-name-en", HttpStatus.BAD_REQUEST);
+        if (request.getInformationRequest().getLastnamear() == null)
+            return new ResponseEntity("last-name-ar", HttpStatus.BAD_REQUEST);
 
-        if (userService.existbyphonenumber(phoneNUmber))
-            return new ResponseEntity("Phone number already exists.", HttpStatus.CONFLICT);
-
-        user = new users(
-                username,
-                request.getEmail().toLowerCase(),
-                request.getPassword(),
-                request.getPhonenumber());
-        user.setActive(true);
-        user.setVerified(true);
-        for (Long id : idList) {
-            if (this.privilegeService.existbyid(id)) {
-                Privilege privilege = this.privilegeService.findbyid(id);
-                user.getPrivileges().add(privilege);
-            }
-        }
+        // Check email format
+        if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
+            return new ResponseEntity("email", HttpStatus.NOT_ACCEPTABLE);
+        String phonenumber = request.getPhonenumber().replaceAll("[\\s()]", "");
+        if (userService.existbyphonenumber(phonenumber))
+            return new ResponseEntity("phone-number", HttpStatus.CONFLICT);
+        if (userService.existbyemail(request.getEmail().toLowerCase()))
+            return new ResponseEntity("email", HttpStatus.CONFLICT);
+        String name = request.getInformationRequest().getFirstnameen() + request.getInformationRequest().getLastnameen();
+        String username = userService.GenerateUserName(name, userService.Count());
+        users existingUserByUsername = userService.findByUserName(username);
+        if (existingUserByUsername != null)
+            return new ResponseEntity("user-name", HttpStatus.CONFLICT);
+        // Create a new user
+        users user = new users();
+        PersonalInformation information = new PersonalInformation();
+        information.setPhonenumber(phonenumber);
+        information.setFirstnameen(request.getInformationRequest().getFirstnameen());
+        information.setLastnameen(request.getInformationRequest().getLastnameen());
+        information.setFirstnamear(request.getInformationRequest().getLastnamear());
+        information.setLastnamear(request.getInformationRequest().getLastnamear());
+        if (request.getInformationRequest().getBirthDate() != null)
+            information.setBirthDate(request.getInformationRequest().getBirthDate());
+        if (request.getInformationRequest().getSecondnameen() != null)
+            information.setSecondnameen(request.getInformationRequest().getSecondnameen());
+        if (request.getInformationRequest().getThirdnameen() != null)
+            information.setThirdnameen(request.getInformationRequest().getThirdnameen());
+        if (request.getInformationRequest().getGrandfathernameen() != null)
+            information.setGrandfathernameen(request.getInformationRequest().getGrandfathernameen());
+        if (request.getInformationRequest().getSecondnamear() != null)
+            information.setSecondnamear(request.getInformationRequest().getSecondnamear());
+        if (request.getInformationRequest().getThirdnamear() != null)
+            information.setThirdnamear(request.getInformationRequest().getThirdnamear());
+        if (request.getInformationRequest().getGrandfathernamear() != null)
+            information.setGrandfathernamear(request.getInformationRequest().getGrandfathernamear());
+        if (request.getInformationRequest().getNumberofdependents() != null)
+            information.setNumberofdependents(request.getInformationRequest().getNumberofdependents());
+        if (request.getInformationRequest().getGender() != null)
+            information.setGender(Gender.valueOf(request.getInformationRequest().getGender()));
+        if (request.getInformationRequest().getWorksector() != null)
+            information.setWorksector(WorkSector.valueOf(request.getInformationRequest().getWorksector()));
+        if (request.getInformationRequest().getMaritalstatus() != null)
+            information.setMaritalstatus(MaritalStatus.valueOf(request.getInformationRequest().getMaritalstatus()));
+        // Set user details
+        PersonalInformation resultinformation = this.personalInformationService.save(information);
+        user.setUsername(username);
+        user.setEmail(request.getEmail().toLowerCase());
+        user.setPassword(request.getPassword());
+        user.setPersonalinformation(resultinformation);
+        // Save the user
         users result = userService.saveSubAdmin(user);
-        PersonalInformation pinfo = new PersonalInformation();
-        pinfo.setGender(request.getGender());
-        pinfo.setPhonenumber(request.getPhonenumber());
-        pinfo.setBirthDate(request.getBirthDate());
-        pinfo.setFirstnameen(request.getFirstnameen());
-        pinfo.setLastnameen(request.getLastnameen());
-        pinfo.setFirstnamear(request.getFirstnamear());
-        pinfo.setLastnamear(request.getLastnamear());
-        pinfo.setMaritalstatus(request.getMaritalstatus());
-        pinfo.setUser(result);
-        this.personalInformationService.save(pinfo);
-        PasswordResetToken resetToken = this.resetTokenServices.findbyuser(result);
-        if (resetToken != null) {
-            this.resetTokenServices.remove_code(resetToken.getUser());
-        }
-        this.resetTokenServices.createPasswordResetTokenForUser(result, token);
-        /*CompletableFuture.runAsync(() -> {
-            RestTemplate restTemplate = new RestTemplate();
-             Send POST request
-            restTemplate.exchange(url + "/api/v1/admin_sub_admin/sendConfirmEmailInEmailHtml?user_id=" + result.getId() + "&token=" + token, HttpMethod.POST, null, String.class);
-        });*/
-
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
