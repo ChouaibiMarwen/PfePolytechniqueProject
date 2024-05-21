@@ -64,7 +64,7 @@ public class RequestController  extends BaseController {
     @Autowired
     private UserService UserServices;
     @PostMapping(value = {"/add_Request"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER') or hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "Add a new request request from the admin", notes = "Endpoint to add a new request")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added the loan request"),
@@ -113,7 +113,7 @@ public class RequestController  extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @PostMapping(value = {"/add_correspondance/{requestId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER') or hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "Add a new correspendance  request from the admin", notes = "Endpoint to add a new  correspendance request")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added the loan request"),
@@ -155,7 +155,7 @@ public class RequestController  extends BaseController {
 
 
     @GetMapping(value = {"/all_requests"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all requests by status for admin", notes = "Endpoint to get requests")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -175,7 +175,7 @@ public class RequestController  extends BaseController {
     }
 
     @GetMapping(value = {"/request/{idRequest}"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all requests by status for admin", notes = "Endpoint to get requests")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -195,7 +195,7 @@ public class RequestController  extends BaseController {
 
     }
 @GetMapping(value = {"/corssspondences/{idRequest}"})
-    @PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all requests by status for admin", notes = "Endpoint to get requests")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

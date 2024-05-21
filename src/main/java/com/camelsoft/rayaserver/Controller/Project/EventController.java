@@ -46,7 +46,7 @@ public class EventController {
 
 
     @GetMapping(value = {"/all_events_by_title"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all events for admin by name", notes = "Endpoint to get events by name and character")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -59,7 +59,7 @@ public class EventController {
     }
 
     @GetMapping(value = {"/all_events_by_title_and_status_paginated"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all events for admin by title paginated ", notes = "Endpoint to get events by name and character paginated ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -73,7 +73,7 @@ public class EventController {
     }
 
     @GetMapping(value = {"/all_events_by_title_and_date_paginated"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all events for admin by title and date paginated ", notes = "Endpoint to get events by name character and date paginated ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -87,7 +87,7 @@ public class EventController {
     }
 
     @PostMapping(value = {"/add_event"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "Add a new event request from the admin", notes = "Endpoint to add a new event")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added the loan request"),
@@ -126,7 +126,7 @@ public class EventController {
     }
 
     @GetMapping(value = {"/event/{id}"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get event by id for admin ", notes = "Endpoint to get event by id")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -140,7 +140,7 @@ public class EventController {
 
 
     @PatchMapping(value = {"/inverse_status_event/{event_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "inverse status of event  for admin ", notes = "Endpoint update status event for admin ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -166,7 +166,7 @@ public class EventController {
 
 
     @PatchMapping(value = {"/update_event/{idEvent}"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "update an event from the admin", notes = "Endpoint to update an event")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added the loan request"),
@@ -223,7 +223,7 @@ public class EventController {
 
     }
     @DeleteMapping(value = {"/{event_id}"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     public ResponseEntity<Event> daleteEvent(@PathVariable Long event_id){
         boolean exist = this.service.ExistById(event_id);
         if(!exist)

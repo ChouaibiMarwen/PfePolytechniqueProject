@@ -73,7 +73,7 @@ public class AuthController extends BaseController {
     String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
 
     @GetMapping(value = {"/current_user"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN')")
     public ResponseEntity<users> current_user() throws IOException {
         users users = userService.findByUserName(getCurrentUser().getUsername());
         return new ResponseEntity<>(users, HttpStatus.OK);
@@ -226,7 +226,7 @@ public class AuthController extends BaseController {
     }
 
     @PutMapping(value = {"/logout"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN')")
     public ResponseEntity<ApiResponse> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
         users currentUser = userService.findByUserName(getCurrentUser().getUsername());
         String deviceId = logOutRequest.getDeviceInfo().getDeviceId();

@@ -34,7 +34,7 @@ public class PrivilegeController  extends BaseController {
 
 
     @GetMapping(value = {"/get_all_privileges"})
-    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRIVILEGE_READ')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all privileges for admin", notes = "Endpoint to get all privileges for admin ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -47,7 +47,7 @@ public class PrivilegeController  extends BaseController {
     }
 
     @PatchMapping(value = {"/add_user_privileges/{user_id}"})
-    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRIVILEGE_WRITE')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     public ResponseEntity<users> add_sub_admin_privileges(@PathVariable Long user_id, @RequestParam List<Long> idList) throws IOException, InterruptedException, MessagingException {
 
         if (!this.userService.existbyid(user_id))
@@ -67,7 +67,7 @@ public class PrivilegeController  extends BaseController {
     }
 
     @PatchMapping(value = {"/remove_user_privileges/{user_id}"})
-    @PreAuthorize("hasRole('ADMIN') and hasAuthority('SUB_ADMIN_WRITE')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     public ResponseEntity<users> remove_sub_admin_privileges(@PathVariable Long user_id, @RequestParam List<Long> idList) throws IOException, InterruptedException, MessagingException {
         if (!this.userService.existbyid(user_id))
             return new ResponseEntity("invalid id" + user_id, HttpStatus.NOT_FOUND);

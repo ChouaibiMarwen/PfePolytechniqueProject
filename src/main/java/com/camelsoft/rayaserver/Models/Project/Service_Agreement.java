@@ -24,10 +24,8 @@ public class Service_Agreement implements Serializable{
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "purchaseorder_id_serviceagreement")
     private PurshaseOrder purchaseorder;
-    @JsonIgnore
     @Column(name = "archive")
     private Boolean archive = false;
-    @JsonIgnore
     @Column(name = "deleted")
     private Boolean deleted = false;
     @Column(name = "timestamp")
@@ -50,7 +48,14 @@ public class Service_Agreement implements Serializable{
         }
     }
 
-    
+    public Long getPurchaseorderId() {
+        return purchaseorderId;
+    }
+
+    public void setPurchaseorderId(Long purchaseorderId) {
+        this.purchaseorderId = purchaseorderId;
+    }
+
     public Long getId() {
         return id;
     }

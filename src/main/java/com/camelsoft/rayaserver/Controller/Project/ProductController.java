@@ -38,7 +38,7 @@ public class ProductController {
     private UserService UserServices;
 
     @GetMapping(value = {"/all_product_by_name"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all product for admin by name", notes = "Endpoint to get product by name and character")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -52,7 +52,7 @@ public class ProductController {
 
 
     @PostMapping("/add_product")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "Add a new product from the admin", notes = "Endpoint to add a new event")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added product "),
@@ -80,7 +80,7 @@ public class ProductController {
 
 
     @GetMapping(value = {"/product/{id]"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get product by id for admin ", notes = "Endpoint to get product by id")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

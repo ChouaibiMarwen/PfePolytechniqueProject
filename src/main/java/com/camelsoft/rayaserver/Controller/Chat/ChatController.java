@@ -118,7 +118,7 @@ public class ChatController  extends BaseController {
 
     }
     @GetMapping("/messages/{senderId}/{recipientId}/count")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('DRIVER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     public ResponseEntity<Long> countNewMessages(
             @PathVariable Long senderId,
             @PathVariable Long recipientId) {
@@ -129,13 +129,13 @@ public class ChatController  extends BaseController {
     }
 
     @GetMapping("/messages/{senderId}/{recipientId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     public ResponseEntity<?> findChatMessages(@PathVariable Long senderId, @PathVariable Long recipientId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) {
         return ResponseEntity.ok(chatMessageService.findChatMessages(page, size, senderId, recipientId,false));
     }
 
     @PatchMapping("/seenallmessage/{senderId}/{recipientId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('DRIVER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     public ResponseEntity seenallmessage ( @PathVariable Long senderId,
                                                 @PathVariable Long recipientId) {
         this.chatMessageService.seenAllMessage(senderId, recipientId);
@@ -144,14 +144,14 @@ public class ChatController  extends BaseController {
 
 
     @GetMapping("/Getadminnotification/{senderId}/{recipientId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     public ResponseEntity<AdminNotificationResponse> Getadminnotification (@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size, @PathVariable Long senderId,
                                                                            @PathVariable Long recipientId) {
         return ResponseEntity
                 .ok(adminNotificationServices.get_all_notification_admin(page,size,recipientId,senderId));
     }
     @GetMapping("/GetAlladminnotification/{recipientId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     public ResponseEntity<AdminNotificationResponse> GetAlladminnotification (@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
                                                                            @PathVariable Long recipientId) {
         return ResponseEntity
@@ -159,7 +159,7 @@ public class ChatController  extends BaseController {
     }
 
     @GetMapping("/messages/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('DRIVER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     public ResponseEntity<?> findMessage ( @PathVariable Long id) {
         return ResponseEntity
                 .ok(chatMessageService.findById(id));
@@ -167,7 +167,7 @@ public class ChatController  extends BaseController {
 
 
     @PostMapping("/add_files")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     public ResponseEntity<List<File_model>> add_files(@RequestParam(value = "files") List<MultipartFile> files) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
         List<File_model> filesw = new ArrayList<>();

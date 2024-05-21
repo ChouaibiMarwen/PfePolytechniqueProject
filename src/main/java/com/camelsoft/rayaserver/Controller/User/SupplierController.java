@@ -50,7 +50,7 @@ public class SupplierController {
     private RoleService roleService;
 
     @PostMapping(value = {"/add"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "add suppliers for admin", notes = "Endpoint to add suppliers")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -138,7 +138,7 @@ public class SupplierController {
 
 
     @GetMapping(value = {"/all"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all suppliers without pagination", notes = "Endpoint to get suppliers")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
@@ -150,7 +150,7 @@ public class SupplierController {
 
 
     @GetMapping(value = {"/all_suppliers_by_purchase_order_status"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all suppliers by purchases order status for admin", notes = "Endpoint to get all suppliers by purchases order status for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -167,7 +167,7 @@ public class SupplierController {
 
 
     @GetMapping(value = {"/all_suppliers_with_available_vehecles_stock"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all suppliers that have available stock for admin", notes = "Endpoint get all suppliers that have available vehecles' stock for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

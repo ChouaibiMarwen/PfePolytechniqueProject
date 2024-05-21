@@ -50,7 +50,7 @@ public class VehiclesController extends BaseController {
     private FilesStorageServiceImpl filesStorageService;
 
     @GetMapping(value = {"/all_vehicles_admin"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all vehicles for admin", notes = "Endpoint to get vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -65,7 +65,7 @@ public class VehiclesController extends BaseController {
     }
 
     @GetMapping(value = {"/all_vehicles_supplier"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all vehicles for admin", notes = "Endpoint to get vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -79,7 +79,7 @@ public class VehiclesController extends BaseController {
     }
 
     @GetMapping(value = {"/all_vehicles_by_supplier/{idSupplier}"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all vehicles by supplier for admin", notes = "Endpoint to get a supllier's vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -99,7 +99,7 @@ public class VehiclesController extends BaseController {
 
 
     @GetMapping(value = {"/all_vehicles_by_supplier_and_vin_and_purchase_order_status/{idSupplier}"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all vehicles by supplier for admin", notes = "Endpoint to get a supllier's vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -121,7 +121,7 @@ public class VehiclesController extends BaseController {
 
 
     @PostMapping(value = {"/add_vehicle"})
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -152,7 +152,7 @@ public class VehiclesController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_vehicle/{id_vehicle}"})
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "update vehicles for supplier", notes = "Endpoint to update vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully update"),
@@ -180,7 +180,7 @@ public class VehiclesController extends BaseController {
     }
 
     @GetMapping(value = {"/{id_vehicle}"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "update vehicles for supplier", notes = "Endpoint to update vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully update"),
@@ -204,7 +204,7 @@ public class VehiclesController extends BaseController {
 
 
     @GetMapping(value = {"/vehecles_available_stock_by_supplier/{idSupplier} "})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get vehecles with available stock by supplier for admin ", notes = "vehecles with available stock by supplier for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully update"),
@@ -228,7 +228,7 @@ public class VehiclesController extends BaseController {
 
 
     @PostMapping(value = {"/add_vehicle_price_financing/{id_vehicle}"})
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -264,7 +264,7 @@ public class VehiclesController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_vehicle_price_financing/{id_vehicle_price_financing}"})
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "update vehicles for supplier", notes = "Endpoint to update vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated"),
@@ -291,7 +291,7 @@ public class VehiclesController extends BaseController {
     }
 
     @PostMapping(value = {"/add_vehicle_media/{id_vehicle}"})
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -367,7 +367,7 @@ public class VehiclesController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_vehicle_media/{id_media}"})
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),

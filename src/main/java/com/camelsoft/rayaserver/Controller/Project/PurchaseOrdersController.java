@@ -51,7 +51,7 @@ public class PurchaseOrdersController {
 
 
     @PostMapping(value = "/add")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "add purshase order for supplier", notes = "Endpoint to add purshase order")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -108,7 +108,7 @@ public class PurchaseOrdersController {
 
 
     @GetMapping(value = {"/all_purchase_orders_by_status"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to get purchase orders by status")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -122,7 +122,7 @@ public class PurchaseOrdersController {
 
 
     @GetMapping(value = {"/all_purchase_orders_by_status_and_date"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all purchase orders by status and date for admin by name", notes = "Endpoint to get purchase orders by status and date")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -135,7 +135,7 @@ public class PurchaseOrdersController {
     }
 
     @GetMapping(value = {"/all_purchase_orders_by_status_and_date_and_vehicle"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all purchase orders by status and date and vehicle for admin by name", notes = "Endpoint to get purchase orders by status and date and vehicle")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -156,7 +156,7 @@ public class PurchaseOrdersController {
     }
 
     @GetMapping(value = {"/all_purchase_orders_by_status_and_date_and_vehicle_and_supplier"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all purchase orders by status and date and vehicle and supplier  for admin by name", notes = "Endpoint to get purchase orders by status and date and vehicle and supplier for admin ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -173,7 +173,7 @@ public class PurchaseOrdersController {
 
 
     @PatchMapping(value ="/update_purchase_order/{purchaseOrderId}")
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to get purchase orders by status")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -240,7 +240,7 @@ public class PurchaseOrdersController {
 
 
     @GetMapping(value = {"/purchase_order/{id]"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all purchase orders by id for admin ", notes = "Endpoint to get purchase orders by id")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -255,7 +255,7 @@ public class PurchaseOrdersController {
 
 
     @PatchMapping(value = "/send_purchase_order/{purchaseOrderId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "accept and send purchase order by admin", notes = "Endpoint send purchase order")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -274,7 +274,7 @@ public class PurchaseOrdersController {
 
 
     @PatchMapping(value = "/update_purchase_order_status/{purchaseOrderId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "update purchase order status by admin", notes = "Endpoint update purchase order status")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -292,7 +292,7 @@ public class PurchaseOrdersController {
     }
 
     @PatchMapping(value = "/accept_purchase_order_by_Supplier/{purchaseOrderId}")
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "accept purchase order status by supplier", notes = "Endpoint to accept purchase order status by supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -310,7 +310,7 @@ public class PurchaseOrdersController {
     }
 
     @PatchMapping(value = "/reject_purchase_order/{purchaseOrderId}")
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "reject purchase order status by supplier", notes = "Endpoint to reject purchase order status by supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -329,7 +329,7 @@ public class PurchaseOrdersController {
 
 
     @PatchMapping(value = "/accept_purchase_order_by_Admin/{purchaseOrderId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "accept purchase order status by admin", notes = "Endpoint to accept purchase order status by admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -349,7 +349,7 @@ public class PurchaseOrdersController {
 
 
     @PatchMapping(value = "/cancel_purchase_order/{purchaseOrderId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "cancel purchase order status by admin", notes = "Endpoint to cancel purchase order status by admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

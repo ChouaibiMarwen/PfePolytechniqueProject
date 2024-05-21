@@ -41,7 +41,7 @@ public class ServiceAgreementController {
 
 
     @PostMapping(value = {"/add_service_agreement/{purchaseorderId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "Add added service agreements to purchase order from the admin", notes = "Endpoint to add service agreements list to purchase order")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added service agreements to purchase order"),
@@ -71,7 +71,7 @@ public class ServiceAgreementController {
     }
 
     @PatchMapping(value = {"delete/{serviceAgreementId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "delete service agreement from the admin and the supplier", notes = "Endpoint to delete service agreement")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully delete service agreements"),
@@ -99,7 +99,7 @@ public class ServiceAgreementController {
 
 
     @PatchMapping(value = {"update_service_agreement/{serviceAgreementId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "update service agreement from the admin and the supplier", notes = "Endpoint to update service agreement")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully update service agreements"),
@@ -120,7 +120,7 @@ public class ServiceAgreementController {
     }
 
     @GetMapping(value = {"/service_agreement/{id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get service agreement by id for admin and supplier ", notes = "Endpoint to get event by id")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -136,7 +136,7 @@ public class ServiceAgreementController {
 
 
     @GetMapping(value = {"/all_service_arguments_by_purchase_order/{purchaseOrderId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all Service agreements by purchase order paginated for admin", notes = "Endpoint toget all Service agreements by purchase order paginated")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -153,7 +153,7 @@ public class ServiceAgreementController {
 
 
     @GetMapping(value = {"/all_service_arguments_by_purchase_order_paginated/{purchaseOrderId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all Service agreements by purchase order paginated for admin", notes = "Endpoint toget all Service agreements by purchase order paginated")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

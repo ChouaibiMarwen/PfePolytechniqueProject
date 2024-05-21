@@ -46,7 +46,7 @@ public class SubAdminController extends BaseController {
 
 
     @GetMapping(value = {"/search_admin"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') and hasAuthority('SUB_ADMIN_READ')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     public ResponseEntity<DynamicResponse> search_admin(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean active) throws IOException {
         List<String> list = new ArrayList<>(Arrays.asList("ROLE_ADMIN", "ROLE_SUB_ADMIN"));
         Page<users> user = this.criteriaService.UsersSearchCreatiriaRolesList(page, size, active, false, name, list );
@@ -56,7 +56,7 @@ public class SubAdminController extends BaseController {
 
 
     @PostMapping(value = {"/add_sub_admin"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') and hasAuthority('SUB_ADMIN_WRITE')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     public ResponseEntity<users> add_sub_admin(@RequestBody CustomerSingUpRequest request) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
         if (request.getEmail() == null)

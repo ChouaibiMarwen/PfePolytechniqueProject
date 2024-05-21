@@ -39,7 +39,7 @@ public class StaticsMainController   extends BaseController {
     private InvoiceService invoiceService;
 
     @GetMapping(value = {"/all_statistics_admin"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all statistics for admin main dashboard", notes = "Endpoint to get statistics")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -74,7 +74,7 @@ public class StaticsMainController   extends BaseController {
     }*/
 
     @GetMapping("/revenue-by-month")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all statistics for admin main dashboard", notes = "Endpoint to get statistics")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

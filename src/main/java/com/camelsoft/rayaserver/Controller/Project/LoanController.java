@@ -46,7 +46,7 @@ public class LoanController extends BaseController {
     private FilesStorageServiceImpl filesStorageService;
 
     @GetMapping(value = {"/all_loans_admin"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all loan by status for admin", notes = "Endpoint to get loan request")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -54,18 +54,11 @@ public class LoanController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<DynamicResponse> all_loans_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) LoanStatus status,  @RequestParam(required = false) Date creationdate) throws IOException {
-        // users user = UserServices.findByUserName(getCurrentUser().getUsername());
-        //DynamicResponse result = new DynamicResponse();
-       /* if (status != null) {
-            result = this.Services.FindAllByState(page, size, status, creationdate);
-        } else {
-            result = this.Services.FindAllPg(page, size);
-        }*/
         return new ResponseEntity<>(this.Services.FindAllByStateAndDatenNewerThen(page, size, status, creationdate), HttpStatus.OK);
     }
 
     @GetMapping(value = {"/all_loans_supplier"})
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all loan by status for supplier", notes = "Endpoint to get loan request")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -85,7 +78,7 @@ public class LoanController extends BaseController {
     }
 
     @PostMapping("/add_loan")
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "Add a new loan request from the supplier", notes = "Endpoint to add a new loan request")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added the loan request"),
@@ -169,7 +162,7 @@ public class LoanController extends BaseController {
     }
 
     @DeleteMapping("/remove_loan/{id}")
-    @PreAuthorize("hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "Remove loan request from the supplier", notes = "Endpoint to remove a loan request")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully removed the loan request"),
@@ -187,7 +180,7 @@ public class LoanController extends BaseController {
         }
     }
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('ADIMN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "Remove loan request from the supplier", notes = "Endpoint to remove a loan request")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully removed the loan request"),
@@ -217,7 +210,7 @@ public class LoanController extends BaseController {
 
 
     @PatchMapping(value = {"/approve_loan/{loan_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "approve loan for admin ", notes = "Endpoint approve loan for admin ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -239,7 +232,7 @@ public class LoanController extends BaseController {
 
 
     @PatchMapping(value = {"/reject_loan/{loan_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "reject loan for admin ", notes = "Endpoint reject loan for admin ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

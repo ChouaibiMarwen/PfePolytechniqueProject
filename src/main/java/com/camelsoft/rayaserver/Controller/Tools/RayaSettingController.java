@@ -25,7 +25,7 @@ public class RayaSettingController {
     private RayaSettingService service;
 
     @PatchMapping(value = {"/raya_settings"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "update general settings for admin", notes = "Endpoint to update general settings for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -57,7 +57,7 @@ public class RayaSettingController {
 
 
  @GetMapping(value = {"/settings"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')")
+ @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get general settings for admin", notes = "Endpoint to get general settings for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
