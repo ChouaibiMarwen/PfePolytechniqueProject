@@ -16,6 +16,7 @@ import com.camelsoft.rayaserver.Services.Project.ServiceAgreementService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 @RestController
 @CrossOrigin
@@ -77,18 +79,21 @@ public class ServiceAgreementController {
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity daleteServiceAgreement(@PathVariable Long serviceAgreementId){
-        Service_Agreement serviceAgreement =  this.service.FindById(serviceAgreementId);
-      /*  if(serviceAgreement == null)
+        Service_Agreement serviceAgreement =  this.service.FindById(642828L);
+        if(serviceAgreement == null)
             return new ResponseEntity("Service agreement by this id :" + serviceAgreementId + "is not founded ", HttpStatus.NOT_FOUND);
         PurshaseOrder purchaseOrder = serviceAgreement.getPurchaseorder();
-        if (purchaseOrder != null) {
-            purchaseOrder.getServiceagreements().remove(serviceAgreement);
-            this.purchaseorderservice.Save(purchaseOrder);
-        }
+        serviceAgreement.getPurchaseorder().getServiceagreements().remove(serviceAgreement);
         serviceAgreement.setDeleted(true);
-        serviceAgreement.setPurchaseorder(null);
-        serviceAgreement = this.service.Update(serviceAgreement);*/
-        this.service.deleteServiceAgreement(serviceAgreement);
+        this.service.Update(serviceAgreement);
+        if (purchaseOrder != null) {
+            Set<Service_Agreement> serviceAgreements = purchaseOrder.getServiceagreements();
+            serviceAgreements.remove(serviceAgreement);
+            purchaseOrder.setServiceagreements(serviceAgreements);
+            this.purchaseorderservice.Update(purchaseOrder); // Update the PurchaseOrder
+
+        }
+            serviceAgreement = this.service.Update(serviceAgreement);
         return new ResponseEntity(HttpStatus.OK);
     }
 

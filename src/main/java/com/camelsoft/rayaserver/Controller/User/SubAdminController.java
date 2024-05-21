@@ -3,11 +3,8 @@ package com.camelsoft.rayaserver.Controller.User;
 import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
-import com.camelsoft.rayaserver.Models.Auth.PasswordResetToken;
-import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Request.User.SignupRequest;
 import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
@@ -28,8 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.camelsoft.rayaserver.Controller.Auth.AuthController.generateRandomResetCode;
 
 @RestController
 @CrossOrigin
