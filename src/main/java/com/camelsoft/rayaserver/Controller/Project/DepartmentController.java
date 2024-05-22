@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -132,6 +133,19 @@ public class DepartmentController {
         Department result = this.departmentService.Update(dep);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
+    }
+
+    @GetMapping(value = {"/all_departments"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "get all departments for admin", notes = "Endpoint to get all departments")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<List<Department>> all_departments_list() throws IOException {
+        List<Department> result = this.departmentService.findAllNotArchived();
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }
