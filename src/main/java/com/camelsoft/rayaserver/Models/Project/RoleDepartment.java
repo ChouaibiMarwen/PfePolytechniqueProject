@@ -19,7 +19,7 @@ public class RoleDepartment implements Serializable {
     private String rolename;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
-    @JoinColumn(name = "department_id_role", nullable = false)
+    @JoinColumn(name = "department_id_role")
     private Department department;
     @Column(name = "archive")
     private Boolean archive = false;

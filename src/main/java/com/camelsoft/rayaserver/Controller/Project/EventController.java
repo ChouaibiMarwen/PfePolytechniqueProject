@@ -150,7 +150,7 @@ public class EventController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<Event> geteventById(@PathVariable(required = false) Long id) throws IOException {
+    public ResponseEntity<Event> geteventById(@PathVariable Long id) throws IOException {
         Event result = this.service.FindById(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
