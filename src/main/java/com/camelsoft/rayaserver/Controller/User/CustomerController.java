@@ -6,14 +6,19 @@ import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
+import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
+import com.camelsoft.rayaserver.Services.Project.ProductService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.CustomerService;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -30,7 +35,9 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/v1/customers")
-public class CustomerController {
+public class CustomerController extends BaseController {
+    @Autowired
+    private UserActionService userActionService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -39,7 +46,7 @@ public class CustomerController {
     private PersonalInformationService personalInformationService;
 
     @PostMapping(value = {"/add"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')" )
     @ApiOperation(value = "add customers for admin", notes = "Endpoint to add customers")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -114,6 +121,13 @@ public class CustomerController {
         user.setPersonalinformation(resultinformation);
         // Save the user
         users result = userService.saveUser(user);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.CUSTOMER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
@@ -134,6 +148,13 @@ public class CustomerController {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
     })
     public ResponseEntity<List<UserShortDto>> all(@RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) Boolean verified) throws IOException {
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.CUSTOMER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(this.customerService.getAllUsersWithoutPagination(active, name, RoleEnum.ROLE_USER, verified), HttpStatus.OK);
     }
 }

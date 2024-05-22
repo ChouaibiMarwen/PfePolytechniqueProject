@@ -1,10 +1,12 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.PurchaseOrderDto;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Product;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
+import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -16,7 +18,9 @@ import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.PurshaseOrderService;
 import com.camelsoft.rayaserver.Services.Project.VehiclesService;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -36,8 +40,10 @@ import java.util.Set;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/v1/purchase_orders")
-public class PurchaseOrdersController {
+public class PurchaseOrdersController  extends BaseController {
 
+    @Autowired
+    private UserActionService userActionService;
     @Autowired
     private VehiclesService vehiclesService;
     @Autowired
@@ -59,6 +65,9 @@ public class PurchaseOrdersController {
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
     })
     public ResponseEntity<PurchaseOrderDto> add_vehicle(@ModelAttribute PurshaseOrderRequest request) throws IOException{
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
         Vehicles vehicle =  this.vehiclesService.FindById(request.getVehicleId());
         if(!this.vehiclesService.inStock(vehicle, request.getQuantity()))
             return new ResponseEntity("No disponible quantity for this vehicle id selected", HttpStatus.BAD_REQUEST);
@@ -102,6 +111,12 @@ public class PurchaseOrdersController {
         }
         PurshaseOrder po = this.purshaseOrderService.Save(purshaseOrder);
         PurchaseOrderDto purchaseOrderDto = PurchaseOrderDto.PurchaseOrderToDto(po);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
 
         return  new ResponseEntity<>(purchaseOrderDto, HttpStatus.OK);
     }
@@ -117,6 +132,15 @@ public class PurchaseOrdersController {
     })
     public ResponseEntity<DynamicResponse> all_purchase_oreder_by_status(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) String status) throws IOException {
         DynamicResponse result = this.purshaseOrderService.findAllPgByStatus(page, size , status);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -131,6 +155,15 @@ public class PurchaseOrdersController {
     })
     public ResponseEntity<DynamicResponse> all_purchase_oreder_byStatus_And_date(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate) throws IOException {
         DynamicResponse result = this.purshaseOrderService.findAllPgByStatusAndDate(page, size , status , creationdate);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -152,6 +185,15 @@ public class PurchaseOrdersController {
         }
 
         DynamicResponse result = this.purshaseOrderService.findAllPgByStatusAndDate(page, size ,status , creationdate);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -166,6 +208,15 @@ public class PurchaseOrdersController {
     public ResponseEntity<DynamicResponse> allPurchaseOrdersByStatusAndDateAndVehicleAndSupplier(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idvehecle,  @RequestParam(required = false) Long idSupplier) throws IOException {
 
         DynamicResponse result = this.purshaseOrderService.FindAllPurchaseOrderPgByVehecleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -234,6 +285,15 @@ public class PurchaseOrdersController {
 
         PurshaseOrder po = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto purchaseOrderDto = PurchaseOrderDto.PurchaseOrderToDto(po);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(purchaseOrderDto, HttpStatus.OK);
 
     }
@@ -250,6 +310,15 @@ public class PurchaseOrdersController {
     public ResponseEntity<PurchaseOrderDto> getPurchaseOrderById(@PathVariable(required = false) Long id) throws IOException {
         PurshaseOrder result = this.purshaseOrderService.FindById(id);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(result);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 
@@ -269,6 +338,15 @@ public class PurchaseOrdersController {
         purchaseOrder.setStatus(PurshaseOrderStatus.PENDING);
         PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 
@@ -288,6 +366,15 @@ public class PurchaseOrdersController {
         purchaseOrder.setStatus(status);
         PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 
@@ -306,6 +393,15 @@ public class PurchaseOrdersController {
         purchaseOrder.setStatus(PurshaseOrderStatus.ACCEPTED);
         PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 
@@ -324,6 +420,15 @@ public class PurchaseOrdersController {
         purchaseOrder.setStatus(PurshaseOrderStatus.REJECTED);
         PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 
@@ -343,6 +448,15 @@ public class PurchaseOrdersController {
         purchaseOrder.setStatus(PurshaseOrderStatus.IN_PROGRESS);
         PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 
@@ -363,6 +477,15 @@ public class PurchaseOrdersController {
         purchaseOrder.setStatus(PurshaseOrderStatus.CANCELED);
         PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 

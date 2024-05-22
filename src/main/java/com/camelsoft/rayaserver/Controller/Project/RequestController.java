@@ -5,12 +5,10 @@ import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.Request.RequestCorrespondant;
 import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
-import com.camelsoft.rayaserver.Models.Project.Event;
-import com.camelsoft.rayaserver.Models.Project.Invoice;
-import com.camelsoft.rayaserver.Models.Project.Request;
-import com.camelsoft.rayaserver.Models.Project.RequestCorrespondence;
+import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Project.RequestRepository;
 import com.camelsoft.rayaserver.Request.project.CorrespendanceRequest;
@@ -24,6 +22,7 @@ import com.camelsoft.rayaserver.Services.Project.EventService;
 import com.camelsoft.rayaserver.Services.Project.InvoiceService;
 import com.camelsoft.rayaserver.Services.Project.RequestCorrespondenceService;
 import com.camelsoft.rayaserver.Services.Project.RequestService;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
@@ -51,7 +50,8 @@ public class RequestController  extends BaseController {
 
     private static final List<String> image_accepte_type = Arrays.asList("jpeg", "jpg", "png", "gif", "bmp", "tiff", "tif", "ico", "webp", "svg", "heic", "raw");
 
-
+    @Autowired
+    private UserActionService userActionService;
     @Autowired
     private RequestService service;
     @Autowired
@@ -60,7 +60,6 @@ public class RequestController  extends BaseController {
     private RequestCorrespondenceService reqcorresservice;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
-
     @Autowired
     private UserService UserServices;
     @PostMapping(value = {"/add_Request"})
@@ -110,6 +109,12 @@ public class RequestController  extends BaseController {
         if (resourceMedia != null)
             corssspondences.setAttachment(resourceMedia);
         this.reqcorresservice.Save(corssspondences);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.REQUEST_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @PostMapping(value = {"/add_correspondance/{requestId}"})
@@ -149,6 +154,12 @@ public class RequestController  extends BaseController {
         if (resourceMedia != null)
             corssspondences.setAttachment(resourceMedia);
         RequestCorrespondence result =  this.reqcorresservice.Save(corssspondences);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.REQUEST_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -164,6 +175,13 @@ public class RequestController  extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<RequestResponse> all_requests_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) RequestState status, @RequestParam(required = true) RoleEnum role) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.REQUEST_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         if(role == null)
             return new ResponseEntity("role is required", HttpStatus.BAD_REQUEST);
 
@@ -190,6 +208,13 @@ public class RequestController  extends BaseController {
             return new ResponseEntity("wrong id request: id not found", HttpStatus.BAD_REQUEST);
 
         Request req = this.service.FindById(idRequest);
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.REQUEST_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(req, HttpStatus.OK);
 
 
@@ -215,6 +240,13 @@ public class RequestController  extends BaseController {
             .stream()
             .sorted(Comparator.comparing(RequestCorrespondence::getTimestamp).reversed())
             .collect(Collectors.toCollection(LinkedHashSet::new));
+             users user = UserServices.findByUserName(getCurrentUser().getUsername());
+                 //save new action
+             UserAction action = new UserAction(
+            UserActionsEnum.REQUEST_MANAGEMENT,
+            user
+            );
+         this.userActionService.Save(action);
         return new ResponseEntity<>(correspondences, HttpStatus.OK);
 
     }

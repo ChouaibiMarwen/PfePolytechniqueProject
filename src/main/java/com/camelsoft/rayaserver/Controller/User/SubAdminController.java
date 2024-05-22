@@ -3,9 +3,11 @@ package com.camelsoft.rayaserver.Controller.User;
 import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Department;
 import com.camelsoft.rayaserver.Models.Project.RoleDepartment;
+import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
@@ -14,6 +16,7 @@ import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.DepartmentService;
 import com.camelsoft.rayaserver.Services.Project.RoleDepartmentService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.auth.PasswordResetTokenServices;
 import com.camelsoft.rayaserver.Services.auth.PrivilegeService;
@@ -37,7 +40,8 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping(value = "/api/v1/sub_admin")
 public class SubAdminController extends BaseController {
-
+    @Autowired
+    private UserActionService userActionService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -170,6 +174,13 @@ public class SubAdminController extends BaseController {
 
         // Save the user
         users result = userService.saveSubAdmin(user);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.CUSTOMER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

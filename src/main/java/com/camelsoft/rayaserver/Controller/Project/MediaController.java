@@ -1,11 +1,14 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.Project.VehiclesMedia;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.VehiclesMediaRequest;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +32,8 @@ import java.util.Set;
 @RequestMapping(value = "/api/v1/media")
 public class MediaController extends BaseController {
     private final Log logger = LogFactory.getLog(MediaController.class);
+    @Autowired
+    private UserActionService userActionService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
     @Autowired
@@ -76,7 +81,12 @@ public class MediaController extends BaseController {
         users result = userService.UpdateUser(user);
         if (oldimage != null)
             this.filesStorageService.delete_file_by_path_from_cdn(oldimage.getUrl(), oldimage.getId());
-
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PROFILE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

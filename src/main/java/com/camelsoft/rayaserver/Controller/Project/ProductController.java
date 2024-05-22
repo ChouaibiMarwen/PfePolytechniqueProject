@@ -1,15 +1,20 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.PurchaseOrderDto;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.Project.Product;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
+import com.camelsoft.rayaserver.Models.Project.UserAction;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.EventRequest;
 import com.camelsoft.rayaserver.Request.project.ProductRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.Project.ProductService;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -29,13 +34,15 @@ import java.util.Locale;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/v1/product")
-public class ProductController {
+public class ProductController extends BaseController {
     private final Log logger = LogFactory.getLog(ProductController.class);
 
     @Autowired
+    private UserActionService userActionService;
+    @Autowired
     private ProductService service;
     @Autowired
-    private UserService UserServices;
+    private UserService userService;
 
     @GetMapping(value = {"/all_product_by_name"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
@@ -47,6 +54,15 @@ public class ProductController {
     })
     public ResponseEntity<List<Product>> all_product_by_name(@ModelAttribute String name) throws IOException {
         List<Product> result = this.service.findAllByName(name);
+        users user = this.userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PRODUCT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -60,6 +76,9 @@ public class ProductController {
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity<Product> addProduct(@ModelAttribute ProductRequest request) throws IOException {
+        users user = this.userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         if (request.getName() == null || request.getName().equals(""))
             return new ResponseEntity("Name can't be null or empty", HttpStatus.BAD_REQUEST);
         if (request.getQuantity() == null || request.getQuantity() == 0D)
@@ -75,6 +94,12 @@ public class ProductController {
                  request.getSubtotal()
         );
         Product result = this.service.Save(product);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PRODUCT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -88,7 +113,16 @@ public class ProductController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<Product> getProductById(@PathVariable(required = false) Long id) throws IOException {
+        users user = this.userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         Product result = this.service.FindById(id);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PRODUCT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

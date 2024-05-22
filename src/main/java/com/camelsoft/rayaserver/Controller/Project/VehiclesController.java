@@ -3,7 +3,9 @@ package com.camelsoft.rayaserver.Controller.Project;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.VehiclesPostStatus;
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.Project.VehiclesMedia;
 import com.camelsoft.rayaserver.Models.Project.VehiclesPriceFinancing;
@@ -15,6 +17,7 @@ import com.camelsoft.rayaserver.Request.project.VehiclesRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.*;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +39,9 @@ import java.util.*;
 @RequestMapping(value = "/api/v1/vehicles")
 public class VehiclesController extends BaseController {
     private final Log logger = LogFactory.getLog(VehiclesController.class);
+
+    @Autowired
+    private UserActionService userActionService;
     @Autowired
     private VehiclesService Services;
     @Autowired
@@ -58,14 +64,19 @@ public class VehiclesController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<DynamicResponse> all_vehicles_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
-        // users user = UserServices.findByUserName(getCurrentUser().getUsername());
         DynamicResponse result = this.Services.FindAllPg(page, size);
-
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_VEHICLES_READ,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping(value = {"/all_vehicles_supplier"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all vehicles for admin", notes = "Endpoint to get vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -75,11 +86,18 @@ public class VehiclesController extends BaseController {
     public ResponseEntity<DynamicResponse> all_vehicles_supplier(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         DynamicResponse result = this.Services.FindAllPgSupplier(page, size, user.getSupplier());
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        //
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_VEHICLES_READ,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping(value = {"/all_vehicles_by_supplier/{idSupplier}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all vehicles by supplier for admin", notes = "Endpoint to get a supllier's vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -94,12 +112,19 @@ public class VehiclesController extends BaseController {
             return new ResponseEntity(" id provided is not for a supplier", HttpStatus.NOT_FOUND);
 
         DynamicResponse result = this.Services.FindAllPgSupplier(page, size, user.getSupplier());
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        //
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_VEHICLES_READ,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
     @GetMapping(value = {"/all_vehicles_by_supplier_and_vin_and_purchase_order_status/{idSupplier}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all vehicles by supplier for admin", notes = "Endpoint to get a supllier's vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -115,7 +140,14 @@ public class VehiclesController extends BaseController {
 
         // DynamicResponse result = this.Services.FindAllPgSupplier(page, size, user.getSupplier());
        DynamicResponse result = this.purshaseOrderService.FindAllVehiclesPgBySupplierAndCarvinAndPurchaseOrderStatus(page, size, user.getSupplier(), vin, status);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        //
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_VEHICLES_READ,
+                currentuser
+        );
+        this.userActionService.Save(action);
+       return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
@@ -148,6 +180,13 @@ public class VehiclesController extends BaseController {
                 supplier
         );
         Vehicles result = this.Services.Save(model);
+
+
+        UserAction action = new UserAction(
+                UserActionsEnum.VEHICLES_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -176,6 +215,11 @@ public class VehiclesController extends BaseController {
         if (request.getDescription() != null) vehicles.setDescription(request.getDescription());
         if (request.getStock() != null) vehicles.setStock(request.getStock());
         Vehicles result = this.Services.Update(vehicles);
+        UserAction action = new UserAction(
+                UserActionsEnum.VEHICLES_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -199,6 +243,10 @@ public class VehiclesController extends BaseController {
 
         }
 
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_VEHICLES_READ,
+                user
+        );
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -220,7 +268,12 @@ public class VehiclesController extends BaseController {
         if(supplier == null)
             return new ResponseEntity("supplier not found in the system", HttpStatus.NOT_FOUND);
         DynamicResponse result =  this.Services.findAllPgBySupplierAndAvailableStock(page, size, supplier);
-
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        //
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_VEHICLES_READ,
+                currentuser
+        );
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -260,6 +313,13 @@ public class VehiclesController extends BaseController {
             vehicles.setStatus(VehiclesPostStatus.PUBLISHED);
         }
         this.Services.Update(vehicles);
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        //
+        UserAction action = new UserAction(
+                UserActionsEnum.VEHICLES_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -287,6 +347,13 @@ public class VehiclesController extends BaseController {
         if (request.getVatamount() != null) vehiclesPriceFinancing.setVatamount(request.getVatamount());
         if (request.getTotalamount() != null) vehiclesPriceFinancing.setTotalamount(request.getTotalamount());
         VehiclesPriceFinancing result = this.vehiclesPriceFinancingService.Update(vehiclesPriceFinancing);
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        //
+        UserAction action = new UserAction(
+                UserActionsEnum.VEHICLES_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -363,6 +430,13 @@ public class VehiclesController extends BaseController {
             vehicles.setStatus(VehiclesPostStatus.PUBLISHED);
         }
         this.Services.Update(vehicles);
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        //
+        UserAction action = new UserAction(
+                UserActionsEnum.VEHICLES_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -430,6 +504,13 @@ public class VehiclesController extends BaseController {
         if (sideviewimageright != null) vehiclesmedia.setSideviewimageright(sideviewimageright);
         if (!additionalviewimages.isEmpty()) vehiclesmedia.setAdditionalviewimages(additionalviewimages);
         VehiclesMedia result = this.vehiclesMediaService.Update(vehiclesmedia);
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        //
+        UserAction action = new UserAction(
+                UserActionsEnum.VEHICLES_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -454,6 +535,13 @@ public class VehiclesController extends BaseController {
         }
         result.setArchive(true);
         result = this.Services.Update(result);
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        //
+        UserAction action = new UserAction(
+                UserActionsEnum.VEHICLES_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

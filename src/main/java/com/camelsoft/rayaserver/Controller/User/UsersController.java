@@ -6,9 +6,11 @@ import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.SessionAction;
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
 import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
@@ -31,6 +33,7 @@ import com.camelsoft.rayaserver.Services.Tools.BankAccountService;
 import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.User.UserSessionService;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
@@ -63,6 +66,9 @@ import java.util.*;
 public class UsersController extends BaseController {
     private final Log logger = LogFactory.getLog(UsersController.class);
     private static List<String> image_accepte_type = Arrays.asList("PNG", "png", "jpeg", "JPEG", "JPG", "jpg");
+
+    @Autowired
+    private UserActionService userActionService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
 
@@ -127,6 +133,12 @@ public class UsersController extends BaseController {
         if (request.getWorksector() != null) personalInformation.setWorksector(WorkSector.valueOf(request.getWorksector()));
         if (request.getMaritalstatus() != null) personalInformation.setMaritalstatus(MaritalStatus.valueOf(request.getMaritalstatus()));
         PersonalInformation result = this.personalInformationService.update(personalInformation);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PROFILE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -164,7 +176,13 @@ public class UsersController extends BaseController {
         if (request.getWorksector() != null) personalInformation.setWorksector(WorkSector.valueOf(request.getWorksector()));
         if (request.getMaritalstatus() != null) personalInformation.setMaritalstatus(MaritalStatus.valueOf(request.getMaritalstatus()));
         PersonalInformation result = this.personalInformationService.update(personalInformation);
-
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PROFILE_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
 
 
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -315,6 +333,14 @@ public class UsersController extends BaseController {
             return new ResponseEntity("User not found", HttpStatus.NOT_FOUND);
         }
         users updatedUser = this.userService.addBillingAddres(user, request);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.BILLING_ADDRESS_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
+
         if (updatedUser != null) {
             return ResponseEntity.ok(updatedUser);
         } else {
@@ -355,7 +381,13 @@ public class UsersController extends BaseController {
         }
 
         billingAddress = this.billingAddressService.updateBillingAddress(billingAddress, request);
-
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.BILLING_ADDRESS_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         if (billingAddress != null) {
             return ResponseEntity.ok(billingAddress);
         } else {
@@ -374,7 +406,13 @@ public class UsersController extends BaseController {
     })
     public ResponseEntity<BillingAddress> getBillingAddress(@PathVariable Long billingId) throws IOException {
        BillingAddress billingAddress = this.billingAddressService.findBillingAddressById(billingId);
-
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.BILLING_ADDRESS_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         if (billingAddress != null) {
             return ResponseEntity.ok(billingAddress);
         } else {
@@ -424,6 +462,13 @@ public class UsersController extends BaseController {
             return new ResponseEntity("Can't find user by that id", HttpStatus.BAD_REQUEST);
         }
         BankInformation  b =  this.userService.addBankAccounToUser(user, request);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.BANK_ACCOUNT_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         if (b != null) {
             return ResponseEntity.ok(this.userService.findById(id));
         } else {
@@ -462,7 +507,12 @@ public class UsersController extends BaseController {
         }
 
         bankInformation = this.bankAccountService.updateBankInfo(bankInformation, request);
-
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.BANK_ACCOUNT_MANAGEMENT,
+                currentuser
+        );
         if (bankInformation != null) {
             return ResponseEntity.ok(bankInformation);
         } else {
@@ -481,7 +531,12 @@ public class UsersController extends BaseController {
     })
     public ResponseEntity<BankInformation> getBankInformation(@PathVariable Long bankInformationId) throws IOException {
         BankInformation bankInformation = this.bankAccountService.findById(bankInformationId);
-
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.BANK_ACCOUNT_MANAGEMENT,
+                currentuser
+        );
         if (bankInformation != null) {
             return ResponseEntity.ok(bankInformation);
         } else {
@@ -537,6 +592,13 @@ public class UsersController extends BaseController {
         }
         users user = this.userService.findById(id);
         Address result = this.userService.addAddressToUser(user, request);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PROFILE_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
@@ -586,6 +648,13 @@ public class UsersController extends BaseController {
 
         // Update the address of the user
         Address result = this.addressServices.updateAddress(address, request);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PROFILE_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
@@ -618,7 +687,13 @@ public class UsersController extends BaseController {
     })
     public ResponseEntity<Address> getAddressUser(@PathVariable Long id) throws IOException {
         Address result = this.addressServices.findById(id);
-
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PROFILE_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
@@ -658,6 +733,13 @@ public class UsersController extends BaseController {
     public ResponseEntity<String> deleteBankInformation(@PathVariable Long bankInformationId) throws IOException{
         BankInformation bankInformation = this.bankAccountService.findById(bankInformationId);
         this.bankAccountService.deleteBankInformation(bankInformation);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.BANK_ACCOUNT_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>("Bank Information deleted successfully", HttpStatus.OK);
     }
 
@@ -673,6 +755,13 @@ public class UsersController extends BaseController {
     })
     public ResponseEntity<String> deleteAddress(@PathVariable Long addressId) throws IOException{
         Address Address = this.addressServices.findById(addressId);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PROFILE_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         this.addressServices.deleteAddress(Address);
         return new ResponseEntity<>("Address deleted successfully", HttpStatus.OK);
     }

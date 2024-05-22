@@ -1,17 +1,18 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
-
-import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Project.Service_Agreement;
 
+import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.ServiceAgreementRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
-import com.camelsoft.rayaserver.Services.Project.PurshaseOrderService;
 import com.camelsoft.rayaserver.Services.Project.ServiceAgreementService;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -30,7 +31,10 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/v1/requests")
-public class ServiceAgreementController {
+public class ServiceAgreementController extends BaseController {
+    @Autowired
+    private UserActionService userActionService;
+
     @Autowired
     private ServiceAgreementService service;
 
@@ -67,6 +71,13 @@ public class ServiceAgreementController {
             agreement.setContent(request.getContant());
             agreement.setSupplier(supplier);
             Service_Agreement result =  this.service.Save(agreement);
+            users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+            //save new action
+            UserAction action = new UserAction(
+                    UserActionsEnum.SUPPLIER_MANAGEMENT,
+                    currentuser
+            );
+            this.userActionService.Save(action);
             return new ResponseEntity<>(result, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity("Error adding service agreements", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -93,6 +104,13 @@ public class ServiceAgreementController {
         serviceAgreement.setDeleted(true);
         this.service.Update(serviceAgreement);
             serviceAgreement = this.service.Update(serviceAgreement);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity(serviceAgreement,HttpStatus.OK);
     }
 
@@ -115,6 +133,13 @@ public class ServiceAgreementController {
         if(content != null)
             serviceAgreement.setContent(content);
         serviceAgreement = this.service.Update(serviceAgreement);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(serviceAgreement, HttpStatus.OK);
     }
 
@@ -130,6 +155,13 @@ public class ServiceAgreementController {
         Service_Agreement serviceAgreement =  this.service.FindById(id);
         if(serviceAgreement == null || serviceAgreement.getDeleted())
             return new ResponseEntity("Service agreement by this id :" + id + "is not founded ", HttpStatus.NOT_FOUND);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(serviceAgreement, HttpStatus.OK);
     }
 
@@ -149,6 +181,13 @@ public class ServiceAgreementController {
         Supplier supplier = user.getSupplier();
         if(supplier == null)
             return new ResponseEntity("no supplier founded using this id: " + supplierId, HttpStatus.NOT_FOUND);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(this.service.findAllBySupplier(supplier), HttpStatus.OK);
 
     }
@@ -169,6 +208,13 @@ public class ServiceAgreementController {
         Supplier supplier = user.getSupplier();
         if(supplier == null)
             return new ResponseEntity("no supplier founded using this id: " + supplierId, HttpStatus.NOT_FOUND);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(this.service.findBySupplierPg(page, size, supplier), HttpStatus.OK);
 
     }
