@@ -73,8 +73,6 @@ public class PurshaseOrder  implements Serializable {
     @JoinColumn(name = "attachments")
     private Set<File_model> attachments = new HashSet<>();
 
-    @OneToMany(mappedBy = "purchaseorder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Service_Agreement> serviceagreements = new HashSet<>();
     @JsonIgnore
     @Column(name = "archive")
     private Boolean archive = false;

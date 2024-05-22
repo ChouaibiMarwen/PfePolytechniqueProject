@@ -1,12 +1,9 @@
 package com.camelsoft.rayaserver.Models.User;
 
 
-import com.camelsoft.rayaserver.Models.Project.Product;
-import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
-import com.camelsoft.rayaserver.Models.Project.Vehicles;
+import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.Tools.Rating;
 import com.camelsoft.rayaserver.Models.File.File_model;
-import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -60,6 +57,9 @@ public class Supplier implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<PurshaseOrder> purchaseOrders = new HashSet<>();
+
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Service_Agreement> serviceagreements = new HashSet<>();
 
     @Transient
     private Integer availableVehiclesCountBySupplier = 0;

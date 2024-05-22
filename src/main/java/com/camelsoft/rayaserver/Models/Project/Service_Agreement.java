@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Models.Project;
 
+import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -22,8 +23,8 @@ public class Service_Agreement implements Serializable{
     private String content;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "purchaseorder_id_serviceagreement")
-    private PurshaseOrder purchaseorder;
+    @JoinColumn(name = "supplier_id_serviceagreement")
+    private Supplier supplier;
     @Column(name = "archive")
     private Boolean archive = false;
     @Column(name = "deleted")
@@ -32,7 +33,7 @@ public class Service_Agreement implements Serializable{
     private Date timestamp;
 
     @Transient
-    private Long purchaseorderId;
+    private Long supplierId;
 
 
     public Service_Agreement() {
@@ -41,19 +42,27 @@ public class Service_Agreement implements Serializable{
 
     @PostLoad
     private void afterload(){
-        if(this.purchaseorder!=null){
-            this.purchaseorderId = this.purchaseorder.getId();
+        if(this.supplier!=null){
+            this.supplierId = this.supplier.getId();
         }else{
-            this.purchaseorderId = 0L;
+            this.supplierId = 0L;
         }
     }
 
-    public Long getPurchaseorderId() {
-        return purchaseorderId;
+    public Supplier getSupplier() {
+        return supplier;
     }
 
-    public void setPurchaseorderId(Long purchaseorderId) {
-        this.purchaseorderId = purchaseorderId;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+
+    public Long getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(Long supplierId) {
+        this.supplierId = supplierId;
     }
 
     public Long getId() {
@@ -70,14 +79,6 @@ public class Service_Agreement implements Serializable{
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public PurshaseOrder getPurchaseorder() {
-        return purchaseorder;
-    }
-
-    public void setPurchaseorder(PurshaseOrder purchaseorder) {
-        this.purchaseorder = purchaseorder;
     }
 
     public String getContent() {
