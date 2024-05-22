@@ -119,4 +119,41 @@ public class CriteriaService {
         }
     }
 
+
+    public List<users> UsersSearchCreatiriaRolesListNotPaginated(Boolean active, Boolean deleted, String search, List<String> roles) {
+        try {
+            List<Role> userRoles = roleRepository.findByRoleIn(roles.stream().map(RoleEnum::valueOf).collect(Collectors.toList()));
+
+            CriteriaQuery<users> Q = criteriaBuilder.createQuery(users.class);
+            Root<users> user = Q.from(users.class);
+            Q.distinct(true);
+
+            Predicate finalPredicate = user.get("role").in(userRoles);
+
+            if (search != null) {
+                Predicate namePredicate = criteriaBuilder.and(criteriaBuilder.like(criteriaBuilder.lower(user.get("name")), "%" + search.toLowerCase() + "%"));
+                namePredicate = criteriaBuilder.or(criteriaBuilder.like(criteriaBuilder.lower(user.get("email")), "%" + search.toLowerCase() + "%"), namePredicate);
+                namePredicate = criteriaBuilder.or(criteriaBuilder.like(criteriaBuilder.lower(user.get("phonenumber")), "%" + search.toLowerCase() + "%"), namePredicate);
+                namePredicate = criteriaBuilder.or(criteriaBuilder.like(criteriaBuilder.lower(user.get("timestmp").as(String.class)), "%" + search.toLowerCase() + "%"), namePredicate);
+                finalPredicate = criteriaBuilder.and(namePredicate, finalPredicate);
+            }
+            if (active != null)
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
+            if (deleted != null) {
+                finalPredicate = criteriaBuilder.and(finalPredicate,  criteriaBuilder.or(
+                        criteriaBuilder.equal(user.get("deleted"), deleted),
+                        criteriaBuilder.isNull(user.get("deleted"))
+                ));
+            }
+            Q.where(finalPredicate);
+            Q.orderBy(criteriaBuilder.desc(user.get("timestmp")));
+            TypedQuery<users> typedQuery = em.createQuery(Q);
+
+            return typedQuery.getResultList();
+
+        } catch (NoResultException ex) {
+            throw new NotFoundException("No data found.");
+        }
+    }
+
 }

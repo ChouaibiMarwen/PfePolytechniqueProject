@@ -210,7 +210,6 @@ public class InvoiceController extends BaseController {
         InvoiceRelated related = request.getRelated();
         if(date==null)
             date=new Date();
-
         System.out.println(date);
         report.setDate(date);
         report.setInvoicepermonth(this.service.countInvoicePerMonth(date, related));

@@ -55,6 +55,15 @@ public class SubAdminController extends BaseController {
     }
 
 
+    @GetMapping(value = {"/search_admin_list"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    public ResponseEntity<List<users>> search_admin(@RequestParam(required = false) String name, @RequestParam(required = false) Boolean active) throws IOException {
+        List<String> list = new ArrayList<>(Arrays.asList("ROLE_ADMIN", "ROLE_SUB_ADMIN"));
+        List<users> userList = this.criteriaService.UsersSearchCreatiriaRolesListNotPaginated(active, false, name, list);
+        return new ResponseEntity<>(userList, HttpStatus.OK);
+    }
+
+
     @PostMapping(value = {"/add_sub_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     public ResponseEntity<users> add_sub_admin(@RequestBody CustomerSingUpRequest request) throws IOException, InterruptedException, MessagingException {
