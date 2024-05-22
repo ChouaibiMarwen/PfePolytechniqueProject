@@ -154,12 +154,6 @@ public class FirstTimeInitializer implements CommandLineRunner {
         if (!privilegeService.existsByName("GLOBAL_SETTINGS_WRITE"))
             privilegeService.save(new Privilege("GLOBAL_SETTINGS_WRITE"));
 
-        if (!privilegeService.existsByName("PREVILEGE_WRITE"))
-            privilegeService.save(new Privilege("PREVILEGE_WRITE"));
-
-        if (!privilegeService.existsByName("PREVILEGE_READ"))
-            privilegeService.save(new Privilege("PREVILEGE_READ"));
-
         if (!privilegeService.existsByName("STATS_READ"))
             privilegeService.save(new Privilege("STATS_READ"));
 

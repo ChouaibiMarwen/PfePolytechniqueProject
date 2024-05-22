@@ -121,6 +121,9 @@ public class users implements Serializable {
     @JoinColumn(name = "role_department_id")
     private RoleDepartment roledepartment;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserAction> actions = new HashSet<>();
+
     @Column(name = "active")
     private Boolean active = true;
     @Column(name = "verified")
@@ -263,6 +266,14 @@ public class users implements Serializable {
 
     public void setPersonalinformation(PersonalInformation personalinformation) {
         this.personalinformation = personalinformation;
+    }
+
+    public Set<UserAction> getActions() {
+        return actions;
+    }
+
+    public void setActions(Set<UserAction> actions) {
+        this.actions = actions;
     }
 
     public Set<File_model> getDocuments() {

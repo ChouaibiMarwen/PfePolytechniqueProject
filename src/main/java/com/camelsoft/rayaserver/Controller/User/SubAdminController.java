@@ -3,12 +3,14 @@ package com.camelsoft.rayaserver.Controller.User;
 import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
+import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Department;
 import com.camelsoft.rayaserver.Models.Project.RoleDepartment;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
+import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.DepartmentService;
 import com.camelsoft.rayaserver.Services.Project.RoleDepartmentService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
@@ -23,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -53,6 +56,9 @@ public class SubAdminController extends BaseController {
     @Autowired
     private RoleDepartmentService roleDepartmentService;
 
+    @Autowired
+    private FilesStorageServiceImpl filesStorageService;
+
 
 
     @GetMapping(value = {"/search_admin"})
@@ -76,7 +82,7 @@ public class SubAdminController extends BaseController {
 
     @PostMapping(value = {"/add_sub_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
-    public ResponseEntity<users> add_sub_admin(@RequestBody CustomerSingUpRequest request) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<users> add_sub_admin(@RequestBody CustomerSingUpRequest request, @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
@@ -153,6 +159,13 @@ public class SubAdminController extends BaseController {
         user.setPersonalinformation(resultinformation);
         user.setDepartment(department);
         user.setRoledepartment(roledep);
+
+        if (!this.filesStorageService.checkformat(file))
+            return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
+        File_model resource_media = filesStorageService.save_file_local(file, "profile");
+        if (resource_media == null)
+            return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
+        user.setProfileimage(resource_media);
         // Save the user
         users result = userService.saveSubAdmin(user);
         return new ResponseEntity<>(result, HttpStatus.OK);

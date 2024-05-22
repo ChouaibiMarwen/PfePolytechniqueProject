@@ -7,6 +7,7 @@ import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
+import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.Supplier;
@@ -16,6 +17,7 @@ import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Request.auth.SupplierSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.RequestResponse;
+import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
@@ -29,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -49,6 +52,9 @@ public class SupplierController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private FilesStorageServiceImpl filesStorageService;
+
     @PostMapping(value = {"/add"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "add suppliers for admin", notes = "Endpoint to add suppliers")
@@ -59,7 +65,7 @@ public class SupplierController {
             @ApiResponse(code = 409, message = "Conflict, phone-number or email or user-name is already exists"),
             @ApiResponse(code = 406, message = "Not Acceptable , the email is not valid")
     })
-    public ResponseEntity<users> add_supplier(@RequestBody SupplierSingUpRequest request) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<users> add_supplier(@RequestBody SupplierSingUpRequest request,  @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
@@ -129,6 +135,14 @@ public class SupplierController {
         user.setPassword(request.getPassword());
         user.setPersonalinformation(resultinformation);
         user.setSupplier(resultsupplier);
+
+
+        if (!this.filesStorageService.checkformat(file))
+            return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
+        File_model resource_media = filesStorageService.save_file_local(file, "profile");
+        if (resource_media == null)
+            return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
+        user.setProfileimage(resource_media);
         // Save the user
         users result = userService.saveSupplier(user);
         return new ResponseEntity<>(result, HttpStatus.OK);
