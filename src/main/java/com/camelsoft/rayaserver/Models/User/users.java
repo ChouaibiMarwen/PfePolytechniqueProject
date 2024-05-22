@@ -120,7 +120,7 @@ public class users implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "role_department_id")
     private RoleDepartment roledepartment;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserAction> actions = new HashSet<>();
 

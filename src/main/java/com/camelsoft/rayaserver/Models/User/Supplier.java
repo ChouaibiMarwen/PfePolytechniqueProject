@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Models.User;
 
 
+import com.camelsoft.rayaserver.Enum.User.IdTypeEnum;
 import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.Tools.Rating;
 import com.camelsoft.rayaserver.Models.File.File_model;
@@ -22,6 +23,11 @@ public class Supplier implements Serializable {
     private Long id;
     @Column(name = "supplier_number")
     private Long suppliernumber;
+
+    @Column(name = "typeid")
+    private IdTypeEnum idtype;
+    @Column(name = "id_number")
+    private String idnumber;
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Loan> loans = new HashSet<>();
@@ -86,6 +92,21 @@ public class Supplier implements Serializable {
         return availableVehiclesCountBySupplier;
     }
 
+    public IdTypeEnum getIdtype() {
+        return idtype;
+    }
+
+    public void setIdtype(IdTypeEnum idtype) {
+        this.idtype = idtype;
+    }
+
+    public String getIdnumber() {
+        return idnumber;
+    }
+
+    public void setIdnumber(String idnumber) {
+        this.idnumber = idnumber;
+    }
 
     public void setAvailableVehiclesCountBySupplier(Integer availableVehiclesCountBySupplier) {
         this.availableVehiclesCountBySupplier = availableVehiclesCountBySupplier;

@@ -26,12 +26,16 @@ public class BillingAddress implements Serializable {
     private String lastname;
     @Column(name = "billingaddress")
     private String billingaddress;
+   @Column(name = "billingaddress02")
+    private String billingaddress02;
     @Column(name = "country")
     private String country;
     @Column(name = "zipcode")
     private String zipcode;
     @Column(name = "city")
     private String city;
+    @Column(name = "streetname")
+    private String streetname;
     @Column(name = "state")
     private String state;
     @Column(name = "phonenumber")

@@ -18,7 +18,7 @@ public class UserAction implements Serializable {
     private Long id;
     @Column(name = "action")
     private UserActionsEnum action;
-    @JsonIgnore
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "user_id_action")
     private users user;

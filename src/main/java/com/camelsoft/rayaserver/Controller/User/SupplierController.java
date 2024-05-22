@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Controller.User;
 
+import com.camelsoft.rayaserver.Controller.Public.CountryController;
 import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
@@ -10,16 +11,22 @@ import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
+import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Models.country.Root;
+import com.camelsoft.rayaserver.Models.country.State;
 import com.camelsoft.rayaserver.Request.Tools.BankInformationRequest;
 import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Request.auth.SupplierSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.RequestResponse;
+import com.camelsoft.rayaserver.Services.Country.CountriesServices;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
+import com.camelsoft.rayaserver.Services.Tools.AddressServices;
+import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
@@ -57,6 +64,12 @@ public class SupplierController extends BaseController {
     private SupplierServices supplierServices;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private BillingAddressService billingAddressService;
+    @Autowired
+    private CountriesServices countriesServices;
+    @Autowired
+    private AddressServices addressServices;
 
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
@@ -71,7 +84,7 @@ public class SupplierController extends BaseController {
             @ApiResponse(code = 409, message = "Conflict, phone-number or email or user-name is already exists"),
             @ApiResponse(code = 406, message = "Not Acceptable , the email is not valid")
     })
-    public ResponseEntity<users> add_supplier(@RequestBody SupplierSingUpRequest request,  @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<users> add_supplier(@RequestBody SupplierSingUpRequest request, @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
@@ -135,9 +148,13 @@ public class SupplierController extends BaseController {
         PersonalInformation resultinformation = this.personalInformationService.save(information);
         Supplier supplier = new Supplier();
         supplier.setSuppliernumber(request.getSuppliernumber());
+        supplier.setName(request.getCompanyName());
+        supplier.setIdtype(request.getIdType());
+        supplier.setIdnumber(request.getIdnumber());
         Supplier resultsupplier = this.supplierServices.save(supplier);
         user.setUsername(username);
         user.setEmail(request.getEmail().toLowerCase());
+        user.setPhonenumber(request.getPhonenumber().toLowerCase());
         user.setPassword(request.getPassword());
         user.setPersonalinformation(resultinformation);
         user.setSupplier(resultsupplier);
@@ -151,6 +168,58 @@ public class SupplierController extends BaseController {
         user.setProfileimage(resource_media);
         // Save the user
         users result = userService.saveSupplier(user);
+        BillingAddress billingAddress = new BillingAddress();
+        if (request.getBillingaddressRequest().getAddressline1() != null)
+            billingAddress.setBillingaddress(request.getBillingaddressRequest().getAddressline1());
+        if (request.getBillingaddressRequest().getAddressline2() != null)
+            billingAddress.setBillingaddress02(request.getBillingaddressRequest().getAddressline2());
+        if (request.getBillingaddressRequest().getCountryName() != null)
+            billingAddress.setCountry(request.getBillingaddressRequest().getCountryName());
+        if (request.getBillingaddressRequest().getPostcode() != null)
+            billingAddress.setZipcode(request.getBillingaddressRequest().getPostcode());
+        if (request.getBillingaddressRequest().getCityName() != null)
+            billingAddress.setCity(request.getBillingaddressRequest().getCityName());
+        if (request.getBillingaddressRequest().getStreetname() != null)
+            billingAddress.setStreetname(request.getBillingaddressRequest().getStreetname());
+        if (user.getPersonalinformation().getPhonenumber() != null)
+            billingAddress.setPhonenumber(user.getPersonalinformation().getPhonenumber());
+        if (user.getPersonalinformation().getFirstnameen() != null)
+            billingAddress.setFirstname(user.getPersonalinformation().getFirstnameen());
+        if (user.getPersonalinformation().getLastnameen() != null)
+            billingAddress.setLastname(user.getPersonalinformation().getLastnameen());
+        if (user.getEmail() != null)
+            billingAddress.setEmail(user.getEmail());
+        BillingAddress billingaddressresult = this.billingAddressService.saveBiLLAddress(billingAddress);
+        user.setBillingAddress(billingaddressresult);
+        users billinguserresult = userService.UpdateUser(user);
+
+        Address address = new Address();
+
+
+        if (request.getUseraddressRequest().getAddressline1() != null)
+            address.setAddressline1(request.getUseraddressRequest().getAddressline1());
+        if (request.getUseraddressRequest().getAddressline2() != null)
+            address.setAddressline2(request.getUseraddressRequest().getAddressline2());
+        if (request.getUseraddressRequest().getCountryName() != null) {
+            Root root = this.countriesServices.countrybyname(request.getUseraddressRequest().getCountryName());
+            if(root != null)
+                address.setCountry(root);
+        }
+        if (request.getUseraddressRequest().getPostcode() != null)
+            address.setPostcode(request.getUseraddressRequest().getPostcode());
+        if (request.getUseraddressRequest().getCityName() != null) {
+            State state = this.countriesServices.Statebyname(request.getUseraddressRequest().getCityName());
+            address.setCity(state);
+        }
+        if (request.getUseraddressRequest().getStreetname() != null)
+            address.setStreetname(request.getUseraddressRequest().getStreetname());
+
+        Address addressresult = this.addressServices.save(address);
+        user.getAddresses().add(address);
+        userService.UpdateUser(user);
+
+
+
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         //save new action
         UserAction action = new UserAction(
@@ -158,10 +227,9 @@ public class SupplierController extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(billinguserresult, HttpStatus.OK);
 
     }
-
 
 
     @GetMapping(value = {"/all"})
@@ -170,10 +238,9 @@ public class SupplierController extends BaseController {
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
     })
-    public ResponseEntity<List<UserShortDto>> all(@RequestParam(required = false) Boolean active, @RequestParam(required = false) String name , @RequestParam(required = false) Boolean verified) throws IOException {
+    public ResponseEntity<List<UserShortDto>> all(@RequestParam(required = false) Boolean active, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean verified) throws IOException {
         return new ResponseEntity<>(this.supplierServices.getAllUsersWithoutPagination(active, name, RoleEnum.ROLE_SUPPLIER, verified), HttpStatus.OK);
     }
-
 
 
     @GetMapping(value = {"/all_suppliers_by_purchase_order_status"})
@@ -198,7 +265,6 @@ public class SupplierController extends BaseController {
     }
 
 
-
     @GetMapping(value = {"/all_suppliers_with_available_vehecles_stock"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all suppliers that have available stock for admin", notes = "Endpoint get all suppliers that have available vehecles' stock for admin")
@@ -219,8 +285,6 @@ public class SupplierController extends BaseController {
         return new ResponseEntity<>(this.suppliersServices.getAllSuppliersHavingAvailbalVeheclesStock(page, size), HttpStatus.OK);
 
     }
-
-
 
 
 }
