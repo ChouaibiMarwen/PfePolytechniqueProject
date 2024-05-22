@@ -44,7 +44,6 @@ public class Rating implements Serializable {
 
 
 
-
     @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "supplier_id")
     private Supplier supplier;

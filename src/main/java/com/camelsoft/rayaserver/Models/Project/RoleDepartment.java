@@ -1,11 +1,14 @@
 package com.camelsoft.rayaserver.Models.Project;
 
+import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
@@ -21,6 +24,10 @@ public class RoleDepartment implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "department_id_role")
     private Department department;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "roledepartment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<users> users = new ArrayList<>();
     @Column(name = "archive")
     private Boolean archive = false;
     @Column(name = "timestamp")

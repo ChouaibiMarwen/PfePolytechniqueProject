@@ -4,10 +4,7 @@ import com.camelsoft.rayaserver.Enum.Tools.Provider;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.File.File_model;
-import com.camelsoft.rayaserver.Models.Project.Invoice;
-import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
-import com.camelsoft.rayaserver.Models.Project.Request;
-import com.camelsoft.rayaserver.Models.Project.RequestCorrespondence;
+import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.Tools.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -115,6 +112,14 @@ public class users implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<PurshaseOrder> purchaseOrders = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @JoinColumn(name = "department_id")
+    private Department department;
+
+    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @JoinColumn(name = "role_department_id")
+    private RoleDepartment roledepartment;
 
     @Column(name = "active")
     private Boolean active = true;
@@ -298,6 +303,22 @@ public class users implements Serializable {
 
     public void setRequestcorrespendencessended(Set<RequestCorrespondence> requestcorrespendencessended) {
         this.requestcorrespendencessended = requestcorrespendencessended;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public RoleDepartment getRoledepartment() {
+        return roledepartment;
+    }
+
+    public void setRoledepartment(RoleDepartment roledepartment) {
+        this.roledepartment = roledepartment;
     }
 
     public Set<Request> getRequests() {

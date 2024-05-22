@@ -3,10 +3,14 @@ package com.camelsoft.rayaserver.Controller.User;
 import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
+import com.camelsoft.rayaserver.Models.Project.Department;
+import com.camelsoft.rayaserver.Models.Project.RoleDepartment;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
+import com.camelsoft.rayaserver.Services.Project.DepartmentService;
+import com.camelsoft.rayaserver.Services.Project.RoleDepartmentService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.auth.PasswordResetTokenServices;
@@ -42,6 +46,12 @@ public class SubAdminController extends BaseController {
 
     @Autowired
     private CriteriaService criteriaService;
+
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private RoleDepartmentService roleDepartmentService;
 
 
 
@@ -80,6 +90,10 @@ public class SubAdminController extends BaseController {
             return new ResponseEntity("last-name-en", HttpStatus.BAD_REQUEST);
         if (request.getInformationRequest().getLastnamear() == null)
             return new ResponseEntity("last-name-ar", HttpStatus.BAD_REQUEST);
+        if (request.getIddepartment() == null)
+            return new ResponseEntity("iddepartment", HttpStatus.BAD_REQUEST);
+        if (request.getIdroledepartment() == null)
+            return new ResponseEntity("idroledepartment", HttpStatus.BAD_REQUEST);
 
         // Check email format
         if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
@@ -94,6 +108,13 @@ public class SubAdminController extends BaseController {
         users existingUserByUsername = userService.findByUserName(username);
         if (existingUserByUsername != null)
             return new ResponseEntity("user-name", HttpStatus.CONFLICT);
+        //check department and roledepartment
+        Department department = this.departmentService.FindById(request.getIddepartment());
+        if(department == null)
+            return new ResponseEntity("department not founded using this is : " + request.getIddepartment(), HttpStatus.NOT_FOUND);
+        RoleDepartment roledep = this.roleDepartmentService.FindById(request.getIddepartment());
+        if(roledep == null)
+            return new ResponseEntity("role department not founded using this is : "+ request.getIdroledepartment(), HttpStatus.NOT_FOUND);
         // Create a new user
         users user = new users();
         PersonalInformation information = new PersonalInformation();
@@ -130,6 +151,8 @@ public class SubAdminController extends BaseController {
         user.setEmail(request.getEmail().toLowerCase());
         user.setPassword(request.getPassword());
         user.setPersonalinformation(resultinformation);
+        user.setDepartment(department);
+        user.setRoledepartment(roledep);
         // Save the user
         users result = userService.saveSubAdmin(user);
         return new ResponseEntity<>(result, HttpStatus.OK);

@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Models.Project;
 
 import com.camelsoft.rayaserver.Models.Tools.Rating;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -20,6 +21,9 @@ public class Department implements Serializable {
     private String name;
     @OneToMany(mappedBy = "department", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RoleDepartment> roles= new HashSet<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<users> users = new ArrayList<>();
     @Column(name = "archive")
     private Boolean archive = false;
     @Column(name = "timestamp")
