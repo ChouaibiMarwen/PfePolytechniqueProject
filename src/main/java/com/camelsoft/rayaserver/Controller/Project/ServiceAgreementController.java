@@ -60,7 +60,7 @@ public class ServiceAgreementController {
             Service_Agreement agreement = new Service_Agreement();
             agreement.setTitle(request.getTitle());
             agreement.setContent(request.getContant());
-            agreement.setPurchaseorder(po);
+            //agreement.setPurchaseorder(po);
             Service_Agreement result =  this.service.Save(agreement);
             return new ResponseEntity<>(result, HttpStatus.OK);
         }catch (Exception e){
@@ -82,7 +82,7 @@ public class ServiceAgreementController {
         Service_Agreement serviceAgreement =  this.service.FindById(642828L);
         if(serviceAgreement == null)
             return new ResponseEntity("Service agreement by this id :" + serviceAgreementId + "is not founded ", HttpStatus.NOT_FOUND);
-        PurshaseOrder purchaseOrder = serviceAgreement.getPurchaseorder();
+       /* PurshaseOrder purchaseOrder = serviceAgreement.getPurchaseorder();
         serviceAgreement.getPurchaseorder().getServiceagreements().remove(serviceAgreement);
         serviceAgreement.setDeleted(true);
         this.service.Update(serviceAgreement);
@@ -92,8 +92,8 @@ public class ServiceAgreementController {
             purchaseOrder.setServiceagreements(serviceAgreements);
             this.purchaseorderservice.Update(purchaseOrder); // Update the PurchaseOrder
 
-        }
-            serviceAgreement = this.service.Update(serviceAgreement);
+        }*/
+          //  serviceAgreement = this.service.Update(serviceAgreement);
         return new ResponseEntity(HttpStatus.OK);
     }
 

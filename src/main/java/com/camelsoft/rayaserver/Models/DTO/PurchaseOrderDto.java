@@ -54,7 +54,6 @@ public class PurchaseOrderDto {
                 dto.setArchive(purchaseOrder.getArchive());
                 dto.setTimestamp(purchaseOrder.getTimestamp());
                 dto.setPoCountBySupplier(purchaseOrder.getPoCountBySupplier());
-                dto.setServiceagreements(purchaseOrder.getServiceagreements());
                 return dto;
         }
 
