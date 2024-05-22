@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Services.Project;
 
 import com.camelsoft.rayaserver.Models.Project.Service_Agreement;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
+import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Repository.Project.ServiceAgreementRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -66,20 +67,20 @@ public class ServiceAgreementService {
         }
 
     }
-    public DynamicResponse findByPurchaseorderPg(int page, int size, PurshaseOrder po) {
+    public DynamicResponse findBySupplierPg(int page, int size, Supplier supplier) {
         try {
             PageRequest pg = PageRequest.of(page, size);
-            Page<Service_Agreement> pckge = this.repository.findByPurchaseorderAndDeletedIsFalse(pg,po);
+            Page<Service_Agreement> pckge = this.repository.findBySupplierAndDeletedIsFalse(pg,supplier);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
     }
-    public List<Service_Agreement> findAllByPurchaseorder(PurshaseOrder po) {
+    public List<Service_Agreement> findAllBySupplier(Supplier supplier) {
         try {
 
-            List<Service_Agreement> pckge = this.repository.findByPurchaseorderAndDeletedIsFalse(po);
+            List<Service_Agreement> pckge = this.repository.findBySupplierAndDeletedIsFalse(supplier);
             return pckge;
 
         } catch (NoSuchElementException ex) {

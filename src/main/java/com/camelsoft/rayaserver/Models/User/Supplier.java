@@ -86,8 +86,17 @@ public class Supplier implements Serializable {
         return availableVehiclesCountBySupplier;
     }
 
+
     public void setAvailableVehiclesCountBySupplier(Integer availableVehiclesCountBySupplier) {
         this.availableVehiclesCountBySupplier = availableVehiclesCountBySupplier;
+    }
+
+    public Set<Service_Agreement> getServiceagreements() {
+        return serviceagreements;
+    }
+
+    public void setServiceagreements(Set<Service_Agreement> serviceagreements) {
+        this.serviceagreements = serviceagreements;
     }
 
     public Set<PurshaseOrder> getPurchaseOrders() {

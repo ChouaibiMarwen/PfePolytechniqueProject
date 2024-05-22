@@ -1,33 +1,31 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
-import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
-import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
-import com.camelsoft.rayaserver.Models.DTO.PurchaseOrderDto;
-import com.camelsoft.rayaserver.Models.File.File_model;
-import com.camelsoft.rayaserver.Models.Project.Event;
+
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.Service_Agreement;
-import com.camelsoft.rayaserver.Repository.Project.ServiceAgreementRepository;
-import com.camelsoft.rayaserver.Request.project.RequestOfEvents;
+
+import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.ServiceAgreementRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.Project.PurshaseOrderService;
 import com.camelsoft.rayaserver.Services.Project.ServiceAgreementService;
+import com.camelsoft.rayaserver.Services.User.SupplierServices;
+import com.camelsoft.rayaserver.Services.User.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.apache.commons.lang3.ObjectUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+
 
 @RestController
 @CrossOrigin
@@ -37,30 +35,37 @@ public class ServiceAgreementController {
     private ServiceAgreementService service;
 
     @Autowired
-    private PurshaseOrderService purchaseorderservice;
+    private UserService userService;
+
+    @Autowired
+    private SupplierServices supplierServices;
 
 
-    @PostMapping(value = {"/add_service_agreement/{purchaseorderId}"})
+    @PostMapping(value = {"/add_service_agreement/{supplierId}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
-    @ApiOperation(value = "Add added service agreements to purchase order from the admin", notes = "Endpoint to add service agreements list to purchase order")
+    @ApiOperation(value = "Add added service agreements to a supplier from the admin", notes = "Endpoint to add service agreements list to supplier")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully added service agreements to purchase order"),
+            @ApiResponse(code = 200, message = "Successfully added service agreements to supplier"),
             @ApiResponse(code = 400, message = "Bad request, empty or null title or empty and null content in request"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Service_Agreement> addServiceAgreements(@PathVariable Long purchaseorderId, @ModelAttribute ServiceAgreementRequest request) throws IOException {
+    public ResponseEntity<Service_Agreement> addServiceAgreements(@PathVariable Long supplierId, @ModelAttribute ServiceAgreementRequest request) throws IOException {
         if(request.getTitle() == null || request.getTitle().isEmpty())
             return new ResponseEntity("Title can't be null or empty", HttpStatus.BAD_REQUEST);
         if (request.getContant() == null)
             return new ResponseEntity("content can't be null or empty", HttpStatus.BAD_REQUEST);
-        PurshaseOrder  po = this.purchaseorderservice.FindById(purchaseorderId);
-        if(po == null)
-            return new ResponseEntity("no purchase orded founded using this id: " + purchaseorderId, HttpStatus.BAD_REQUEST);
+        users user = this.userService.findById(supplierId);
+        if(user == null)
+            return new ResponseEntity("no user founded using this id: " + supplierId, HttpStatus.NOT_FOUND);
+        Supplier supplier = user.getSupplier();
+        if(supplier == null)
+            return new ResponseEntity("no supplier founded using this id: " + supplierId, HttpStatus.NOT_FOUND);
+
         try{
             Service_Agreement agreement = new Service_Agreement();
             agreement.setTitle(request.getTitle());
             agreement.setContent(request.getContant());
-            //agreement.setPurchaseorder(po);
+            agreement.setSupplier(supplier);
             Service_Agreement result =  this.service.Save(agreement);
             return new ResponseEntity<>(result, HttpStatus.OK);
         }catch (Exception e){
@@ -78,23 +83,17 @@ public class ServiceAgreementController {
             @ApiResponse(code = 400, message = "Bad request, empty or null title or empty and null content in request"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity daleteServiceAgreement(@PathVariable Long serviceAgreementId){
-        Service_Agreement serviceAgreement =  this.service.FindById(642828L);
+    public ResponseEntity<Service_Agreement> daleteServiceAgreement(@PathVariable Long serviceAgreementId){
+        Service_Agreement serviceAgreement =  this.service.FindById(serviceAgreementId);
         if(serviceAgreement == null)
             return new ResponseEntity("Service agreement by this id :" + serviceAgreementId + "is not founded ", HttpStatus.NOT_FOUND);
-       /* PurshaseOrder purchaseOrder = serviceAgreement.getPurchaseorder();
-        serviceAgreement.getPurchaseorder().getServiceagreements().remove(serviceAgreement);
+        Supplier supplier = serviceAgreement.getSupplier();
+        supplier.getServiceagreements().remove(serviceAgreement);
+        this.supplierServices.update(supplier);
         serviceAgreement.setDeleted(true);
         this.service.Update(serviceAgreement);
-        if (purchaseOrder != null) {
-            Set<Service_Agreement> serviceAgreements = purchaseOrder.getServiceagreements();
-            serviceAgreements.remove(serviceAgreement);
-            purchaseOrder.setServiceagreements(serviceAgreements);
-            this.purchaseorderservice.Update(purchaseOrder); // Update the PurchaseOrder
-
-        }*/
-          //  serviceAgreement = this.service.Update(serviceAgreement);
-        return new ResponseEntity(HttpStatus.OK);
+            serviceAgreement = this.service.Update(serviceAgreement);
+        return new ResponseEntity(serviceAgreement,HttpStatus.OK);
     }
 
 
@@ -135,36 +134,42 @@ public class ServiceAgreementController {
     }
 
 
-    @GetMapping(value = {"/all_service_arguments_by_purchase_order/{purchaseOrderId}"})
+    @GetMapping(value = {"/all_service_arguments_by_purchase_order/{supplierId}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
-    @ApiOperation(value = "get all Service agreements by purchase order paginated for admin", notes = "Endpoint toget all Service agreements by purchase order paginated")
+    @ApiOperation(value = "get all Service agreements list by supplier paginated for admin", notes = "Endpoint toget all Service agreements list by supplier paginated")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin or supplier")
     })
-    public ResponseEntity<List<Service_Agreement>> all_invoice_by_purchase_order(@PathVariable Long purchaseOrderId) throws IOException {
-        PurshaseOrder  po = this.purchaseorderservice.FindById(purchaseOrderId);
-        if(po == null)
-            return new ResponseEntity("no purchase orded founded using this id: " + purchaseOrderId, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(this.service.findAllByPurchaseorder(po), HttpStatus.OK);
+    public ResponseEntity<List<Service_Agreement>> all_invoice_by_purchase_order(@PathVariable Long supplierId) throws IOException {
+        users user = this.userService.findById(supplierId);
+        if(user == null)
+            return new ResponseEntity("no user founded using this id: " + supplierId, HttpStatus.NOT_FOUND);
+        Supplier supplier = user.getSupplier();
+        if(supplier == null)
+            return new ResponseEntity("no supplier founded using this id: " + supplierId, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(this.service.findAllBySupplier(supplier), HttpStatus.OK);
 
     }
 
 
-    @GetMapping(value = {"/all_service_arguments_by_purchase_order_paginated/{purchaseOrderId}"})
+    @GetMapping(value = {"/all_service_arguments_by_purchase_order_paginated/{supplierId}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
-    @ApiOperation(value = "get all Service agreements by purchase order paginated for admin", notes = "Endpoint toget all Service agreements by purchase order paginated")
+    @ApiOperation(value = "get all Service agreements by supplier paginated for admin", notes = "Endpoint toget all Service agreements by supplier paginated")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin or supplier")
     })
-    public ResponseEntity<DynamicResponse> all_invoice_by_purchase_order_paginated(@PathVariable Long purchaseOrderId, @RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
-        PurshaseOrder  po = this.purchaseorderservice.FindById(purchaseOrderId);
-        if(po == null)
-            return new ResponseEntity("no purchase orded founded using this id: " + purchaseOrderId, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(this.service.findByPurchaseorderPg(page, size, po), HttpStatus.OK);
+    public ResponseEntity<DynamicResponse> all_invoice_by_purchase_order_paginated(@PathVariable Long supplierId, @RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
+        users user = this.userService.findById(supplierId);
+        if(user == null)
+            return new ResponseEntity("no user founded using this id: " + supplierId, HttpStatus.NOT_FOUND);
+        Supplier supplier = user.getSupplier();
+        if(supplier == null)
+            return new ResponseEntity("no supplier founded using this id: " + supplierId, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(this.service.findBySupplierPg(page, size, supplier), HttpStatus.OK);
 
     }
 
