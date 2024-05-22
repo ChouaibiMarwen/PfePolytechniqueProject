@@ -159,13 +159,15 @@ public class SubAdminController extends BaseController {
         user.setPersonalinformation(resultinformation);
         user.setDepartment(department);
         user.setRoledepartment(roledep);
+        if(file != null){
+            if (!this.filesStorageService.checkformat(file))
+                return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
+            File_model resource_media = filesStorageService.save_file_local(file, "profile");
+            if (resource_media == null)
+                return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
+            user.setProfileimage(resource_media);
+        }
 
-        if (!this.filesStorageService.checkformat(file))
-            return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
-        File_model resource_media = filesStorageService.save_file_local(file, "profile");
-        if (resource_media == null)
-            return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
-        user.setProfileimage(resource_media);
         // Save the user
         users result = userService.saveSubAdmin(user);
         return new ResponseEntity<>(result, HttpStatus.OK);
