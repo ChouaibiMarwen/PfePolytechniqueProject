@@ -7,6 +7,7 @@ import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.Project.Product;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
 import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -146,12 +147,13 @@ public class InvoiceService {
             Date endDate = calendar.getTime();
 
             // Call repository method to count invoices within the specified month
-            return this.repository.countByTimestampBetweenAndRelated(startDate, endDate,related);
+            return this.repository.countByTimestampBetweenAndRelated(startDate, endDate, related);
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
     }
-    public Integer countInvoicePerMonthAndStatus(Date date,InvoiceStatus status, InvoiceRelated related) {
+
+    public Integer countInvoicePerMonthAndStatus(Date date, InvoiceStatus status, InvoiceRelated related) {
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
@@ -167,7 +169,7 @@ public class InvoiceService {
             Date endDate = calendar.getTime();
 
             // Call repository method to count invoices within the specified month
-            return this.repository.countByTimestampBetweenAndStatusAndRelated(startDate, endDate,status,related);
+            return this.repository.countByTimestampBetweenAndStatusAndRelated(startDate, endDate, status, related);
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
@@ -186,19 +188,15 @@ public class InvoiceService {
     }
 
     public double getTotalRevenueFromOnePaidInvoice(Invoice invoice) {
-       // List<Invoice> paidInvoices = this.repository.findByStatus(InvoiceStatus.PAID);
+        // List<Invoice> paidInvoices = this.repository.findByStatus(InvoiceStatus.PAID);
         double totalRevenue = 0.0;
-        if(invoice.getProducts() == null || invoice.getProducts().isEmpty())
+        if (invoice.getProducts() == null || invoice.getProducts().isEmpty())
             return 0;
         for (Product product : invoice.getProducts()) {
             totalRevenue += product.getSubtotal();
         }
         return totalRevenue;
     }
-
-
-
-
 
 
     //get totla revevenu by date :
@@ -231,6 +229,54 @@ public class InvoiceService {
         return revenueByMonth;
     }
 
+    public List<Map<String, Double>> calculateRevenueByMonthAndSupplier(Date startDate, Date endDate, users user) {
+        List<Invoice> paidInvoices = this.repository.findByStatusAndArchiveIsFalseAndTimestampBetweenAndRelatedto(InvoiceStatus.PAID, startDate, endDate, user);
+        List<Invoice> paidInvoices2 = this.repository.findByStatusAndArchiveIsFalseAndTimestampBetweenAndCreatedby(InvoiceStatus.PAID, startDate, endDate, user);
+
+        List<Map<String, Double>> revenueByMonth = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+
+        while (calendar.getTime().before(endDate) || calendar.getTime().equals(endDate)) {
+            double totalRevenue = 0.0;
+            int month = calendar.get(Calendar.MONTH);
+            String monthName = new SimpleDateFormat("MMMM").format(calendar.getTime());
+
+            for (Invoice invoice : paidInvoices) {
+                if (isSameMonth(invoice.getTimestamp(), calendar.getTime())) {
+                    for (Product product : invoice.getProducts()) {
+                        totalRevenue += product.getSubtotal();
+                    }
+                }
+            }
+
+            Map<String, Double> monthlyRevenue = new HashMap<>();
+            monthlyRevenue.put(monthName, totalRevenue);
+            revenueByMonth.add(monthlyRevenue);
+            calendar.add(Calendar.MONTH, 1);
+        }
+        while (calendar.getTime().before(endDate) || calendar.getTime().equals(endDate)) {
+            double totalRevenue = 0.0;
+            int month = calendar.get(Calendar.MONTH);
+            String monthName = new SimpleDateFormat("MMMM").format(calendar.getTime());
+
+            for (Invoice invoice : paidInvoices2) {
+                if (isSameMonth(invoice.getTimestamp(), calendar.getTime())) {
+                    for (Product product : invoice.getProducts()) {
+                        totalRevenue += product.getSubtotal();
+                    }
+                }
+            }
+
+            Map<String, Double> monthlyRevenue = new HashMap<>();
+            monthlyRevenue.put(monthName, totalRevenue);
+            revenueByMonth.add(monthlyRevenue);
+            calendar.add(Calendar.MONTH, 1);
+        }
+
+        return revenueByMonth;
+    }
+
     private boolean isSameMonth(Date date1, Date date2) {
         Calendar cal1 = Calendar.getInstance();
         cal1.setTime(date1);
@@ -238,6 +284,7 @@ public class InvoiceService {
         cal2.setTime(date2);
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
     }
+
     //gettotla paid invoices for su_admins by date :
     public List<Map<String, Double>> calculateRevenueByMonthForSubAdmins(Date startDate, Date endDate) {
         List<Invoice> paidInvoices = this.repository.findByStatusAndArchiveIsFalseAndTimestampBetweenAndCreatedByRole(InvoiceStatus.PAID, startDate, endDate, RoleEnum.ROLE_SUB_ADMIN);
@@ -276,7 +323,8 @@ public class InvoiceService {
     public long countInvoicesCreatedBySubAdmins() {
         return this.repository.countByCreatedByRole(RoleEnum.ROLE_SUB_ADMIN);
     }
-        public long countInvoicesCreatedBySubAdminsAndNotPaid() {
+
+    public long countInvoicesCreatedBySubAdminsAndNotPaid() {
         return this.repository.countUnpaidOrPartiallyPaidInvoicesByCreatedByRole(RoleEnum.ROLE_SUB_ADMIN);
     }
 

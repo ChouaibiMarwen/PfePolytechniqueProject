@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Loan;
+import com.camelsoft.rayaserver.Models.User.users;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,6 +30,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     Double sumSubtotalOfProductsByInvoiceDateBetween(Date startDate, Date endDate);
 
     List<Invoice> findByStatusAndArchiveIsFalseAndTimestampBetween(InvoiceStatus status, Date startDate, Date endDate);
+    List<Invoice> findByStatusAndArchiveIsFalseAndTimestampBetweenAndRelatedto(InvoiceStatus status, Date startDate, Date endDate, users user);
+    List<Invoice> findByStatusAndArchiveIsFalseAndTimestampBetweenAndCreatedby(InvoiceStatus status, Date startDate, Date endDate, users user);
 
     @Query("SELECT COUNT(i) FROM Invoice i WHERE i.status = :status AND i.createdby.role.role = :role")
     long countByStatusAndCreatedByRole(InvoiceStatus status, RoleEnum role);

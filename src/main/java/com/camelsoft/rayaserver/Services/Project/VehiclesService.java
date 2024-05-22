@@ -74,6 +74,15 @@ public DynamicResponse FindAllPgSupplier(int page, int size, Supplier supplier) 
         }
 
     }
+public List<Vehicles> FindAllSupplier( Supplier supplier) {
+        try {
+            return this.repository.findAllByArchiveIsFalseAndSupplier(supplier);
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
 
     public DynamicResponse FindAllPgByCarVinSupplier(int page, int size, String carvin ,Supplier supplier) {
         try {
