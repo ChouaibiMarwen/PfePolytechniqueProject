@@ -43,23 +43,23 @@ public class DepartmentController {
             @ApiResponse(code = 400, message = "Bad request, check required fields"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Department> addDepartment(@RequestParam String name , @RequestParam Set<RoleDepartment> rolesdepartment) throws IOException {
-        if (name == null || name.length() ==0 )
+    public ResponseEntity<Department> addDepartment(@RequestParam String name , @RequestParam List<String> roledepartmentNames ) throws IOException {
+        if (name == null || name.length() == 0)
             return new ResponseEntity("Department name can't be null or empty", HttpStatus.BAD_REQUEST);
-        if (rolesdepartment.isEmpty())
+        if (roledepartmentNames.isEmpty())
             return new ResponseEntity("Department's roles can't be null or empty", HttpStatus.BAD_REQUEST);
 
         Department  dep  = new Department(
-               name
+                name
         );
 
 
          dep = this.departmentService.Save(dep);
 
-        for (RoleDepartment r : rolesdepartment) {
+        for (String r : roledepartmentNames) {
             RoleDepartment roledep = new RoleDepartment();
             roledep.setDepartment(dep);
-            roledep.setRolename(r.getRolename());
+            roledep.setRolename(r);
             this.roleDepartmentService.Save(roledep);
         }
         Department result = new Department();
