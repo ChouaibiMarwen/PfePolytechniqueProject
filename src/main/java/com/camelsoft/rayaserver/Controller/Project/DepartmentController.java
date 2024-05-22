@@ -1,14 +1,20 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Department;
 import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.Project.RoleDepartment;
+import com.camelsoft.rayaserver.Models.Project.UserAction;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.DepartmentRequest;
 import com.camelsoft.rayaserver.Request.project.RequestOfEvents;
 import com.camelsoft.rayaserver.Services.Project.DepartmentService;
 import com.camelsoft.rayaserver.Services.Project.RoleDepartmentService;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
+import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -17,22 +23,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/v1/department")
-public class DepartmentController {
+public class DepartmentController extends BaseController {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserActionService userActionService;
 
     @Autowired
     private DepartmentService departmentService;
     @Autowired
     private RoleDepartmentService roleDepartmentService;
+
 
 
     @PostMapping(value = {"/add_department"})
@@ -44,6 +55,9 @@ public class DepartmentController {
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity<Department> addDepartment(@RequestParam String name , @RequestParam List<String> roledepartmentNames ) throws IOException {
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         if (name.length() == 0)
             return new ResponseEntity("Department name can't be null or empty", HttpStatus.BAD_REQUEST);
         if (roledepartmentNames.isEmpty())
@@ -62,6 +76,12 @@ public class DepartmentController {
             roledep.setRolename(r);
             this.roleDepartmentService.Save(roledep);
         }
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.DEPARTMENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         Department result =this.departmentService.FindById(dep.getId());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -89,7 +109,9 @@ public class DepartmentController {
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity<Department> updatDepartment(@PathVariable Long idDepartment, @RequestParam(required = false) String name, @RequestParam(required = false)List<String> rolesDepartmentname) throws IOException {
-
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         Department dep =  this.departmentService.FindById(idDepartment);
         if(dep == null)
             return new ResponseEntity("department is not founded  by this id : " + idDepartment , HttpStatus.NOT_FOUND);
@@ -110,7 +132,12 @@ public class DepartmentController {
                 this.roleDepartmentService.Save(roledep);
             }
         }
-
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.DEPARTMENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         Department result = this.departmentService.Update(dep);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
@@ -126,13 +153,21 @@ public class DepartmentController {
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity<Department> deleteDepartment(@PathVariable Long idDepartment) throws IOException {
-
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         Department dep =  this.departmentService.FindById(idDepartment);
         if(dep == null)
             return new ResponseEntity("department is not founded  by this id : " + idDepartment , HttpStatus.NOT_FOUND);
 
        dep.setArchive(true);
         Department result = this.departmentService.Update(dep);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.DEPARTMENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }

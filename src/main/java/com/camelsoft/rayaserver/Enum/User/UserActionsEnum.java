@@ -15,4 +15,5 @@ public enum UserActionsEnum {
     STATS_READ,
     NOTIFICATION_READ,
     PROFILE_MANAGEMENT,
+    DEPARTMENT_MANAGEMENT,
 }

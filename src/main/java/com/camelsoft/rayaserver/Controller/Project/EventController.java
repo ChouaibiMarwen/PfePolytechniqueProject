@@ -4,6 +4,7 @@ import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.DTO.PurchaseOrderDto;
 import com.camelsoft.rayaserver.Models.File.File_model;
@@ -17,6 +18,9 @@ import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.EventService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
+import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -33,9 +37,15 @@ import java.util.*;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/v1/events")
-public class EventController {
+public class EventController extends BaseController {
 
     private static final List<String> image_accepte_type = Arrays.asList("jpeg", "jpg", "png", "gif", "bmp", "tiff", "tif", "ico", "webp", "svg", "heic", "raw");
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserActionService userActionService;
 
     @Autowired
     private EventService service;
@@ -54,7 +64,17 @@ public class EventController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<List<Event>> all_events_by_title(@ModelAttribute String title) throws IOException {
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         List<Event> result = this.service.findAllByName(title);
+
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -67,7 +87,15 @@ public class EventController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<DynamicResponse> all_events_by_title_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String  title, @RequestParam(required = false) EventStatus  status) throws IOException {
-
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
          return new ResponseEntity<>(this.service.findAllByTtileOrStatusPaginated(page, size , title, status), HttpStatus.OK);
 
     }
@@ -81,7 +109,15 @@ public class EventController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<DynamicResponse> all_events_by_title__and_date_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String  title, @RequestParam(required = false) Date  creationdate) throws IOException {
-
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(this.service.findAllByTtileOrDatePaginated(page, size , title, creationdate), HttpStatus.OK);
 
     }
@@ -96,7 +132,15 @@ public class EventController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<DynamicResponse> all_events_by_role_assignedto(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam RoleEnum role) throws IOException {
-
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(this.service.FindEventAssignedToByRole(page, size ,role), HttpStatus.OK);
 
     }
@@ -112,6 +156,10 @@ public class EventController {
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity<Event> addEvent(@ModelAttribute RequestOfEvents request,@RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+
         if (request.getTitle() == null)
             return new ResponseEntity("Title can't be null or empty", HttpStatus.BAD_REQUEST);
         if (request.getEventDate() == null)
@@ -139,6 +187,12 @@ public class EventController {
                 request.getStatus()
         );
         Event result = this.service.Save(event);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -151,7 +205,16 @@ public class EventController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<Event> geteventById(@PathVariable Long id) throws IOException {
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         Event result = this.service.FindById(id);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -166,6 +229,9 @@ public class EventController {
             @ApiResponse(code = 404, message = "Not found, check invoice id")
     })
     public ResponseEntity<Event> update_status_event(@PathVariable Long event_id) throws IOException {
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         if (this.service.FindById(event_id)== null) {
             return new ResponseEntity(event_id + " is not found in the system!", HttpStatus.NOT_FOUND);
         }
@@ -176,6 +242,12 @@ public class EventController {
             event.setStatus(EventStatus.PUBLISHED);
         }
         Event result = this.service.Update(event);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
@@ -191,7 +263,9 @@ public class EventController {
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity<Event> updateevnt( @PathVariable Long idEvent,  @ModelAttribute RequestOfEvents request,@RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
-
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         boolean exist = this.service.ExistById(idEvent);
         if(!exist)
             return new ResponseEntity("envent by this id :" + idEvent + "is not founded ", HttpStatus.NOT_ACCEPTABLE);
@@ -236,12 +310,21 @@ public class EventController {
             event.setAttachment(resourceMedia);
         }
         Event result = this.service.Update(event);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
     @DeleteMapping(value = {"/{event_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     public ResponseEntity<Event> daleteEvent(@PathVariable Long event_id){
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         boolean exist = this.service.ExistById(event_id);
         if(!exist)
             return new ResponseEntity("envent by this id :" + event_id + "is not founded ", HttpStatus.NOT_ACCEPTABLE);
@@ -249,6 +332,12 @@ public class EventController {
         Event event =  this.service.FindById(event_id);
         event.setArchive(true);
         event = this.service.Update(event);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(event, HttpStatus.OK);
 
     }

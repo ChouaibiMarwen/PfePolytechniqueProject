@@ -2,9 +2,11 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Product;
 import com.camelsoft.rayaserver.Models.Project.RefundInvoice;
+import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.InvoiceRepportRequest;
 import com.camelsoft.rayaserver.Request.project.InvoiceRequest;
@@ -14,6 +16,7 @@ import com.camelsoft.rayaserver.Response.Project.InvoiceReport;
 import com.camelsoft.rayaserver.Services.Project.InvoiceService;
 import com.camelsoft.rayaserver.Services.Project.ProductService;
 import com.camelsoft.rayaserver.Services.Project.RefundInvoiceService;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +42,9 @@ public class InvoiceController extends BaseController {
     private final Log logger = LogFactory.getLog(InvoiceController.class);
 
     @Autowired
+    private UserActionService userActionService;
+
+    @Autowired
     private InvoiceService service;
     @Autowired
     private ProductService productservice;
@@ -57,11 +63,21 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<DynamicResponse> all_vehicles_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam(required = true) InvoiceRelated related) throws IOException {
+
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+
         if (related == InvoiceRelated.NONE)
             return new ResponseEntity("you need to choose related NONE not a related", HttpStatus.NOT_ACCEPTABLE);
         if (status != null)
             return new ResponseEntity<>(this.service.FindAllByState(page, size, status, related), HttpStatus.OK);
-
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
            // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
         return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
 
@@ -79,6 +95,9 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<Invoice> add_invoice(@RequestBody InvoiceRequest request) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
         users relatedto = UserServices.findById(request.getRelatedtouserid());
 
@@ -124,6 +143,12 @@ public class InvoiceController extends BaseController {
                 relatedto
         );
         Invoice result = this.service.Save(invoice);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
 
@@ -139,7 +164,9 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 404, message = "Not found, check invoice id")
     })
     public ResponseEntity<Invoice> update_invoice(@PathVariable Long invoice_id, @ModelAttribute String remark, @ModelAttribute InvoiceStatus status) throws IOException {
-        //users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         if (this.service.FindById(invoice_id) == null) {
             return new ResponseEntity(invoice_id + " is not found in the system!", HttpStatus.NOT_FOUND);
         }
@@ -147,6 +174,12 @@ public class InvoiceController extends BaseController {
         if (remark != null) invoice.setRemark(remark);
         if (status != null) invoice.setStatus(status);
         Invoice result = this.service.Update(invoice);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
 
@@ -162,11 +195,19 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 404, message = "Not found, check invoice id")
     })
     public ResponseEntity<Invoice> admin_get_invoice_by_id(@PathVariable Long invoice_id) throws IOException {
-        //users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         if (this.service.FindById(invoice_id) == null) {
             return new ResponseEntity(invoice_id + " is not found in the system!", HttpStatus.NOT_FOUND);
         }
         Invoice result = this.service.FindById(invoice_id);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
 
@@ -174,22 +215,29 @@ public class InvoiceController extends BaseController {
 
     @GetMapping(value = {"/supplier/{invoice_id}"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
-    @ApiOperation(value = "get invoice for supplier", notes = "Endpoint to get invoice")
+    @ApiOperation(value = "get invoice for supplier", notes = "Endpoint to get invoice for supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request, this request not related to this user"),
-            @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the supplier"),
             @ApiResponse(code = 404, message = "Not found, check invoice id")
     })
     public ResponseEntity<Invoice> supplier_get_invoice_by_id(@PathVariable Long invoice_id) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         if (this.service.FindById(invoice_id) == null) {
             return new ResponseEntity(invoice_id + " is not found in the system!", HttpStatus.NOT_FOUND);
         }
         Invoice result = this.service.FindById(invoice_id);
         if (result.getCreatedby() != user && result.getRelatedto() != user)
             return new ResponseEntity(invoice_id + "you not related or the owner of this invoice", HttpStatus.BAD_REQUEST);
-
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
 
@@ -205,6 +253,9 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<InvoiceReport> invoice_report_admin(@ModelAttribute InvoiceRepportRequest request) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         InvoiceReport report = new InvoiceReport();
         Date date = request.getDate();
         InvoiceRelated related = request.getRelated();
@@ -220,6 +271,12 @@ public class InvoiceController extends BaseController {
         report.setRequestpending(0); // need to added later
         report.setSoldcars(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related));
         report.setInvoicepermonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.UNPAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS, related));
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(report, HttpStatus.OK);
 
     }
@@ -235,7 +292,9 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<Invoice> add_refund_invoice(@PathVariable Long idInvoice, @ModelAttribute RefundInvoiceRequest request) throws IOException {
-
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         Invoice invoice = this.service.FindById(idInvoice);
         if (invoice == null)
             return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_FOUND);
@@ -253,6 +312,12 @@ public class InvoiceController extends BaseController {
 
         invoice.setStatus(InvoiceStatus.REFUNDS);
         Invoice result  = this.service.Update(invoice);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
@@ -268,7 +333,9 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<Invoice> confirm_invoice(@PathVariable Long idInvoice) throws IOException {
-
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         Invoice invoice = this.service.FindById(idInvoice);
         if (invoice == null)
             return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_FOUND);
@@ -278,6 +345,12 @@ public class InvoiceController extends BaseController {
 
         invoice.setStatus(InvoiceStatus.PAID);
         Invoice result  = this.service.Update(invoice);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result,HttpStatus.OK);
 
     }

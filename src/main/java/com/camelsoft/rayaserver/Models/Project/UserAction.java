@@ -35,6 +35,7 @@ public class UserAction implements Serializable {
     public UserAction(UserActionsEnum action, users user) {
         this.action = action;
         this.user = user;
+        this.timestamp = new Date();
     }
 
     public Long getId() {

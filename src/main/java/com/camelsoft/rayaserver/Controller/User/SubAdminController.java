@@ -118,7 +118,7 @@ public class SubAdminController extends BaseController {
         Department department = this.departmentService.FindById(request.getIddepartment());
         if(department == null)
             return new ResponseEntity("department not founded using this is : " + request.getIddepartment(), HttpStatus.NOT_FOUND);
-        RoleDepartment roledep = this.roleDepartmentService.FindById(request.getIddepartment());
+        RoleDepartment roledep = this.roleDepartmentService.FindById(request.getIdroledepartment());
         if(roledep == null)
             return new ResponseEntity("role department not founded using this is : "+ request.getIdroledepartment(), HttpStatus.NOT_FOUND);
         // Create a new user
