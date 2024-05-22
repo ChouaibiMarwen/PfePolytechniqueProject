@@ -88,7 +88,7 @@ public class DepartmentController {
             @ApiResponse(code = 400, message = "Bad request, check params type "),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Department> updatDepartment(@PathVariable Long idDepartment, @RequestParam(required = false) String name, @RequestParam(required = false)Set<RoleDepartment> rolesDepartment) throws IOException {
+    public ResponseEntity<Department> updatDepartment(@PathVariable Long idDepartment, @RequestParam(required = false) String name, @RequestParam(required = false)List<String> rolesDepartmentname) throws IOException {
 
         Department dep =  this.departmentService.FindById(idDepartment);
         if(dep == null)
@@ -96,15 +96,18 @@ public class DepartmentController {
 
         if(name != null && name.length() > 0)
             dep.setName(name);
-        if(rolesDepartment != null && rolesDepartment.size() > 0){
+        if(rolesDepartmentname != null && !rolesDepartmentname.isEmpty()){
             for(RoleDepartment r : dep.getRoles()){
                 dep.getRoles().remove(r);
                 r.setDepartment(null);
+                r.setArchive(true);
                 roleDepartmentService.Save(r);
             }
-            for(RoleDepartment r :rolesDepartment){
-                r.setDepartment(dep);
-                roleDepartmentService.Save(r);
+            for (String r : rolesDepartmentname) {
+                RoleDepartment roledep = new RoleDepartment();
+                roledep.setDepartment(dep);
+                roledep.setRolename(r);
+                this.roleDepartmentService.Save(roledep);
             }
         }
 
