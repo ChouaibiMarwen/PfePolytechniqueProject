@@ -3,6 +3,7 @@ package com.camelsoft.rayaserver.Repository.Project;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import org.springframework.data.domain.Page;
@@ -29,4 +30,24 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
 
     List<Invoice> findByStatusAndArchiveIsFalseAndTimestampBetween(InvoiceStatus status, Date startDate, Date endDate);
 
+    @Query("SELECT COUNT(i) FROM Invoice i WHERE i.status = :status AND i.createdby.role.role = :role")
+    long countByStatusAndCreatedByRole(InvoiceStatus status, RoleEnum role);
+
+    @Query("SELECT COUNT(i) FROM Invoice i WHERE i.createdby.role = :role")
+    long countByCreatedByRole(RoleEnum role);
+
+    @Query("SELECT COUNT(i) FROM Invoice i " +
+            "WHERE (i.status = :unpaidStatus OR i.status = :partiallyPaidStatus) " +
+            "AND i.createdby.role.role = :role")
+    long countUnpaidOrPartiallyPaidInvoicesByCreatedByRole(RoleEnum role);
+
+
+    @Query("SELECT i FROM Invoice i " +
+            "WHERE i.status = :status " +
+            "AND i.archive = false " +
+            "AND i.timestamp BETWEEN :startDate AND :endDate " +
+            "AND i.createdby.role.role = :role")
+    List<Invoice> findByStatusAndArchiveIsFalseAndTimestampBetweenAndCreatedByRole(
+            InvoiceStatus status, Date startDate, Date endDate, RoleEnum role
+    );
 }

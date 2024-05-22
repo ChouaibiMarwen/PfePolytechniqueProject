@@ -91,4 +91,35 @@ public class UserActionService {
         }
 
     }
+
+
+    public DynamicResponse FindAllSubAdminActionByUserId(int page, int size,Long idUser) {
+        try {
+
+            PageRequest pg = PageRequest.of(page, size);
+            Page<UserAction> pckge = this.repository.findLatestUserActionsByRoleAndUserId(pg, RoleEnum.ROLE_SUB_ADMIN, idUser);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+    public DynamicResponse FindAllSubAdminActionByName(int page, int size,String name) {
+        try {
+
+            PageRequest pg = PageRequest.of(page, size);
+            Page<UserAction> pckge = this.repository.findLatestUserActionsByRoleAndName(pg, RoleEnum.ROLE_SUB_ADMIN, name);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
+
+
 }

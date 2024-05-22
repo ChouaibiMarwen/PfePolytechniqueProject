@@ -3,6 +3,7 @@ package com.camelsoft.rayaserver.Services.Project;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.Project.Product;
@@ -237,8 +238,47 @@ public class InvoiceService {
         cal2.setTime(date2);
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
     }
+    //gettotla paid invoices for su_admins by date :
+    public List<Map<String, Double>> calculateRevenueByMonthForSubAdmins(Date startDate, Date endDate) {
+        List<Invoice> paidInvoices = this.repository.findByStatusAndArchiveIsFalseAndTimestampBetweenAndCreatedByRole(InvoiceStatus.PAID, startDate, endDate, RoleEnum.ROLE_SUB_ADMIN);
+
+        List<Map<String, Double>> revenueByMonth = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+
+        while (calendar.getTime().before(endDate) || calendar.getTime().equals(endDate)) {
+            double totalRevenue = 0.0;
+            int month = calendar.get(Calendar.MONTH);
+            String monthName = new SimpleDateFormat("MMMM").format(calendar.getTime());
+
+            for (Invoice invoice : paidInvoices) {
+                if (isSameMonth(invoice.getTimestamp(), calendar.getTime())) {
+                    for (Product product : invoice.getProducts()) {
+                        totalRevenue += product.getSubtotal();
+                    }
+                }
+            }
+
+            Map<String, Double> monthlyRevenue = new HashMap<>();
+            monthlyRevenue.put(monthName, totalRevenue);
+            revenueByMonth.add(monthlyRevenue);
+            calendar.add(Calendar.MONTH, 1);
+        }
+
+        return revenueByMonth;
+    }
 
 
+    public long countPaidInvoicesCreatedBySubAdmin(InvoiceStatus status) {
+        return this.repository.countByStatusAndCreatedByRole(status, RoleEnum.ROLE_SUB_ADMIN);
+    }
+
+    public long countInvoicesCreatedBySubAdmins() {
+        return this.repository.countByCreatedByRole(RoleEnum.ROLE_SUB_ADMIN);
+    }
+        public long countInvoicesCreatedBySubAdminsAndNotPaid() {
+        return this.repository.countUnpaidOrPartiallyPaidInvoicesByCreatedByRole(RoleEnum.ROLE_SUB_ADMIN);
+    }
 
 
 }

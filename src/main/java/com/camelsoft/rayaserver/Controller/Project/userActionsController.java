@@ -55,6 +55,37 @@ public class userActionsController extends BaseController {
     }
 
 
+
+    @GetMapping(value = {"/last_actions_of_all_sub_admins_by_user_name_or_user_id"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "get last actions of all sub admins for admin", notes = "Endpoint to getlast actions of all sub admins")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> last_actions_of_all_sub_admins_by_user_name_or_user_id(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Long idUser,  @RequestParam(required = false) String name) throws IOException {
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("current user not found", HttpStatus.NOT_FOUND);
+
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.AGENT_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+
+         if (idUser != null && name == null) {
+            return new ResponseEntity<>(this.userActionService.FindAllSubAdminActionByUserId(page, size, idUser ), HttpStatus.OK);
+        } else if (idUser == null && name != null) {
+            return new ResponseEntity<>(this.userActionService.FindAllSubAdminActionByName(page, size, name ), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(this.userActionService.FindLastActionsForAllSubAdmins(page, size ), HttpStatus.OK);
+
+    }
+
+
     @GetMapping(value = {"/user_historic_actions/{userId}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get last actions of all sub admins for admin", notes = "Endpoint to getlast actions of all sub admins")

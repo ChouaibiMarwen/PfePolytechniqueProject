@@ -20,4 +20,19 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
 
     Page<UserAction> findByUserOrderByTimestampDesc(Pageable pageable, users user);
 
+    @Query("SELECT ua " +
+            "FROM UserAction ua " +
+            "WHERE ua.user.role.role = :roleEnum " +
+            "AND (LOWER(ua.user.personalinformation.firstnameen) LIKE LOWER(CONCAT('%', :name, '%')) " +
+            "     OR LOWER(ua.user.personalinformation.lastnameen) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND ua.timestamp = (SELECT MAX(ua2.timestamp) FROM UserAction ua2 WHERE ua2.user = ua.user)")
+    Page<UserAction> findLatestUserActionsByRoleAndName(Pageable page, RoleEnum roleEnum, String name);
+
+    @Query("SELECT ua " +
+            "FROM UserAction ua " +
+            "WHERE ua.user.role.role = :roleEnum " +
+            "AND ua.user.id = :userId " +
+            "AND ua.timestamp = (SELECT MAX(ua2.timestamp) FROM UserAction ua2 WHERE ua2.user = ua.user)")
+    Page<UserAction> findLatestUserActionsByRoleAndUserId(Pageable page, RoleEnum roleEnum, Long userId);
+
 }
