@@ -44,7 +44,7 @@ public class DepartmentController {
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity<Department> addDepartment(@RequestParam String name , @RequestParam List<String> roledepartmentNames ) throws IOException {
-        if (name == null || name.length() == 0)
+        if (name.length() == 0)
             return new ResponseEntity("Department name can't be null or empty", HttpStatus.BAD_REQUEST);
         if (roledepartmentNames.isEmpty())
             return new ResponseEntity("Department's roles can't be null or empty", HttpStatus.BAD_REQUEST);
@@ -62,10 +62,9 @@ public class DepartmentController {
             roledep.setRolename(r);
             this.roleDepartmentService.Save(roledep);
         }
-        Department result = new Department();
+        Department result =this.departmentService.FindById(dep.getId());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
 
     @GetMapping(value = {"/depatment/{id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")

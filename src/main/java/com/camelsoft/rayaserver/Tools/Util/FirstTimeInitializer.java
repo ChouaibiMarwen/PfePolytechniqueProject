@@ -160,6 +160,24 @@ public class FirstTimeInitializer implements CommandLineRunner {
         if (!privilegeService.existsByName("PREVILEGE_READ"))
             privilegeService.save(new Privilege("PREVILEGE_READ"));
 
+        if (!privilegeService.existsByName("STATS_READ"))
+            privilegeService.save(new Privilege("STATS_READ"));
+
+        if (!privilegeService.existsByName("STATS_WRITE"))
+            privilegeService.save(new Privilege("STATS_WRITE"));
+
+        if (!privilegeService.existsByName("PROFILE_READ"))
+            privilegeService.save(new Privilege("PROFILE_READ"));
+
+        if (!privilegeService.existsByName("PROFILE_WRITE"))
+            privilegeService.save(new Privilege("PROFILE_WRITE"));
+
+        if (!privilegeService.existsByName("NOTIFICATION_READ"))
+            privilegeService.save(new Privilege("NOTIFICATION_READ"));
+
+        if (!privilegeService.existsByName("NOTIFICATION_WRITE"))
+            privilegeService.save(new Privilege("NOTIFICATION_WRITE"));
+
 
         if (this.userService.existbyemail("admin@camel-soft.com")) {
             users user = userService.findbyemail("admin@camel-soft.com");
