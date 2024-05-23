@@ -89,7 +89,10 @@ public class users implements Serializable {
     @OneToMany(mappedBy = "creatorrequest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
-
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "manager_id")
+    private users manager;
 
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -426,5 +429,13 @@ public class users implements Serializable {
 
     public void setAttachmentchat(Set<File_model> attachmentchat) {
         this.attachmentchat = attachmentchat;
+    }
+
+    public users getManager() {
+        return manager;
+    }
+
+    public void setManager(users manager) {
+        this.manager = manager;
     }
 }
