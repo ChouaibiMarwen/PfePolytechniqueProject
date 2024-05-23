@@ -55,13 +55,13 @@ public class users implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
-    @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "profileimage")
     private File_model profileimage;
     @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "personal_id", referencedColumnName = "personal_information_id")
     private PersonalInformation personalinformation;
-@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "configuration_user_id", referencedColumnName = "configuration_id")
     private UserConfiguration userconfiguration;
 
@@ -76,7 +76,7 @@ public class users implements Serializable {
     @OneToMany(mappedBy = "createdby", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Invoice> invoicescreated = new HashSet<>();
-    @OneToMany(mappedBy = "user", cascade = { CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.LAZY)
     private Set<Address> addresses = new HashSet<>();
     @OneToMany(mappedBy = "relatedto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -108,7 +108,7 @@ public class users implements Serializable {
             inverseJoinColumns =
             @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
     private Set<Privilege> privileges = new HashSet<>();
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "supplier_id", referencedColumnName = "id")
     private Supplier supplier;
 
@@ -116,11 +116,11 @@ public class users implements Serializable {
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<PurshaseOrder> purchaseOrders = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "department_id")
     private Department department;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "role_department_id")
     private RoleDepartment roledepartment;
     @JsonIgnore
@@ -142,7 +142,7 @@ public class users implements Serializable {
 
     }
 
-    public users(String username,String email, String password, String phonenumber, PersonalInformation personalinformation) {
+    public users(String username, String email, String password, String phonenumber, PersonalInformation personalinformation) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -160,9 +160,9 @@ public class users implements Serializable {
 
 
     @PostLoad
-    private void afterload(){
-        if(this.personalinformation!=null){
-            this.name = this.personalinformation.getFirstnameen()+" "+this.personalinformation.getLastnameen();
+    private void afterload() {
+        if (this.personalinformation != null) {
+            this.name = this.personalinformation.getFirstnameen() + " " + this.personalinformation.getLastnameen();
         }
     }
 
