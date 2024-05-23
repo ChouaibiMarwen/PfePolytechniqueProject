@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
@@ -41,9 +42,9 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     long countByCreatedByRole(RoleEnum role);
 
     @Query("SELECT COUNT(i) FROM Invoice i " +
-            "WHERE (i.status = :unpaidStatus OR i.status = :partiallyPaidStatus) " +
+            "WHERE i.status IN (:statuses) " +
             "AND i.createdby.role.role = :role")
-    long countUnpaidOrPartiallyPaidInvoicesByCreatedByRole(RoleEnum role);
+    long countUnpaidOrPartiallyPaidInvoicesByCreatedByRole (Set<InvoiceStatus> statuses, RoleEnum role);
 
 
     @Query("SELECT i FROM Invoice i " +
