@@ -100,6 +100,7 @@ public class SupplierController extends BaseController {
             return new ResponseEntity("last-name-ar", HttpStatus.BAD_REQUEST);
 
         String phonenumber = request.getPhonenumber().replaceAll("[\\s()]", "");
+/*
         if (userService.existbyphonenumber(phonenumber))
             return new ResponseEntity("phone-number", HttpStatus.CONFLICT);
         if (userService.existbyemail(request.getEmail().toLowerCase()))
@@ -107,6 +108,7 @@ public class SupplierController extends BaseController {
         // Check email format
         if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
             return new ResponseEntity("email", HttpStatus.NOT_ACCEPTABLE);
+*/
 
         String name = request.getInformationRequest().getFirstnameen() + request.getInformationRequest().getLastnameen();
         String username = userService.GenerateUserName(name, userService.Count());
