@@ -20,6 +20,7 @@ import java.util.List;
 public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     Page<Invoice> findAllByStatusAndArchiveIsFalse(Pageable page, InvoiceStatus status);
     Page<Invoice> findAllByStatusAndArchiveIsFalseAndRelated(Pageable page, InvoiceStatus status, InvoiceRelated related);
+    Page<Invoice> findAllByStatusAndArchiveIsFalseAndRelatedAndCreatedby(Pageable page, InvoiceStatus status, InvoiceRelated related,users user);
     Page<Invoice> findAllByArchiveIsFalseAndRelated(Pageable page, InvoiceRelated related);
     boolean existsByInvoicenumber(Integer invoicenumber);
     Integer countByTimestampBetweenAndRelated(Date startDate, Date endDate,InvoiceRelated related);

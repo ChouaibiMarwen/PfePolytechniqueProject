@@ -85,6 +85,36 @@ public class InvoiceController extends BaseController {
 
 
     }
+  @GetMapping(value = {"/all_invoice_supplier"})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @ApiOperation(value = "get all invoice by status for supplier", notes = "Endpoint to get vehicles")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> all_invoice_supplier(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam(required = true) InvoiceRelated related) throws IOException {
+
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+
+        if (related == InvoiceRelated.NONE)
+            return new ResponseEntity("you need to choose related NONE not a related", HttpStatus.NOT_ACCEPTABLE);
+        if (status != null)
+            return new ResponseEntity<>(this.service.FindAllByStateandsupplier(page, size, status, related,user), HttpStatus.OK);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+           // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
+        return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
+
+
+    }
 
     @PostMapping(value = {"/add_invoice"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
