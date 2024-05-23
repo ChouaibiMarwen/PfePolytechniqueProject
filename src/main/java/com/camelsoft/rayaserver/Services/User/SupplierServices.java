@@ -124,6 +124,35 @@ public class SupplierServices {
 
     }
 
+ public List<UserShortDto> getAllUsersWithoutPaginationSupplier(Boolean active, String name, RoleEnum role, Boolean verified,users manager) {
+        try {
+            Role userRole = roleRepository.findByRole(role);
+            List<users> user = null;
+            if (name == null && active == null && verified == null)
+                user = this.userRepository.findByRoleAndActiveAndDeletedAndManagerOrderByTimestmpDesc(userRole, true, false,manager);
+            else if (name == null && active == null && verified != null)
+                user = this.userRepository.findByRoleAndActiveAndDeletedAndVerifiedAndManagerOrderByTimestmpDesc(userRole, true, false, verified,manager);
+            else if (name != null && active == null && verified == null)
+                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseAndManagerOrderByTimestmpDesc(userRole, "%" + name + "%", false, "%DELETED%",manager);
+            else if (name != null && active == null && verified != null)
+                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseAndVerifiedAndManagerOrderByTimestmpDesc(userRole, "%" + name + "%", false, "%DELETED%", verified,manager);
+            else if (name == null && active != null && verified == null)
+                user = this.userRepository.findByRoleAndActiveAndDeletedAndManagerOrderByTimestmpDesc(userRole, active, false,manager);
+            else if (name == null && active != null && verified != null)
+                user = this.userRepository.findByRoleAndActiveAndDeletedAndVerifiedAndManagerOrderByTimestmpDesc(userRole, active, false, verified,manager);
+            else if (name != null && active != null && verified == null)
+                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedAndManagerOrderByTimestmpDesc(userRole, active, "%" + name + "%", false,manager);
+            else if (name != null && active != null && verified != null)
+                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedAndVerifiedAndManagerOrderByTimestmpDesc(userRole, active, "%" + name + "%", false, verified,manager);
+            return  user.stream()
+                    .map(UserShortDto::mapToUserShortDTO)
+                    .collect(Collectors.toList());
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(String.format("No data found"));
+        }
+
+    }
+
 
     public Long countSuppliers() {
         return this.repository.count();

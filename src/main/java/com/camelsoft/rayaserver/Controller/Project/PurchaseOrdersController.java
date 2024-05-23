@@ -123,7 +123,7 @@ public class PurchaseOrdersController  extends BaseController {
 
 
     @GetMapping(value = {"/all_purchase_orders_by_status"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('Supplier') or hasRole('SUB_Supplier')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to get purchase orders by status")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -146,7 +146,7 @@ public class PurchaseOrdersController  extends BaseController {
 
 
     @GetMapping(value = {"/all_purchase_orders_by_status_and_date"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('Supplier') or hasRole('SUB_Supplier')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all purchase orders by status and date for admin by name", notes = "Endpoint to get purchase orders by status and date")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -168,7 +168,7 @@ public class PurchaseOrdersController  extends BaseController {
     }
 
     @GetMapping(value = {"/all_purchase_orders_by_status_and_date_and_vehicle"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('Supplier') or hasRole('SUB_Supplier')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all purchase orders by status and date and vehicle for admin by name", notes = "Endpoint to get purchase orders by status and date and vehicle")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -198,7 +198,7 @@ public class PurchaseOrdersController  extends BaseController {
     }
 
     @GetMapping(value = {"/all_purchase_orders_by_status_and_date_and_vehicle_and_supplier"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('Supplier') or hasRole('SUB_Supplier')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all purchase orders by status and date and vehicle and supplier  for admin by name", notes = "Endpoint to get purchase orders by status and date and vehicle and supplier for admin ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

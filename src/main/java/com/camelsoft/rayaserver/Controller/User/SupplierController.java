@@ -171,18 +171,21 @@ public class SupplierController extends BaseController {
         // Save the user
         users result = userService.saveSupplier(user);
         BillingAddress billingAddress = new BillingAddress();
-        if (request.getBillingaddressRequest().getAddressline1() != null)
-            billingAddress.setBillingaddress(request.getBillingaddressRequest().getAddressline1());
-        if (request.getBillingaddressRequest().getAddressline2() != null)
-            billingAddress.setBillingaddress02(request.getBillingaddressRequest().getAddressline2());
-        if (request.getBillingaddressRequest().getCountryName() != null)
-            billingAddress.setCountry(request.getBillingaddressRequest().getCountryName());
-        if (request.getBillingaddressRequest().getPostcode() != null)
-            billingAddress.setZipcode(request.getBillingaddressRequest().getPostcode());
-        if (request.getBillingaddressRequest().getCityName() != null)
-            billingAddress.setCity(request.getBillingaddressRequest().getCityName());
-        if (request.getBillingaddressRequest().getStreetname() != null)
-            billingAddress.setStreetname(request.getBillingaddressRequest().getStreetname());
+        if(request.getBillingaddressRequest()!=null){
+            if (request.getBillingaddressRequest().getAddressline1() != null)
+                billingAddress.setBillingaddress(request.getBillingaddressRequest().getAddressline1());
+            if (request.getBillingaddressRequest().getAddressline2() != null)
+                billingAddress.setBillingaddress02(request.getBillingaddressRequest().getAddressline2());
+            if (request.getBillingaddressRequest().getCountryName() != null)
+                billingAddress.setCountry(request.getBillingaddressRequest().getCountryName());
+            if (request.getBillingaddressRequest().getPostcode() != null)
+                billingAddress.setZipcode(request.getBillingaddressRequest().getPostcode());
+            if (request.getBillingaddressRequest().getCityName() != null)
+                billingAddress.setCity(request.getBillingaddressRequest().getCityName());
+            if (request.getBillingaddressRequest().getStreetname() != null)
+                billingAddress.setStreetname(request.getBillingaddressRequest().getStreetname());
+        }
+
         if (user.getPersonalinformation().getPhonenumber() != null)
             billingAddress.setPhonenumber(user.getPersonalinformation().getPhonenumber());
         if (user.getPersonalinformation().getFirstnameen() != null)
@@ -235,7 +238,7 @@ public class SupplierController extends BaseController {
 
 
     @GetMapping(value = {"/all"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('Supplier') or hasRole('SUB_Supplier') ")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') ")
     @ApiOperation(value = "get all suppliers without pagination", notes = "Endpoint to get suppliers")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
