@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Services.criteria;
 
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
+import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -96,6 +97,49 @@ public class CriteriaService {
             }
             if (active != null)
                 finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
+            if (deleted != null) {
+                finalPredicate = criteriaBuilder.and(finalPredicate,  criteriaBuilder.or(
+                        criteriaBuilder.equal(user.get("deleted"), deleted),
+                        criteriaBuilder.isNull(user.get("deleted"))
+                ));
+
+            }
+            Q.where(finalPredicate);
+            Q.orderBy(criteriaBuilder.desc(user.get("timestmp")));
+            TypedQuery<users> typedQuery = em.createQuery(Q);
+
+            int usersCount = typedQuery.getResultList().size();
+            typedQuery.setFirstResult(page * size);
+            typedQuery.setMaxResults(size);
+            Pageable pageable = PageRequest.of(page, size);
+
+            return new PageImpl<>(typedQuery.getResultList(), pageable, usersCount);
+
+        } catch (NoResultException ex) {
+            throw new NotFoundException("No data found.");
+        }
+    }
+  public PageImpl<users> UsersSearchCreatiriaRolesListsupplier(int page, int size, Boolean active, Boolean deleted, String search, List<String> roles, users manager) {
+        try {
+            List<Role> userRoles = roleRepository.findByRoleIn(roles.stream().map(RoleEnum::valueOf).collect(Collectors.toList()));
+
+            CriteriaQuery<users> Q = criteriaBuilder.createQuery(users.class);
+            Root<users> user = Q.from(users.class);
+            Q.distinct(true);
+
+            Predicate finalPredicate = user.get("role").in(userRoles);
+
+            if (search != null) {
+                Predicate namePredicate = criteriaBuilder.and(criteriaBuilder.like(criteriaBuilder.lower(user.get("name")), "%" + search.toLowerCase() + "%"));
+                namePredicate = criteriaBuilder.or(criteriaBuilder.like(criteriaBuilder.lower(user.get("email")), "%" + search.toLowerCase() + "%"), namePredicate);
+                namePredicate = criteriaBuilder.or(criteriaBuilder.like(criteriaBuilder.lower(user.get("phonenumber")), "%" + search.toLowerCase() + "%"), namePredicate);
+                namePredicate = criteriaBuilder.or(criteriaBuilder.like(criteriaBuilder.lower(user.get("timestmp").as(String.class)), "%" + search.toLowerCase() + "%"), namePredicate);
+                finalPredicate = criteriaBuilder.and(namePredicate, finalPredicate);
+            }
+            if (active != null)
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
+
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("manager"), manager));
             if (deleted != null) {
                 finalPredicate = criteriaBuilder.and(finalPredicate,  criteriaBuilder.or(
                         criteriaBuilder.equal(user.get("deleted"), deleted),

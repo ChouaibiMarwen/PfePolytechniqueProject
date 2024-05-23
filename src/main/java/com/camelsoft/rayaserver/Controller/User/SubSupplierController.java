@@ -3,6 +3,7 @@ package com.camelsoft.rayaserver.Controller.User;
 import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Auth.PasswordResetToken;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
@@ -61,18 +62,22 @@ public class SubSupplierController extends BaseController {
 
     @GetMapping(value = {"/search_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
-    public ResponseEntity<DynamicResponse> search_admin(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean active) throws IOException {
+    public ResponseEntity<DynamicResponse> search_supplier(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean active) throws IOException {
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         List<String> list = new ArrayList<>(Arrays.asList("ROLE_SUPPLIER", "ROLE_SUB_SUPPLIER"));
-        Page<users> user = this.criteriaService.UsersSearchCreatiriaRolesList(page, size, active, false, name, list );
+        Page<users> user = this.criteriaService.UsersSearchCreatiriaRolesListsupplier(page, size, active, false, name, list,currentuser );
         DynamicResponse ress = new DynamicResponse(user.getContent(), user.getNumber(), user.getTotalElements(), user.getTotalPages());
         return new ResponseEntity<>(ress, HttpStatus.OK);
     }
+
 
 
     @PostMapping(value = {"/add_sub_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     public ResponseEntity<users> add_sub_admin(@RequestBody CustomerSingUpRequest request, @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
         if (request.getPhonenumber() == null)
@@ -132,6 +137,15 @@ public class SubSupplierController extends BaseController {
         // Set user details
         PersonalInformation resultinformation = this.personalInformationService.save(information);
         user.setUsername(username);
+        if(currentuser.getManager() != null && currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUB_SUPPLIER) {
+            user.setManager(currentuser.getManager());
+        }else if(currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUPPLIER){
+            user.setManager(currentuser);
+
+        }else{
+            return new ResponseEntity("you're not a supplier or you don't have manager : ", HttpStatus.NOT_ACCEPTABLE);
+
+        }
         user.setEmail(request.getEmail().toLowerCase());
         user.setPassword(request.getPassword());
         user.setPersonalinformation(resultinformation);
@@ -143,7 +157,6 @@ public class SubSupplierController extends BaseController {
         user.setProfileimage(resource_media);
         // Save the user
         users result = userService.saveSubSupplier(user);
-        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.SUPPLIER_MANAGEMENT,
