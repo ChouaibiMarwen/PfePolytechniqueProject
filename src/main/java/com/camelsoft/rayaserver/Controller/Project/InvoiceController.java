@@ -15,6 +15,7 @@ import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.InvoiceReport;
 import com.camelsoft.rayaserver.Services.Project.InvoiceService;
 import com.camelsoft.rayaserver.Services.Project.ProductService;
+import com.camelsoft.rayaserver.Services.Project.PurshaseOrderService;
 import com.camelsoft.rayaserver.Services.Project.RefundInvoiceService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
@@ -52,9 +53,11 @@ public class InvoiceController extends BaseController {
     private UserService UserServices;
     @Autowired
     private RefundInvoiceService refundInvoiceService;
+    @Autowired
+    private PurshaseOrderService purshaseOrderService;
 
     @GetMapping(value = {"/all_invoice"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all invoice by status for admin", notes = "Endpoint to get vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -266,7 +269,7 @@ public class InvoiceController extends BaseController {
         report.setInvoicepermonth(this.service.countInvoicePerMonth(date, related));
         report.setRefundbymonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS, related));
         report.setPaymentbymonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.UNPAID, related));
-        report.setPurshaseorderrequest(0); // need to added later
+        report.setPurshaseorderrequest(this.purshaseOrderService.countPurchaseOrdersWithCustomerOrSupllier(related));
         report.setRequestdone(0); // need to added later
         report.setRequestpending(0); // need to added later
         report.setSoldcars(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related));

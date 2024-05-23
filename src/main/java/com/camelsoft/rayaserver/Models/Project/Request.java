@@ -34,8 +34,6 @@ public class Request implements Serializable {
     @JoinColumn(name = "user_id_creatorrequest", nullable = false)
     private users creatorrequest;
 
-
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "request_invoices",
             joinColumns =

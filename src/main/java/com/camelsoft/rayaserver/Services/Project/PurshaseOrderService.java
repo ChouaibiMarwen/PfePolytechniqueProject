@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Services.Project;
 
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
@@ -266,6 +267,14 @@ public class PurshaseOrderService {
     }
 
 
+    public Integer countPurchaseOrdersWithCustomerOrSupllier(InvoiceRelated related ) {
+        if(related == InvoiceRelated.CUSTOMER)
+            return this.repository.countByArchiveIsFalseAndCustomerIsNotNull();
+        else {
+            return this.repository.countByArchiveIsFalseAndSupplierIsNotNull();
+        }
+
+    }
 
 
 

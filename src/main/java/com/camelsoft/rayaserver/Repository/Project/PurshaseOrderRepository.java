@@ -64,5 +64,6 @@ public interface PurshaseOrderRepository extends JpaRepository<PurshaseOrder, Lo
             "AND v.archive = false")
     Page<Vehicles> findVehiclesBySupplierAndStatusAndCarvinContaining(Pageable pageable,Supplier supplier, PurshaseOrderStatus status, String vin);
 
-
+    Integer countByArchiveIsFalseAndCustomerIsNotNull();
+    Integer countByArchiveIsFalseAndSupplierIsNotNull();
 }

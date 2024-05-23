@@ -166,7 +166,7 @@ public class RequestController  extends BaseController {
 
 
     @GetMapping(value = {"/all_requests"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('Supplier') or hasRole('SUB_Supplier')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all requests by status for admin", notes = "Endpoint to get requests")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
