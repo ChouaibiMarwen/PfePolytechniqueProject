@@ -218,10 +218,10 @@ public class SupplierController extends BaseController {
         }
         if (request.getUseraddressRequest().getStreetname() != null)
             address.setStreetname(request.getUseraddressRequest().getStreetname());
-
+        address.setUser(user);
         Address addressresult = this.addressServices.save(address);
-        user.getAddresses().add(address);
-        userService.UpdateUser(user);
+        /*user.getAddresses().add(address);
+        userService.UpdateUser(user);*/
 
 
 
