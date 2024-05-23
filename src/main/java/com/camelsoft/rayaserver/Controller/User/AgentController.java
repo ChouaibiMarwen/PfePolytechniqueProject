@@ -4,12 +4,18 @@ import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
+import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
+import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -18,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -25,11 +32,17 @@ import java.io.IOException;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/v1/agents")
-public class AgentController {
+public class AgentController extends BaseController {
     @Autowired
     private UserService userService;
     @Autowired
     private PersonalInformationService personalInformationService;
+
+    @Autowired
+    private FilesStorageServiceImpl filesStorageService;
+
+    @Autowired
+    private UserActionService userActionService;
 
     @PostMapping(value = {"/add"})
     @PreAuthorize("hasRole('ADMIN')")
@@ -41,7 +54,7 @@ public class AgentController {
             @ApiResponse(code = 409, message = "Conflict, phone-number or email or user-name is already exists"),
             @ApiResponse(code = 406, message = "Not Acceptable , the email is not valid")
     })
-    public ResponseEntity<users> add_agent(@RequestBody CustomerSingUpRequest request) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<users> add_agent(@RequestBody CustomerSingUpRequest request,  @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
@@ -105,8 +118,24 @@ public class AgentController {
         user.setEmail(request.getEmail().toLowerCase());
         user.setPassword(request.getPassword());
         user.setPersonalinformation(resultinformation);
+
+        if(file != null){
+            if (!this.filesStorageService.checkformat(file))
+                return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
+            File_model resource_media = filesStorageService.save_file_local(file, "profile");
+            if (resource_media == null)
+                return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
+            user.setProfileimage(resource_media);
+        }
         // Save the user
         users result = userService.saveAgent(user);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
