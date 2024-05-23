@@ -100,7 +100,6 @@ public class SupplierController extends BaseController {
             return new ResponseEntity("last-name-ar", HttpStatus.BAD_REQUEST);
 
         String phonenumber = request.getPhonenumber().replaceAll("[\\s()]", "");
-/*
         if (userService.existbyphonenumber(phonenumber))
             return new ResponseEntity("phone-number", HttpStatus.CONFLICT);
         if (userService.existbyemail(request.getEmail().toLowerCase()))
@@ -108,7 +107,6 @@ public class SupplierController extends BaseController {
         // Check email format
         if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
             return new ResponseEntity("email", HttpStatus.NOT_ACCEPTABLE);
-*/
 
         String name = request.getInformationRequest().getFirstnameen() + request.getInformationRequest().getLastnameen();
         String username = userService.GenerateUserName(name, userService.Count());
@@ -162,12 +160,14 @@ public class SupplierController extends BaseController {
         user.setSupplier(resultsupplier);
 
 
-        if (!this.filesStorageService.checkformat(file))
-            return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
-        File_model resource_media = filesStorageService.save_file_local(file, "profile");
-        if (resource_media == null)
-            return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
-        user.setProfileimage(resource_media);
+        if(file != null){
+            if (!this.filesStorageService.checkformat(file))
+                return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
+            File_model resource_media = filesStorageService.save_file_local(file, "profile");
+            if (resource_media == null)
+                return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
+            user.setProfileimage(resource_media);
+        }
         // Save the user
         users result = userService.saveSupplier(user);
         BillingAddress billingAddress = new BillingAddress();
