@@ -7,5 +7,7 @@ public enum RoleEnum {
     ROLE_SUB_ADMIN,
     ROLE_SUPPLIER,
     ROLE_SUB_SUPPLIER,
+    ROLE_SUB_DEALER,
+    ROLE_SUB_SUB_DEALER,
 
 }

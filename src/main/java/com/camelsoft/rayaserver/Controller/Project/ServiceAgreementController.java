@@ -30,7 +30,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api/v1/requests")
+@RequestMapping(value = "/api/v1/service_agreement")
 public class ServiceAgreementController extends BaseController {
     @Autowired
     private UserActionService userActionService;
@@ -166,7 +166,7 @@ public class ServiceAgreementController extends BaseController {
     }
 
 
-    @GetMapping(value = {"/all_service_arguments_by_purchase_order/{supplierId}"})
+    @GetMapping(value = {"/all_service_arguments_by_supplier/{supplierId}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all Service agreements list by supplier paginated for admin", notes = "Endpoint toget all Service agreements list by supplier paginated")
     @ApiResponses(value = {
@@ -193,7 +193,7 @@ public class ServiceAgreementController extends BaseController {
     }
 
 
-    @GetMapping(value = {"/all_service_arguments_by_purchase_order_paginated/{supplierId}"})
+    @GetMapping(value = {"/all_service_arguments_by_supplier_paginated/{supplierId}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all Service agreements by supplier paginated for admin", notes = "Endpoint toget all Service agreements by supplier paginated")
     @ApiResponses(value = {

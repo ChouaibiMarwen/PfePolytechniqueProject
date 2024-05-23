@@ -98,9 +98,9 @@ public class SubSupplierController extends BaseController {
     @PostMapping(value = {"/add_sub_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     public ResponseEntity<users> add_sub_admin(@RequestBody CustomerSingUpRequest request, @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
-        // Check if email is null
-        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
 
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        // Check if email is null
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
         if (request.getPhonenumber() == null)

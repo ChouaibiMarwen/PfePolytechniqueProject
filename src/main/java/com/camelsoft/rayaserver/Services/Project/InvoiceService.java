@@ -337,7 +337,8 @@ public class InvoiceService {
     }
 
     public long countInvoicesCreatedBySubAdminsAndNotPaid() {
-        return this.repository.countUnpaidOrPartiallyPaidInvoicesByCreatedByRole(RoleEnum.ROLE_SUB_ADMIN);
+        Set<InvoiceStatus> statuses = new HashSet<>(Arrays.asList(InvoiceStatus.PAID, InvoiceStatus.PARTIALLY_PAID));
+        return this.repository.countUnpaidOrPartiallyPaidInvoicesByCreatedByRole(statuses, RoleEnum.ROLE_SUB_ADMIN);
     }
 
 
