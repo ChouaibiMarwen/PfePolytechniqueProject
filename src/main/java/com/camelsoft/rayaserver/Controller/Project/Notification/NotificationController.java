@@ -29,7 +29,7 @@ public class NotificationController  extends BaseController {
 
 
     @GetMapping(value = {"/all_my_notification"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('Supplier') ")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('Supplier') or hasRole('SUB_Supplier') or hasRole('SUB_ADMIN')")
     public ResponseEntity<PaginationResponse> all_my_notification(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
         PaginationResponse result = this.services.allnotificationbyuser(page, size,user);
