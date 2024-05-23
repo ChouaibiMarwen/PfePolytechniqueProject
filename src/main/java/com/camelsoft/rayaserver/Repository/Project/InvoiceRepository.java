@@ -37,7 +37,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     @Query("SELECT COUNT(i) FROM Invoice i WHERE i.status = :status AND i.createdby.role.role = :role")
     long countByStatusAndCreatedByRole(InvoiceStatus status, RoleEnum role);
 
-    @Query("SELECT COUNT(i) FROM Invoice i WHERE i.createdby.role = :role")
+    @Query("SELECT COUNT(i) FROM Invoice i WHERE i.createdby.role.role = :role")
     long countByCreatedByRole(RoleEnum role);
 
     @Query("SELECT COUNT(i) FROM Invoice i " +
