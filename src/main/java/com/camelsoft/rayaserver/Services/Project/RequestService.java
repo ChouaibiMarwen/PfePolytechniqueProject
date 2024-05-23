@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Services.Project;
 
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
@@ -14,9 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
 public class RequestService {
@@ -161,6 +160,26 @@ public class RequestService {
             return this.repository.count();
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+    public Integer countRequestsByUserRoleAndStatus(InvoiceRelated related) {
+        Set<RequestState> state = new HashSet<>(Arrays.asList(RequestState.WAITING, RequestState.IN_PROGRESS));
+        if( InvoiceRelated.SUPPLIER == related )
+            return this.repository.countByCreatorrequestRoleRoleAndStatusIn(RoleEnum.ROLE_SUPPLIER, state);
+        else{
+            return this.repository.countByCreatorrequestRoleRoleAndStatusIn(RoleEnum.ROLE_USER, state);
+        }
+
+    }
+
+    public Integer countDoneRequestsByUserRole(InvoiceRelated related) {
+        Set<RequestState> state = new HashSet<>(Arrays.asList(RequestState.WAITING, RequestState.IN_PROGRESS));
+        if( InvoiceRelated.SUPPLIER == related )
+            return this.repository.countByCreatorrequestRoleRoleAndStatus(RoleEnum.ROLE_SUPPLIER, RequestState.DONE);
+        else{
+            return this.repository.countByCreatorrequestRoleRoleAndStatus(RoleEnum.ROLE_USER, RequestState.DONE);
         }
 
     }

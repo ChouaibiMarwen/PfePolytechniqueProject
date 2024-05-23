@@ -13,10 +13,7 @@ import com.camelsoft.rayaserver.Request.project.InvoiceRequest;
 import com.camelsoft.rayaserver.Request.project.RefundInvoiceRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.InvoiceReport;
-import com.camelsoft.rayaserver.Services.Project.InvoiceService;
-import com.camelsoft.rayaserver.Services.Project.ProductService;
-import com.camelsoft.rayaserver.Services.Project.PurshaseOrderService;
-import com.camelsoft.rayaserver.Services.Project.RefundInvoiceService;
+import com.camelsoft.rayaserver.Services.Project.*;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
@@ -55,6 +52,8 @@ public class InvoiceController extends BaseController {
     private RefundInvoiceService refundInvoiceService;
     @Autowired
     private PurshaseOrderService purshaseOrderService;
+    @Autowired
+    private RequestService requestService;
 
     @GetMapping(value = {"/all_invoice"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
@@ -270,8 +269,8 @@ public class InvoiceController extends BaseController {
         report.setRefundbymonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS, related));
         report.setPaymentbymonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.UNPAID, related));
         report.setPurshaseorderrequest(this.purshaseOrderService.countPurchaseOrdersWithCustomerOrSupllier(related));
-        report.setRequestdone(0); // need to added later
-        report.setRequestpending(0); // need to added later
+        report.setRequestdone(this.requestService.countDoneRequestsByUserRole(related));
+        report.setRequestpending(this.requestService.countRequestsByUserRoleAndStatus(related));
         report.setSoldcars(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related));
         report.setInvoicepermonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.UNPAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS, related));
         //save new action
