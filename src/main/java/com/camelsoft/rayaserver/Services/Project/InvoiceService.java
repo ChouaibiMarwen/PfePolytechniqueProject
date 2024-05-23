@@ -82,6 +82,18 @@ public class InvoiceService {
 
     }
 
+ public DynamicResponse FindAllByStateandsupplier(int page, int size, InvoiceStatus status, InvoiceRelated related,users user) {
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Invoice> pckge = this.repository.findAllByStatusAndArchiveIsFalseAndRelatedAndCreatedby(pg, status, related,user);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
 
     public List<Invoice> findAll() {
         try {
@@ -139,7 +151,7 @@ public class InvoiceService {
             int year = calendar.get(Calendar.YEAR);
 
             // Set the start date to the first day of the specified month
-            calendar.set(year, month - 1, 1, 0, 0, 0);
+            calendar.set(year, month , 1, 0, 0, 0);
             Date startDate = calendar.getTime();
 
             // Set the end date to the last day of the specified month

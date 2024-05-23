@@ -17,6 +17,7 @@ import java.util.Date;
 @Repository
 public interface PurshaseOrderRepository extends JpaRepository<PurshaseOrder, Long> {
     Page<PurshaseOrder> findByArchiveIsFalse(Pageable page);
+
     Page<PurshaseOrder> findByArchiveIsFalseAndSupplier(Pageable page, Supplier supplier);
 
     Page<PurshaseOrder> findByArchiveIsFalseAndStatus(Pageable page, PurshaseOrderStatus status);
