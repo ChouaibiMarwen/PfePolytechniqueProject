@@ -7,6 +7,7 @@ import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Auth.PasswordResetToken;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
+import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
@@ -16,12 +17,15 @@ import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
+import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.auth.PasswordResetTokenServices;
 import com.camelsoft.rayaserver.Services.auth.PrivilegeService;
 import com.camelsoft.rayaserver.Services.criteria.CriteriaService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -58,7 +62,8 @@ public class SubSupplierController extends BaseController {
 
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
-
+    @Autowired
+    private SupplierServices supplierServices;
 
     @GetMapping(value = {"/search_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
@@ -68,6 +73,24 @@ public class SubSupplierController extends BaseController {
         Page<users> user = this.criteriaService.UsersSearchCreatiriaRolesListsupplier(page, size, active, false, name, list,currentuser );
         DynamicResponse ress = new DynamicResponse(user.getContent(), user.getNumber(), user.getTotalElements(), user.getTotalPages());
         return new ResponseEntity<>(ress, HttpStatus.OK);
+    }
+    @GetMapping(value = {"/all"})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') ")
+    @ApiOperation(value = "get all suppliers without pagination", notes = "Endpoint to get suppliers")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
+    })
+    public ResponseEntity<List<UserShortDto>> all(@RequestParam(required = false) Boolean active, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean verified) throws IOException {
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        List<UserShortDto> result = new ArrayList<>() ;
+        if(currentuser.getManager() == null && currentuser.getRole().getRole()==RoleEnum.ROLE_SUPPLIER){
+            result =  this.supplierServices.getAllUsersWithoutPaginationSupplier(active, name, RoleEnum.ROLE_SUPPLIER, verified,currentuser);
+        }else{
+            // need to adjust
+            result =  this.supplierServices.getAllUsersWithoutPaginationSupplier(active, name, RoleEnum.ROLE_SUPPLIER, verified,currentuser);
+
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 

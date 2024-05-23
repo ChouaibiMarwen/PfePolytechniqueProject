@@ -38,14 +38,17 @@ public interface UserRepository extends JpaRepository<users, Long> {
 
     Page<users> findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(Pageable page, Role role, String name, Boolean delete, String userNaMe);
     List<users> findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(Role role, String name, Boolean delete, String userNaMe);
+    List<users> findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseAndManagerOrderByTimestmpDesc(Role role, String name, Boolean delete, String userNaMe,users user);
 
     Page<users> findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseAndVerifiedOrderByTimestmpDesc(Pageable page, Role role, String name, Boolean delete, String userNaMe, Boolean verified);
     List<users> findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseAndVerifiedOrderByTimestmpDesc(Role role, String name, Boolean delete, String userNaMe, Boolean verified);
+    List<users> findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseAndVerifiedAndManagerOrderByTimestmpDesc(Role role, String name, Boolean delete, String userNaMe, Boolean verified,users user);
 
 
 
     Page<users> findByRoleAndActiveAndDeletedOrderByTimestmpDesc(Pageable page, Role role, Boolean active, Boolean deleted);
     List<users> findByRoleAndActiveAndDeletedOrderByTimestmpDesc(Role role, Boolean active, Boolean deleted);
+    List<users> findByRoleAndActiveAndDeletedAndManagerOrderByTimestmpDesc(Role role, Boolean active, Boolean deleted,users manager);
 
 
     Page<users> findByRoleAndDeletedOrderByTimestmpDesc(Pageable page, Role role, Boolean deleted);
@@ -54,14 +57,17 @@ public interface UserRepository extends JpaRepository<users, Long> {
 
     Page<users> findByRoleAndActiveAndDeletedAndVerifiedOrderByTimestmpDesc(Pageable page, Role role, Boolean active, Boolean deleted, Boolean verified);
     List<users> findByRoleAndActiveAndDeletedAndVerifiedOrderByTimestmpDesc(Role role, Boolean active, Boolean deleted, Boolean verified);
+     List<users> findByRoleAndActiveAndDeletedAndVerifiedAndManagerOrderByTimestmpDesc(Role role, Boolean active, Boolean deleted, Boolean verified,users manger);
 
     Page<users> findByRoleAndActiveOrderBySupplier_RatingsDesc(Pageable page, Role role, Boolean active);
 
     Page<users> findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(Pageable page, Role role, Boolean active, String name, Boolean deleted);
     List<users> findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(Role role, Boolean active, String name, Boolean deleted);
+    List<users> findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedAndManagerOrderByTimestmpDesc(Role role, Boolean active, String name, Boolean deleted,users user);
 
     Page<users> findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedAndVerifiedOrderByTimestmpDesc(Pageable page, Role role, Boolean active, String name, Boolean deleted, Boolean verified);
     List<users> findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedAndVerifiedOrderByTimestmpDesc(Role role, Boolean active, String name, Boolean deleted, Boolean verified);
+    List<users> findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedAndVerifiedAndManagerOrderByTimestmpDesc (Role role, Boolean active, String name, Boolean deleted, Boolean verified,users manager);
 
     Page<users> findAllByRoleAndNameContainingIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(Pageable page, Role role, String name, Boolean delete, String userName);
 

@@ -37,7 +37,7 @@ public class NotificationController  extends BaseController {
     }
 
     @GetMapping(value = {"/all_my_notification_waiting"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('Supplier')  or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')  or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN')")
     public ResponseEntity<PaginationResponse> all_my_notification_waiting(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
         PaginationResponse result = this.services.allnotificationbyuser(page, size,user);
@@ -45,7 +45,7 @@ public class NotificationController  extends BaseController {
     }
 
     @PatchMapping(value = {"/read_my_waiting_notification"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('Supplier')  or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')  or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN')")
     public ResponseEntity<List<Notification>> read_my_waiting_notification (@RequestParam Long[] notificationid) throws IOException {
 
         List<Notification> result = new ArrayList<>();
