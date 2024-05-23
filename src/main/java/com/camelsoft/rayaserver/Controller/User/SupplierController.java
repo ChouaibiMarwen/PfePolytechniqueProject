@@ -236,7 +236,7 @@ public class SupplierController extends BaseController {
 
 
     @GetMapping(value = {"/all"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') ")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all suppliers without pagination", notes = "Endpoint to get suppliers")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),

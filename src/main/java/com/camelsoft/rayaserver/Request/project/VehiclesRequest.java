@@ -1,9 +1,9 @@
 package com.camelsoft.rayaserver.Request.project;
 
-import com.camelsoft.rayaserver.Enum.Project.Vehicles.BodyStyle;
-import com.camelsoft.rayaserver.Enum.Project.Vehicles.FuelType;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.*;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,4 +19,11 @@ public class VehiclesRequest {
     private Set<String> interiorfeatures = new HashSet<>();
     private String description;
     private Integer stock = 0;
+    private String carmake;
+    private String mileage;
+    private String year;
+    private String doors;
+    private AvailiabilityEnum availiability;
+    private ConditionEnum condition;
+    private TransmissionTypeEnum transmissiontype;
 }

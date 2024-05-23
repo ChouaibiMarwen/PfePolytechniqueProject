@@ -262,5 +262,24 @@ public class FirstTimeInitializer implements CommandLineRunner {
             userService.saveUser(users);
         }
 
+        if (!this.userService.existbyemail("sub_dealer@camel-soft.com")) {
+            logger.info("No users found creating some users ...");
+            PersonalInformation personalInformation = new PersonalInformation();
+            personalInformation.setFirstnameen("CAMELSOFTDEALER");
+            personalInformation.setFirstnamear("التاجر");
+            personalInformation.setLastnameen("SUB_DEALER");
+            personalInformation.setLastnamear("تاجر");
+            PersonalInformation information = this.personalInformationService.save(personalInformation);
+            users users = new users(
+                    "CAMELSOFTDEALER",
+                    "sub_dealer@camel-soft.com",
+                    "aze",
+                    "+21690000009",
+                    information
+            );
+
+            userService.saveSubDealer(users);
+        }
+
     }
 }

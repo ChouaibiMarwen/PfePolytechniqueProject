@@ -2,6 +2,9 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.ConditionEnum;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.TransmissionTypeEnum;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.VehiclesPostStatus;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.File.File_model;
@@ -153,7 +156,7 @@ public class VehiclesController extends BaseController {
 
 
     @PostMapping(value = {"/add_vehicle"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')" )
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -177,7 +180,15 @@ public class VehiclesController extends BaseController {
                 request.getInteriorfeatures(),
                 request.getDescription(),
                 request.getStock(),
-                supplier
+                supplier,
+                request.getCarmake(),
+                request.getMileage(),
+                request.getYear(),
+                request.getDoors(),
+                request.getAvailiability(),
+                request.getCondition(),
+                request.getTransmissiontype()
+
         );
         Vehicles result = this.Services.Save(model);
 
@@ -191,7 +202,7 @@ public class VehiclesController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_vehicle/{id_vehicle}"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "update vehicles for supplier", notes = "Endpoint to update vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully update"),
@@ -224,7 +235,7 @@ public class VehiclesController extends BaseController {
     }
 
     @GetMapping(value = {"/{id_vehicle}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get vehicles by id for supplier", notes = "Endpoint get vehicles by id")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully update"),
@@ -281,7 +292,7 @@ public class VehiclesController extends BaseController {
 
 
     @PostMapping(value = {"/add_vehicle_price_financing/{id_vehicle}"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -324,7 +335,7 @@ public class VehiclesController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_vehicle_price_financing/{id_vehicle_price_financing}"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "update vehicles for supplier", notes = "Endpoint to update vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated"),
@@ -358,7 +369,7 @@ public class VehiclesController extends BaseController {
     }
 
     @PostMapping(value = {"/add_vehicle_media/{id_vehicle}"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -441,7 +452,7 @@ public class VehiclesController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_vehicle_media/{id_media}"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -515,7 +526,7 @@ public class VehiclesController extends BaseController {
     }
 
     @PatchMapping(value = {"delete_vehicle/{id_vehicle}"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "delete vehicle for supplier", notes = "Endpoint delete vehicles by supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully deleted"),

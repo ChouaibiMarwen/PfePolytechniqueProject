@@ -1,8 +1,6 @@
 package com.camelsoft.rayaserver.Models.Project;
 
-import com.camelsoft.rayaserver.Enum.Project.Vehicles.BodyStyle;
-import com.camelsoft.rayaserver.Enum.Project.Vehicles.FuelType;
-import com.camelsoft.rayaserver.Enum.Project.Vehicles.VehiclesPostStatus;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.*;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,6 +24,22 @@ public class Vehicles implements Serializable {
     private String carmodel;
     @Column(name = "color")
     private String color;
+
+    @Column(name = "carmake")
+    private String carmake;
+    @Column(name = "mileage")
+    private String mileage;
+    @Column(name = "year")
+    private String year;
+    @Column(name = "doors")
+    private String doors;
+    @Column(name = "availiability")
+    private AvailiabilityEnum availiability;
+    @Column(name = "condition")
+    private ConditionEnum condition;
+    @Column(name = "transmissiontype")
+    private TransmissionTypeEnum transmissiontype;
+
     @Transient
     private Double price;
     @Column(name = "carvin")
@@ -76,6 +90,8 @@ public class Vehicles implements Serializable {
         this.timestamp = new Date();
     }
 
+
+
     public Vehicles(String carmodel, String color, String carvin, Double enginesize, FuelType fueltype, BodyStyle bodystyle, Set<String> exteriorfeatures, Set<String> interiorfeatures, String description, Integer stock, Supplier supplier) {
         this.carmodel = carmodel;
         this.color = color;
@@ -90,6 +106,29 @@ public class Vehicles implements Serializable {
         this.supplier = supplier;
         this.timestamp = new Date();
     }
+
+    public Vehicles(String carmodel, String color, String carvin, Double enginesize, FuelType fueltype, BodyStyle bodystyle, Set<String> exteriorfeatures, Set<String> interiorfeatures, String description, Integer stock, Supplier supplier, String carmake,String mileage,String year, String doors,AvailiabilityEnum availiability, ConditionEnum condition, TransmissionTypeEnum transmissiontype) {
+        this.carmodel = carmodel;
+        this.color = color;
+        this.carvin = carvin;
+        this.enginesize = enginesize;
+        this.fueltype = fueltype;
+        this.bodystyle = bodystyle;
+        this.exteriorfeatures = exteriorfeatures;
+        this.interiorfeatures = interiorfeatures;
+        this.description = description;
+        this.stock = stock;
+        this.supplier = supplier;
+        this.carmake = carmake;
+        this.mileage = mileage;
+        this.year = year;
+        this.doors = doors;
+        this.availiability = availiability;
+        this.condition= condition;
+        this.transmissiontype = transmissiontype;
+        this.timestamp = new Date();
+    }
+
 
     public Integer getStock() {
         return stock;
@@ -243,5 +282,62 @@ public class Vehicles implements Serializable {
 
     public void setPurchaseOrder(Set<PurshaseOrder> purchaseOrder) {
         this.purchaseOrder = purchaseOrder;
+    }
+
+
+    public String getCarmake() {
+        return carmake;
+    }
+
+    public void setCarmake(String carmake) {
+        this.carmake = carmake;
+    }
+
+    public String getMileage() {
+        return mileage;
+    }
+
+    public void setMileage(String mileage) {
+        this.mileage = mileage;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getDoors() {
+        return doors;
+    }
+
+    public void setDoors(String doors) {
+        this.doors = doors;
+    }
+
+    public AvailiabilityEnum getAvailiability() {
+        return availiability;
+    }
+
+    public void setAvailiability(AvailiabilityEnum availiability) {
+        this.availiability = availiability;
+    }
+
+    public ConditionEnum getCondition() {
+        return condition;
+    }
+
+    public void setCondition(ConditionEnum condition) {
+        this.condition = condition;
+    }
+
+    public TransmissionTypeEnum getTransmissiontype() {
+        return transmissiontype;
+    }
+
+    public void setTransmissiontype(TransmissionTypeEnum transmissiontype) {
+        this.transmissiontype = transmissiontype;
     }
 }
