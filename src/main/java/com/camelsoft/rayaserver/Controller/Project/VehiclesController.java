@@ -81,7 +81,7 @@ public class VehiclesController extends BaseController {
 
     @GetMapping(value = {"/all_vehicles_supplier"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
-    @ApiOperation(value = "get all vehicles for admin", notes = "Endpoint to get vehicles")
+    @ApiOperation(value = "get all vehicles for  supplier ", notes = "Endpoint to get vehicles for supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
@@ -585,7 +585,7 @@ public class VehiclesController extends BaseController {
     }
 
 
-    @DeleteMapping(value = {"/remove_media_vehicle/{vehicleId}/{id_media}"})
+    @PatchMapping(value = {"/remove_media_vehicle/{vehicleId}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
     @ApiOperation(value = "remove vehicle media", notes = "Endpoint to delete vehicle's media")
     @ApiResponses(value = {
@@ -593,11 +593,7 @@ public class VehiclesController extends BaseController {
             @ApiResponse(code = 404, message = "Not found, check the media id"),
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier, admin or user")
     })
-    public ResponseEntity<Vehicles> remove_media_vehicle(@PathVariable Long vehicleId, @PathVariable Long id_media) {
-        VehiclesMedia vehiclesmedia = this.vehiclesMediaService.FindById(id_media);
-        if (vehiclesmedia == null)
-            return new ResponseEntity("vehicle media " + id_media + " not found in the system", HttpStatus.NOT_FOUND);
-
+    public ResponseEntity<Vehicles> remove_media_vehicle(@PathVariable Long vehicleId) {
         Vehicles vehicle = this.Services.FindById(vehicleId);
         if (vehicle == null) {
             return new ResponseEntity("Vehicle with id: " + vehicleId + " is not found", HttpStatus.NOT_FOUND);
