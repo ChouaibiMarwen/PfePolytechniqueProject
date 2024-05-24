@@ -131,17 +131,17 @@ public class MediaController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = {"/remove_media_vehicle/{vehicleId}/{id_media}"})
+    @DeleteMapping(value = {"/remove_photo_vehicle/{vehicleId}/{id_photo}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
-    @ApiOperation(value = "remove vehicle media", notes = "Endpoint to delete vehicle's media")
+    @ApiOperation(value = "remove vehicle image ", notes = "Endpoint to delete vehicle's image")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully deleted"),
             @ApiResponse(code = 404, message = "Not found, check the media id"),
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier, admin or user")
     })
-    public ResponseEntity<String> remove_media_vehicle(@PathVariable Long vehicleId, @PathVariable Long id_media) {
+    public ResponseEntity<String> remove_media_vehicle(@PathVariable Long vehicleId, @PathVariable Long id_photo) {
         try {
-            if (id_media == null) {
+            if (id_photo == null) {
                 return new ResponseEntity<>("fileId is null", HttpStatus.BAD_REQUEST);
             }
 
@@ -154,30 +154,30 @@ public class MediaController extends BaseController {
             File_model model = null;
             boolean found = false;
 
-            if (media.getFrontviewimage() != null && media.getFrontviewimage().getId().equals(id_media)) {
+            if (media.getFrontviewimage() != null && media.getFrontviewimage().getId().equals(id_photo)) {
                 model = media.getFrontviewimage();
                 media.setFrontviewimage(null);
                 found = true;
-            } else if (media.getRearviewimage() != null && media.getRearviewimage().getId().equals(id_media)) {
+            } else if (media.getRearviewimage() != null && media.getRearviewimage().getId().equals(id_photo)) {
                 model = media.getRearviewimage();
                 media.setRearviewimage(null);
                 found = true;
-            } else if (media.getInteriorviewimage() != null && media.getInteriorviewimage().getId().equals(id_media)) {
+            } else if (media.getInteriorviewimage() != null && media.getInteriorviewimage().getId().equals(id_photo)) {
                 model = media.getInteriorviewimage();
                 media.setInteriorviewimage(null);
                 found = true;
-            } else if (media.getSideviewimageleft() != null && media.getSideviewimageleft().getId().equals(id_media)) {
+            } else if (media.getSideviewimageleft() != null && media.getSideviewimageleft().getId().equals(id_photo)) {
                 model = media.getSideviewimageleft();
                 media.setSideviewimageleft(null);
                 found = true;
-            } else if (media.getSideviewimageright() != null && media.getSideviewimageright().getId().equals(id_media)) {
+            } else if (media.getSideviewimageright() != null && media.getSideviewimageright().getId().equals(id_photo)) {
                 model = media.getSideviewimageright();
                 media.setSideviewimageright(null);
                 found = true;
             } else {
                 Set<File_model> additionalViewImages = media.getAdditionalviewimages();
                 for (File_model addFile : additionalViewImages) {
-                    if (addFile.getId().equals(id_media)) {
+                    if (addFile.getId().equals(id_photo)) {
                         model = addFile;
                         additionalViewImages.remove(addFile);
                         found = true;
@@ -190,7 +190,7 @@ public class MediaController extends BaseController {
                 return new ResponseEntity<>("No media with that ID belongs to the specified vehicle", HttpStatus.NOT_FOUND);
             }
             this.vehiclesMediaService.Update(media);
-            this.filesStorageService.delete_file_by_path_local(model.getUrl(), id_media);
+            this.filesStorageService.delete_file_by_path_local(model.getUrl(), id_photo);
 
             return new ResponseEntity<>("Media deleted successfully", HttpStatus.OK);
         } catch (Exception e) {

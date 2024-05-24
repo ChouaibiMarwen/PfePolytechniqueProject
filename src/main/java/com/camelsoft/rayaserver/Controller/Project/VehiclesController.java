@@ -550,6 +550,8 @@ public class VehiclesController extends BaseController {
 
 
 
+
+
     @PatchMapping(value = {"delete_vehicle/{id_vehicle}"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "delete vehicle for supplier", notes = "Endpoint delete vehicles by supplier")
@@ -583,4 +585,28 @@ public class VehiclesController extends BaseController {
     }
 
 
+    @DeleteMapping(value = {"/remove_media_vehicle/{vehicleId}/{id_media}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
+    @ApiOperation(value = "remove vehicle media", notes = "Endpoint to delete vehicle's media")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted"),
+            @ApiResponse(code = 404, message = "Not found, check the media id"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not a supplier, admin or user")
+    })
+    public ResponseEntity<Vehicles> remove_media_vehicle(@PathVariable Long vehicleId, @PathVariable Long id_media) {
+        VehiclesMedia vehiclesmedia = this.vehiclesMediaService.FindById(id_media);
+        if (vehiclesmedia == null)
+            return new ResponseEntity("vehicle media " + id_media + " not found in the system", HttpStatus.NOT_FOUND);
+
+        Vehicles vehicle = this.Services.FindById(vehicleId);
+        if (vehicle == null) {
+            return new ResponseEntity("Vehicle with id: " + vehicleId + " is not found", HttpStatus.NOT_FOUND);
+        }
+       // VehiclesMedia media = vehicle.getCarimages();
+        vehicle.setCarimages(null);
+       Vehicles result = this.Services.Update(vehicle);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }
+
+
