@@ -80,7 +80,7 @@ public class MediaController extends BaseController {
         user.setProfileimage(resource_media);
         users result = userService.UpdateUser(user);
         if (oldimage != null)
-            this.filesStorageService.delete_file_by_path_from_cdn(oldimage.getUrl(), oldimage.getId());
+            this.filesStorageService.delete_file_by_path_local(oldimage.getUrl(), oldimage.getId());
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.PROFILE_MANAGEMENT,
