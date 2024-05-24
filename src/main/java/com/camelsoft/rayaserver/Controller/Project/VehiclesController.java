@@ -33,6 +33,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
@@ -421,7 +422,8 @@ public class VehiclesController extends BaseController {
             }
         }
         if (this.filesStorageService.checkformatList(request.getAdditionalviewimages())) {
-            additionalviewimages = filesStorageService.save_all(request.getAdditionalviewimages(), "vehicles");
+            List<MultipartFile> fileList = new ArrayList<>(request.getAdditionalviewimages());
+            additionalviewimages = filesStorageService.save_all_local(fileList, "vehicles");
             if (additionalviewimages == null || additionalviewimages.isEmpty()) {
                 return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
             }
