@@ -342,4 +342,18 @@ public class InvoiceService {
     }
 
 
+    public DynamicResponse getInvoicesByUser(int page, int size, users user) {
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Invoice> pckge = this.repository.findByCreatedbyOrRelatedto(user, user,pg);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+        }
+
+
+
 }

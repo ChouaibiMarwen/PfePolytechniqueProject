@@ -52,7 +52,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
             "AND i.archive = false " +
             "AND i.timestamp BETWEEN :startDate AND :endDate " +
             "AND i.createdby.role.role = :role")
-    List<Invoice> findByStatusAndArchiveIsFalseAndTimestampBetweenAndCreatedByRole(
-            InvoiceStatus status, Date startDate, Date endDate, RoleEnum role
-    );
+    List<Invoice> findByStatusAndArchiveIsFalseAndTimestampBetweenAndCreatedByRole(InvoiceStatus status, Date startDate, Date endDate, RoleEnum role);
+
+    Page<Invoice> findByCreatedbyOrRelatedto(users user,users userRelated ,Pageable pageable);
 }
