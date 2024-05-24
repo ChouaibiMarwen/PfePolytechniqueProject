@@ -6,7 +6,6 @@ import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.Project.VehiclesMedia;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Request.project.VehiclesMediaRequest;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.VehiclesMediaService;
 import com.camelsoft.rayaserver.Services.Project.VehiclesService;
@@ -25,13 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @RestController
@@ -138,7 +131,7 @@ public class MediaController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = {"/remove_media_vehicle/{vehicleId}/{fileId}"})
+    @DeleteMapping(value = {"/remove_media_vehicle/{vehicleId}/{id_media}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
     @ApiOperation(value = "remove vehicle media", notes = "Endpoint to delete vehicle's media")
     @ApiResponses(value = {
@@ -146,9 +139,9 @@ public class MediaController extends BaseController {
             @ApiResponse(code = 404, message = "Not found, check the media id"),
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier, admin or user")
     })
-    public ResponseEntity<String> remove_media_vehicle(@PathVariable Long vehicleId, @PathVariable Long fileId) {
+    public ResponseEntity<String> remove_media_vehicle(@PathVariable Long vehicleId, @PathVariable Long id_media) {
         try {
-            if (fileId == null) {
+            if (id_media == null) {
                 return new ResponseEntity<>("fileId is null", HttpStatus.BAD_REQUEST);
             }
 
@@ -161,30 +154,30 @@ public class MediaController extends BaseController {
             File_model model = null;
             boolean found = false;
 
-            if (media.getFrontviewimage() != null && media.getFrontviewimage().getId().equals(fileId)) {
+            if (media.getFrontviewimage() != null && media.getFrontviewimage().getId().equals(id_media)) {
                 model = media.getFrontviewimage();
                 media.setFrontviewimage(null);
                 found = true;
-            } else if (media.getRearviewimage() != null && media.getRearviewimage().getId().equals(fileId)) {
+            } else if (media.getRearviewimage() != null && media.getRearviewimage().getId().equals(id_media)) {
                 model = media.getRearviewimage();
                 media.setRearviewimage(null);
                 found = true;
-            } else if (media.getInteriorviewimage() != null && media.getInteriorviewimage().getId().equals(fileId)) {
+            } else if (media.getInteriorviewimage() != null && media.getInteriorviewimage().getId().equals(id_media)) {
                 model = media.getInteriorviewimage();
                 media.setInteriorviewimage(null);
                 found = true;
-            } else if (media.getSideviewimageleft() != null && media.getSideviewimageleft().getId().equals(fileId)) {
+            } else if (media.getSideviewimageleft() != null && media.getSideviewimageleft().getId().equals(id_media)) {
                 model = media.getSideviewimageleft();
                 media.setSideviewimageleft(null);
                 found = true;
-            } else if (media.getSideviewimageright() != null && media.getSideviewimageright().getId().equals(fileId)) {
+            } else if (media.getSideviewimageright() != null && media.getSideviewimageright().getId().equals(id_media)) {
                 model = media.getSideviewimageright();
                 media.setSideviewimageright(null);
                 found = true;
             } else {
                 Set<File_model> additionalViewImages = media.getAdditionalviewimages();
                 for (File_model addFile : additionalViewImages) {
-                    if (addFile.getId().equals(fileId)) {
+                    if (addFile.getId().equals(id_media)) {
                         model = addFile;
                         additionalViewImages.remove(addFile);
                         found = true;
@@ -197,7 +190,7 @@ public class MediaController extends BaseController {
                 return new ResponseEntity<>("No media with that ID belongs to the specified vehicle", HttpStatus.NOT_FOUND);
             }
             this.vehiclesMediaService.Update(media);
-            this.filesStorageService.delete_file_by_path_local(model.getUrl(), fileId);
+            this.filesStorageService.delete_file_by_path_local(model.getUrl(), id_media);
 
             return new ResponseEntity<>("Media deleted successfully", HttpStatus.OK);
         } catch (Exception e) {
