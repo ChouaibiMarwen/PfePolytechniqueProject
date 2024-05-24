@@ -155,7 +155,6 @@ public class VehiclesController extends BaseController {
     }
 
 
-
     @PostMapping(value = {"/add_vehicle"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')" )
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")
