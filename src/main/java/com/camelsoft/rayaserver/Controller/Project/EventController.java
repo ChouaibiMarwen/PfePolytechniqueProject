@@ -61,7 +61,7 @@ public class EventController extends BaseController {
 
 
     @GetMapping(value = {"/all_events_by_title"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')  or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all events for admin by name", notes = "Endpoint to get events by name and character")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -84,7 +84,7 @@ public class EventController extends BaseController {
     }
 
     @GetMapping(value = {"/all_events_by_title_and_status_paginated"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')  or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all events for admin by title paginated ", notes = "Endpoint to get events by name and character paginated ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -106,7 +106,7 @@ public class EventController extends BaseController {
     }
 
     @GetMapping(value = {"/all_events_by_title_and_date_paginated"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all events for admin by title and date paginated ", notes = "Endpoint to get events by name character and date paginated ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -264,7 +264,7 @@ public class EventController extends BaseController {
     }
 
     @GetMapping(value = {"/event/{id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')  or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get event by id for admin ", notes = "Endpoint to get event by id")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
