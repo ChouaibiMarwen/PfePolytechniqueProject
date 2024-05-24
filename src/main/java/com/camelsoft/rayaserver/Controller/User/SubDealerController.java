@@ -77,7 +77,7 @@ public class SubDealerController extends BaseController {
             @ApiResponse(code = 409, message = "Conflict, phone-number or email or user-name is already exists"),
             @ApiResponse(code = 406, message = "Not Acceptable , the email is not valid")
     })
-    public ResponseEntity<users> add_sub_dealer(@RequestBody SupplierSingUpRequest request, @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<users> add_sub_dealer(@RequestBody SupplierSingUpRequest request) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
@@ -152,14 +152,6 @@ public class SubDealerController extends BaseController {
         user.setPersonalinformation(resultinformation);
         user.setSupplier(resultsupplier);
 
-        if(file != null){
-            if (!this.filesStorageService.checkformat(file))
-                return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
-            File_model resource_media = filesStorageService.save_file_local(file, "profile");
-            if (resource_media == null)
-                return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
-            user.setProfileimage(resource_media);
-        }
         users result = userService.saveSubDealer(user);
         BillingAddress billingAddress = new BillingAddress();
         if(request.getBillingaddressRequest()!=null){
