@@ -157,4 +157,5 @@ public class CustomerController extends BaseController {
         this.userActionService.Save(action);
         return new ResponseEntity<>(this.customerService.getAllUsersWithoutPagination(active, name, RoleEnum.ROLE_USER, verified), HttpStatus.OK);
     }
+
 }

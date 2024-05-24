@@ -8,6 +8,8 @@ import com.camelsoft.rayaserver.Models.Project.VehiclesMedia;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.VehiclesMediaRequest;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
+import com.camelsoft.rayaserver.Services.Project.VehiclesMediaService;
+import com.camelsoft.rayaserver.Services.Project.VehiclesService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
@@ -23,8 +25,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @RestController
@@ -38,6 +45,12 @@ public class MediaController extends BaseController {
     private FilesStorageServiceImpl filesStorageService;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private VehiclesService vehiclesService;
+
+    @Autowired
+    private VehiclesMediaService vehiclesMediaService;
 
     @DeleteMapping(value = {"/remove_media/{id_file}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
@@ -123,6 +136,74 @@ public class MediaController extends BaseController {
         );
         this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = {"/remove_media_vehicle/{vehicleId}/{fileId}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
+    @ApiOperation(value = "remove vehicle media", notes = "Endpoint to delete vehicle's media")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted"),
+            @ApiResponse(code = 404, message = "Not found, check the media id"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not a supplier, admin or user")
+    })
+    public ResponseEntity<String> remove_media_vehicle(@PathVariable Long vehicleId, @PathVariable Long fileId) {
+        try {
+            if (fileId == null) {
+                return new ResponseEntity<>("fileId is null", HttpStatus.BAD_REQUEST);
+            }
+
+            Vehicles vehicle = this.vehiclesService.FindById(vehicleId);
+            if (vehicle == null) {
+                return new ResponseEntity<>("Vehicle with id: " + vehicleId + " is not found", HttpStatus.NOT_FOUND);
+            }
+
+            VehiclesMedia media = vehicle.getCarimages();
+            File_model model = null;
+            boolean found = false;
+
+            if (media.getFrontviewimage() != null && media.getFrontviewimage().getId().equals(fileId)) {
+                model = media.getFrontviewimage();
+                media.setFrontviewimage(null);
+                found = true;
+            } else if (media.getRearviewimage() != null && media.getRearviewimage().getId().equals(fileId)) {
+                model = media.getRearviewimage();
+                media.setRearviewimage(null);
+                found = true;
+            } else if (media.getInteriorviewimage() != null && media.getInteriorviewimage().getId().equals(fileId)) {
+                model = media.getInteriorviewimage();
+                media.setInteriorviewimage(null);
+                found = true;
+            } else if (media.getSideviewimageleft() != null && media.getSideviewimageleft().getId().equals(fileId)) {
+                model = media.getSideviewimageleft();
+                media.setSideviewimageleft(null);
+                found = true;
+            } else if (media.getSideviewimageright() != null && media.getSideviewimageright().getId().equals(fileId)) {
+                model = media.getSideviewimageright();
+                media.setSideviewimageright(null);
+                found = true;
+            } else {
+                Set<File_model> additionalViewImages = media.getAdditionalviewimages();
+                for (File_model addFile : additionalViewImages) {
+                    if (addFile.getId().equals(fileId)) {
+                        model = addFile;
+                        additionalViewImages.remove(addFile);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!found) {
+                return new ResponseEntity<>("No media with that ID belongs to the specified vehicle", HttpStatus.NOT_FOUND);
+            }
+            this.vehiclesMediaService.Update(media);
+            this.filesStorageService.delete_file_by_path_local(model.getUrl(), fileId);
+
+            return new ResponseEntity<>("Media deleted successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error deleting media: ", e);
+            return new ResponseEntity<>("Error deleting media", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
