@@ -54,7 +54,7 @@ public class AgentController extends BaseController {
             @ApiResponse(code = 409, message = "Conflict, phone-number or email or user-name is already exists"),
             @ApiResponse(code = 406, message = "Not Acceptable , the email is not valid")
     })
-    public ResponseEntity<users> add_agent(@RequestBody CustomerSingUpRequest request,  @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<users> add_agent(@ModelAttribute CustomerSingUpRequest request,  @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
