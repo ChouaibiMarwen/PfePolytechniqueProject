@@ -202,7 +202,7 @@ public class UsersCategoryController extends BaseController {
         UsersCategory result = this.service.Save(category);
         //save new action
         UserAction action = new UserAction(
-                UserActionsEnum.EVENT_MANAGEMENT,
+                UserActionsEnum.USERS_CATEGORIES_MANAGEMENT,
                 currentuser
         );
         this.userActionService.Save(action);
@@ -255,7 +255,7 @@ public class UsersCategoryController extends BaseController {
 
         // Save new action
         UserAction action = new UserAction(
-                UserActionsEnum.EVENT_MANAGEMENT,
+                UserActionsEnum.USERS_CATEGORIES_MANAGEMENT,
                 currentUser
         );
         this.userActionService.Save(action);

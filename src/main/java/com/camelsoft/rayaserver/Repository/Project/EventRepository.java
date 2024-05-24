@@ -5,6 +5,7 @@ import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.Project.Product;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
+import com.camelsoft.rayaserver.Models.User.users;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,6 +24,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page, Date date);
 
     Page<Event> findByAssignedtoContaining(Pageable page, RoleEnum role);
+
+    List<Event> findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContains(RoleEnum role, users user);
+    Page<Event> findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContains(Pageable page , RoleEnum role, users user);
 
 
 

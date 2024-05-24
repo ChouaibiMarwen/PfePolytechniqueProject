@@ -10,6 +10,7 @@ import com.camelsoft.rayaserver.Models.DTO.PurchaseOrderDto;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.UsersCategory;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.EventRequest;
 import com.camelsoft.rayaserver.Request.project.LoanRequest;
@@ -17,6 +18,7 @@ import com.camelsoft.rayaserver.Request.project.RequestOfEvents;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.EventService;
+import com.camelsoft.rayaserver.Services.Project.UserCategoryService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
@@ -53,6 +55,9 @@ public class EventController extends BaseController {
     private RoleService roleService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
+
+    @Autowired
+    private UserCategoryService userCategoryService;
 
 
     @GetMapping(value = {"/all_events_by_title"})
@@ -124,7 +129,7 @@ public class EventController extends BaseController {
 
 
     @GetMapping(value = {"/all_events_by_role_assignedto"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all events  by assignedto role paginated ", notes = "Endpoint to get events by  by assignedto role paginated ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -145,6 +150,55 @@ public class EventController extends BaseController {
 
     }
 
+    @GetMapping(value = {"/user_events_paginated/{userId}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get all user's events paginated ", notes = "Endpoint to get all user's events paginated ")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> user_events(@PathVariable Long userId , @RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        users user = userService.findById(userId);
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(this.service.getEventsForUserPg(page, size ,user), HttpStatus.OK);
+
+    }
+
+    @GetMapping(value = {"/user_events_List/{userId}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get all user's events paginated ", notes = "Endpoint to get all user's events paginated ")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<List<Event>> user_events_List(@PathVariable Long userId , @RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        users user = userService.findById(userId);
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(this.service.getEventsForUserList(user), HttpStatus.OK);
+
+    }
 
 
     @PostMapping(value = {"/add_event"})
@@ -177,7 +231,6 @@ public class EventController extends BaseController {
                 return ResponseEntity.badRequest().body(null);
             }
         }
-
         Event  event  = new Event(
                 request.getTitle(),
                 request.getDescription(),
@@ -187,6 +240,20 @@ public class EventController extends BaseController {
                 request.getStatus()
         );
         Event result = this.service.Save(event);
+        if(!request.getCategoriesId().isEmpty()){
+            for (Long categoryid : request.getCategoriesId()) {
+                UsersCategory cat = this.userCategoryService.FindById(categoryid);
+                if(cat == null)
+                    return new ResponseEntity("category with id: " + categoryid + " is not found", HttpStatus.NOT_FOUND);
+                if(!cat.getUsers().isEmpty()){
+                    for(users u : cat.getUsers()){
+                        u.getEvents().add(event);
+                        this.userService.UpdateUser(u);
+                    }
+                }
+
+            }
+        }
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.EVENT_MANAGEMENT,
@@ -263,8 +330,8 @@ public class EventController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity<Event> updateevnt( @PathVariable Long idEvent,  @ModelAttribute RequestOfEvents request,@RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
-        users user = userService.findByUserName(getCurrentUser().getUsername());
-        if (user == null)
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         boolean exist = this.service.ExistById(idEvent);
         if(!exist)
@@ -277,8 +344,6 @@ public class EventController extends BaseController {
 
             if(event.getAttachment() != null){
                 File_model model = this.filesStorageService.findbyid(event.getAttachment().getId());
-                /*if (model == null)
-                    return new ResponseEntity("media si not found in the system", HttpStatus.NOT_FOUND);*/
                 this.filesStorageService.delete_file_by_path_from_cdn(model.getUrl(), event.getAttachment().getId());
             }
 
@@ -309,11 +374,33 @@ public class EventController extends BaseController {
         if (resourceMedia != null) {
             event.setAttachment(resourceMedia);
         }
+        if(!request.getCategoriesId().isEmpty()){
+            if(!event.getUsersevents().isEmpty()){
+                for(users u : event.getUsersevents()){
+                    u.getEvents().remove(event);
+                    this.userService.UpdateUser(u);
+                }
+            }
+            for (Long categoryid : request.getCategoriesId()) {
+                UsersCategory cat = this.userCategoryService.FindById(categoryid);
+                if(cat == null)
+                    return new ResponseEntity("category with id: " + categoryid + " is not found", HttpStatus.NOT_FOUND);
+                if(!cat.getUsers().isEmpty()){
+                    for(users u : cat.getUsers()){
+                        u.getEvents().add(event);
+                        this.userService.UpdateUser(u);
+                    }
+                }
+
+            }
+
+        }
+
         Event result = this.service.Update(event);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.EVENT_MANAGEMENT,
-                user
+                currentuser
         );
         this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);

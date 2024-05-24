@@ -148,6 +148,10 @@ public class users implements Serializable {
     private Set<UsersCategory> categories = new HashSet<>();
 
 
+    @ManyToMany(mappedBy = "usersevents", fetch = FetchType.EAGER)
+    private Set<Event> events = new HashSet<>();
+
+
     public users() {
 
     }
@@ -455,5 +459,13 @@ public class users implements Serializable {
 
     public void setCategories(Set<UsersCategory> categories) {
         this.categories = categories;
+    }
+
+    public Set<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Set<Event> events) {
+        this.events = events;
     }
 }

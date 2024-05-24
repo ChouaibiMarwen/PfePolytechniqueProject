@@ -3,6 +3,7 @@ package com.camelsoft.rayaserver.Services.Project;
 import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Project.Event;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Project.EventRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -212,5 +213,22 @@ public class EventService {
 
     }
 
+
+    public List<Event> getEventsForUserList(users user) {
+        return this.repository.findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContains(user.getRole().getRole(),user);
+    }
+
+
+    public DynamicResponse getEventsForUserPg(int page, int size , users user) {
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Event> pckge = this.repository.findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContains(pg,user.getRole().getRole(),user);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
     
 }
