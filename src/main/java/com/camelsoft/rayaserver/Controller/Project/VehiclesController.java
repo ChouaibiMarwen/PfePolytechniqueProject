@@ -473,40 +473,61 @@ public class VehiclesController extends BaseController {
         File_model sideviewimageleft = null;
         File_model sideviewimageright = null;
         Set<File_model> additionalviewimages = new HashSet<>();
-        if (this.filesStorageService.checkformat(request.getFrontviewimage())) {
-            frontviewimage = filesStorageService.save_file_local(request.getFrontviewimage(), "vehicles");
-            if (frontviewimage == null) {
-                return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+
+        if(request.getFrontviewimage() != null){
+            if (this.filesStorageService.checkformat(request.getFrontviewimage())) {
+                frontviewimage = filesStorageService.save_file_local(request.getFrontviewimage(), "vehicles");
+                if (frontviewimage == null) {
+                    return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+                }
+                File_model media = vehiclesmedia.getFrontviewimage();
+                vehiclesmedia.setFrontviewimage(null);
+                this.filesStorageService.delete_file_by_path_local(media.getUrl(), media.getId());
+                vehiclesmedia.setFrontviewimage(frontviewimage);
+                this.vehiclesMediaService.Update(vehiclesmedia);
             }
         }
-        if (this.filesStorageService.checkformat(request.getRearviewimage())) {
-            rearviewimage = filesStorageService.save_file_local(request.getRearviewimage(), "vehicles");
-            if (rearviewimage == null) {
-                return new ResponseEntity("can't upload rear view image", HttpStatus.BAD_REQUEST);
+
+        if(request.getRearviewimage() != null){
+            if (this.filesStorageService.checkformat(request.getRearviewimage())) {
+                rearviewimage = filesStorageService.save_file_local(request.getRearviewimage(), "vehicles");
+                if (rearviewimage == null) {
+                    return new ResponseEntity("can't upload rear view image", HttpStatus.BAD_REQUEST);
+                }
             }
         }
-        if (this.filesStorageService.checkformat(request.getInteriorviewimage())) {
-            interiorviewimage = filesStorageService.save_file_local(request.getInteriorviewimage(), "vehicles");
-            if (interiorviewimage == null) {
-                return new ResponseEntity("can't upload interior view image", HttpStatus.BAD_REQUEST);
+
+        if(request.getInteriorviewimage() != null){
+            if (this.filesStorageService.checkformat(request.getInteriorviewimage())) {
+                interiorviewimage = filesStorageService.save_file_local(request.getInteriorviewimage(), "vehicles");
+                if (interiorviewimage == null) {
+                    return new ResponseEntity("can't upload interior view image", HttpStatus.BAD_REQUEST);
+                }
             }
         }
-        if (this.filesStorageService.checkformat(request.getSideviewimageleft())) {
-            sideviewimageleft = filesStorageService.save_file_local(request.getSideviewimageleft(), "vehicles");
-            if (sideviewimageleft == null) {
-                return new ResponseEntity("can't upload side view image left", HttpStatus.BAD_REQUEST);
+        if(request.getSideviewimageleft() != null){
+            if (this.filesStorageService.checkformat(request.getSideviewimageleft())) {
+                sideviewimageleft = filesStorageService.save_file_local(request.getSideviewimageleft(), "vehicles");
+                if (sideviewimageleft == null) {
+                    return new ResponseEntity("can't upload side view image left", HttpStatus.BAD_REQUEST);
+                }
             }
         }
-        if (this.filesStorageService.checkformat(request.getSideviewimageright())) {
-            sideviewimageright = filesStorageService.save_file_local(request.getSideviewimageright(), "vehicles");
-            if (sideviewimageright == null) {
-                return new ResponseEntity("can't upload side view image right", HttpStatus.BAD_REQUEST);
+
+        if(request.getSideviewimageright() != null){
+            if (this.filesStorageService.checkformat(request.getSideviewimageright())) {
+                sideviewimageright = filesStorageService.save_file_local(request.getSideviewimageright(), "vehicles");
+                if (sideviewimageright == null) {
+                    return new ResponseEntity("can't upload side view image right", HttpStatus.BAD_REQUEST);
+                }
             }
         }
-        if (this.filesStorageService.checkformatList(request.getAdditionalviewimages())) {
-            additionalviewimages = filesStorageService.save_all(request.getAdditionalviewimages(), "vehicles");
-            if (additionalviewimages == null || additionalviewimages.isEmpty()) {
-                return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+        if(request.getAdditionalviewimages() != null){
+            if (this.filesStorageService.checkformatList(request.getAdditionalviewimages())) {
+                additionalviewimages = filesStorageService.save_all(request.getAdditionalviewimages(), "vehicles");
+                if (additionalviewimages == null || additionalviewimages.isEmpty()) {
+                    return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+                }
             }
         }
 
@@ -526,6 +547,8 @@ public class VehiclesController extends BaseController {
         this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
 
     @PatchMapping(value = {"delete_vehicle/{id_vehicle}"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
