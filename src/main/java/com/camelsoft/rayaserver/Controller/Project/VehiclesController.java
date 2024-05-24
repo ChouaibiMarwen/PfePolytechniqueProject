@@ -80,7 +80,7 @@ public class VehiclesController extends BaseController {
     }
 
     @GetMapping(value = {"/all_vehicles_supplier"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all vehicles for  supplier ", notes = "Endpoint to get vehicles for supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -101,7 +101,7 @@ public class VehiclesController extends BaseController {
     }
 
     @GetMapping(value = {"/all_vehicles_by_supplier/{idSupplier}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all vehicles by supplier for admin", notes = "Endpoint to get a supllier's vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -128,7 +128,7 @@ public class VehiclesController extends BaseController {
 
 
     @GetMapping(value = {"/all_vehicles_by_supplier_and_vin_and_purchase_order_status/{idSupplier}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all vehicles by supplier for admin", notes = "Endpoint to get a supllier's vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
