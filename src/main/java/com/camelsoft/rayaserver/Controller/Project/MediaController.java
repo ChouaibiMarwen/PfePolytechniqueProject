@@ -90,4 +90,39 @@ public class MediaController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PatchMapping(value = {"/update_user_profile_image/{userId}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @ApiOperation(value = "update user profile image", notes = "Endpoint to update user's profile image")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated"),
+            @ApiResponse(code = 400, message = "Bad Request, the media is Null"),
+            @ApiResponse(code = 406, message = "Not Acceptable, the type is not acceptable"),
+            @ApiResponse(code = 501, message = "Not Implemented, please try again")
+    })
+    public ResponseEntity<users> update_profile_image(@PathVariable Long userId ,@RequestParam(required = false, name = "file") MultipartFile file) throws IOException {
+        users user = this.userService.findById(userId);
+        if(user == null)
+            return new ResponseEntity("user with id: " +userId+ "is not found", HttpStatus.NOT_FOUND);
+        File_model oldimage = user.getProfileimage();
+        if (file == null) {
+            return new ResponseEntity("file is null", HttpStatus.BAD_REQUEST);
+        }
+        if (!this.filesStorageService.checkformat(file))
+            return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
+        File_model resource_media = filesStorageService.save_file_local(file, "profile");
+        if (resource_media == null)
+            return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
+        user.setProfileimage(resource_media);
+        users result = userService.UpdateUser(user);
+        if (oldimage != null)
+            this.filesStorageService.delete_file_by_path_from_cdn(oldimage.getUrl(), oldimage.getId());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PROFILE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }
