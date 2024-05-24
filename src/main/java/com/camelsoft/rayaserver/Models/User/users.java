@@ -138,6 +138,16 @@ public class users implements Serializable {
     @Column(name = "timestmp")
     private Date timestmp = new Date();
 
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_categories",
+            joinColumns =
+            @JoinColumn(name = "usar_id", referencedColumnName = "user_id"),
+            inverseJoinColumns =
+            @JoinColumn(name = "category_id", referencedColumnName = "id"))
+    private Set<UsersCategory> categories = new HashSet<>();
+
+
     public users() {
 
     }
@@ -437,5 +447,13 @@ public class users implements Serializable {
 
     public void setManager(users manager) {
         this.manager = manager;
+    }
+
+    public Set<UsersCategory> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<UsersCategory> categories) {
+        this.categories = categories;
     }
 }

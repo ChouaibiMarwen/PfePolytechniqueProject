@@ -151,7 +151,7 @@ public class EventController extends BaseController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "Add a new event request from the admin", notes = "Endpoint to add a new event")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully added the loan request"),
+            @ApiResponse(code = 200, message = "Successfully added the event"),
             @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
