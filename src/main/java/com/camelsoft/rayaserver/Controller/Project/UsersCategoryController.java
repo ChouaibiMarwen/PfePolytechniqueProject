@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -42,7 +43,6 @@ public class UsersCategoryController extends BaseController {
     private UserCategoryService service;
 
 
-
     @GetMapping(value = {"/all_categories_by_name"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all categories for admin by name", notes = "Endpoint to get categories by name and character")
@@ -51,11 +51,16 @@ public class UsersCategoryController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<List<UsersCategory>> all_categories_by_name(@RequestParam String name) throws IOException {
+    public ResponseEntity<List<UsersCategory>> all_categories_by_name(@RequestParam(required = false) String name) throws IOException {
         users user = userService.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
-        List<UsersCategory> result = this.service.FindAllByNameList(name);
+        List<UsersCategory> result = new ArrayList<>();
+        if (name == null) {
+            result = this.service.FindAll();
+        } else {
+            result = this.service.FindAllByNameList(name);
+        }
 
         //save new action
         UserAction action = new UserAction(
@@ -114,8 +119,6 @@ public class UsersCategoryController extends BaseController {
     }
 
 
-
-
     @GetMapping(value = {"/category/{categoryId}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get category by id for admin ", notes = "Endpoint to get category by id")
@@ -165,8 +168,6 @@ public class UsersCategoryController extends BaseController {
     }
 
 
-
-
     @PostMapping(value = {"/add_category"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "Add a new category from the admin", notes = "Endpoint to add a new category for admin")
@@ -185,13 +186,13 @@ public class UsersCategoryController extends BaseController {
         if (request.getCategoryAssignedRole() == null)
             return new ResponseEntity("category's role can't be null", HttpStatus.BAD_REQUEST);
 
-        UsersCategory  category = new UsersCategory();
+        UsersCategory category = new UsersCategory();
         category.setName(request.getName());
         category.setCategoryrole(request.getCategoryAssignedRole());
-        if(request.getDescription()!= null)
+        if (request.getDescription() != null)
             category.setDescription(request.getDescription());
-        if(!request.getUsersIds().isEmpty()){
-            for(Long userId : request.getUsersIds()){
+        if (!request.getUsersIds().isEmpty()) {
+            for (Long userId : request.getUsersIds()) {
                 users user = this.userService.findById(userId);
                 if (user == null)
                     return new ResponseEntity("user with id: " + userId + "  is not found", HttpStatus.NOT_FOUND);
@@ -264,7 +265,6 @@ public class UsersCategoryController extends BaseController {
     }
 
 
-
     @PatchMapping(value = {"/delete_category/{categoryId}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "delete category by id for admin ", notes = "Endpoint to delete category by id")
@@ -279,8 +279,8 @@ public class UsersCategoryController extends BaseController {
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         UsersCategory result = this.service.FindById(categoryId);
         if (result == null)
-            return new ResponseEntity("category with id: "+ categoryId +" is not found", HttpStatus.NOT_FOUND);
-         result.setArchive(true);
+            return new ResponseEntity("category with id: " + categoryId + " is not found", HttpStatus.NOT_FOUND);
+        result.setArchive(true);
         this.service.Update(result);
         //save new action
         UserAction action = new UserAction(
@@ -289,9 +289,8 @@ public class UsersCategoryController extends BaseController {
         );
         this.userActionService.Save(action);
 
-        return new ResponseEntity<>( HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
 
 }

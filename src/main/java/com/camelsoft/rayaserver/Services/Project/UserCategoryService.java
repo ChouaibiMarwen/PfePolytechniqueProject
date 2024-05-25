@@ -75,7 +75,18 @@ public class UserCategoryService {
 
     public List<UsersCategory> FindAllByNameList(String name) {
         try {
+
             return this.repository.findByArchiveIsFalseAndNameContainingIgnoreCase(name);
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+ public List<UsersCategory> FindAll() {
+        try {
+
+            return this.repository.findByArchiveIsFalse();
 
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
