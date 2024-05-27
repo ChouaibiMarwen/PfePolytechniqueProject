@@ -139,8 +139,8 @@ public class InvoiceController extends BaseController {
             return new ResponseEntity("you need to defined the invoice relation " + request.getRelated(), HttpStatus.NOT_ACCEPTABLE);
         }
         if (relatedto.getSupplier() != null) {
-            if (request.getRelated() != InvoiceRelated.SUPPLIER)
-                return new ResponseEntity("the related to is a supplier and the related is not a supplier", HttpStatus.NOT_ACCEPTABLE);
+            if (request.getRelated() != InvoiceRelated.SUPPLIER && request.getRelated() != InvoiceRelated.SUB_DEALER)
+                return new ResponseEntity("the related to is a supplier or sub-dealer and the related is not a supplier or sub-dealer", HttpStatus.NOT_ACCEPTABLE);
 
         } else {
             if (request.getRelated() != InvoiceRelated.CUSTOMER)
