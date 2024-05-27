@@ -4,5 +4,6 @@ public enum InvoiceRelated {
     NONE,
     CUSTOMER,
     SUPPLIER,
+    SUB_DEALER,
     RAYAFINANCING
 }
