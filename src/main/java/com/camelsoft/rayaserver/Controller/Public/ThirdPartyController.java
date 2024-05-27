@@ -51,14 +51,18 @@ public class ThirdPartyController {
         return response;
     }
 
-
     @PostMapping(value = {"/po_invoice"})
-    public ResponseEntity<String> getPoInvoice() {
+    public ResponseEntity<String> getPoInvoiceWithFilters(@RequestBody ThirdPartRequst filterRequest) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + Base64Utils.encodeToString((USERNAME + ":" + PASSWORD).getBytes()));
         headers.set("Content-Type", "application/json");
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("VendorNumber", filterRequest.getVendorNumber());
+        requestJson.put("FromDate", filterRequest.getFromDate());
+        requestJson.put("ToDate", filterRequest.getToDate());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestJson.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
                 PO_INVOICE_SERVICE_URI,
@@ -71,12 +75,17 @@ public class ThirdPartyController {
     }
 
     @PostMapping(value = {"/po_invoice_payment"})
-    public ResponseEntity<String> getPoInvoicePayment() {
+    public ResponseEntity<String> getPoInvoicePaymentWithFilters(@RequestBody ThirdPartRequst filterRequest) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + Base64Utils.encodeToString((USERNAME + ":" + PASSWORD).getBytes()));
         headers.set("Content-Type", "application/json");
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("VendorNumber", filterRequest.getVendorNumber());
+        requestJson.put("FromDate", filterRequest.getFromDate());
+        requestJson.put("ToDate", filterRequest.getToDate());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestJson.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
                 PO_INVOICE_PAYMENT_SERVICE_URI,
@@ -86,6 +95,7 @@ public class ThirdPartyController {
         );
 
         return response;
+
     }
 }
 
