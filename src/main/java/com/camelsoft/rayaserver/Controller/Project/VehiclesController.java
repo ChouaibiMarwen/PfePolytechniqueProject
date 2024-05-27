@@ -225,6 +225,14 @@ public class VehiclesController extends BaseController {
         if (request.getInteriorfeatures() != null) vehicles.setInteriorfeatures(request.getInteriorfeatures());
         if (request.getDescription() != null) vehicles.setDescription(request.getDescription());
         if (request.getStock() != null) vehicles.setStock(request.getStock());
+        if(request.getCarmake() != null) vehicles.setCarmake(request.getCarmake());
+        if(request.getYear() != null) vehicles.setYear(request.getYear());
+        if(request.getDoors() != null) vehicles.setDoors(request.getDoors());
+        if(request.getAvailiability() != null) vehicles.setAvailiability(request.getAvailiability());
+        if(request.getCondition() != null) vehicles.setCondition(request.getCondition());
+        if(request.getTransmissiontype() != null) vehicles.setTransmissiontype(request.getTransmissiontype());
+
+
         Vehicles result = this.Services.Update(vehicles);
         UserAction action = new UserAction(
                 UserActionsEnum.VEHICLES_MANAGEMENT,
