@@ -1,15 +1,14 @@
 package com.camelsoft.rayaserver.Controller.Public;
 
+import com.camelsoft.rayaserver.Request.thirdPart.ThirdPartRequst;
+import com.nimbusds.jose.shaded.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Base64Utils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
@@ -30,12 +29,17 @@ public class ThirdPartyController {
     }
 
     @PostMapping(value = {"/po_list"})
-    public ResponseEntity<String> getPoList() {
+    public ResponseEntity<String> getPoListWithFilters(@RequestBody ThirdPartRequst filterRequest) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + Base64Utils.encodeToString((USERNAME + ":" + PASSWORD).getBytes()));
         headers.set("Content-Type", "application/json");
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("VendorNumber", filterRequest.getVendorNumber());
+        requestJson.put("FromDate", filterRequest.getFromDate());
+        requestJson.put("ToDate", filterRequest.getToDate());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestJson.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
                 PO_LIST_SERVICE_URI,
@@ -47,14 +51,18 @@ public class ThirdPartyController {
         return response;
     }
 
-
     @PostMapping(value = {"/po_invoice"})
-    public ResponseEntity<String> getPoInvoice() {
+    public ResponseEntity<String> getPoInvoiceWithFilters(@RequestBody ThirdPartRequst filterRequest) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + Base64Utils.encodeToString((USERNAME + ":" + PASSWORD).getBytes()));
         headers.set("Content-Type", "application/json");
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("VendorNumber", filterRequest.getVendorNumber());
+        requestJson.put("FromDate", filterRequest.getFromDate());
+        requestJson.put("ToDate", filterRequest.getToDate());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestJson.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
                 PO_INVOICE_SERVICE_URI,
@@ -67,12 +75,17 @@ public class ThirdPartyController {
     }
 
     @PostMapping(value = {"/po_invoice_payment"})
-    public ResponseEntity<String> getPoInvoicePayment() {
+    public ResponseEntity<String> getPoInvoicePaymentWithFilters(@RequestBody ThirdPartRequst filterRequest) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + Base64Utils.encodeToString((USERNAME + ":" + PASSWORD).getBytes()));
         headers.set("Content-Type", "application/json");
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("VendorNumber", filterRequest.getVendorNumber());
+        requestJson.put("FromDate", filterRequest.getFromDate());
+        requestJson.put("ToDate", filterRequest.getToDate());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestJson.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
                 PO_INVOICE_PAYMENT_SERVICE_URI,
@@ -82,6 +95,7 @@ public class ThirdPartyController {
         );
 
         return response;
+
     }
 }
 
