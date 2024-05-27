@@ -559,7 +559,7 @@ public class VehiclesController extends BaseController {
 
 
 
-    @PatchMapping(value = {"delete_vehicle/{id_vehicle}"})
+    @PatchMapping(value = {"/delete_vehicle/{id_vehicle}"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "delete vehicle for supplier", notes = "Endpoint delete vehicles by supplier")
     @ApiResponses(value = {
