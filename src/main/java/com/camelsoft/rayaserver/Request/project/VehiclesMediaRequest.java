@@ -5,7 +5,9 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -20,7 +22,7 @@ public class VehiclesMediaRequest {
 
     private MultipartFile sideviewimageright;
 
-    private Set<MultipartFile> additionalviewimages = new HashSet<>();
+    private List<MultipartFile> additionalviewimages = new ArrayList<>();
 
 
 

@@ -83,6 +83,20 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
         return true;
     }
+    public Boolean checkformatArrayList(List<MultipartFile> files){
+        for (MultipartFile f : files) {
+            if( f == null ||  f.isEmpty())
+            {
+                return false;
+            }
+            String extension = f.getContentType().substring(f.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+            if (!image_accepte_type.contains(extension)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
     @Override
     public File_model save_file(MultipartFile file, String folderName) throws IOException {
 
