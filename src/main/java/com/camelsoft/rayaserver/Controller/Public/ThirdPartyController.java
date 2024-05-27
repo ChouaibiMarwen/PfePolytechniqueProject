@@ -51,18 +51,14 @@ public class ThirdPartyController {
         return response;
     }
 
+
     @PostMapping(value = {"/po_invoice"})
-    public ResponseEntity<String> getPoInvoiceWithFilters(@RequestBody ThirdPartRequst filterRequest) {
+    public ResponseEntity<String> getPoInvoice() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + Base64Utils.encodeToString((USERNAME + ":" + PASSWORD).getBytes()));
         headers.set("Content-Type", "application/json");
 
-        JSONObject requestJson = new JSONObject();
-        requestJson.put("VendorNumber", filterRequest.getVendorNumber());
-        requestJson.put("FromDate", filterRequest.getFromDate());
-        requestJson.put("ToDate", filterRequest.getToDate());
-
-        HttpEntity<String> entity = new HttpEntity<>(requestJson.toString(), headers);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
                 PO_INVOICE_SERVICE_URI,
@@ -75,17 +71,12 @@ public class ThirdPartyController {
     }
 
     @PostMapping(value = {"/po_invoice_payment"})
-    public ResponseEntity<String> getPoInvoicePaymentWithFilters(@RequestBody ThirdPartRequst filterRequest) {
+    public ResponseEntity<String> getPoInvoicePayment() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + Base64Utils.encodeToString((USERNAME + ":" + PASSWORD).getBytes()));
         headers.set("Content-Type", "application/json");
 
-        JSONObject requestJson = new JSONObject();
-        requestJson.put("VendorNumber", filterRequest.getVendorNumber());
-        requestJson.put("FromDate", filterRequest.getFromDate());
-        requestJson.put("ToDate", filterRequest.getToDate());
-
-        HttpEntity<String> entity = new HttpEntity<>(requestJson.toString(), headers);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
                 PO_INVOICE_PAYMENT_SERVICE_URI,
