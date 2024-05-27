@@ -30,6 +30,8 @@ public class InvoiceRequest {
     private String vehiclemileage;
     private String vehiclemotexpiry;
     private String vehicleenginesize;
+    private String bankiban;
+    private String bankrip;
     private InvoiceRelated related=InvoiceRelated.NONE;
     private Long relatedtouserid;
     private List<Long> products = new ArrayList<>();

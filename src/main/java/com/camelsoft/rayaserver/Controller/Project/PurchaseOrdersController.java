@@ -64,7 +64,7 @@ public class PurchaseOrdersController  extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, check the data"),
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
     })
-    public ResponseEntity<PurchaseOrderDto> add_vehicle(@ModelAttribute PurshaseOrderRequest request) throws IOException{
+    public ResponseEntity<PurchaseOrderDto> add_purchase_orders(@ModelAttribute PurshaseOrderRequest request) throws IOException{
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentuser == null)
             return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);

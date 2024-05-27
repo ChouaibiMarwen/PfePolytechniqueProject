@@ -33,22 +33,15 @@ public class PurshaseOrder  implements Serializable {
     private PurshaseOrderStatus status = PurshaseOrderStatus.PENDING;
     @Column(name ="supplier_id")
     private Long supplierId;
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicles_id")
     private Vehicles vehicles;
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id_purchaseorder",nullable = false)
     private Supplier supplier;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private users customer;
-
-
     @Column(name ="vehicule_id")
     private Long vehicleId;
     @Column(name ="quantity")
@@ -72,16 +65,22 @@ public class PurshaseOrder  implements Serializable {
     @OneToMany(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
     @JoinColumn(name = "attachments")
     private Set<File_model> attachments = new HashSet<>();
-
     @JsonIgnore
     @Column(name = "archive")
     private Boolean archive = false;
     @JsonIgnore
     @Column(name = "deleted")
     private Boolean deleted = false;
-
     @Transient
     private Integer poCountBySupplier = 0;
+    @Transient
+    private Long invoiceid ;
+    @Transient
+    private Boolean haveinvoice = false;
+    @OneToOne(mappedBy = "purshaseorder")
+    @JsonIgnore
+    private Invoice invoice;
+
     @Column(name = "timestamp")
     private Date timestamp;
 
@@ -99,6 +98,12 @@ public class PurshaseOrder  implements Serializable {
             }else {
                 this.poCountBySupplier = 0;
             }
+        }
+        if(invoice!=null){
+            this.invoiceid = invoice.getId();
+            this.haveinvoice=true;
+        }else{
+            this.haveinvoice=false;
         }
     }
 

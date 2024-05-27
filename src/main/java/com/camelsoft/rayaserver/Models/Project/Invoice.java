@@ -47,6 +47,10 @@ public class Invoice implements Serializable {
     private String bankstreetadress;
     @Column(name = "bankphonenumber")
     private String bankphonenumber;
+    @Column(name = "bankiban")
+    private String bankiban;
+    @Column(name = "bankrib")
+    private String bankrib;
     @Column(name = "vehicleregistration")
     private String vehicleregistration;
     @Column(name = "vehiclecolor")
@@ -90,18 +94,21 @@ public class Invoice implements Serializable {
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<RefundInvoice> refunds = new HashSet<>();
-
-
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "purchaseorder_id", referencedColumnName = "id")
+    private PurshaseOrder purshaseorder;
+    @Transient
+    private Long poid ;
     @ManyToMany(mappedBy = "invoices")
     @JsonIgnore
-    private Set<Request> requests =  new HashSet<>();
+    private Set<Request> requests = new HashSet<>();
 
 
     public Invoice() {
         this.timestamp = new Date();
     }
 
-    public Invoice(Integer invoicenumber, Date invoicedate, Date duedate, String currency, String suppliername, String supplierzipcode, String supplierstreetadress, String supplierphonenumber, String bankname, String bankzipcode, String bankstreetadress, String bankphonenumber, String vehicleregistration, String vehiclecolor, String vehiclevin, String vehiclemodel, String vehiclemark, String vehiclemileage, String vehiclemotexpiry, String vehicleenginesize, Set<Product> products, users createdby, InvoiceRelated related, users relatedto) {
+    public Invoice(Integer invoicenumber, Date invoicedate, Date duedate, String currency, String suppliername, String supplierzipcode, String supplierstreetadress, String supplierphonenumber, String bankname, String bankzipcode, String bankstreetadress, String bankphonenumber, String vehicleregistration, String vehiclecolor, String vehiclevin, String vehiclemodel, String vehiclemark, String vehiclemileage, String vehiclemotexpiry, String vehicleenginesize, Set<Product> products, users createdby, InvoiceRelated related, users relatedto,String bankiban,String bankrib) {
         this.invoicenumber = invoicenumber;
         this.invoicedate = invoicedate;
         this.duedate = duedate;
@@ -126,9 +133,15 @@ public class Invoice implements Serializable {
         this.createdby = createdby;
         this.relatedto = relatedto;
         this.related = related;
+        this.bankiban = bankiban;
+        this.bankrib= bankrib;
         this.timestamp = new Date();
     }
-
+    @PostLoad
+    private void afterload(){
+        if(this.purshaseorder!=null)
+            this.poid = this.purshaseorder.getId();
+    }
     public InvoiceRelated getRelated() {
         return related;
     }
@@ -375,5 +388,37 @@ public class Invoice implements Serializable {
 
     public void setRequests(Set<Request> requests) {
         this.requests = requests;
+    }
+
+    public String getBankiban() {
+        return bankiban;
+    }
+
+    public void setBankiban(String bankiban) {
+        this.bankiban = bankiban;
+    }
+
+    public String getBankrib() {
+        return bankrib;
+    }
+
+    public void setBankrib(String bankrib) {
+        this.bankrib = bankrib;
+    }
+
+    public PurshaseOrder getPurshaseorder() {
+        return purshaseorder;
+    }
+
+    public void setPurshaseorder(PurshaseOrder purshaseorder) {
+        this.purshaseorder = purshaseorder;
+    }
+
+    public Long getPoid() {
+        return poid;
+    }
+
+    public void setPoid(Long poid) {
+        this.poid = poid;
     }
 }

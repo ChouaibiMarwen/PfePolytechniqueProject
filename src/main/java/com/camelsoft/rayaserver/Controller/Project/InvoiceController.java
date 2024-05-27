@@ -3,10 +3,7 @@ package com.camelsoft.rayaserver.Controller.Project;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
-import com.camelsoft.rayaserver.Models.Project.Invoice;
-import com.camelsoft.rayaserver.Models.Project.Product;
-import com.camelsoft.rayaserver.Models.Project.RefundInvoice;
-import com.camelsoft.rayaserver.Models.Project.UserAction;
+import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.InvoiceRepportRequest;
 import com.camelsoft.rayaserver.Request.project.InvoiceRequest;
@@ -115,7 +112,7 @@ public class InvoiceController extends BaseController {
 
     }
 
-    @PostMapping(value = {"/add_invoice"})
+    @PostMapping(value = {"/add_invoice/{poid}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "add invoice for admin  and supplier", notes = "Endpoint to add invoice")
     @ApiResponses(value = {
@@ -125,10 +122,15 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<Invoice> add_invoice(@RequestBody InvoiceRequest request) throws IOException {
+    public ResponseEntity<Invoice> add_invoice(@RequestBody InvoiceRequest request,@PathVariable Long poid) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        PurshaseOrder po = purshaseOrderService.FindById(poid);
+        if (po == null)
+            return new ResponseEntity("this po not found", HttpStatus.NOT_FOUND);
+        if (po.getInvoice() != null)
+            return new ResponseEntity("this po already have invoice", HttpStatus.NOT_ACCEPTABLE);
         users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
         users relatedto = UserServices.findById(request.getRelatedtouserid());
 
@@ -171,8 +173,11 @@ public class InvoiceController extends BaseController {
                 products,
                 createdby,
                 request.getRelated(),
-                relatedto
+                relatedto,
+                request.getBankiban(),
+                request.getBankrip()
         );
+        invoice.setPurshaseorder(po);
         Invoice result = this.service.Save(invoice);
         //save new action
         UserAction action = new UserAction(
