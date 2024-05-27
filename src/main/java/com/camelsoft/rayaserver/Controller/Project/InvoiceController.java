@@ -250,7 +250,7 @@ public class InvoiceController extends BaseController {
     }
 
 
-    @GetMapping(value = {"/all_user_invoices/{user_id}"})
+    @GetMapping(value = {"/user_all_invoices/{user_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get user's invoices", notes = "Endpoint to get invoice")
     @ApiResponses(value = {
@@ -279,6 +279,32 @@ public class InvoiceController extends BaseController {
     }
 
 
+
+    @GetMapping(value = {"/get_my_invoices"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or  hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get user's invoices", notes = "Endpoint to get invoice")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
+            @ApiResponse(code = 404, message = "Not found, check invoice id")
+    })
+    public ResponseEntity<DynamicResponse> get_my_invoices(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
+
+        return new ResponseEntity<>(this.service.getInvoicesByUser(page,size,currentuser), HttpStatus.OK);
+
+
+    }
 
     @GetMapping(value = {"/supplier/{invoice_id}"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
