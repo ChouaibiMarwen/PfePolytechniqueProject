@@ -428,7 +428,7 @@ public class VehiclesController extends BaseController {
                 return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
             }
         }
-        if (this.filesStorageService.checkformatList(request.getAdditionalviewimages())) {
+        if (this.filesStorageService.checkformatArrayList(request.getAdditionalviewimages())) {
             List<MultipartFile> fileList = new ArrayList<>(request.getAdditionalviewimages());
             additionalviewimages = filesStorageService.save_all_local(fileList, "vehicles");
             if (additionalviewimages == null || additionalviewimages.isEmpty()) {
