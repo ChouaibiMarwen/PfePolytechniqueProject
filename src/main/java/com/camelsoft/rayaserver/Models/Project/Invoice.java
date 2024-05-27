@@ -97,8 +97,17 @@ public class Invoice implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "purchaseorder_id", referencedColumnName = "id")
     private PurshaseOrder purshaseorder;
+    @JsonIgnore
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.EAGER)
+    private Set<Payment> payments = new HashSet<>();
     @Transient
-    private Long poid ;
+    private Long poid;
+    @Transient
+    private Double amountpaid = 0.0;
+    @Transient
+    private Boolean paid = false;
+    @Transient
+    private Double total = 0.0;
     @ManyToMany(mappedBy = "invoices")
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
@@ -108,7 +117,7 @@ public class Invoice implements Serializable {
         this.timestamp = new Date();
     }
 
-    public Invoice(Integer invoicenumber, Date invoicedate, Date duedate, String currency, String suppliername, String supplierzipcode, String supplierstreetadress, String supplierphonenumber, String bankname, String bankzipcode, String bankstreetadress, String bankphonenumber, String vehicleregistration, String vehiclecolor, String vehiclevin, String vehiclemodel, String vehiclemark, String vehiclemileage, String vehiclemotexpiry, String vehicleenginesize, Set<Product> products, users createdby, InvoiceRelated related, users relatedto,String bankiban,String bankrib) {
+    public Invoice(Integer invoicenumber, Date invoicedate, Date duedate, String currency, String suppliername, String supplierzipcode, String supplierstreetadress, String supplierphonenumber, String bankname, String bankzipcode, String bankstreetadress, String bankphonenumber, String vehicleregistration, String vehiclecolor, String vehiclevin, String vehiclemodel, String vehiclemark, String vehiclemileage, String vehiclemotexpiry, String vehicleenginesize, Set<Product> products, users createdby, InvoiceRelated related, users relatedto, String bankiban, String bankrib) {
         this.invoicenumber = invoicenumber;
         this.invoicedate = invoicedate;
         this.duedate = duedate;
@@ -134,14 +143,28 @@ public class Invoice implements Serializable {
         this.relatedto = relatedto;
         this.related = related;
         this.bankiban = bankiban;
-        this.bankrib= bankrib;
+        this.bankrib = bankrib;
         this.timestamp = new Date();
     }
+
     @PostLoad
-    private void afterload(){
-        if(this.purshaseorder!=null)
+    private void afterload() {
+        if (this.purshaseorder != null)
             this.poid = this.purshaseorder.getId();
+        if (payments != null) {
+            for (Payment p : payments) {
+                this.amountpaid += p.getAmount();
+            }
+        }
+        if (products != null) {
+            for (Product p : products) {
+                this.total += p.getSubtotal();
+            }
+            if(this.total>=this.amountpaid)
+                this.paid = true;
+        }
     }
+
     public InvoiceRelated getRelated() {
         return related;
     }
@@ -420,5 +443,37 @@ public class Invoice implements Serializable {
 
     public void setPoid(Long poid) {
         this.poid = poid;
+    }
+
+    public Set<Payment> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(Set<Payment> payments) {
+        this.payments = payments;
+    }
+
+    public Double getAmountpaid() {
+        return amountpaid;
+    }
+
+    public void setAmountpaid(Double amountpaid) {
+        this.amountpaid = amountpaid;
+    }
+
+    public Boolean getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Boolean paid) {
+        this.paid = paid;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
     }
 }
