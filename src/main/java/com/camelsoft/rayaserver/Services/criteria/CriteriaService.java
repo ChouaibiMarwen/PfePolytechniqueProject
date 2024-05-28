@@ -224,6 +224,48 @@ public class CriteriaService {
             throw new NotFoundException("No data found.");
         }
     }
+    public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, RoleEnum role) {
+        try {
+            // Prepare criteria builder and query
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<Invoice> criteriaQuery = criteriaBuilder.createQuery(Invoice.class);
+            Root<Invoice> invoiceRoot = criteriaQuery.from(Invoice.class);
+
+            // Prepare list to hold predicates
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Combine createdby and relatedto invoices
+            List<Invoice> invoicesList = new ArrayList<>();
+            invoicesList.addAll(invoicerepository.findAllByCreatedby_Role_Role(role));
+             predicates.add(invoiceRoot.in(invoicesList));
+
+            // Apply status filter if present
+            if (status != null) {
+                predicates.add(criteriaBuilder.equal(invoiceRoot.get("status"), status));
+            }
+
+
+            // Apply predicates to query
+            criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+
+            // Order by timestamp descending
+            criteriaQuery.orderBy(criteriaBuilder.desc(invoiceRoot.get("timestamp")));
+
+            // Create query and set pagination
+            TypedQuery<Invoice> typedQuery = em.createQuery(criteriaQuery);
+            int totalRecords = typedQuery.getResultList().size();
+            typedQuery.setFirstResult(page * size);
+            typedQuery.setMaxResults(size);
+
+            // Create pageable instance
+            Pageable pageable = PageRequest.of(page, size);
+
+            // Return paginated result
+            return new PageImpl<>(typedQuery.getResultList(), pageable, totalRecords);
+        } catch (NoResultException ex) {
+            throw new NotFoundException("No data found.");
+        }
+    }
     public List<users> UsersSearchCreatiriaRolesListNotPaginated(Boolean active, Boolean deleted, String search, List<String> roles) {
         try {
             List<Role> userRoles = roleRepository.findByRoleIn(roles.stream().map(RoleEnum::valueOf).collect(Collectors.toList()));
