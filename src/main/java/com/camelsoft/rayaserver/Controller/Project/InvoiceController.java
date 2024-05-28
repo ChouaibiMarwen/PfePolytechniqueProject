@@ -14,6 +14,7 @@ import com.camelsoft.rayaserver.Response.Project.InvoiceReport;
 import com.camelsoft.rayaserver.Services.Project.*;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Services.criteria.CriteriaService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -21,6 +22,7 @@ import io.swagger.annotations.ApiResponses;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,12 +48,14 @@ public class InvoiceController extends BaseController {
     @Autowired
     private UserService UserServices;
     @Autowired
+    private CriteriaService criteriaService;
+    @Autowired
     private RefundInvoiceService refundInvoiceService;
     @Autowired
     private PurshaseOrderService purshaseOrderService;
     @Autowired
     private RequestService requestService;
- @Autowired
+    @Autowired
     private VehiclesService vehiclesService;
 
     @GetMapping(value = {"/all_invoice"})
@@ -79,12 +83,13 @@ public class InvoiceController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
-           // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
+        // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
         return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
 
 
     }
-  @GetMapping(value = {"/all_invoice_supplier"})
+
+    @GetMapping(value = {"/all_invoice_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     @ApiOperation(value = "get all invoice by status for supplier", notes = "Endpoint to get vehicles")
     @ApiResponses(value = {
@@ -93,24 +98,21 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_invoice_supplier(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam(required = true) InvoiceRelated related) throws IOException {
+    public ResponseEntity<DynamicResponse> all_invoice_supplier(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam(required = false) InvoiceRelated related) throws IOException {
 
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
-        if (user == null)
-            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
 
-        if (related == InvoiceRelated.NONE)
-            return new ResponseEntity("you need to choose related NONE not a related", HttpStatus.NOT_ACCEPTABLE);
-        if (status != null)
-            return new ResponseEntity<>(this.service.FindAllByStateandsupplier(page, size, status, related,user), HttpStatus.OK);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
-           // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
-        return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
+        Page<Invoice> invoice = this.criteriaService.findAllByStatusAndRelatedAndUsers(page, size, status, related, user);
+        DynamicResponse res= new DynamicResponse(invoice.getContent(), invoice.getNumber(), invoice.getTotalElements(), invoice.getTotalPages());
+
+        // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
+        return new ResponseEntity<>(res, HttpStatus.OK);
 
 
     }
@@ -125,7 +127,7 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<Invoice> add_invoice(@RequestBody InvoiceRequest request,@PathVariable Long poid) throws IOException {
+    public ResponseEntity<Invoice> add_invoice(@RequestBody InvoiceRequest request, @PathVariable Long poid) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
@@ -135,7 +137,7 @@ public class InvoiceController extends BaseController {
         if (po.getInvoice() != null)
             return new ResponseEntity("this po already have invoice", HttpStatus.NOT_ACCEPTABLE);
         Vehicles vehicles = this.vehiclesService.FindByVIN(request.getVehiclevin());
-      if (vehicles == null)
+        if (vehicles == null)
             return new ResponseEntity(request.getVehiclevin() + "this vehicle VIN  not found", HttpStatus.NOT_ACCEPTABLE);
         users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
         users relatedto = UserServices.findById(request.getRelatedtouserid());
@@ -146,7 +148,7 @@ public class InvoiceController extends BaseController {
         if (request.getRelated() == null || request.getRelated() == InvoiceRelated.NONE) {
             return new ResponseEntity("you need to defined the invoice relation " + request.getRelated(), HttpStatus.NOT_ACCEPTABLE);
         }
-        if(relatedto.getRole().getRole() != RoleEnum.ROLE_ADMIN && relatedto.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN ) {
+        if (relatedto.getRole().getRole() != RoleEnum.ROLE_ADMIN && relatedto.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN) {
             if (relatedto.getSupplier() != null) {
                 if (request.getRelated() != InvoiceRelated.SUPPLIER && request.getRelated() != InvoiceRelated.SUB_DEALER)
                     return new ResponseEntity("the related to is a supplier or sub-dealer and the related is not a supplier or sub-dealer", HttpStatus.NOT_ACCEPTABLE);
@@ -282,11 +284,10 @@ public class InvoiceController extends BaseController {
         );
         this.userActionService.Save(action);
 
-        return new ResponseEntity<>(this.service.getInvoicesByUser(page,size,user), HttpStatus.OK);
+        return new ResponseEntity<>(this.service.getInvoicesByUser(page, size, user), HttpStatus.OK);
 
 
     }
-
 
 
     @GetMapping(value = {"/get_my_invoices"})
@@ -310,7 +311,7 @@ public class InvoiceController extends BaseController {
         );
         this.userActionService.Save(action);
 
-        return new ResponseEntity<>(this.service.getInvoicesByUser(page,size,currentuser), HttpStatus.OK);
+        return new ResponseEntity<>(this.service.getInvoicesByUser(page, size, currentuser), HttpStatus.OK);
 
 
     }
@@ -361,8 +362,8 @@ public class InvoiceController extends BaseController {
         InvoiceReport report = new InvoiceReport();
         Date date = request.getDate();
         InvoiceRelated related = request.getRelated();
-        if(date==null)
-            date=new Date();
+        if (date == null)
+            date = new Date();
         System.out.println(date);
         report.setDate(date);
         report.setInvoicepermonth(this.service.countInvoicePerMonth(date, related));
@@ -401,9 +402,9 @@ public class InvoiceController extends BaseController {
         if (invoice == null)
             return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_FOUND);
 
-        if(invoice.getStatus() != InvoiceStatus.PAID)
+        if (invoice.getStatus() != InvoiceStatus.PAID)
             return new ResponseEntity("The invoice is not paid yet", HttpStatus.NOT_ACCEPTABLE);
-        if(this.service.getTotalRevenueFromOnePaidInvoice(invoice) - request.getAmount() <0)
+        if (this.service.getTotalRevenueFromOnePaidInvoice(invoice) - request.getAmount() < 0)
             return new ResponseEntity("refunded amount is bigger then invoice amount ", HttpStatus.NOT_ACCEPTABLE);
 
         RefundInvoice refund = new RefundInvoice();
@@ -413,7 +414,7 @@ public class InvoiceController extends BaseController {
         this.refundInvoiceService.Save(refund);
 
         invoice.setStatus(InvoiceStatus.REFUNDS);
-        Invoice result  = this.service.Update(invoice);
+        Invoice result = this.service.Update(invoice);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
@@ -442,21 +443,20 @@ public class InvoiceController extends BaseController {
         if (invoice == null)
             return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_FOUND);
 
-        if(invoice.getStatus() == InvoiceStatus.PAID)
+        if (invoice.getStatus() == InvoiceStatus.PAID)
             return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
 
         invoice.setStatus(InvoiceStatus.PAID);
-        Invoice result  = this.service.Update(invoice);
+        Invoice result = this.service.Update(invoice);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
-
 
 
 }

@@ -1,10 +1,14 @@
 package com.camelsoft.rayaserver.Services.criteria;
 
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
+import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
+import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
@@ -19,6 +23,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +33,8 @@ public class CriteriaService {
     private final CriteriaBuilder criteriaBuilder;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private InvoiceRepository invoicerepository;
 
     public CriteriaService(EntityManager em) {
         this.em = em;
@@ -164,6 +171,59 @@ public class CriteriaService {
     }
 
 
+    public PageImpl<Invoice> findAllByStatusAndRelatedAndUsers(int page, int size, InvoiceStatus status, InvoiceRelated related, users user) {
+        try {
+            // Prepare criteria builder and query
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<Invoice> criteriaQuery = criteriaBuilder.createQuery(Invoice.class);
+            Root<Invoice> invoiceRoot = criteriaQuery.from(Invoice.class);
+
+            // Prepare list to hold predicates
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Combine createdby and relatedto invoices
+            List<Invoice> invoicesList = new ArrayList<>();
+            invoicesList.addAll(invoicerepository.findAllByCreatedby(user));
+            invoicesList.addAll(invoicerepository.findAllByRelatedto(user));
+            predicates.add(invoiceRoot.in(invoicesList));
+
+            // Apply status filter if present
+            if (status != null) {
+                predicates.add(criteriaBuilder.equal(invoiceRoot.get("status"), status));
+            }
+
+            // Apply related filter if present
+            if (related != null) {
+                predicates.add(criteriaBuilder.equal(invoiceRoot.get("related"), related));
+            }
+
+            // Apply user filter
+            predicates.add(criteriaBuilder.or(
+                    criteriaBuilder.equal(invoiceRoot.get("createdby"), user),
+                    criteriaBuilder.equal(invoiceRoot.get("relatedto"), user)
+            ));
+
+            // Apply predicates to query
+            criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+
+            // Order by timestamp descending
+            criteriaQuery.orderBy(criteriaBuilder.desc(invoiceRoot.get("timestmp")));
+
+            // Create query and set pagination
+            TypedQuery<Invoice> typedQuery = em.createQuery(criteriaQuery);
+            int totalRecords = typedQuery.getResultList().size();
+            typedQuery.setFirstResult(page * size);
+            typedQuery.setMaxResults(size);
+
+            // Create pageable instance
+            Pageable pageable = PageRequest.of(page, size);
+
+            // Return paginated result
+            return new PageImpl<>(typedQuery.getResultList(), pageable, totalRecords);
+        } catch (NoResultException ex) {
+            throw new NotFoundException("No data found.");
+        }
+    }
     public List<users> UsersSearchCreatiriaRolesListNotPaginated(Boolean active, Boolean deleted, String search, List<String> roles) {
         try {
             List<Role> userRoles = roleRepository.findByRoleIn(roles.stream().map(RoleEnum::valueOf).collect(Collectors.toList()));
