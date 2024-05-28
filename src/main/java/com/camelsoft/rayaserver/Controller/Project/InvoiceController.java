@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -145,13 +146,15 @@ public class InvoiceController extends BaseController {
         if (request.getRelated() == null || request.getRelated() == InvoiceRelated.NONE) {
             return new ResponseEntity("you need to defined the invoice relation " + request.getRelated(), HttpStatus.NOT_ACCEPTABLE);
         }
-        if (relatedto.getSupplier() != null) {
-            if (request.getRelated() != InvoiceRelated.SUPPLIER && request.getRelated() != InvoiceRelated.SUB_DEALER)
-                return new ResponseEntity("the related to is a supplier or sub-dealer and the related is not a supplier or sub-dealer", HttpStatus.NOT_ACCEPTABLE);
+        if(relatedto.getRole().getRole() != RoleEnum.ROLE_ADMIN && relatedto.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN ) {
+            if (relatedto.getSupplier() != null) {
+                if (request.getRelated() != InvoiceRelated.SUPPLIER && request.getRelated() != InvoiceRelated.SUB_DEALER)
+                    return new ResponseEntity("the related to is a supplier or sub-dealer and the related is not a supplier or sub-dealer", HttpStatus.NOT_ACCEPTABLE);
 
-        } else {
-            if (request.getRelated() != InvoiceRelated.CUSTOMER)
-                return new ResponseEntity("the related to is a customer and the related is not a customer", HttpStatus.NOT_ACCEPTABLE);
+            } else {
+                if (request.getRelated() != InvoiceRelated.CUSTOMER)
+                    return new ResponseEntity("the related to is a customer and the related is not a customer", HttpStatus.NOT_ACCEPTABLE);
+            }
         }
         Set<Product> products = this.productservice.GetProductList(request.getProducts());
         Invoice invoice = new Invoice(
