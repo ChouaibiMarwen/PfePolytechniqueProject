@@ -151,6 +151,7 @@ public class Invoice implements Serializable {
 
     @PostLoad
     private void afterload() {
+        this.total=0d;
         if (this.purshaseorder != null)
             this.poid = this.purshaseorder.getId();
         if (payments != null) {
