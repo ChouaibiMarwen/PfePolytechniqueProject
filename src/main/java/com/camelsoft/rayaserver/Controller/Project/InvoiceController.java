@@ -78,8 +78,8 @@ public class InvoiceController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
-        Page<Invoice> invoice = this.criteriaService.findAllByStatusAndRole(page, size, status , role);
-        DynamicResponse res= new DynamicResponse(invoice.getContent(), invoice.getNumber(), invoice.getTotalElements(), invoice.getTotalPages());
+        Page<Invoice> invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role);
+        DynamicResponse res = new DynamicResponse(invoice.getContent(), invoice.getNumber(), invoice.getTotalElements(), invoice.getTotalPages());
 
         return new ResponseEntity<>(res, HttpStatus.OK);
 
@@ -106,7 +106,7 @@ public class InvoiceController extends BaseController {
         );
         this.userActionService.Save(action);
         Page<Invoice> invoice = this.criteriaService.findAllByStatusAndRelatedAndUsers(page, size, status, related, user);
-        DynamicResponse res= new DynamicResponse(invoice.getContent(), invoice.getNumber(), invoice.getTotalElements(), invoice.getTotalPages());
+        DynamicResponse res = new DynamicResponse(invoice.getContent(), invoice.getNumber(), invoice.getTotalElements(), invoice.getTotalPages());
 
         // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
         return new ResponseEntity<>(res, HttpStatus.OK);
@@ -196,6 +196,135 @@ public class InvoiceController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 
 
+    }
+
+    @PatchMapping(value = {"/update_invoice_data/{invoice_id}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @ApiOperation(value = "Update invoice for admin and supplier", notes = "Endpoint to update an invoice")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 406, message = "Not acceptable, you need to define the invoice relation"),
+            @ApiResponse(code = 302, message = "The invoice number is already in use"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<Invoice> update_invoice_data(@RequestBody(required = false) InvoiceRequest request, @PathVariable Long invoice_id) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+
+        Invoice existingInvoice = this.service.FindById(invoice_id);
+        if (existingInvoice == null) {
+            return new ResponseEntity(invoice_id + " is not found in the system!", HttpStatus.NOT_FOUND);
+        }
+        if (existingInvoice.getStatus() == InvoiceStatus.CANCELLED) {
+            return new ResponseEntity(invoice_id + " this invoice is canceled!", HttpStatus.NOT_FOUND);
+        }
+        if (existingInvoice.getStatus() == InvoiceStatus.PAID) {
+            return new ResponseEntity(invoice_id + " this invoice is paid!", HttpStatus.NOT_FOUND);
+        }
+        if (existingInvoice.getStatus() == InvoiceStatus.REFUNDS) {
+            return new ResponseEntity(invoice_id + " this invoice is refund!", HttpStatus.NOT_FOUND);
+        }
+
+        // Update invoice number if provided
+        if (request.getInvoicenumber() != null) {
+            if (this.service.ExistByInvoiceNumber(request.getInvoicenumber())) {
+                return new ResponseEntity(request.getInvoicenumber() + " is already found, please try something else!", HttpStatus.FOUND);
+            }
+            existingInvoice.setInvoicenumber(request.getInvoicenumber());
+        }
+
+        // Update invoice date if provided
+        if (request.getInvoicedate() != null) {
+            existingInvoice.setInvoicedate(request.getInvoicedate());
+        }
+
+        // Update other fields if provided
+        if (request.getDuedate() != null) {
+            existingInvoice.setDuedate(request.getDuedate());
+        }
+        if (request.getCurrency() != null) {
+            existingInvoice.setCurrency(request.getCurrency());
+        }
+        if (request.getSuppliername() != null) {
+            existingInvoice.setSuppliername(request.getSuppliername());
+        }
+        if (request.getSupplierzipcode() != null) {
+            existingInvoice.setSupplierzipcode(request.getSupplierzipcode());
+        }
+        if (request.getSupplierstreetadress() != null) {
+            existingInvoice.setSupplierstreetadress(request.getSupplierstreetadress());
+        }
+        if (request.getSupplierphonenumber() != null) {
+            existingInvoice.setSupplierphonenumber(request.getSupplierphonenumber());
+        }
+        if (request.getBankname() != null) {
+            existingInvoice.setBankname(request.getBankname());
+        }
+        if (request.getBankzipcode() != null) {
+            existingInvoice.setBankzipcode(request.getBankzipcode());
+        }
+        if (request.getBankstreetadress() != null) {
+            existingInvoice.setBankstreetadress(request.getBankstreetadress());
+        }
+        if (request.getBankphonenumber() != null) {
+            existingInvoice.setBankphonenumber(request.getBankphonenumber());
+        }
+        if (request.getVehicleregistration() != null) {
+            existingInvoice.setVehicleregistration(request.getVehicleregistration());
+        }
+        if (request.getVehiclecolor() != null) {
+            existingInvoice.setVehiclecolor(request.getVehiclecolor());
+        }
+        if (request.getVehiclevin() != null) {
+            Vehicles vehicles = this.vehiclesService.FindByVIN(request.getVehiclevin());
+            if (vehicles == null)
+                return new ResponseEntity(request.getVehiclevin() + "this vehicle VIN  not found", HttpStatus.NOT_ACCEPTABLE);
+            existingInvoice.setVehiclevin(request.getVehiclevin());
+        }
+        if (request.getVehiclemodel() != null) {
+            existingInvoice.setVehiclemodel(request.getVehiclemodel());
+        }
+        if (request.getVehiclemark() != null) {
+            existingInvoice.setVehiclemark(request.getVehiclemark());
+        }
+        if (request.getVehiclemileage() != null) {
+            existingInvoice.setVehiclemileage(request.getVehiclemileage());
+        }
+        if (request.getVehiclemotexpiry() != null) {
+            existingInvoice.setVehiclemotexpiry(request.getVehiclemotexpiry());
+        }
+        if (request.getVehicleenginesize() != null) {
+            existingInvoice.setVehicleenginesize(request.getVehicleenginesize());
+        }
+        if (request.getBankiban() != null) {
+            existingInvoice.setBankiban(request.getBankiban());
+        }
+        if (request.getBankrip() != null) {
+            existingInvoice.setBankrib(request.getBankrip());
+        }
+        if (request.getStatus() != null) {
+            existingInvoice.setStatus(request.getStatus());
+        }
+
+        // Update products if provided
+        if (request.getProducts() != null) {
+            Set<Product> products = this.productservice.GetProductList(request.getProducts());
+            existingInvoice.setProducts(products);
+        }
+
+        // Update related information if provided
+        if (request.getRelated() != null) {
+            existingInvoice.setRelated(request.getRelated());
+        }
+
+        // Save the updated invoice
+        Invoice result = this.service.Update(existingInvoice);
+
+        // Save new action
+        UserAction action = new UserAction(UserActionsEnum.INVOICE_MANAGEMENT, user);
+        this.userActionService.Save(action);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PatchMapping(value = {"/update_invoice/{invoice_id}"})
