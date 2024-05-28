@@ -207,7 +207,7 @@ public class CriteriaService {
             criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
 
             // Order by timestamp descending
-            criteriaQuery.orderBy(criteriaBuilder.desc(invoiceRoot.get("timestmp")));
+            criteriaQuery.orderBy(criteriaBuilder.desc(invoiceRoot.get("timestamp")));
 
             // Create query and set pagination
             TypedQuery<Invoice> typedQuery = em.createQuery(criteriaQuery);
