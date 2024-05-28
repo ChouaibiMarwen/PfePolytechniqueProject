@@ -152,6 +152,10 @@ public class users implements Serializable {
     private Set<Event> events = new HashSet<>();
 
 
+    @Transient
+    private String supplierCompanyName;
+
+
     public users() {
 
     }
@@ -178,10 +182,25 @@ public class users implements Serializable {
         if (this.personalinformation != null) {
             this.name = this.personalinformation.getFirstnameen() + " " + this.personalinformation.getLastnameen();
         }
+        if(this.supplier != null) {
+            if(this.supplier.getName() != null) {
+                this.supplierCompanyName = this.supplier.getName();
+            }
+        }else{
+            this.supplierCompanyName = "";
+        }
     }
 
     public void addAddress(Address address) {
         this.addresses.add(address);
+    }
+
+    public String getSupplierCompanyName() {
+        return supplierCompanyName;
+    }
+
+    public void setSupplierCompanyName(String supplierCompanyName) {
+        this.supplierCompanyName = supplierCompanyName;
     }
 
     public UserConfiguration getUserconfiguration() {
