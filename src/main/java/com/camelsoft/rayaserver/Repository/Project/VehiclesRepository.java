@@ -18,7 +18,7 @@ public interface VehiclesRepository extends JpaRepository<Vehicles,Long> {
     Page<Vehicles> findAllByArchiveIsFalseAndSupplier(Pageable page, Supplier supplier);
     List<Vehicles> findAllByArchiveIsFalseAndSupplier(Supplier supplier);
     Page<Vehicles> findAllByArchiveIsFalseAndCarvinContainingIgnoreCaseAndSupplier(Pageable page, String carvin,Supplier supplier);
-
+    Vehicles findTopByCarvin(String vin);
     @Query("SELECT v FROM Vehicles v "
             + "WHERE v.supplier = :supplier AND v.stock > 0 AND v.archive = false")
     Page<Vehicles> findVehiclesBySupplierAndStockGreaterThanAndArchiveFalse(Pageable pageable, Supplier supplier);

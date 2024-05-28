@@ -14,7 +14,11 @@ import java.util.Set;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-@Table(name = "Vehicles")
+
+@Table(name = "Vehicles",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "carvin"),
+        })
 public class Vehicles implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

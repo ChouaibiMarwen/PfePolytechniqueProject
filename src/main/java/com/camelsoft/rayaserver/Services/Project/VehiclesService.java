@@ -49,6 +49,15 @@ public class VehiclesService {
         }
 
     }
+  public Vehicles FindByVIN(String vin) {
+        try {
+
+            return this.repository.findTopByCarvin(vin);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
 
     public DynamicResponse FindAllPg(int page, int size) {
         try {

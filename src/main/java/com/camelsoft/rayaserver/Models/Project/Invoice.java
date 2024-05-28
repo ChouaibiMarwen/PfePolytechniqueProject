@@ -67,6 +67,8 @@ public class Invoice implements Serializable {
     private String vehiclemotexpiry;
     @Column(name = "vehicleenginesize")
     private String vehicleenginesize;
+   @Column(name = "vehicleprice")
+    private Double vehicleprice = 0.0;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "invoice_products",
             joinColumns =
@@ -160,9 +162,11 @@ public class Invoice implements Serializable {
             for (Product p : products) {
                 this.total += p.getSubtotal();
             }
-            if(this.total>=this.amountpaid)
-                this.paid = true;
+
         }
+        this.total+= vehicleprice;
+        if(this.total>=this.amountpaid)
+            this.paid = true;
     }
 
     public InvoiceRelated getRelated() {
@@ -475,5 +479,13 @@ public class Invoice implements Serializable {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public Double getVehicleprice() {
+        return vehicleprice;
+    }
+
+    public void setVehicleprice(Double vehicleprice) {
+        this.vehicleprice = vehicleprice;
     }
 }

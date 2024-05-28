@@ -50,6 +50,8 @@ public class InvoiceController extends BaseController {
     private PurshaseOrderService purshaseOrderService;
     @Autowired
     private RequestService requestService;
+ @Autowired
+    private VehiclesService vehiclesService;
 
     @GetMapping(value = {"/all_invoice"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
@@ -131,6 +133,9 @@ public class InvoiceController extends BaseController {
             return new ResponseEntity("this po not found", HttpStatus.NOT_FOUND);
         if (po.getInvoice() != null)
             return new ResponseEntity("this po already have invoice", HttpStatus.NOT_ACCEPTABLE);
+        Vehicles vehicles = this.vehiclesService.FindByVIN(request.getVehiclevin());
+      if (vehicles == null)
+            return new ResponseEntity(request.getVehiclevin() + "this vehicle VIN  not found", HttpStatus.NOT_ACCEPTABLE);
         users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
         users relatedto = UserServices.findById(request.getRelatedtouserid());
 
@@ -177,6 +182,7 @@ public class InvoiceController extends BaseController {
                 request.getBankiban(),
                 request.getBankrip()
         );
+        invoice.setVehicleprice(vehicles.getPrice());
         invoice.setPurshaseorder(po);
         Invoice result = this.service.Save(invoice);
         //save new action
