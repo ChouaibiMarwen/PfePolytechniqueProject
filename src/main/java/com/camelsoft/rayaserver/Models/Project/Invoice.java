@@ -164,8 +164,9 @@ public class Invoice implements Serializable {
             }
 
         }
-        this.total+= vehicleprice;
-        if(this.total>=this.amountpaid)
+        if(vehicleprice!=null)
+            this.total+= vehicleprice;
+        if(this.amountpaid!=null && this.total!=null && this.total>=this.amountpaid)
             this.paid = true;
     }
 
