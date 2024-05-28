@@ -224,7 +224,7 @@ public class CriteriaService {
             throw new NotFoundException("No data found.");
         }
     }
-    public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, RoleEnum role) {
+    public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, List<RoleEnum> role) {
         try {
             // Prepare criteria builder and query
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -236,7 +236,7 @@ public class CriteriaService {
 
             // Combine createdby and relatedto invoices
             List<Invoice> invoicesList = new ArrayList<>();
-            invoicesList.addAll(invoicerepository.findAllByCreatedby_Role_Role(role));
+            invoicesList.addAll(invoicerepository.findAllByCreatedby_Role_RoleIn(role));
              predicates.add(invoiceRoot.in(invoicesList));
 
             // Apply status filter if present
