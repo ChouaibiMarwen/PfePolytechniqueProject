@@ -9,6 +9,7 @@ import com.camelsoft.rayaserver.Enum.User.SessionAction;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
+import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.Address;
@@ -59,6 +60,7 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -260,6 +262,22 @@ public class UsersController extends BaseController {
             throw new ResourceNotFoundException("ROLE " + role + " Is Not Found");
         return new ResponseEntity<>(this.userService.filterAllUser(page, size, active, name, RoleEnum.valueOf(role), verified), HttpStatus.OK);
     }
+
+
+    @GetMapping(value = {"/all_users_list_by_role"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
+    @ApiOperation(value = "get all users by role and status for admin", notes = "Endpoint to get users")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
+    })
+    public ResponseEntity<List<UserShortDto>> all_users_list_by_role(@RequestParam RoleEnum role) throws IOException {
+        List<users> user = null;
+        user = this.userService.allusersByRole(role);
+        List<UserShortDto> shortuser =  user.stream().map(UserShortDto::mapToUserShortDTO)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(shortuser, HttpStatus.OK);
+    }
+
 
 
 
