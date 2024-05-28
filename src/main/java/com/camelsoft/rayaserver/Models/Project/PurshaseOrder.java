@@ -21,48 +21,51 @@ import java.util.Set;
 
 @Data
 @Entity
-public class PurshaseOrder  implements Serializable {
+public class PurshaseOrder implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
-    @Column(name ="order_date")
+    @Column(name = "order_date")
     private Date orderDate;
     @Getter
-    @Column(name ="order_status")
+    @Column(name = "order_status")
     private PurshaseOrderStatus status = PurshaseOrderStatus.PENDING;
-    @Column(name ="supplier_id")
+    @Column(name = "supplier_id")
     private Long supplierId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicles_id")
     private Vehicles vehicles;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supplier_id_purchaseorder",nullable = false)
+    @JoinColumn(name = "supplier_id_purchaseorder", nullable = false)
     private Supplier supplier;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private users customer;
-    @Column(name ="vehicule_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "createdby_id")
+    private users createdby;
+    @Column(name = "vehicule_id")
     private Long vehicleId;
-    @Column(name ="quantity")
+    @Column(name = "quantity")
     private Integer quantity;
-    @Column(name ="discount_amount")
+    @Column(name = "discount_amount")
     private Double discountamount = 0D;
-    @Column(name ="request_delivered_date")
+    @Column(name = "request_delivered_date")
     private Date requestDeliveryDate;
-    @Column(name ="street")
+    @Column(name = "street")
     private String streetAddress;
-    @Column(name ="city")
+    @Column(name = "city")
     private String city;
-    @Column(name ="state")
+    @Column(name = "state")
     private String state;
-    @Column(name ="postal_code")
+    @Column(name = "postal_code")
     private String codePostal;
-    @Column(name ="contry")
+    @Column(name = "contry")
     private String country;
-    @Column(columnDefinition = "TEXT",name = "description")
+    @Column(columnDefinition = "TEXT", name = "description")
     private String description;
-    @OneToMany(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "attachments")
     private Set<File_model> attachments = new HashSet<>();
     @JsonIgnore
@@ -74,7 +77,7 @@ public class PurshaseOrder  implements Serializable {
     @Transient
     private Integer poCountBySupplier = 0;
     @Transient
-    private Long invoiceid ;
+    private Long invoiceid;
     @Transient
     private Boolean haveinvoice = false;
     @OneToOne(mappedBy = "purshaseorder")
@@ -84,29 +87,28 @@ public class PurshaseOrder  implements Serializable {
     @Column(name = "timestamp")
     private Date timestamp;
 
-    public PurshaseOrder()  {
-        this.timestamp=new Date();
+    public PurshaseOrder() {
+        this.timestamp = new Date();
     }
 
 
     @PostLoad
-    private void afterload(){
-        if(this.supplier!=null){
-            if(this.supplier.getPurchaseOrders()!=null){
+    private void afterload() {
+        if (this.supplier != null) {
+            if (this.supplier.getPurchaseOrders() != null) {
                 this.poCountBySupplier = this.supplier.getPurchaseOrders().size();
 
-            }else {
+            } else {
                 this.poCountBySupplier = 0;
             }
         }
-        if(invoice!=null){
+        if (invoice != null) {
             this.invoiceid = invoice.getId();
-            this.haveinvoice=true;
-        }else{
-            this.haveinvoice=false;
+            this.haveinvoice = true;
+        } else {
+            this.haveinvoice = false;
         }
     }
-
 
 
     public PurshaseOrder(Date orderDate, PurshaseOrderStatus status, Long supplierId, Integer quantity, Long vehicleId, Double discountamount, Date requestDeliveryDate, String streetAddress, String city, String codePostal, String state, String country, String description) {

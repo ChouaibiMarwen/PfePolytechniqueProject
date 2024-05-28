@@ -99,6 +99,7 @@ public class PurchaseOrdersController  extends BaseController {
         purshaseOrder.setCodePostal(request.getCodePostal());
         purshaseOrder.setCountry(request.getCountry());
         purshaseOrder.setDescription(request.getDescription());
+        purshaseOrder.setCreatedby(currentuser);
         if(!request.getAttachments().isEmpty()){
             Set<File_model> attachmentsList = new HashSet<>();
             if (this.filesStorageService.checkformatList(request.getAttachments())) {
