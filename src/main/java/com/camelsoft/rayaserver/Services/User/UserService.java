@@ -387,6 +387,19 @@ public class UserService extends BaseController implements UserDetailsService {
     }
 
 
+    public List<users> allusersByRole(RoleEnum role) {
+        try {
+            Role userRole = roleRepository.findByRole(role);
+            if(userRole == null)
+                throw new NotFoundException("Role is not found");
+
+            return this.userRepository.findByRoleAndDeletedIsFalse(userRole);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("hourbor id not found data");
+        }
+    }
+
+
     public users findbyemail(String email) {
         try {
             return userRepository.findByEmail(email);

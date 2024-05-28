@@ -88,6 +88,7 @@ public interface UserRepository extends JpaRepository<users, Long> {
     Long countAllByRoleAndActive(Role role, Boolean active);
 
     List<users> findAllByRoleAndActive(Role role, Boolean active);
+    List<users> findByRoleAndDeletedIsFalse(Role role);
 
     Page<users> findAllByNameContains(Pageable page, String name);
 }
