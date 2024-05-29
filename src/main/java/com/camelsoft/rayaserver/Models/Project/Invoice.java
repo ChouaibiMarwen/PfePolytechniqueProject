@@ -67,7 +67,7 @@ public class Invoice implements Serializable {
     private String vehiclemotexpiry;
     @Column(name = "vehicleenginesize")
     private String vehicleenginesize;
-   @Column(name = "vehicleprice")
+    @Column(name = "vehicleprice")
     private Double vehicleprice = 0.0;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "invoice_products",

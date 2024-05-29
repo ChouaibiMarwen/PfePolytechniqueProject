@@ -58,4 +58,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     List<Invoice> findByStatusAndArchiveIsFalseAndTimestampBetweenAndCreatedByRole(InvoiceStatus status, Date startDate, Date endDate, RoleEnum role);
 
     Page<Invoice> findByCreatedbyOrRelatedto(users user,users userRelated ,Pageable pageable);
+
+    List<Invoice> findAllByCreatedbyOrRelatedtoAndStatusAndArchiveIsFalse(users createdBy, users relatedTo, InvoiceStatus status);
 }

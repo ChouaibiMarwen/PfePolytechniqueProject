@@ -1,6 +1,8 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
+import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Response.Project.StatisticResponse;
 import com.camelsoft.rayaserver.Response.Project.SupplierMainStatistic;
@@ -10,6 +12,7 @@ import com.camelsoft.rayaserver.Services.Project.VehiclesService;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
+import com.sun.xml.bind.v2.TODO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -52,15 +55,21 @@ public class StaticsSupplierController extends BaseController {
     })
     public ResponseEntity<SupplierMainStatistic> all_statistics_supplier() throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        Supplier supplier = user.getSupplier();
+        if(supplier == null)
+            return new ResponseEntity("supplier not found" , HttpStatus.NOT_ACCEPTABLE);
        SupplierMainStatistic response = new SupplierMainStatistic();
         response.setTotalcars(this.vehiclesService.FindAllSupplier(user.getSupplier()).size());
-        response.setSoldcars(0);//need to see
-        response.setLoandone(0);//need to see
-        response.setSalesrevenue(0D);//need to see
-        response.setPendingpayment(0D);//need to see
+        response.setSoldcars(this.invoiceService.totalVehiclesPandingPaymentByUser(user, InvoiceStatus.PAID).intValue());//need to see
+        response.setLoandone(this.loanServices.countLoneDoneBySupplier(supplier));
+        response.setSalesrevenue(this.invoiceService.totalRevenuByUser(user));
+        response.setPendingpayment(this.invoiceService.totalVehiclesPandingPaymentByUser(user, InvoiceStatus.UNPAID));//need to see
+        response.setLoaninprogress(this.loanServices.countLoneInProgressBySupplier(supplier));
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+
+
 
     @GetMapping("/revenue-by-month")
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")

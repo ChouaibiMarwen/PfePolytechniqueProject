@@ -28,7 +28,6 @@ public class Vehicles implements Serializable {
     private String carmodel;
     @Column(name = "color")
     private String color;
-
     @Column(name = "carmake")
     private String carmake;
     @Column(name = "mileage")
@@ -43,11 +42,9 @@ public class Vehicles implements Serializable {
     private ConditionEnum condition;
     @Column(name = "transmissiontype")
     private TransmissionTypeEnum transmissiontype;
-
     @Transient
     private Double price;
     @Column(name = "carvin")
-
     private String carvin;
     @Column(name = "enginesize")
 
@@ -79,7 +76,6 @@ public class Vehicles implements Serializable {
     @JsonIgnore
     @Column(name = "archive")
     private Boolean archive = false;
-
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id", nullable = false)
@@ -89,7 +85,6 @@ public class Vehicles implements Serializable {
     private Set<PurshaseOrder> purchaseOrder = new HashSet<>();
     @Column(name = "timestamp")
     private Date timestamp;
-
     public Vehicles() {
         this.timestamp = new Date();
     }

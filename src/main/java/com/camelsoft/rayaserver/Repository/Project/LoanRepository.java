@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface LoanRepository extends JpaRepository<Loan,Long> {
@@ -24,5 +25,13 @@ public interface LoanRepository extends JpaRepository<Loan,Long> {
 
     @Query("SELECT SUM(l.loanamount) FROM Loan l WHERE l.status = :status")
     Double sumLoanAmountByStatus(@Param("status") LoanStatus status);
+
+    Integer countAllByStatusAndSupplierAndArchiveIsFalse(LoanStatus status, Supplier supplier);
+
+    Integer countAllBySupplierAndArchiveIsFalseAndStatusIn(Supplier supplier, List<LoanStatus> statuses);
+
+
+
+
 
 }

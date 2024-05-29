@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -148,6 +149,8 @@ public class LoanServices {
 
     }
 
+
+
     public DynamicResponse FindAllBySupplier(int page, int size, Supplier supplier) {
         try {
             PageRequest pg = PageRequest.of(page, size);
@@ -162,6 +165,14 @@ public class LoanServices {
 
     public long countByStatus(LoanStatus status) {
         return this.repository.countByStatus(status);
+    }
+    public Integer countLoneDoneBySupplier(Supplier supplier) {
+        return this.repository.countAllByStatusAndSupplierAndArchiveIsFalse(LoanStatus.DONE, supplier);
+    }
+
+    public Integer countLoneInProgressBySupplier(Supplier supplier) {
+        List<LoanStatus> statuses = Arrays.asList(LoanStatus.WAITING, LoanStatus.IN_PROGRESS);
+        return this.repository.countAllBySupplierAndArchiveIsFalseAndStatusIn(supplier, statuses);
     }
 
 

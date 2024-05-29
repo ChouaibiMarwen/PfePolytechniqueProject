@@ -553,7 +553,6 @@ public class InvoiceController extends BaseController {
     }
 
     @PatchMapping(value = {"/confirm_invoice/{idInvoice}"})
-    //@PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to confirm invoice for admin")
     @ApiResponses(value = {
