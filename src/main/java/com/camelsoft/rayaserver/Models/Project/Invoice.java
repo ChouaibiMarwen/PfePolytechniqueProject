@@ -96,7 +96,7 @@ public class Invoice implements Serializable {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "user_id_confirmedby", nullable = false)
+    @JoinColumn(name = "user_id_confirmedby")
     private users confirmedBy;
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
