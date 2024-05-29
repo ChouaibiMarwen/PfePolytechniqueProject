@@ -47,7 +47,7 @@ public class PrivilegeController  extends BaseController {
     }
 
     @PatchMapping(value = {"/add_user_privileges/{user_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<users> add_sub_admin_privileges(@PathVariable Long user_id, @RequestParam List<Long> idList) throws IOException, InterruptedException, MessagingException {
 
         if (!this.userService.existbyid(user_id))
@@ -67,7 +67,7 @@ public class PrivilegeController  extends BaseController {
     }
 
     @PatchMapping(value = {"/remove_user_privileges/{user_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<users> remove_sub_admin_privileges(@PathVariable Long user_id, @RequestParam List<Long> idList) throws IOException, InterruptedException, MessagingException {
         if (!this.userService.existbyid(user_id))
             return new ResponseEntity("invalid id" + user_id, HttpStatus.NOT_FOUND);

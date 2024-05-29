@@ -42,7 +42,7 @@ public class StaticsSupplierController extends BaseController {
     private InvoiceService invoiceService;
 
    @GetMapping(value = {"/all_statistics_supplier"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all statistics for supplier main dashboard", notes = "Endpoint to get statistics")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -63,7 +63,7 @@ public class StaticsSupplierController extends BaseController {
     }
 
     @GetMapping("/revenue-by-month")
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all statistics for supplier main dashboard", notes = "Endpoint to get statistics")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

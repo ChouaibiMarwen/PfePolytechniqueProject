@@ -118,7 +118,7 @@ public class ChatController  extends BaseController {
 
     }
     @GetMapping("/messages/{senderId}/{recipientId}/count")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<Long> countNewMessages(
             @PathVariable Long senderId,
             @PathVariable Long recipientId) {
@@ -129,13 +129,13 @@ public class ChatController  extends BaseController {
     }
 
     @GetMapping("/messages/{senderId}/{recipientId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<?> findChatMessages(@PathVariable Long senderId, @PathVariable Long recipientId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) {
         return ResponseEntity.ok(chatMessageService.findChatMessages(page, size, senderId, recipientId,false));
     }
 
     @PatchMapping("/seenallmessage/{senderId}/{recipientId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity seenallmessage ( @PathVariable Long senderId,
                                                 @PathVariable Long recipientId) {
         this.chatMessageService.seenAllMessage(senderId, recipientId);
@@ -159,7 +159,7 @@ public class ChatController  extends BaseController {
     }
 
     @GetMapping("/messages/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<?> findMessage ( @PathVariable Long id) {
         return ResponseEntity
                 .ok(chatMessageService.findById(id));
@@ -167,7 +167,7 @@ public class ChatController  extends BaseController {
 
 
     @PostMapping("/add_files")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<List<File_model>> add_files(@RequestParam(value = "files") List<MultipartFile> files) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
         List<File_model> filesw = new ArrayList<>();

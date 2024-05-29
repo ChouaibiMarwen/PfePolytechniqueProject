@@ -46,7 +46,7 @@ public class MediaController extends BaseController {
     private VehiclesMediaService vehiclesMediaService;
 
     @DeleteMapping(value = {"/remove_media/{id_file}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "remove media", notes = "Endpoint to delete media")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully deleted"),
@@ -64,7 +64,7 @@ public class MediaController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_profile_image"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "update current user profile image", notes = "Endpoint to update profile image")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated"),
@@ -97,7 +97,7 @@ public class MediaController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_user_profile_image/{userId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "update user profile image", notes = "Endpoint to update user's profile image")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated"),

@@ -66,7 +66,7 @@ public class SubSupplierController extends BaseController {
     private SupplierServices supplierServices;
 
     @GetMapping(value = {"/search_supplier"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<DynamicResponse> search_supplier(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean active) throws IOException {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         List<String> list = new ArrayList<>(Arrays.asList("ROLE_SUPPLIER", "ROLE_SUB_SUPPLIER"));
@@ -75,7 +75,7 @@ public class SubSupplierController extends BaseController {
         return new ResponseEntity<>(ress, HttpStatus.OK);
     }
     @GetMapping(value = {"/all"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') ")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all suppliers without pagination", notes = "Endpoint to get suppliers")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),

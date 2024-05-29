@@ -33,7 +33,7 @@ public class PushNotificationController extends BaseController {
 
 
     @PostMapping("/send-notification")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('USER') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity sendNotification(@RequestBody Notificationrequest request) throws FirebaseMessagingException {
         if (!this.pushNotificationService.isValidFCMToken(request.getToken()))
             return new ResponseEntity("Invalid FCM Token", HttpStatus.BAD_REQUEST);
@@ -46,7 +46,7 @@ public class PushNotificationController extends BaseController {
     }
 
     @PostMapping("/send-notification-test")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('USER') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity sendnotificationtest(@RequestBody Notificationrequest request) throws FirebaseMessagingException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
         Action action=Action.IDLE;

@@ -32,10 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -103,10 +100,13 @@ public class PurchaseOrdersController  extends BaseController {
         if(!request.getAttachments().isEmpty()){
             Set<File_model> attachmentsList = new HashSet<>();
             if (this.filesStorageService.checkformatList(request.getAttachments())) {
-                attachmentsList = filesStorageService.save_all(request.getAttachments(), "purshase_order");
+                List<MultipartFile> list = new ArrayList<>(request.getAttachments());
+                attachmentsList = filesStorageService.save_all_local(list, "purshase_order");
                 if (attachmentsList == null || attachmentsList.isEmpty()) {
                     return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
                 }
+            }else{
+                return new ResponseEntity("check file's format", HttpStatus.BAD_REQUEST);
             }
             purshaseOrder.setAttachments(attachmentsList);
         }
@@ -124,7 +124,7 @@ public class PurchaseOrdersController  extends BaseController {
 
 
     @GetMapping(value = {"/all_purchase_orders_by_status"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to get purchase orders by status")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -147,7 +147,7 @@ public class PurchaseOrdersController  extends BaseController {
 
 
     @GetMapping(value = {"/all_purchase_orders_by_status_and_date"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all purchase orders by status and date for admin by name", notes = "Endpoint to get purchase orders by status and date")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -169,7 +169,7 @@ public class PurchaseOrdersController  extends BaseController {
     }
 
     @GetMapping(value = {"/all_purchase_orders_by_status_and_date_and_vehicle"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all purchase orders by status and date and vehicle for admin by name", notes = "Endpoint to get purchase orders by status and date and vehicle")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -199,7 +199,7 @@ public class PurchaseOrdersController  extends BaseController {
     }
 
     @GetMapping(value = {"/all_purchase_orders_by_status_and_date_and_vehicle_and_supplier"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all purchase orders by status and date and vehicle and supplier  for admin by name", notes = "Endpoint to get purchase orders by status and date and vehicle and supplier for admin ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -301,7 +301,7 @@ public class PurchaseOrdersController  extends BaseController {
 
 
     @GetMapping(value = {"/purchase_order/{id]"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all purchase orders by id for admin ", notes = "Endpoint to get purchase orders by id")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -353,7 +353,7 @@ public class PurchaseOrdersController  extends BaseController {
 
 
     @PatchMapping(value = "/update_purchase_order_status/{purchaseOrderId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "update purchase order status by admin", notes = "Endpoint update purchase order status")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -380,7 +380,7 @@ public class PurchaseOrdersController  extends BaseController {
     }
 
     @PatchMapping(value = "/accept_purchase_order_by_Supplier/{purchaseOrderId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "accept purchase order status by supplier", notes = "Endpoint to accept purchase order status by supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -407,7 +407,7 @@ public class PurchaseOrdersController  extends BaseController {
     }
 
     @PatchMapping(value = "/reject_purchase_order/{purchaseOrderId}")
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "reject purchase order status by supplier", notes = "Endpoint to reject purchase order status by supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

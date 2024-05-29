@@ -87,7 +87,7 @@ public class InvoiceController extends BaseController {
     }
 
     @GetMapping(value = {"/all_invoice_supplier"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all invoice by status for supplier", notes = "Endpoint to get vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -115,7 +115,7 @@ public class InvoiceController extends BaseController {
     }
 
     @PostMapping(value = {"/add_invoice/{poid}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "add invoice for admin  and supplier", notes = "Endpoint to add invoice")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -199,7 +199,7 @@ public class InvoiceController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_invoice_data/{invoice_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "Update invoice for admin and supplier", notes = "Endpoint to update an invoice")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated"),
@@ -328,7 +328,7 @@ public class InvoiceController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_invoice/{invoice_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "update invoice for admin and supplier", notes = "Endpoint to update invoice")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -443,7 +443,7 @@ public class InvoiceController extends BaseController {
     }
 
     @GetMapping(value = {"/supplier/{invoice_id}"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get invoice for supplier", notes = "Endpoint to get invoice for supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -511,7 +511,7 @@ public class InvoiceController extends BaseController {
     }
 
     @PatchMapping(value = {"/add_refund_invoice/{idInvoice}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "add refund invoice for admin", notes = "Endpoint to add refund invoice for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -552,7 +552,7 @@ public class InvoiceController extends BaseController {
     }
 
     @PatchMapping(value = {"/confirm_invoice/{idInvoice}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to confirm invoice for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

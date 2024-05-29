@@ -73,7 +73,7 @@ public class AuthController extends BaseController {
     String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
 
     @GetMapping(value = {"/current_user"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<users> current_user() throws IOException {
         users users = userService.findByUserName(getCurrentUser().getUsername());
         return new ResponseEntity<>(users, HttpStatus.OK);

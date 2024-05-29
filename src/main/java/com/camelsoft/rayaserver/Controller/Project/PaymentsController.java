@@ -46,7 +46,7 @@ public class PaymentsController extends BaseController {
     private UserService userService;
 
     @PostMapping(value = {"/add_payment/{invoice_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "add payments", notes = "Endpoint to add payments")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully deleted"),

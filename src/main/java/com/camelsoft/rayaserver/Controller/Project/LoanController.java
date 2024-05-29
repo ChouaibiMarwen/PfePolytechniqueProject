@@ -71,7 +71,7 @@ public class LoanController extends BaseController {
     }
 
     @GetMapping(value = {"/all_loans_supplier"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all loan by status for supplier", notes = "Endpoint to get loan request for supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -97,7 +97,7 @@ public class LoanController extends BaseController {
     }
 
     @PostMapping("/add_loan")
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "Add a new loan request from the supplier", notes = "Endpoint to add a new loan request for supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added the loan request"),
@@ -187,7 +187,7 @@ public class LoanController extends BaseController {
     }
 
     @DeleteMapping("/remove_loan/{id}")
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "Remove loan request from the supplier", notes = "Endpoint to remove a loan request for supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully removed the loan request"),
@@ -212,7 +212,7 @@ public class LoanController extends BaseController {
 
     }
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "Remove loan request from the supplier", notes = "Endpoint to remove a loan request")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully removed the loan request"),
@@ -248,7 +248,7 @@ public class LoanController extends BaseController {
 
 
     @PatchMapping(value = {"/approve_loan/{loan_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "approve loan for admin ", notes = "Endpoint approve loan for admin ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -277,7 +277,7 @@ public class LoanController extends BaseController {
 
 
     @PatchMapping(value = {"/reject_loan/{loan_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "reject loan for admin ", notes = "Endpoint reject loan for admin ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
