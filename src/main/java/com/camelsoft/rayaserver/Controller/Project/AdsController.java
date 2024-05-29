@@ -1,13 +1,16 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
+import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Ads;
 import com.camelsoft.rayaserver.Models.Project.Department;
+import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.AdsRequest;
 import com.camelsoft.rayaserver.Services.File.FileServices;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.AdsService;
+import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +40,9 @@ public class AdsController extends BaseController {
 
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
+
+    @Autowired
+    private UserActionService userActionService;
 
 
 
@@ -76,6 +82,13 @@ public class AdsController extends BaseController {
             ads.setDescription(request.getDescription());
 
         ads = this.adsService.save(ads);
+
+
+        UserAction action = new UserAction(
+                UserActionsEnum.ADS_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(ads, HttpStatus.OK);
 
     }
@@ -115,11 +128,65 @@ public class AdsController extends BaseController {
         }
 
         ads = this.adsService.update(ads);
+        UserAction action = new UserAction(
+                UserActionsEnum.ADS_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity<>(ads, HttpStatus.OK);
 
     }
 
 
+    @GetMapping(value = {"/get_all_ads"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get all ads list from the admin", notes = "Endpoint to get all ads list for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully update the ads"),
+            @ApiResponse(code = 400, message = "Bad request, check required fields"),
+            @ApiResponse(code = 403, message = "Forbidden")
+    })
+    public ResponseEntity<List<Ads>> get_all_ads () {
+        List<Ads> result = this.adsService.findAll();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
+
+    @GetMapping(value = {"/ads_by_id/{idAds}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get all ads list from the admin", notes = "Endpoint to get all ads list for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully update the ads"),
+            @ApiResponse(code = 400, message = "Bad request, check required fields"),
+            @ApiResponse(code = 403, message = "Forbidden")
+    })
+    public ResponseEntity<Ads> get_all_ads (@PathVariable Long idAds) {
+        Ads ads = this.adsService.findbyid(idAds);
+        if(ads == null)
+            return new ResponseEntity("no ads founded with this is: " + idAds, HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(ads, HttpStatus.OK);
+    }
+
+
+    @DeleteMapping(value = {"/delete_ads/{id}"})
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('ADS_WRITE')")
+    public ResponseEntity<String> delete_ads (@PathVariable Long id) throws IOException {
+
+        Ads ads = this.adsService.findbyid(id);
+        if(ads == null)
+            return new ResponseEntity("no ads founded with this is: " + id, HttpStatus.NOT_FOUND);
+        ads.getAttachments().clear();
+        this.adsService.deletebyid(id);
+
+        //get current user to savev action
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        UserAction action = new UserAction(
+                UserActionsEnum.VEHICLES_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>("Deleted !", HttpStatus.OK);
+    }
 
 }

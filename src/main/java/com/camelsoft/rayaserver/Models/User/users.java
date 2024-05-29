@@ -76,6 +76,9 @@ public class users implements Serializable {
     @OneToMany(mappedBy = "createdby", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Invoice> invoicescreated = new HashSet<>();
+    @OneToMany(mappedBy = "confirmedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Invoice> invoicesconfirmed = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.LAZY)
     private Set<Address> addresses = new HashSet<>();
     @OneToMany(mappedBy = "relatedto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -193,6 +196,14 @@ public class users implements Serializable {
 
     public void addAddress(Address address) {
         this.addresses.add(address);
+    }
+
+    public Set<Invoice> getInvoicesconfirmed() {
+        return invoicesconfirmed;
+    }
+
+    public void setInvoicesconfirmed(Set<Invoice> invoicesconfirmed) {
+        this.invoicesconfirmed = invoicesconfirmed;
     }
 
     public String getSupplierCompanyName() {

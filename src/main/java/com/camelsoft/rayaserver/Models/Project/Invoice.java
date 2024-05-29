@@ -94,6 +94,11 @@ public class Invoice implements Serializable {
     @JoinColumn(name = "user_id_relatedto", nullable = false)
     private users relatedto;
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "user_id_confirmedby", nullable = false)
+    private users confirmedBy;
+
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<RefundInvoice> refunds = new HashSet<>();
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
@@ -110,6 +115,8 @@ public class Invoice implements Serializable {
     private Boolean paid = false;
     @Transient
     private Double total = 0.0;
+    @Transient
+    private Long confirmedById;
     @ManyToMany(mappedBy = "invoices")
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
@@ -169,6 +176,29 @@ public class Invoice implements Serializable {
             this.total+= vehicleprice;
         if(this.amountpaid!=null && this.total!=null && this.total>=this.amountpaid)
             this.paid = true;
+
+        if(this.confirmedBy != null ){
+            this.confirmedById = this.confirmedBy.getId();
+        }else{
+            this.confirmedById = null;
+        }
+    }
+
+
+    public Long getConfirmedById() {
+        return confirmedById;
+    }
+
+    public void setConfirmedById(Long confirmedById) {
+        this.confirmedById = confirmedById;
+    }
+
+    public users getConfirmedBy() {
+        return confirmedBy;
+    }
+
+    public void setConfirmedBy(users confirmedBy) {
+        this.confirmedBy = confirmedBy;
     }
 
     public InvoiceRelated getRelated() {

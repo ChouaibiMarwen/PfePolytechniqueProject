@@ -553,7 +553,8 @@ public class InvoiceController extends BaseController {
     }
 
     @PatchMapping(value = {"/confirm_invoice/{idInvoice}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    //@PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to confirm invoice for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
@@ -572,8 +573,10 @@ public class InvoiceController extends BaseController {
 
         if (invoice.getStatus() == InvoiceStatus.PAID)
             return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
-
+        if (invoice.getConfirmedBy() != null)
+            return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen() , HttpStatus.NOT_ACCEPTABLE);
         invoice.setStatus(InvoiceStatus.PAID);
+        invoice.setConfirmedBy(user);
         Invoice result = this.service.Update(invoice);
         //save new action
         UserAction action = new UserAction(
