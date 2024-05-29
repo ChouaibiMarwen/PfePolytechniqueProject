@@ -214,16 +214,16 @@ public class InvoiceController extends BaseController {
 
         Invoice existingInvoice = this.service.FindById(invoice_id);
         if (existingInvoice == null) {
-            return new ResponseEntity(invoice_id + " is not found in the system!", HttpStatus.NOT_FOUND);
+            return new ResponseEntity(invoice_id + " is not found in the system!", HttpStatus.NOT_ACCEPTABLE);
         }
         if (existingInvoice.getStatus() == InvoiceStatus.CANCELLED) {
-            return new ResponseEntity(invoice_id + " this invoice is canceled!", HttpStatus.NOT_FOUND);
+            return new ResponseEntity(invoice_id + " this invoice is canceled!", HttpStatus.NOT_ACCEPTABLE);
         }
         if (existingInvoice.getStatus() == InvoiceStatus.PAID) {
-            return new ResponseEntity(invoice_id + " this invoice is paid!", HttpStatus.NOT_FOUND);
+            return new ResponseEntity(invoice_id + " this invoice is paid!", HttpStatus.NOT_ACCEPTABLE);
         }
         if (existingInvoice.getStatus() == InvoiceStatus.REFUNDS) {
-            return new ResponseEntity(invoice_id + " this invoice is refund!", HttpStatus.NOT_FOUND);
+            return new ResponseEntity(invoice_id + " this invoice is refund!", HttpStatus.NOT_ACCEPTABLE);
         }
 
         // Update invoice number if provided
@@ -566,10 +566,10 @@ public class InvoiceController extends BaseController {
     public ResponseEntity<Invoice> confirm_invoice(@PathVariable Long idInvoice) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
-            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("this user not found", HttpStatus.NOT_ACCEPTABLE);
         Invoice invoice = this.service.FindById(idInvoice);
         if (invoice == null)
-            return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_ACCEPTABLE);
 
         if (invoice.getStatus() == InvoiceStatus.PAID)
             return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
