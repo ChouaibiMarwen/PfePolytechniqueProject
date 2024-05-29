@@ -134,6 +134,14 @@ public class Vehicles implements Serializable {
     }
 
 
+    @PostLoad
+    public void postload(){
+        if(this.getVehiclespricefinancing()!= null){
+            this.price = this.getVehiclespricefinancing().getTotalamount();
+        }else{
+            this.price = 0D;
+        }
+    }
     public Integer getStock() {
         return stock;
     }

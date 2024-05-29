@@ -184,7 +184,8 @@ public class InvoiceController extends BaseController {
                 request.getBankiban(),
                 request.getBankrip()
         );
-        invoice.setVehicleprice(vehicles.getPrice());
+        if(vehicles.getVehiclespricefinancing() != null)
+            invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
         invoice.setPurshaseorder(po);
         Invoice result = this.service.Save(invoice);
         //save new action

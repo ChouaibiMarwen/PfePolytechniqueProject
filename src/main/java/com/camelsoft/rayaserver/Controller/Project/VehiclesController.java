@@ -390,8 +390,8 @@ public class VehiclesController extends BaseController {
         Vehicles vehicles = this.Services.FindById(id_vehicle);
         if (vehicles == null)
             return new ResponseEntity("vehicle " + id_vehicle + " not found in the system", HttpStatus.NOT_FOUND);
-        if (vehicles.getVehiclespricefinancing() != null)
-            return new ResponseEntity("this vehicle " + id_vehicle + " already have media", HttpStatus.BAD_REQUEST);
+     /*   if (vehicles.getVehiclespricefinancing() != null)
+            return new ResponseEntity("this vehicle " + id_vehicle + " already have media", HttpStatus.BAD_REQUEST);*/
         File_model frontviewimage = null;
         File_model rearviewimage = null;
         File_model interiorviewimage = null;
