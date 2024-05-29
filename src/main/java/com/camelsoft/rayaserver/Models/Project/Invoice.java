@@ -93,12 +93,10 @@ public class Invoice implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id_relatedto", nullable = false)
     private users relatedto;
-
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id_confirmedby")
     private users confirmedBy;
-
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<RefundInvoice> refunds = new HashSet<>();
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
