@@ -24,10 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -167,7 +164,6 @@ public class UsersCategoryController extends BaseController {
         return new ResponseEntity<>(userset, HttpStatus.OK);
     }
 
-
     @PostMapping(value = {"/add_category"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "Add a new category from the admin", notes = "Endpoint to add a new category for admin")
@@ -185,19 +181,20 @@ public class UsersCategoryController extends BaseController {
             return new ResponseEntity("Name can't be null or empty", HttpStatus.BAD_REQUEST);
         if (request.getCategoryAssignedRole() == null)
             return new ResponseEntity("category's role can't be null", HttpStatus.BAD_REQUEST);
-
         UsersCategory category = new UsersCategory();
         category.setName(request.getName());
         category.setCategoryrole(request.getCategoryAssignedRole());
         if (request.getDescription() != null)
             category.setDescription(request.getDescription());
+        Set<users> users = new HashSet<>();
         if (!request.getUsersIds().isEmpty()) {
             for (Long userId : request.getUsersIds()) {
                 users user = this.userService.findById(userId);
                 if (user == null)
                     return new ResponseEntity("user with id: " + userId + "  is not found", HttpStatus.NOT_FOUND);
-
-                category.getUsers().add(user);
+               // user.getCategories().add(category);
+               // this.userService.UpdateUser(user);
+                category.addUser(user);
             }
         }
         UsersCategory result = this.service.Save(category);

@@ -97,11 +97,23 @@ public class UsersCategory implements Serializable {
         this.categoryrole = categoryrole;
     }
 
-    public Set<com.camelsoft.rayaserver.Models.User.users> getUsers() {
+
+    public void addUser(users user) {
+        users.add(user);
+        user.getCategories().add(this);
+    }
+
+    public void removeUser(users user) {
+        users.remove(user);
+        user.getCategories().remove(this);
+    }
+
+
+    public Set<users> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<com.camelsoft.rayaserver.Models.User.users> users) {
+    public void setUsers(Set<users> users) {
         this.users = users;
     }
 }
