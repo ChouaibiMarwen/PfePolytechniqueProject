@@ -160,6 +160,16 @@ public class Event implements Serializable {
         this.assignedto = assignedto;
     }
 
+    public void addUserEvent(users user) {
+        usersevents.add(user);
+        user.getEvents().add(this);
+    }
+
+    public void removeUserEvent(users user) {
+        usersevents.remove(user);
+        user.getEvents().remove(this);
+    }
+
     public Set<users> getUsersevents() {
         return usersevents;
     }

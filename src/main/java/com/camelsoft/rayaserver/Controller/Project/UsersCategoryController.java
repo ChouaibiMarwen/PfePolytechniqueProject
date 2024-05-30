@@ -192,8 +192,6 @@ public class UsersCategoryController extends BaseController {
                 users user = this.userService.findById(userId);
                 if (user == null)
                     return new ResponseEntity("user with id: " + userId + "  is not found", HttpStatus.NOT_FOUND);
-               // user.getCategories().add(category);
-               // this.userService.UpdateUser(user);
                 category.addUser(user);
             }
         }
@@ -234,22 +232,22 @@ public class UsersCategoryController extends BaseController {
         if (request.getCategoryAssignedRole() != null)
             category.setCategoryrole(request.getCategoryAssignedRole());
 
-        // Remove old users from the category
-        category.getUsers().clear();
 
-        // Add new users to the category
         if (!request.getUsersIds().isEmpty()) {
+            for(users u : category.getUsers()) {
+                // Remove old users from the category
+                category.removeUser(u);
+            }
+            // Add new users to the category
             for (Long userId : request.getUsersIds()) {
                 users user = this.userService.findById(userId);
                 if (user == null)
                     return new ResponseEntity("User with id: " + userId + " not found", HttpStatus.NOT_FOUND);
-
-                category.getUsers().add(user);
-                user.getCategories().add(category);
+                category.addUser(user);
             }
         }
 
-        UsersCategory result = this.service.Save(category);
+        UsersCategory result = this.service.Update(category);
 
         // Save new action
         UserAction action = new UserAction(

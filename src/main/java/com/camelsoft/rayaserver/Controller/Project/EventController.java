@@ -218,8 +218,8 @@ public class EventController extends BaseController {
             return new ResponseEntity("Title can't be null or empty", HttpStatus.BAD_REQUEST);
         if (request.getEventDate() == null)
             return new ResponseEntity("Event date can't be null", HttpStatus.BAD_REQUEST);
-        if (request.getAssignedto() == null || request.getAssignedto().isEmpty())
-            return new ResponseEntity("Sent to list can't be null or empty", HttpStatus.BAD_REQUEST);
+        if ((request.getAssignedto() == null || request.getAssignedto().isEmpty()) && (request.getCategoriesId() == null || request.getCategoriesId().isEmpty()))
+            return new ResponseEntity("must select at list one role assigned to or one category", HttpStatus.BAD_REQUEST);
         File_model resourceMedia = null;
         if (attachment != null && !attachment.isEmpty()) {
             String extension = attachment.getContentType().substring(attachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
@@ -381,6 +381,7 @@ public class EventController extends BaseController {
                     this.userService.UpdateUser(u);
                 }
             }
+            //event.getUsersevents().clear();
             for (Long categoryid : request.getCategoriesId()) {
                 UsersCategory cat = this.userCategoryService.FindById(categoryid);
                 if(cat == null)
