@@ -150,7 +150,7 @@ public class users implements Serializable {
             @JoinColumn(name = "category_id", referencedColumnName = "id"))
     private Set<UsersCategory> categories = new HashSet<>();
 
-
+    @JsonIgnore
     @ManyToMany(mappedBy = "usersevents", fetch = FetchType.EAGER)
     private Set<Event> events = new HashSet<>();
 
