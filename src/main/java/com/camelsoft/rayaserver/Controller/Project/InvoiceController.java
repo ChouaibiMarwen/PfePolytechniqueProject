@@ -139,7 +139,7 @@ public class InvoiceController extends BaseController {
         users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
         users relatedto = UserServices.findById(request.getRelatedtouserid());
 
-        if (request.getInvoicenumber()==null || this.service.ExistByInvoiceNumber(request.getInvoicenumber())) {
+        if (request.getInvoicenumber() == null || this.service.ExistByInvoiceNumber(request.getInvoicenumber())) {
             return new ResponseEntity(request.getInvoicenumber() + "is already found , please try something else !", HttpStatus.FOUND);
         }
         if (request.getRelated() == null || request.getRelated() == InvoiceRelated.NONE) {
@@ -158,12 +158,12 @@ public class InvoiceController extends BaseController {
         Set<Product> products = this.productservice.GetProductList(request.getProducts());
         Invoice invoice = new Invoice();
         if (request.getThirdpartypoid() != null) {
-            if(this.service.existByThirdpartypoid(request.getThirdpartypoid()))
+            if (this.service.existByThirdpartypoid(request.getThirdpartypoid()))
                 return new ResponseEntity(request.getThirdpartypoid() + "is already found , please try something else !", HttpStatus.FOUND);
 
             invoice.setThirdpartypoid(request.getThirdpartypoid());
         }
-       if (request.getInvoicenumber() != null) {
+        if (request.getInvoicenumber() != null) {
             invoice.setInvoicenumber(request.getInvoicenumber());
         }
         if (request.getInvoicedate() != null) {
@@ -182,7 +182,7 @@ public class InvoiceController extends BaseController {
             invoice.setSuppliername(request.getSuppliername());
 
         }
-      if (request.getSupplierzipcode() != null) {
+        if (request.getSupplierzipcode() != null) {
             invoice.setSupplierzipcode(request.getSupplierzipcode());
 
         }
@@ -471,7 +471,7 @@ public class InvoiceController extends BaseController {
 
     }
 
-@GetMapping(value = {"/get_invoice_by_third_party_po_id/{thirdpartypoid}"})
+    @GetMapping(value = {"/get_invoice_by_third_party_po_id/{thirdpartypoid}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get invoice for admin", notes = "Endpoint to get invoice")
     @ApiResponses(value = {
