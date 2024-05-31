@@ -64,6 +64,26 @@ public class InvoiceService {
         }
 
     }
+ public Invoice FindByThirdpartypoid(String thpoid) {
+        try {
+
+                return this.repository.findByThirdpartypoid(thpoid);
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+ public boolean existByThirdpartypoid(String thpoid) {
+        try {
+
+                return this.repository.existsByThirdpartypoid(thpoid);
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
 
     public DynamicResponse FindAllPg(int page, int size, InvoiceRelated related) {
         try {

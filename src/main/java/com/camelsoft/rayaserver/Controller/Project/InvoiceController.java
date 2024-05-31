@@ -124,7 +124,7 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<Invoice> add_invoice(@RequestBody InvoiceRequest request, @PathVariable Long poid) throws IOException {
+    public ResponseEntity<Invoice> add_invoice(@RequestBody(required = false) InvoiceRequest request, @PathVariable Long poid) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
@@ -157,7 +157,13 @@ public class InvoiceController extends BaseController {
         }
         Set<Product> products = this.productservice.GetProductList(request.getProducts());
         Invoice invoice = new Invoice();
-        if (request.getInvoicenumber() != null) {
+        if (request.getThirdpartypoid() != null) {
+            if(this.service.existByThirdpartypoid(request.getThirdpartypoid()))
+                return new ResponseEntity(request.getThirdpartypoid() + "is already found , please try something else !", HttpStatus.FOUND);
+
+            invoice.setThirdpartypoid(request.getThirdpartypoid());
+        }
+       if (request.getInvoicenumber() != null) {
             invoice.setInvoicenumber(request.getInvoicenumber());
         }
         if (request.getInvoicedate() != null) {

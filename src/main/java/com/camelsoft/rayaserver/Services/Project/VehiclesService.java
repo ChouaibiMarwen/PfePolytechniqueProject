@@ -49,6 +49,14 @@ public class VehiclesService {
         }
 
     }
+  public Vehicles FindByVehiclesmediaid(Long id) {
+        try {
+                return this.repository.findByCarimages_Id(id);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
   public Vehicles FindByVIN(String vin) {
         try {
 
