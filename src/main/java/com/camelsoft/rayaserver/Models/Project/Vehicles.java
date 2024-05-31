@@ -72,7 +72,7 @@ public class Vehicles implements Serializable {
     private VehiclesMedia carimages;
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "VehiclesPriceFinancing_id")
-    private VehiclesPriceFinancing Vehiclespricefinancing;
+    private VehiclesPriceFinancing vehiclespricefinancing;
     @JsonIgnore
     @Column(name = "archive")
     private Boolean archive = false;
@@ -235,11 +235,11 @@ public class Vehicles implements Serializable {
     }
 
     public VehiclesPriceFinancing getVehiclespricefinancing() {
-        return Vehiclespricefinancing;
+        return vehiclespricefinancing;
     }
 
     public void setVehiclespricefinancing(VehiclesPriceFinancing vehiclespricefinancing) {
-        Vehiclespricefinancing = vehiclespricefinancing;
+        this.vehiclespricefinancing = vehiclespricefinancing;
     }
 
     public Boolean getArchive() {

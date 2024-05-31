@@ -306,7 +306,7 @@ public class VehiclesController extends BaseController {
             @ApiResponse(code = 404, message = "Not found, check the car id"),
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
     })
-    public ResponseEntity<VehiclesPriceFinancing> add_vehicle_price_financing(@PathVariable Long id_vehicle, @ModelAttribute VehiclesPriceFinancingRequest request) throws IOException {
+    public ResponseEntity<Vehicles> add_vehicle_price_financing(@PathVariable Long id_vehicle, @ModelAttribute VehiclesPriceFinancingRequest request) throws IOException {
         //users user = UserServices.findByUserName(getCurrentUser().getUsername());
         Vehicles vehicles = this.Services.FindById(id_vehicle);
         if (vehicles == null)
@@ -329,7 +329,7 @@ public class VehiclesController extends BaseController {
         if (vehicles.getCarimages() != null) {
             vehicles.setStatus(VehiclesPostStatus.PUBLISHED);
         }
-        this.Services.Update(vehicles);
+         Vehicles resultvehicles =  this.Services.Update(vehicles);
         users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
         //
         UserAction action = new UserAction(
@@ -337,7 +337,7 @@ public class VehiclesController extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(resultvehicles, HttpStatus.OK);
     }
 
     @PatchMapping(value = {"/update_vehicle_price_financing/{id_vehicle_price_financing}"})
@@ -349,7 +349,7 @@ public class VehiclesController extends BaseController {
             @ApiResponse(code = 404, message = "Not found, check the car id"),
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
     })
-    public ResponseEntity<VehiclesPriceFinancing> update_vehicle_price_financing(@PathVariable Long id_vehicle_price_financing, @ModelAttribute VehiclesPriceFinancingRequest request) throws IOException {
+    public ResponseEntity<Vehicles> update_vehicle_price_financing(@PathVariable Long id_vehicle_price_financing, @ModelAttribute VehiclesPriceFinancingRequest request) throws IOException {
         //users user = UserServices.findByUserName(getCurrentUser().getUsername());
         VehiclesPriceFinancing vehiclesPriceFinancing = this.vehiclesPriceFinancingService.FindById(id_vehicle_price_financing);
         if (vehiclesPriceFinancing == null)
@@ -364,6 +364,7 @@ public class VehiclesController extends BaseController {
         if (request.getVatamount() != null) vehiclesPriceFinancing.setVatamount(request.getVatamount());
         if (request.getTotalamount() != null) vehiclesPriceFinancing.setTotalamount(request.getTotalamount());
         VehiclesPriceFinancing result = this.vehiclesPriceFinancingService.Update(vehiclesPriceFinancing);
+        Vehicles resultVehicles = this.Services.FindByfindByehiclespricefinancingid(result.getId());
         users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
         //
         UserAction action = new UserAction(
@@ -371,7 +372,7 @@ public class VehiclesController extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(resultVehicles, HttpStatus.OK);
     }
 
     @PostMapping(value = {"/add_vehicle_media/{id_vehicle}"})
@@ -383,7 +384,7 @@ public class VehiclesController extends BaseController {
             @ApiResponse(code = 404, message = "Not found, check the car id"),
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
     })
-    public ResponseEntity<VehiclesMedia> add_vehicle_media(@PathVariable Long id_vehicle, @ModelAttribute VehiclesMediaRequest request) throws IOException {
+    public ResponseEntity<Vehicles> add_vehicle_media(@PathVariable Long id_vehicle, @ModelAttribute VehiclesMediaRequest request) throws IOException {
         //users user = UserServices.findByUserName(getCurrentUser().getUsername());
         Vehicles vehicles = this.Services.FindById(id_vehicle);
         if (vehicles == null)
@@ -447,7 +448,7 @@ public class VehiclesController extends BaseController {
         if (vehicles.getVehiclespricefinancing() != null) {
             vehicles.setStatus(VehiclesPostStatus.PUBLISHED);
         }
-        this.Services.Update(vehicles);
+        Vehicles resultvehicles =  this.Services.Update(vehicles);
         users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
         //
         UserAction action = new UserAction(
@@ -455,7 +456,7 @@ public class VehiclesController extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(resultvehicles, HttpStatus.OK);
     }
 
     @PatchMapping(value = {"/update_vehicle_media/{id_media}"})
