@@ -471,6 +471,34 @@ public class InvoiceController extends BaseController {
 
     }
 
+@GetMapping(value = {"/get_invoice_by_third_party_po_id/{thirdpartypoid}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "get invoice for admin", notes = "Endpoint to get invoice")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
+            @ApiResponse(code = 404, message = "Not found, check invoice id")
+    })
+    public ResponseEntity<Invoice> get_invoice_by_third_party_po_id(@PathVariable String thirdpartypoid) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        if (this.service.FindByThirdpartypoid(thirdpartypoid) == null) {
+            return new ResponseEntity(thirdpartypoid + " is not found in the system!", HttpStatus.NOT_ACCEPTABLE);
+        }
+        Invoice result = this.service.FindByThirdpartypoid(thirdpartypoid);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+
+    }
+
 
     @GetMapping(value = {"/user_all_invoices/{user_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
