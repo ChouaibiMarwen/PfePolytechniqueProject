@@ -59,6 +59,17 @@ public class VehiclesService {
         }
 
     }
+
+    public Vehicles FindByfindByehiclespricefinancingid(Long id) {
+        try {
+            return this.repository.findByVehiclespricefinancing_Id(id);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
   public Vehicles FindByVIN(String vin) {
         try {
 
