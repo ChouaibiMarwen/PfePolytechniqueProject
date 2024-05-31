@@ -139,7 +139,7 @@ public class InvoiceController extends BaseController {
         users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
         users relatedto = UserServices.findById(request.getRelatedtouserid());
 
-        if (this.service.ExistByInvoiceNumber(request.getInvoicenumber())) {
+        if (request.getInvoicenumber()==null || this.service.ExistByInvoiceNumber(request.getInvoicenumber())) {
             return new ResponseEntity(request.getInvoicenumber() + "is already found , please try something else !", HttpStatus.FOUND);
         }
         if (request.getRelated() == null || request.getRelated() == InvoiceRelated.NONE) {
@@ -156,35 +156,113 @@ public class InvoiceController extends BaseController {
             }
         }
         Set<Product> products = this.productservice.GetProductList(request.getProducts());
-        Invoice invoice = new Invoice(
-                request.getInvoicenumber(),
-                request.getInvoicedate(),
-                request.getDuedate(),
-                request.getCurrency(),
-                request.getSuppliername(),
-                request.getSupplierzipcode(),
-                request.getSupplierstreetadress(),
-                request.getSupplierphonenumber(),
-                request.getBankname(),
-                request.getBankzipcode(),
-                request.getBankstreetadress(),
-                request.getBankphonenumber(),
-                request.getVehicleregistration(),
-                request.getVehiclecolor(),
-                request.getVehiclevin(),
-                request.getVehiclemodel(),
-                request.getVehiclemark(),
-                request.getVehiclemileage(),
-                request.getVehiclemotexpiry(),
-                request.getVehicleenginesize(),
-                products,
-                createdby,
-                request.getRelated(),
-                relatedto,
-                request.getBankiban(),
-                request.getBankrip()
-        );
-        if(vehicles.getVehiclespricefinancing() != null)
+        Invoice invoice = new Invoice();
+        if (request.getInvoicenumber() != null) {
+            invoice.setInvoicenumber(request.getInvoicenumber());
+        }
+        if (request.getInvoicedate() != null) {
+            invoice.setInvoicedate(request.getInvoicedate());
+
+        }
+        if (request.getDuedate() != null) {
+            invoice.setDuedate(request.getDuedate());
+
+        }
+        if (request.getCurrency() != null) {
+            invoice.setCurrency(request.getCurrency());
+
+        }
+        if (request.getSuppliername() != null) {
+            invoice.setSuppliername(request.getSuppliername());
+
+        }
+      if (request.getSupplierzipcode() != null) {
+            invoice.setSupplierzipcode(request.getSupplierzipcode());
+
+        }
+        if (request.getSupplierstreetadress() != null) {
+            invoice.setSupplierstreetadress(request.getSupplierstreetadress());
+
+        }
+        if (request.getSupplierphonenumber() != null) {
+            invoice.setSupplierphonenumber(request.getSupplierphonenumber());
+
+        }
+        if (request.getBankname() != null) {
+            invoice.setBankname(request.getBankname());
+
+        }
+        if (request.getBankzipcode() != null) {
+            invoice.setBankzipcode(request.getBankzipcode());
+
+        }
+        if (request.getBankstreetadress() != null) {
+            invoice.setBankstreetadress(request.getBankstreetadress());
+
+        }
+        if (request.getBankphonenumber() != null) {
+            invoice.setBankphonenumber(request.getBankphonenumber());
+
+        }
+        if (request.getVehicleregistration() != null) {
+            invoice.setVehicleregistration(request.getVehicleregistration());
+
+        }
+        if (request.getVehiclecolor() != null) {
+            invoice.setVehiclecolor(request.getVehiclecolor());
+
+        }
+        if (request.getVehiclevin() != null) {
+            invoice.setVehiclevin(request.getVehiclevin());
+
+        }
+        if (request.getVehiclemodel() != null) {
+            invoice.setVehiclemodel(request.getVehiclemodel());
+
+        }
+        if (request.getVehiclemark() != null) {
+            invoice.setVehiclemark(request.getVehiclemark());
+
+        }
+        if (request.getVehiclemileage() != null) {
+            invoice.setVehiclemileage(request.getVehiclemileage());
+
+        }
+        if (request.getVehiclemotexpiry() != null) {
+            invoice.setVehiclemotexpiry(request.getVehiclemotexpiry());
+
+        }
+
+        if (request.getVehicleenginesize() != null) {
+            invoice.setVehicleenginesize(request.getVehicleenginesize());
+
+        }
+        if (products != null) {
+            invoice.setProducts(products);
+
+        }
+        if (createdby != null) {
+            invoice.setCreatedby(createdby);
+
+        }
+        if (request.getRelated() != null) {
+            invoice.setRelated(request.getRelated());
+
+        }
+        if (relatedto != null) {
+            invoice.setRelatedto(relatedto);
+
+        }
+        if (request.getBankiban() != null) {
+            invoice.setBankiban(request.getBankiban());
+
+        }
+        if (request.getBankrip() != null) {
+            invoice.setBankrib(request.getBankrip());
+
+        }
+
+        if (vehicles.getVehiclespricefinancing() != null)
             invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
         invoice.setPurshaseorder(po);
         Invoice result = this.service.Save(invoice);
@@ -573,7 +651,7 @@ public class InvoiceController extends BaseController {
         if (invoice.getStatus() == InvoiceStatus.PAID)
             return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
         if (invoice.getConfirmedBy() != null)
-            return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen() , HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
         invoice.setStatus(InvoiceStatus.PAID);
         invoice.setConfirmedBy(user);
         Invoice result = this.service.Update(invoice);
