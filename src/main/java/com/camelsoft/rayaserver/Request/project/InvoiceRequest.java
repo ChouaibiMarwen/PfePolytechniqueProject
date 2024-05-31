@@ -31,6 +31,7 @@ public class InvoiceRequest {
     private String vehiclemotexpiry;
     private String vehicleenginesize;
     private String bankiban;
+    private String thirdpartypoid;
     private String bankrip;
     private InvoiceRelated related=InvoiceRelated.NONE;
     private Long relatedtouserid;

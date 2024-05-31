@@ -469,7 +469,7 @@ public class VehiclesController extends BaseController {
             @ApiResponse(code = 404, message = "Not found, check the car id"),
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
     })
-    public ResponseEntity<VehiclesMedia> update_vehicle_media(@PathVariable Long id_media, @ModelAttribute VehiclesMediaRequest request) throws IOException {
+    public ResponseEntity<Vehicles> update_vehicle_media(@PathVariable Long id_media, @ModelAttribute VehiclesMediaRequest request) throws IOException {
         //users user = UserServices.findByUserName(getCurrentUser().getUsername());
         VehiclesMedia vehiclesmedia = this.vehiclesMediaService.FindById(id_media);
         if (vehiclesmedia == null)
@@ -545,14 +545,14 @@ public class VehiclesController extends BaseController {
         if (sideviewimageright != null) vehiclesmedia.setSideviewimageright(sideviewimageright);
         if (!additionalviewimages.isEmpty()) vehiclesmedia.setAdditionalviewimages(additionalviewimages);
         VehiclesMedia result = this.vehiclesMediaService.Update(vehiclesmedia);
+        Vehicles resulttoshow = this.Services.FindByVehiclesmediaid(result.getId());
         users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
-        //
         UserAction action = new UserAction(
                 UserActionsEnum.VEHICLES_MANAGEMENT,
                 currentuser
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(resulttoshow, HttpStatus.OK);
     }
 
 

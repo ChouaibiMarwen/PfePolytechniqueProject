@@ -124,7 +124,7 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<Invoice> add_invoice(@RequestBody InvoiceRequest request, @PathVariable Long poid) throws IOException {
+    public ResponseEntity<Invoice> add_invoice(@RequestBody(required = false) InvoiceRequest request, @PathVariable Long poid) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
@@ -139,7 +139,7 @@ public class InvoiceController extends BaseController {
         users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
         users relatedto = UserServices.findById(request.getRelatedtouserid());
 
-        if (request.getInvoicenumber()==null || this.service.ExistByInvoiceNumber(request.getInvoicenumber())) {
+        if (request.getInvoicenumber() == null || this.service.ExistByInvoiceNumber(request.getInvoicenumber())) {
             return new ResponseEntity(request.getInvoicenumber() + "is already found , please try something else !", HttpStatus.FOUND);
         }
         if (request.getRelated() == null || request.getRelated() == InvoiceRelated.NONE) {
@@ -157,6 +157,12 @@ public class InvoiceController extends BaseController {
         }
         Set<Product> products = this.productservice.GetProductList(request.getProducts());
         Invoice invoice = new Invoice();
+        if (request.getThirdpartypoid() != null) {
+            if (this.service.existByThirdpartypoid(request.getThirdpartypoid()))
+                return new ResponseEntity(request.getThirdpartypoid() + "is already found , please try something else !", HttpStatus.FOUND);
+
+            invoice.setThirdpartypoid(request.getThirdpartypoid());
+        }
         if (request.getInvoicenumber() != null) {
             invoice.setInvoicenumber(request.getInvoicenumber());
         }
@@ -176,7 +182,7 @@ public class InvoiceController extends BaseController {
             invoice.setSuppliername(request.getSuppliername());
 
         }
-      if (request.getSupplierzipcode() != null) {
+        if (request.getSupplierzipcode() != null) {
             invoice.setSupplierzipcode(request.getSupplierzipcode());
 
         }
@@ -454,6 +460,34 @@ public class InvoiceController extends BaseController {
             return new ResponseEntity(invoice_id + " is not found in the system!", HttpStatus.NOT_FOUND);
         }
         Invoice result = this.service.FindById(invoice_id);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+
+    }
+
+    @GetMapping(value = {"/get_invoice_by_third_party_po_id/{thirdpartypoid}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "get invoice for admin", notes = "Endpoint to get invoice")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
+            @ApiResponse(code = 404, message = "Not found, check invoice id")
+    })
+    public ResponseEntity<Invoice> get_invoice_by_third_party_po_id(@PathVariable String thirdpartypoid) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        if (this.service.FindByThirdpartypoid(thirdpartypoid) == null) {
+            return new ResponseEntity(thirdpartypoid + " is not found in the system!", HttpStatus.NOT_ACCEPTABLE);
+        }
+        Invoice result = this.service.FindByThirdpartypoid(thirdpartypoid);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,

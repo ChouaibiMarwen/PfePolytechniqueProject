@@ -41,6 +41,8 @@ public class Invoice implements Serializable {
     private String supplierphonenumber;
     @Column(name = "bankname")
     private String bankname;
+     @Column(name = "thirdpartypoid")
+    private String thirdpartypoid;
     @Column(name = "bankzipcode")
     private String bankzipcode;
     @Column(name = "bankstreetadress")
@@ -517,5 +519,13 @@ public class Invoice implements Serializable {
 
     public void setVehicleprice(Double vehicleprice) {
         this.vehicleprice = vehicleprice;
+    }
+
+    public String getThirdpartypoid() {
+        return thirdpartypoid;
+    }
+
+    public void setThirdpartypoid(String thirdpartypoid) {
+        this.thirdpartypoid = thirdpartypoid;
     }
 }
