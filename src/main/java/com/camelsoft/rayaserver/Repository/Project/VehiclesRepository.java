@@ -3,6 +3,8 @@ package com.camelsoft.rayaserver.Repository.Project;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
+import com.camelsoft.rayaserver.Models.Project.VehiclesMedia;
+import com.camelsoft.rayaserver.Models.Project.VehiclesPriceFinancing;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,5 +24,8 @@ public interface VehiclesRepository extends JpaRepository<Vehicles,Long> {
     @Query("SELECT v FROM Vehicles v "
             + "WHERE v.supplier = :supplier AND v.stock > 0 AND v.archive = false")
     Page<Vehicles> findVehiclesBySupplierAndStockGreaterThanAndArchiveFalse(Pageable pageable, Supplier supplier);
+
+   // Vehicles findByVehiclespricefinancing(VehiclesPriceFinancing vehiclesPriceFinancing);
+    //Vehicles findByCarimages(VehiclesMedia vehiclesMedia);
 
 }

@@ -2,6 +2,8 @@ package com.camelsoft.rayaserver.Services.Project;
 
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 
+import com.camelsoft.rayaserver.Models.Project.VehiclesMedia;
+import com.camelsoft.rayaserver.Models.Project.VehiclesPriceFinancing;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Repository.Project.VehiclesRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -160,14 +162,19 @@ public List<Vehicles> FindAllSupplier( Supplier supplier) {
 
     }
 
-
     public boolean inStock( Vehicles vehicles, Integer demandedQuantity ){
         return vehicles.getStock() - demandedQuantity >= 0;
     }
 
+   /* public Vehicles getVeheclesByPriceFinancing(VehiclesPriceFinancing vehiclesPriceFinancing) {
+        return this.repository.findByVehiclespricefinancing(vehiclesPriceFinancing);
+    }
 
+    public Vehicles getVeheclesByCarImage(VehiclesMedia vehiclesMedia) {
+        return this.repository.findByCarimages(vehiclesMedia);
+    }
 
-
+*/
 
 
 }
