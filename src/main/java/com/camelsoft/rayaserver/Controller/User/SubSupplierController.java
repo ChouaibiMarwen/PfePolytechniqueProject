@@ -84,14 +84,16 @@ public class SubSupplierController extends BaseController {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         List<UserShortDto> result = new ArrayList<>() ;
         if(currentuser.getManager() == null && currentuser.getRole().getRole()==RoleEnum.ROLE_SUPPLIER){
-            result =  this.supplierServices.getAllUsersWithoutPaginationSupplier(active, name, RoleEnum.ROLE_SUPPLIER, verified,currentuser);
+            result =  this.supplierServices.getAllSubSupplierWithoutPaginationSupplier(active, name, RoleEnum.ROLE_SUPPLIER, verified,currentuser);
         }else{
             // need to adjust
-            result =  this.supplierServices.getAllUsersWithoutPaginationSupplier(active, name, RoleEnum.ROLE_SUPPLIER, verified,currentuser);
+            result =  this.supplierServices.getAllSubSupplierWithoutPaginationSupplier(active, name, RoleEnum.ROLE_SUPPLIER, verified,currentuser);
 
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
 
 
 

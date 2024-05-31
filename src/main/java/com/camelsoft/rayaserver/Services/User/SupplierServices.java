@@ -124,7 +124,7 @@ public class SupplierServices {
 
     }
 
- public List<UserShortDto> getAllUsersWithoutPaginationSupplier(Boolean active, String name, RoleEnum role, Boolean verified,users manager) {
+ public List<UserShortDto> getAllSubSupplierWithoutPaginationSupplier(Boolean active, String name, RoleEnum role, Boolean verified,users manager) {
         try {
             Role userRole = roleRepository.findByRole(role);
             List<users> user = null;
@@ -152,7 +152,6 @@ public class SupplierServices {
         }
 
     }
-
 
     public Long countSuppliers() {
         return this.repository.count();

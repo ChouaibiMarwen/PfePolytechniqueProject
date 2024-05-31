@@ -145,8 +145,46 @@ public class CriteriaService {
             }
             if (active != null)
                 finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
+            finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("manager"), manager));
+            if (deleted != null) {
+                finalPredicate = criteriaBuilder.and(finalPredicate,  criteriaBuilder.or(
+                        criteriaBuilder.equal(user.get("deleted"), deleted),
+                        criteriaBuilder.isNull(user.get("deleted"))
+                ));
 
-                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("manager"), manager));
+            }
+            Q.where(finalPredicate);
+            Q.orderBy(criteriaBuilder.desc(user.get("timestmp")));
+            TypedQuery<users> typedQuery = em.createQuery(Q);
+
+            int usersCount = typedQuery.getResultList().size();
+            typedQuery.setFirstResult(page * size);
+            typedQuery.setMaxResults(size);
+            Pageable pageable = PageRequest.of(page, size);
+
+            return new PageImpl<>(typedQuery.getResultList(), pageable, usersCount);
+
+        } catch (NoResultException ex) {
+            throw new NotFoundException("No data found.");
+        }
+    }
+ public PageImpl<users> UsersSearchCreatiriaRolesListSubsupplier(int page, int size,Boolean active, String name, RoleEnum role, Boolean verified,users manager,Boolean deleted) {
+        try {
+             Role  userRoles = roleRepository.findByRole(role);
+
+            CriteriaQuery<users> Q = criteriaBuilder.createQuery(users.class);
+            Root<users> user = Q.from(users.class);
+            Q.distinct(true);
+
+            Predicate finalPredicate = user.get("role").in(userRoles);
+
+            if (name != null) {
+                Predicate namePredicate = criteriaBuilder.and(criteriaBuilder.like(criteriaBuilder.lower(user.get("name")), "%" + name.toLowerCase() + "%"));
+                    finalPredicate = criteriaBuilder.and(namePredicate, finalPredicate);
+            }
+            if (active != null)
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
+            finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("manager"), manager));
             if (deleted != null) {
                 finalPredicate = criteriaBuilder.and(finalPredicate,  criteriaBuilder.or(
                         criteriaBuilder.equal(user.get("deleted"), deleted),
