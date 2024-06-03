@@ -114,7 +114,7 @@ public class InvoiceController extends BaseController {
 
     }
 
-    @PostMapping(value = {"/add_invoice/{poid}"})
+    @PostMapping(value = {"/add_invoice"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "add invoice for admin  and supplier", notes = "Endpoint to add invoice")
     @ApiResponses(value = {
@@ -124,7 +124,171 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<Invoice> add_invoice(@RequestBody(required = false) InvoiceRequest request, @PathVariable Long poid) throws IOException {
+    public ResponseEntity<Invoice> add_invoice(@RequestBody(required = false) InvoiceRequest request) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+
+        Vehicles vehicles = this.vehiclesService.FindByVIN(request.getVehiclevin());
+        if (vehicles == null)
+            return new ResponseEntity(request.getVehiclevin() + "this vehicle VIN  not found", HttpStatus.NOT_ACCEPTABLE);
+        users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
+        users relatedto = UserServices.findById(request.getRelatedtouserid());
+
+        if (request.getInvoicenumber() == null || this.service.ExistByInvoiceNumber(request.getInvoicenumber())) {
+            return new ResponseEntity(request.getInvoicenumber() + "is already found , please try something else !", HttpStatus.FOUND);
+        }
+        if (request.getRelated() == null || request.getRelated() == InvoiceRelated.NONE) {
+            return new ResponseEntity("you need to defined the invoice relation " + request.getRelated(), HttpStatus.NOT_ACCEPTABLE);
+        }
+        if (relatedto.getRole().getRole() != RoleEnum.ROLE_ADMIN && relatedto.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN) {
+            if (relatedto.getSupplier() != null) {
+                if (request.getRelated() != InvoiceRelated.SUPPLIER && request.getRelated() != InvoiceRelated.SUB_DEALER)
+                    return new ResponseEntity("the related to is a supplier or sub-dealer and the related is not a supplier or sub-dealer", HttpStatus.NOT_ACCEPTABLE);
+
+            } else {
+                if (request.getRelated() != InvoiceRelated.CUSTOMER)
+                    return new ResponseEntity("the related to is a customer and the related is not a customer", HttpStatus.NOT_ACCEPTABLE);
+            }
+        }
+        Set<Product> products = this.productservice.GetProductList(request.getProducts());
+        Invoice invoice = new Invoice();
+        if (request.getThirdpartypoid() != null) {
+            if (this.service.existByThirdpartypoid(request.getThirdpartypoid()))
+                return new ResponseEntity(request.getThirdpartypoid() + "is already found , please try something else !", HttpStatus.FOUND);
+
+            invoice.setThirdpartypoid(request.getThirdpartypoid());
+        }
+        if (request.getInvoicenumber() != null) {
+            invoice.setInvoicenumber(request.getInvoicenumber());
+        }
+        if (request.getInvoicedate() != null) {
+            invoice.setInvoicedate(request.getInvoicedate());
+
+        }
+        if (request.getDuedate() != null) {
+            invoice.setDuedate(request.getDuedate());
+
+        }
+        if (request.getCurrency() != null) {
+            invoice.setCurrency(request.getCurrency());
+
+        }
+        if (request.getSuppliername() != null) {
+            invoice.setSuppliername(request.getSuppliername());
+
+        }
+        if (request.getSupplierzipcode() != null) {
+            invoice.setSupplierzipcode(request.getSupplierzipcode());
+
+        }
+        if (request.getSupplierstreetadress() != null) {
+            invoice.setSupplierstreetadress(request.getSupplierstreetadress());
+
+        }
+        if (request.getSupplierphonenumber() != null) {
+            invoice.setSupplierphonenumber(request.getSupplierphonenumber());
+
+        }
+        if (request.getBankname() != null) {
+            invoice.setBankname(request.getBankname());
+
+        }
+        if (request.getBankzipcode() != null) {
+            invoice.setBankzipcode(request.getBankzipcode());
+
+        }
+        if (request.getBankstreetadress() != null) {
+            invoice.setBankstreetadress(request.getBankstreetadress());
+
+        }
+        if (request.getBankphonenumber() != null) {
+            invoice.setBankphonenumber(request.getBankphonenumber());
+
+        }
+        if (request.getVehicleregistration() != null) {
+            invoice.setVehicleregistration(request.getVehicleregistration());
+
+        }
+        if (request.getVehiclecolor() != null) {
+            invoice.setVehiclecolor(request.getVehiclecolor());
+
+        }
+        if (request.getVehiclevin() != null) {
+            invoice.setVehiclevin(request.getVehiclevin());
+
+        }
+        if (request.getVehiclemodel() != null) {
+            invoice.setVehiclemodel(request.getVehiclemodel());
+
+        }
+        if (request.getVehiclemark() != null) {
+            invoice.setVehiclemark(request.getVehiclemark());
+
+        }
+        if (request.getVehiclemileage() != null) {
+            invoice.setVehiclemileage(request.getVehiclemileage());
+
+        }
+        if (request.getVehiclemotexpiry() != null) {
+            invoice.setVehiclemotexpiry(request.getVehiclemotexpiry());
+
+        }
+
+        if (request.getVehicleenginesize() != null) {
+            invoice.setVehicleenginesize(request.getVehicleenginesize());
+
+        }
+        if (products != null) {
+            invoice.setProducts(products);
+
+        }
+        if (createdby != null) {
+            invoice.setCreatedby(createdby);
+
+        }
+        if (request.getRelated() != null) {
+            invoice.setRelated(request.getRelated());
+
+        }
+        if (relatedto != null) {
+            invoice.setRelatedto(relatedto);
+
+        }
+        if (request.getBankiban() != null) {
+            invoice.setBankiban(request.getBankiban());
+
+        }
+        if (request.getBankrip() != null) {
+            invoice.setBankrib(request.getBankrip());
+
+        }
+
+        if (vehicles.getVehiclespricefinancing() != null)
+            invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
+
+        Invoice result = this.service.Save(invoice);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+
+    }
+@PostMapping(value = {"/add_invoice/{poid}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "add invoice for admin  and supplier", notes = "Endpoint to add invoice")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 406, message = "Not acceptable , you need to defined the invoice relation"),
+            @ApiResponse(code = 302, message = "the invoice number is already in use"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<Invoice> add_invoice_thirdparty(@RequestBody(required = false) InvoiceRequest request, @PathVariable Long poid) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
