@@ -128,6 +128,8 @@ public class InvoiceController extends BaseController {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        if(request.getVehiclevin()==null)
+            return new ResponseEntity("VIN should be not null", HttpStatus.NOT_ACCEPTABLE);
 
         Vehicles vehicles = this.vehiclesService.FindByVIN(request.getVehiclevin());
         if (vehicles == null)
@@ -298,6 +300,8 @@ public class InvoiceController extends BaseController {
             return new ResponseEntity("this po not found", HttpStatus.NOT_FOUND);
         if (po.getInvoice() != null)
             return new ResponseEntity("this po already have invoice", HttpStatus.NOT_ACCEPTABLE);
+        if(request.getVehiclevin()==null)
+            return new ResponseEntity("VIN should be not null", HttpStatus.NOT_ACCEPTABLE);
         Vehicles vehicles = this.vehiclesService.FindByVIN(request.getVehiclevin());
         if (vehicles == null)
             return new ResponseEntity(request.getVehiclevin() + "this vehicle VIN  not found", HttpStatus.NOT_ACCEPTABLE);
@@ -433,8 +437,11 @@ public class InvoiceController extends BaseController {
 
         }
 
-        if (vehicles.getVehiclespricefinancing() != null)
+        if (request.getVehicleprice()!=null ) {
+            invoice.setVehicleprice(request.getVehicleprice());
+        }else if( vehicles.getVehiclespricefinancing() != null){
             invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
+        }
         invoice.setPurshaseorder(po);
         Invoice result = this.service.Save(invoice);
         //save new action

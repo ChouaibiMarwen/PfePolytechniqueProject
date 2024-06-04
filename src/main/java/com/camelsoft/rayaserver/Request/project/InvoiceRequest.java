@@ -13,6 +13,8 @@ public class InvoiceRequest {
     private InvoiceStatus status = InvoiceStatus.UNPAID;
     private Date invoicedate = new Date();
     private Date duedate = new Date();
+    private Double vehicleprice = 0.0;
+
     private String currency="SAR";
     private String suppliername;
     private String supplierzipcode;
