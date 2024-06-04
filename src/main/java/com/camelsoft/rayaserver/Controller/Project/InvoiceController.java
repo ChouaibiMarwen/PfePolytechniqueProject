@@ -266,9 +266,11 @@ public class InvoiceController extends BaseController {
 
         }
 
-        if (vehicles.getVehiclespricefinancing() != null)
+        if (request.getVehicleprice()!=null ) {
+            invoice.setVehicleprice(request.getVehicleprice());
+        }else if( vehicles.getVehiclespricefinancing() != null){
             invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
-
+        }
         Invoice result = this.service.Save(invoice);
         //save new action
         UserAction action = new UserAction(
