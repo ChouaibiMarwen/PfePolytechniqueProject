@@ -231,8 +231,12 @@ public class CriteriaService {
             if (status != null) {
                 predicates.add(criteriaBuilder.equal(invoiceRoot.get("status"), status));
             }
-            if (thirdparty != null && thirdparty) {
-                predicates.add(criteriaBuilder.isNotNull(invoiceRoot.get("thirdpartypoid")));// and equal to thirdparty
+            if (thirdparty != null) {
+                if(thirdparty){
+                    predicates.add(criteriaBuilder.isNotNull(invoiceRoot.get("thirdpartypoid")));
+                }else{
+                    predicates.add(criteriaBuilder.isNull(invoiceRoot.get("thirdpartypoid")));
+                }
             }
 
             // Apply related filter if present
