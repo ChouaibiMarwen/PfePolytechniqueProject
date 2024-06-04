@@ -278,7 +278,7 @@ public class InvoiceController extends BaseController {
 
 
     }
-@PostMapping(value = {"/add_invoice_thirdparty/{poid}"})
+@PostMapping(value = {"/add_invoice_thirdparty"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "add invoice for admin  and supplier", notes = "Endpoint to add invoice")
     @ApiResponses(value = {
@@ -288,14 +288,11 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<Invoice> add_invoice_thirdparty(@RequestBody(required = false) InvoiceRequest request, @PathVariable Long poid) throws IOException {
+    public ResponseEntity<Invoice> add_invoice_thirdparty(@RequestBody(required = false) InvoiceRequest request) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
-        PurshaseOrder po = purshaseOrderService.FindById(poid);
 
-        if (po != null && po.getInvoice() != null)
-            return new ResponseEntity("this po already have invoice", HttpStatus.NOT_ACCEPTABLE);
         Vehicles vehicles = this.vehiclesService.FindByVIN(request.getVehiclevin());
         if (vehicles == null)
             return new ResponseEntity(request.getVehiclevin() + "this vehicle VIN  not found", HttpStatus.NOT_ACCEPTABLE);
@@ -433,7 +430,7 @@ public class InvoiceController extends BaseController {
 
         if (vehicles.getVehiclespricefinancing() != null)
             invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
-        invoice.setPurshaseorder(po);
+
         Invoice result = this.service.Save(invoice);
         //save new action
         UserAction action = new UserAction(
