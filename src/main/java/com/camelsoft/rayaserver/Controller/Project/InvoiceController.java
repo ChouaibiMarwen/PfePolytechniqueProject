@@ -278,7 +278,7 @@ public class InvoiceController extends BaseController {
 
 
     }
-@PostMapping(value = {"/add_invoice/{poid}"})
+@PostMapping(value = {"/add_invoice_thirdparty/{poid}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "add invoice for admin  and supplier", notes = "Endpoint to add invoice")
     @ApiResponses(value = {
