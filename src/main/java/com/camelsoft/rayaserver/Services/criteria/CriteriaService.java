@@ -63,7 +63,7 @@ public class CriteriaService {
             if (active != null)
                 finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
             if (deleted != null) {
-                finalPredicate = criteriaBuilder.and(finalPredicate,  criteriaBuilder.or(
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.or(
                         criteriaBuilder.equal(user.get("deleted"), deleted),
                         criteriaBuilder.isNull(user.get("deleted"))
                 ));
@@ -105,7 +105,7 @@ public class CriteriaService {
             if (active != null)
                 finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
             if (deleted != null) {
-                finalPredicate = criteriaBuilder.and(finalPredicate,  criteriaBuilder.or(
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.or(
                         criteriaBuilder.equal(user.get("deleted"), deleted),
                         criteriaBuilder.isNull(user.get("deleted"))
                 ));
@@ -126,7 +126,8 @@ public class CriteriaService {
             throw new NotFoundException("No data found.");
         }
     }
-  public PageImpl<users> UsersSearchCreatiriaRolesListsupplier(int page, int size, Boolean active, Boolean deleted, String search, List<String> roles, users manager) {
+
+    public PageImpl<users> UsersSearchCreatiriaRolesListsupplier(int page, int size, Boolean active, Boolean deleted, String search, List<String> roles, users manager) {
         try {
             List<Role> userRoles = roleRepository.findByRoleIn(roles.stream().map(RoleEnum::valueOf).collect(Collectors.toList()));
 
@@ -147,7 +148,7 @@ public class CriteriaService {
                 finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
             finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("manager"), manager));
             if (deleted != null) {
-                finalPredicate = criteriaBuilder.and(finalPredicate,  criteriaBuilder.or(
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.or(
                         criteriaBuilder.equal(user.get("deleted"), deleted),
                         criteriaBuilder.isNull(user.get("deleted"))
                 ));
@@ -168,9 +169,10 @@ public class CriteriaService {
             throw new NotFoundException("No data found.");
         }
     }
- public PageImpl<users> UsersSearchCreatiriaRolesListSubsupplier(int page, int size,Boolean active, String name, RoleEnum role, Boolean verified,users manager,Boolean deleted) {
+
+    public PageImpl<users> UsersSearchCreatiriaRolesListSubsupplier(int page, int size, Boolean active, String name, RoleEnum role, Boolean verified, users manager, Boolean deleted) {
         try {
-             Role  userRoles = roleRepository.findByRole(role);
+            Role userRoles = roleRepository.findByRole(role);
 
             CriteriaQuery<users> Q = criteriaBuilder.createQuery(users.class);
             Root<users> user = Q.from(users.class);
@@ -180,13 +182,13 @@ public class CriteriaService {
 
             if (name != null) {
                 Predicate namePredicate = criteriaBuilder.and(criteriaBuilder.like(criteriaBuilder.lower(user.get("name")), "%" + name.toLowerCase() + "%"));
-                    finalPredicate = criteriaBuilder.and(namePredicate, finalPredicate);
+                finalPredicate = criteriaBuilder.and(namePredicate, finalPredicate);
             }
             if (active != null)
                 finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
             finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("manager"), manager));
             if (deleted != null) {
-                finalPredicate = criteriaBuilder.and(finalPredicate,  criteriaBuilder.or(
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.or(
                         criteriaBuilder.equal(user.get("deleted"), deleted),
                         criteriaBuilder.isNull(user.get("deleted"))
                 ));
@@ -209,7 +211,7 @@ public class CriteriaService {
     }
 
 
-    public PageImpl<Invoice> findAllByStatusAndRelatedAndUsers(int page, int size, InvoiceStatus status, InvoiceRelated related, users user) {
+    public PageImpl<Invoice> findAllByStatusAndRelatedAndUsers(int page, int size, InvoiceStatus status, InvoiceRelated related, users user, Boolean thirdparty) {
         try {
             // Prepare criteria builder and query
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -228,6 +230,9 @@ public class CriteriaService {
             // Apply status filter if present
             if (status != null) {
                 predicates.add(criteriaBuilder.equal(invoiceRoot.get("status"), status));
+            }
+            if (thirdparty != null && thirdparty) {
+                predicates.add(criteriaBuilder.isNotNull(invoiceRoot.get("thirdpartypoid")));// and equal to thirdparty
             }
 
             // Apply related filter if present
@@ -262,6 +267,7 @@ public class CriteriaService {
             throw new NotFoundException("No data found.");
         }
     }
+
     public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, List<RoleEnum> role) {
         try {
             // Prepare criteria builder and query
@@ -275,7 +281,7 @@ public class CriteriaService {
             // Combine createdby and relatedto invoices
             List<Invoice> invoicesList = new ArrayList<>();
             invoicesList.addAll(invoicerepository.findAllByCreatedby_Role_RoleIn(role));
-             predicates.add(invoiceRoot.in(invoicesList));
+            predicates.add(invoiceRoot.in(invoicesList));
 
             // Apply status filter if present
             if (status != null) {
@@ -304,6 +310,7 @@ public class CriteriaService {
             throw new NotFoundException("No data found.");
         }
     }
+
     public List<users> UsersSearchCreatiriaRolesListNotPaginated(Boolean active, Boolean deleted, String search, List<String> roles) {
         try {
             List<Role> userRoles = roleRepository.findByRoleIn(roles.stream().map(RoleEnum::valueOf).collect(Collectors.toList()));
@@ -324,7 +331,7 @@ public class CriteriaService {
             if (active != null)
                 finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
             if (deleted != null) {
-                finalPredicate = criteriaBuilder.and(finalPredicate,  criteriaBuilder.or(
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.or(
                         criteriaBuilder.equal(user.get("deleted"), deleted),
                         criteriaBuilder.isNull(user.get("deleted"))
                 ));

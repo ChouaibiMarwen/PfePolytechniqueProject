@@ -95,7 +95,7 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_invoice_supplier(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam(required = false) InvoiceRelated related) throws IOException {
+    public ResponseEntity<DynamicResponse> all_invoice_supplier(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam(required = false) InvoiceRelated related, @RequestParam(required = false) Boolean thirdparty) throws IOException {
 
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
 
@@ -105,7 +105,7 @@ public class InvoiceController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
-        Page<Invoice> invoice = this.criteriaService.findAllByStatusAndRelatedAndUsers(page, size, status, related, user);
+        Page<Invoice> invoice = this.criteriaService.findAllByStatusAndRelatedAndUsers(page, size, status, related, user,thirdparty);
         DynamicResponse res = new DynamicResponse(invoice.getContent(), invoice.getNumber(), invoice.getTotalElements(), invoice.getTotalPages());
 
         // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
