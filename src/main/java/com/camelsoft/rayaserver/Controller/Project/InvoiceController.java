@@ -293,9 +293,8 @@ public class InvoiceController extends BaseController {
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         PurshaseOrder po = purshaseOrderService.FindById(poid);
-        if (po != null)
-            return new ResponseEntity("this po not found", HttpStatus.NOT_FOUND);
-        if (po.getInvoice() != null)
+
+        if (po != null && po.getInvoice() != null)
             return new ResponseEntity("this po already have invoice", HttpStatus.NOT_ACCEPTABLE);
         Vehicles vehicles = this.vehiclesService.FindByVIN(request.getVehiclevin());
         if (vehicles == null)
