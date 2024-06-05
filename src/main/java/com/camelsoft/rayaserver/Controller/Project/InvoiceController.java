@@ -855,11 +855,44 @@ public class InvoiceController extends BaseController {
         if (invoice == null)
             return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_ACCEPTABLE);
 
+        if (invoice.getStatus() == InvoiceStatus.PAID || invoice.getStatus() == InvoiceStatus.REJECTED)
+            return new ResponseEntity("The invoice is already paid or rejected", HttpStatus.NOT_ACCEPTABLE);
+        invoice.setStatus(InvoiceStatus.UNPAID);
+        Invoice result = this.service.Update(invoice);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+    }
+
+
+    @PatchMapping(value = {"/reject_invoice/{idInvoice}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to reject invoice for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 406, message = "Not acceptable , you need to defined the invoice relation"),
+            @ApiResponse(code = 302, message = "the invoice number is already in use"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<Invoice> reject_invoice(@PathVariable Long idInvoice) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_ACCEPTABLE);
+        Invoice invoice = this.service.FindById(idInvoice);
+        if (invoice == null)
+            return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_ACCEPTABLE);
+
         if (invoice.getStatus() == InvoiceStatus.PAID)
             return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
         if (invoice.getConfirmedBy() != null)
             return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
-        invoice.setStatus(InvoiceStatus.UNPAID);
+        invoice.setStatus(InvoiceStatus.REJECTED);
         invoice.setConfirmedBy(user);
         Invoice result = this.service.Update(invoice);
         //save new action
@@ -872,9 +905,10 @@ public class InvoiceController extends BaseController {
 
     }
 
+
     @PatchMapping(value = {"/paid_invoice/{idInvoice}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
-    @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to confirm invoice for admin")
+    @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to change invoice's status to pia for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request, check data"),
@@ -890,8 +924,8 @@ public class InvoiceController extends BaseController {
         if (invoice == null)
             return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_ACCEPTABLE);
 
-        if (invoice.getStatus() == InvoiceStatus.PAID)
-            return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
+        if (invoice.getStatus() == InvoiceStatus.PAID || invoice.getStatus() == InvoiceStatus.REJECTED)
+            return new ResponseEntity("The invoice is already paid or rejected", HttpStatus.NOT_ACCEPTABLE);
         if (invoice.getConfirmedBy() != null)
             return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
 
