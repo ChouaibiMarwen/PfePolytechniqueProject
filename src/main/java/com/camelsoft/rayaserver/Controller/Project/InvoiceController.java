@@ -852,12 +852,14 @@ public class InvoiceController extends BaseController {
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_ACCEPTABLE);
         Invoice invoice = this.service.FindById(idInvoice);
+
         if (invoice == null)
             return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_ACCEPTABLE);
 
         if (invoice.getStatus() == InvoiceStatus.PAID || invoice.getStatus() == InvoiceStatus.REJECTED)
             return new ResponseEntity("The invoice is already paid or rejected", HttpStatus.NOT_ACCEPTABLE);
         invoice.setStatus(InvoiceStatus.UNPAID);
+        invoice.setConfirmedBy(user);
         Invoice result = this.service.Update(invoice);
         //save new action
         UserAction action = new UserAction(
@@ -890,7 +892,7 @@ public class InvoiceController extends BaseController {
 
         if (invoice.getStatus() == InvoiceStatus.PAID)
             return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
-        if (invoice.getConfirmedBy() != null)
+        if (invoice.getConfirmedBy() != null  && invoice.getConfirmedBy().equals(user))
             return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
         invoice.setStatus(InvoiceStatus.REJECTED);
         invoice.setConfirmedBy(user);
@@ -926,7 +928,7 @@ public class InvoiceController extends BaseController {
 
         if (invoice.getStatus() == InvoiceStatus.PAID || invoice.getStatus() == InvoiceStatus.REJECTED)
             return new ResponseEntity("The invoice is already paid or rejected", HttpStatus.NOT_ACCEPTABLE);
-        if (invoice.getConfirmedBy() != null)
+        if (invoice.getConfirmedBy() != null &&invoice.getConfirmedBy().equals(user))
             return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
 
         //update invoice status and confirmed by status
@@ -974,9 +976,11 @@ public class InvoiceController extends BaseController {
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_ACCEPTABLE);
         Invoice invoice = this.service.FindById(idInvoice);
+
         if (invoice == null)
             return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_ACCEPTABLE);
         //update invoice status and confirmed by status
+      /*  users user = invoice.getConfirmedBy().get*/
         invoice.setConfirmedBy(null);
         Invoice result = this.service.Update(invoice);
 
