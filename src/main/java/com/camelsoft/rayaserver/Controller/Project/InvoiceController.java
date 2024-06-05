@@ -890,8 +890,8 @@ public class InvoiceController extends BaseController {
         if (invoice == null)
             return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_ACCEPTABLE);
 
-        if (invoice.getStatus() == InvoiceStatus.PAID)
-            return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
+        if (invoice.getStatus() == InvoiceStatus.PAID || invoice.getStatus() == InvoiceStatus.REJECTED || invoice.getStatus() == InvoiceStatus.REFUNDS)
+            return new ResponseEntity("The invoice is already paid ", HttpStatus.NOT_ACCEPTABLE);
         if (invoice.getConfirmedBy() != null  && invoice.getConfirmedBy().equals(user))
             return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
         invoice.setStatus(InvoiceStatus.REJECTED);
