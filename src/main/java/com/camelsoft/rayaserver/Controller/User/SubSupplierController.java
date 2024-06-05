@@ -164,7 +164,7 @@ public class SubSupplierController extends BaseController {
         user.setUsername(username);
         if(currentuser.getRole().getRole() == RoleEnum.ROLE_SUPPLIER )
             user.setManager(currentuser);
-        if(currentuser.getManager() != null && currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUB_SUPPLIER) {
+        else if(currentuser.getManager() != null && currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUB_SUPPLIER) {
             user.setManager(currentuser.getManager());
         }else if(currentuser.getManager()!= null && currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUPPLIER){
             user.setManager(currentuser);
