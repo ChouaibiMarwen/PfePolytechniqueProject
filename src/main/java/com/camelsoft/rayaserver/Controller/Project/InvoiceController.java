@@ -961,7 +961,7 @@ public class InvoiceController extends BaseController {
 
 
 
-    @PatchMapping(value = {"/patch_for_test/{idInvoice}"})
+    /*@PatchMapping(value = {"/patch_for_test/{idInvoice}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to change invoice's status to pia for admin")
     @ApiResponses(value = {
@@ -989,7 +989,7 @@ public class InvoiceController extends BaseController {
         Invoice result = this.service.Update(invoice);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+    }*/
 
 
 
