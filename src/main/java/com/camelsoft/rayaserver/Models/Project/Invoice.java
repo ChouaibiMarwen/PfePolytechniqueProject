@@ -24,7 +24,7 @@ public class Invoice implements Serializable {
     @Column(name = "invoicenumber")
     private Integer invoicenumber = 0;
     @Column(name = "status")
-    private InvoiceStatus status = InvoiceStatus.UNPAID;
+    private InvoiceStatus status = InvoiceStatus.PENDING;
     @Column(name = "invoicedate")
     private Date invoicedate = new Date();
     @Column(name = "duedate")

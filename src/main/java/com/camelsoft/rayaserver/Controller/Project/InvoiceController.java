@@ -95,7 +95,7 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_invoice_supplier(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam(required = false) InvoiceRelated related, @RequestParam(required = false) Boolean thirdparty) throws IOException {
+    public ResponseEntity<DynamicResponse> all_invoice_supplier(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam(required = false) InvoiceRelated related, @RequestParam(required = false) Boolean thirdparty,@RequestParam(required = false) Integer invoicenumber) throws IOException {
 
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
 
@@ -105,7 +105,7 @@ public class InvoiceController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
-        Page<Invoice> invoice = this.criteriaService.findAllByStatusAndRelatedAndUsers(page, size, status, related, user,thirdparty);
+        Page<Invoice> invoice = this.criteriaService.findAllByStatusAndRelatedAndUsers(page, size, status, related, user,thirdparty, invoicenumber);
         DynamicResponse res = new DynamicResponse(invoice.getContent(), invoice.getNumber(), invoice.getTotalElements(), invoice.getTotalPages());
 
         // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
@@ -702,7 +702,6 @@ public class InvoiceController extends BaseController {
 
     }
 
-
     @GetMapping(value = {"/get_my_invoices"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or  hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get user's invoices", notes = "Endpoint to get invoice")
@@ -725,7 +724,6 @@ public class InvoiceController extends BaseController {
         this.userActionService.Save(action);
 
         return new ResponseEntity<>(this.service.getInvoicesByUser(page, size, currentuser), HttpStatus.OK);
-
 
     }
 
@@ -860,7 +858,7 @@ public class InvoiceController extends BaseController {
             return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
         if (invoice.getConfirmedBy() != null)
             return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
-        invoice.setStatus(InvoiceStatus.PAID);
+        invoice.setStatus(InvoiceStatus.UNPAID);
         invoice.setConfirmedBy(user);
         Invoice result = this.service.Update(invoice);
         //save new action
@@ -873,5 +871,39 @@ public class InvoiceController extends BaseController {
 
     }
 
+    @PatchMapping(value = {"/payed_invoice/{idInvoice}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to confirm invoice for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check data"),
+            @ApiResponse(code = 406, message = "Not acceptable , you need to defined the invoice relation"),
+            @ApiResponse(code = 302, message = "the invoice number is already in use"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<Invoice> payed_invoice(@PathVariable Long idInvoice) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_ACCEPTABLE);
+        Invoice invoice = this.service.FindById(idInvoice);
+        if (invoice == null)
+            return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_ACCEPTABLE);
+
+        if (invoice.getStatus() == InvoiceStatus.PAID)
+            return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
+        if (invoice.getConfirmedBy() != null)
+            return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
+        invoice.setStatus(InvoiceStatus.PAID);
+        invoice.setConfirmedBy(user);
+        Invoice result = this.service.Update(invoice);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+    }
 
 }

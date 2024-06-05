@@ -22,6 +22,7 @@ import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.*;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Services.criteria.CriteriaService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -29,6 +30,8 @@ import io.swagger.annotations.ApiResponses;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,6 +61,9 @@ public class VehiclesController extends BaseController {
     private PurshaseOrderService purshaseOrderService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
+
+    @Autowired
+    private CriteriaService criteriaService;
 
     @GetMapping(value = {"/all_vehicles_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
@@ -99,6 +105,30 @@ public class VehiclesController extends BaseController {
         this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
+    @GetMapping(value = {"/all_vehicles_supplier_by_carmake_carvin_carmodel_availibility"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get all vehicles for  supplier ", notes = "Endpoint to get vehicles for supplier by carmake or carvin or carmodel or availibility")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the supplier")
+    })
+    public ResponseEntity<DynamicResponse> all_vehicles_supplier_by_carmake_carvin_carmodel_availibility(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size ,@RequestParam(required = false) String carmodel, @RequestParam(required = false) String carmake, @RequestParam(required = false) String carvin, @RequestParam(required = false) AvailiabilityEnum availiability) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        Page<Vehicles> result = this.criteriaService.FindAllPgSupplierAndcarmodelWithCriteria(page, size, user.getSupplier(), carmodel, carmake, carvin, availiability);
+        DynamicResponse res = new DynamicResponse(result.getContent(), result.getNumber(), result.getTotalElements(), result.getTotalPages());
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        //
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIER_VEHICLES_READ,
+                currentuser
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
 
     @GetMapping(value = {"/all_vehicles_by_supplier/{idSupplier}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")

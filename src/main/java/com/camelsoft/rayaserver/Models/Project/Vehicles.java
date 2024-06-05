@@ -47,18 +47,15 @@ public class Vehicles implements Serializable {
     @Column(name = "carvin")
     private String carvin;
     @Column(name = "enginesize")
-
     private Double enginesize = 0D;
     @Column(name = "fueltype")
-
     private FuelType fueltype = FuelType.NONE;
     @Column(name = "bodystyle")
-
     private BodyStyle bodystyle = BodyStyle.NONE;
     @Column(name = "post_status")
     private VehiclesPostStatus status = VehiclesPostStatus.DRAFT;
     @Column(name = "stock")
-    private Integer stock = 0;
+    private Integer stock = 1;
     @Column(name = "exteriorfeatures")
     @ElementCollection
     private Set<String> exteriorfeatures = new HashSet<>();
@@ -88,7 +85,6 @@ public class Vehicles implements Serializable {
     public Vehicles() {
         this.timestamp = new Date();
     }
-
 
 
     public Vehicles(String carmodel, String color, String carvin, Double enginesize, FuelType fueltype, BodyStyle bodystyle, Set<String> exteriorfeatures, Set<String> interiorfeatures, String description, Integer stock, Supplier supplier) {

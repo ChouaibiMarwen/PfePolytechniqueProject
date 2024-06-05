@@ -2,13 +2,16 @@ package com.camelsoft.rayaserver.Services.criteria;
 
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
+import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
+import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
@@ -211,7 +214,7 @@ public class CriteriaService {
     }
 
 
-    public PageImpl<Invoice> findAllByStatusAndRelatedAndUsers(int page, int size, InvoiceStatus status, InvoiceRelated related, users user, Boolean thirdparty) {
+    public PageImpl<Invoice> findAllByStatusAndRelatedAndUsers(int page, int size, InvoiceStatus status, InvoiceRelated related, users user, Boolean thirdparty, Integer invoicenumber) {
         try {
             // Prepare criteria builder and query
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -244,6 +247,10 @@ public class CriteriaService {
                 predicates.add(criteriaBuilder.equal(invoiceRoot.get("related"), related));
             }
 
+            // Apply invoicenumber filter if present
+            if (invoicenumber != null) {
+                predicates.add(criteriaBuilder.equal(invoiceRoot.get("invoicenumber"), invoicenumber));
+            }
             // Apply user filter
             predicates.add(criteriaBuilder.or(
                     criteriaBuilder.equal(invoiceRoot.get("createdby"), user),
@@ -349,6 +356,47 @@ public class CriteriaService {
         } catch (NoResultException ex) {
             throw new NotFoundException("No data found.");
         }
+    }
+
+    public PageImpl<Vehicles> FindAllPgSupplierAndcarmodelWithCriteria(int page, int size, Supplier supplier, String carmodel, String carmake, String carvin, AvailiabilityEnum availiability) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Vehicles> query = builder.createQuery(Vehicles.class);
+        Root<Vehicles> root = query.from(Vehicles.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (supplier != null) {
+            predicates.add(builder.equal(root.get("supplier"), supplier));
+        }
+
+        if (carmodel != null) {
+            predicates.add(builder.like(builder.lower(root.get("carmodel")), "%" + carmodel.toLowerCase() + "%"));
+        }
+
+        if (carmake != null) {
+            predicates.add(builder.like(builder.lower(root.get("carmake")), "%" + carmake.toLowerCase() + "%"));
+        }
+
+        if (carvin != null) {
+            predicates.add(builder.like(builder.lower(root.get("carvin")), "%" + carvin.toLowerCase() + "%"));
+        }
+
+        if (availiability != null) {
+            predicates.add(builder.equal(root.get("availiability"), availiability));
+        }
+
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
+        query.orderBy(builder.desc(root.get("timestamp")));
+
+        TypedQuery<Vehicles> typedQuery = em.createQuery(query);
+        typedQuery.setFirstResult(page * size);
+        typedQuery.setMaxResults(size);
+
+        List<Vehicles> vehicles = typedQuery.getResultList();
+        int totalElements = typedQuery.getResultList().size();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        return new PageImpl<>(vehicles, PageRequest.of(page, size), totalElements);
     }
 
 }
