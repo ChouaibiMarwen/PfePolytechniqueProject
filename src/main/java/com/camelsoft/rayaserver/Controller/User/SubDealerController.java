@@ -26,11 +26,13 @@ import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Services.criteria.CriteriaService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,6 +65,8 @@ public class SubDealerController extends BaseController {
     private CountriesServices countriesServices;
     @Autowired
     private AddressServices addressServices;
+    @Autowired
+    private CriteriaService criteriaService;
 
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
@@ -228,6 +232,30 @@ public class SubDealerController extends BaseController {
     })
     public ResponseEntity<List<UserShortDto>> all(@RequestParam(required = false) Boolean active, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean verified) throws IOException {
         return new ResponseEntity<>(this.supplierServices.getAllUsersWithoutPagination(active, name, RoleEnum.ROLE_SUB_DEALER, verified), HttpStatus.OK);
+    }
+
+
+
+    @GetMapping(value = {"/all_my_sub_sub_delear_paginated"})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get all suppliers without pagination", notes = "Endpoint to get sub sub dealer")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request,"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @ApiResponse(code = 409, message = "Conflict, phone-number or email or user-name is already exists"),
+            @ApiResponse(code = 406, message = "Not Acceptable , the email is not valid")
+    })
+    public ResponseEntity<PageImpl<users>> all_my_sub_supplier_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean verified) throws IOException {
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+
+        if(currentuser.getManager() == null && currentuser.getRole().getRole()==RoleEnum.ROLE_SUB_DEALER){
+            PageImpl<users>  result =  this.criteriaService.UsersSearchCreatiriaRolesListSubsupplier(page,size,active, name, RoleEnum.ROLE_SUB_SUB_DEALER, verified,currentuser,false);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+
+        }
+        return new ResponseEntity("this is user is not a manager", HttpStatus.BAD_REQUEST);
+
     }
 
 }
