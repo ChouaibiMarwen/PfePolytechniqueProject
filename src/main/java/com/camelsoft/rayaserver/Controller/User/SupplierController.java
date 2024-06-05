@@ -284,12 +284,13 @@ public class SupplierController extends BaseController {
             @ApiResponse(code = 409, message = "Conflict, phone-number or email or user-name is already exists"),
             @ApiResponse(code = 406, message = "Not Acceptable , the email is not valid")
     })
-    public ResponseEntity<PageImpl<users>> all_my_sub_supplier_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean verified) throws IOException {
+    public ResponseEntity<DynamicResponse> all_my_sub_supplier_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean verified) throws IOException {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
 
         if(currentuser.getManager() == null && currentuser.getRole().getRole()==RoleEnum.ROLE_SUPPLIER){
             PageImpl<users>  result =  this.criteriaService.UsersSearchCreatiriaRolesListSubsupplier(page,size,active, name, RoleEnum.ROLE_SUB_SUPPLIER, verified,currentuser,false);
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            DynamicResponse respense = new DynamicResponse(result.getContent(), result.getNumber(), result.getTotalElements(), result.getTotalPages());
+            return new ResponseEntity<>(respense, HttpStatus.OK);
 
         }
         return new ResponseEntity("this is user is not a manager", HttpStatus.BAD_REQUEST);
