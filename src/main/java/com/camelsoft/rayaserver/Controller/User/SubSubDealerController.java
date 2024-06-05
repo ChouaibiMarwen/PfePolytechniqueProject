@@ -138,9 +138,11 @@ public class SubSubDealerController extends BaseController {
         // Set user details
         PersonalInformation resultinformation = this.personalInformationService.save(information);
         user.setUsername(username);
+        if(currentuser.getRole().getRole() ==   RoleEnum.ROLE_SUB_DEALER)
+            user.setManager(currentuser);
         if(currentuser.getManager() != null && currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUB_SUB_DEALER) {
             user.setManager(currentuser.getManager());
-        }else if(currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUB_DEALER){
+        }else if(currentuser.getManager() != null && currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUB_DEALER){
             user.setManager(currentuser);
 
         }else{
