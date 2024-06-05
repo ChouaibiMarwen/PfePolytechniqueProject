@@ -980,7 +980,9 @@ public class InvoiceController extends BaseController {
         if (invoice == null)
             return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_ACCEPTABLE);
         //update invoice status and confirmed by status
-      /*  users user = invoice.getConfirmedBy().get*/
+        users confirmedUser = invoice.getConfirmedBy();
+        confirmedUser.getInvoicesconfirmed().remove(invoice);
+        //this.UserServices.UpdateUser(confirmedUser);
         invoice.setConfirmedBy(null);
         Invoice result = this.service.Update(invoice);
 
