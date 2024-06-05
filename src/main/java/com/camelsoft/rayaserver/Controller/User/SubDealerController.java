@@ -235,7 +235,6 @@ public class SubDealerController extends BaseController {
     }
 
 
-
     @GetMapping(value = {"/all_my_sub_sub_delear_paginated"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all suppliers without pagination", notes = "Endpoint to get sub sub dealer")

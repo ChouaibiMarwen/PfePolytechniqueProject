@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.PurchaseOrderDto;
 import com.camelsoft.rayaserver.Models.File.File_model;
@@ -65,19 +66,26 @@ public class PurchaseOrdersController  extends BaseController {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentuser == null)
             return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
-        Vehicles vehicle =  this.vehiclesService.FindById(request.getVehicleId());
-        if(!this.vehiclesService.inStock(vehicle, request.getQuantity()))
-            return new ResponseEntity("No disponible quantity for this vehicle id selected", HttpStatus.BAD_REQUEST);
+
+        Vehicles vehicles =  this.vehiclesService.FindById(request.getVehicleId());
+        if(vehicles == null ){
+            return new ResponseEntity("vehicle is not founded", HttpStatus.BAD_REQUEST);
+        }
+        if(vehicles.getAvailiability() != AvailiabilityEnum.INSTOCK)
+            return new ResponseEntity("The vehicle is no longer in stock", HttpStatus.BAD_REQUEST);
+        if(vehicles.getCarvin()==null)
+            return new ResponseEntity("VIN should be not null", HttpStatus.NOT_ACCEPTABLE);
+        // check if there is purchase order for the same car vin and have status pending or in progress
+        boolean condition = this.purshaseOrderService.isTherePoPendingOrInProgressWithCarVin(vehicles.getCarvin());
+        if(condition)
+            return new ResponseEntity("this Vehicle's carvin have a Pending or Inprogress purchase order", HttpStatus.NOT_ACCEPTABLE);
 
         users user = this.userService.findById(request.getSupplierId());
         if(user == null ){
             return new ResponseEntity("User is not founded", HttpStatus.BAD_REQUEST);
         }
         Supplier supplier = user.getSupplier();
-        Vehicles vehicles = this.vehiclesService.FindById(request.getVehicleId());
-        if(vehicles == null ){
-            return new ResponseEntity("vehicle is not founded", HttpStatus.BAD_REQUEST);
-        }
+
         PurshaseOrder purshaseOrder = new PurshaseOrder();
         purshaseOrder.setVehicleId(request.getVehicleId());
         purshaseOrder.setSupplierId(supplier.getId());

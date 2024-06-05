@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface PurshaseOrderRepository extends JpaRepository<PurshaseOrder, Long> {
@@ -36,6 +37,8 @@ public interface PurshaseOrderRepository extends JpaRepository<PurshaseOrder, Lo
     Page<PurshaseOrder> findByStatusAndVehiclesAndArchiveIsFalse(Pageable pageable,  PurshaseOrderStatus status, Vehicles vehicle);
     Page<PurshaseOrder> findByStatusAndSupplierAndVehiclesAndArchiveIsFalse(Pageable pageable,  PurshaseOrderStatus status,Supplier supplier, Vehicles vehicle);
 
+    @Query("SELECT COUNT(po) FROM PurshaseOrder po WHERE po.status IN (:status) AND po.vehicles.carvin = :carvin")
+    Integer countPendingOrInProgressPurshaseOrdersByCarvin(List<PurshaseOrderStatus> status,String carvin);
 
 
     @Query("SELECT DISTINCT v FROM Vehicles v " +

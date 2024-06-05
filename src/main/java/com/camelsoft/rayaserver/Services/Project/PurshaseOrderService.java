@@ -16,7 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -274,6 +276,18 @@ public class PurshaseOrderService {
             return this.repository.countByArchiveIsFalseAndSupplierIsNotNull();
         }
 
+    }
+
+
+
+    public boolean isTherePoPendingOrInProgressWithCarVin(String carvin){
+        List<PurshaseOrderStatus> statusList = Arrays.asList(PurshaseOrderStatus.PENDING, PurshaseOrderStatus.IN_PROGRESS);
+        Integer total = this.repository.countPendingOrInProgressPurshaseOrdersByCarvin(statusList, carvin);
+        if(total == 0)
+            return false;
+        else {
+            return true;
+        }
     }
 
 

@@ -10,7 +10,7 @@ import java.util.*;
 @Data
 public class InvoiceRequest {
     private Integer invoicenumber = 0;
-    private InvoiceStatus status = InvoiceStatus.UNPAID;
+    private InvoiceStatus status = InvoiceStatus.PENDING;
     private Date invoicedate = new Date();
     private Date duedate = new Date();
     private Double vehicleprice = 0.0;

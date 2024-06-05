@@ -2,6 +2,8 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Project.*;
@@ -673,7 +675,6 @@ public class InvoiceController extends BaseController {
 
     }
 
-
     @GetMapping(value = {"/user_all_invoices/{user_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get user's invoices", notes = "Endpoint to get invoice")
@@ -871,7 +872,7 @@ public class InvoiceController extends BaseController {
 
     }
 
-    @PatchMapping(value = {"/payed_invoice/{idInvoice}"})
+    @PatchMapping(value = {"/paid_invoice/{idInvoice}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to confirm invoice for admin")
     @ApiResponses(value = {
@@ -893,9 +894,26 @@ public class InvoiceController extends BaseController {
             return new ResponseEntity("The invoice is already paid", HttpStatus.NOT_ACCEPTABLE);
         if (invoice.getConfirmedBy() != null)
             return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
+
+        //update invoice status and confirmed by status
         invoice.setStatus(InvoiceStatus.PAID);
         invoice.setConfirmedBy(user);
         Invoice result = this.service.Update(invoice);
+
+        //update vehicle availibility
+        Vehicles vehicles = this.vehiclesService.FindByVIN(invoice.getVehiclevin());
+        if (vehicles == null)
+            return new ResponseEntity("no vehicle founded with that carvin", HttpStatus.NOT_ACCEPTABLE);
+        vehicles.setAvailiability(AvailiabilityEnum.SOLD);
+        this.vehiclesService.Update(vehicles);
+
+        //update purchase order status
+        PurshaseOrder po = invoice.getPurshaseorder();
+        if (po == null)
+            return new ResponseEntity("no po founded to update po status", HttpStatus.NOT_ACCEPTABLE);
+        po.setStatus(PurshaseOrderStatus.COMPLETED);
+        this.purshaseOrderService.Update(po);
+
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
@@ -903,7 +921,6 @@ public class InvoiceController extends BaseController {
         );
         this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
-
     }
 
 }
