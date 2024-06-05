@@ -130,7 +130,6 @@ public class PurchaseOrdersController  extends BaseController {
         return  new ResponseEntity<>(purchaseOrderDto, HttpStatus.OK);
     }
 
-
     @GetMapping(value = {"/all_purchase_orders_by_status"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to get purchase orders by status")

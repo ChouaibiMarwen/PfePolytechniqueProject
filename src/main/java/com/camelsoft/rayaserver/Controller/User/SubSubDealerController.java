@@ -72,7 +72,7 @@ public class SubSubDealerController extends BaseController {
 
 
     @PostMapping(value = {"/add_sub_sub_dealer"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<users> add_sub_admin(@RequestBody CustomerSingUpRequest request, @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
 
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
