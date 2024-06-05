@@ -99,7 +99,7 @@ public class SubSupplierController extends BaseController {
 
     @PostMapping(value = {"/add_sub_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
-    public ResponseEntity<users> add_sub_admin(@RequestBody CustomerSingUpRequest request, @RequestParam(required = false, name = "file") MultipartFile file) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<users> add_sub_admin(@RequestBody CustomerSingUpRequest request) throws IOException, InterruptedException, MessagingException {
 
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         // Check if email is null
@@ -176,12 +176,13 @@ public class SubSupplierController extends BaseController {
         user.setEmail(request.getEmail().toLowerCase());
         user.setPassword(request.getPassword());
         user.setPersonalinformation(resultinformation);
-        if (!this.filesStorageService.checkformat(file))
+
+      /*  if (!this.filesStorageService.checkformat(file))
             return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
         File_model resource_media = filesStorageService.save_file_local(file, "profile");
         if (resource_media == null)
             return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
-        user.setProfileimage(resource_media);
+        user.setProfileimage(resource_media);*/
         // Save the user
         users result = userService.saveSubSupplier(user);
         //save new action
