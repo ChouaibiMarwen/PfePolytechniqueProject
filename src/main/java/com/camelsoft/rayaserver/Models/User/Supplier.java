@@ -75,10 +75,10 @@ public class Supplier implements Serializable {
 
     @PostLoad
     private void afterload(){
-        if(this.user!=null){
-            if(this.user.getPersonalinformation()!=null){
-                this.name = this.user.getPersonalinformation().getFirstnameen()+" "+this.user.getPersonalinformation().getLastnameen();
-                this.userId = this.getUser().getId();
+        if(user !=null){
+            if(user.getPersonalinformation()!=null){
+                name = user.getPersonalinformation().getFirstnameen()+" "+ user.getPersonalinformation().getLastnameen();
+                userId = this.getUser().getId();
             }
         }
         if(this.vehicles!=null){

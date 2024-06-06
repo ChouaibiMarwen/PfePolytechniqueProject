@@ -892,7 +892,7 @@ public class InvoiceController extends BaseController {
 
         if (invoice.getStatus() == InvoiceStatus.PAID || invoice.getStatus() == InvoiceStatus.REJECTED || invoice.getStatus() == InvoiceStatus.REFUNDS)
             return new ResponseEntity("The invoice is already paid ", HttpStatus.NOT_ACCEPTABLE);
-        if (invoice.getConfirmedBy() != null  && invoice.getConfirmedBy().equals(user))
+        if (invoice.getConfirmedBy() != null  && !invoice.getConfirmedBy().equals(user))
             return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
         invoice.setStatus(InvoiceStatus.REJECTED);
         invoice.setConfirmedBy(user);
@@ -928,7 +928,7 @@ public class InvoiceController extends BaseController {
 
         if (invoice.getStatus() == InvoiceStatus.PAID || invoice.getStatus() == InvoiceStatus.REJECTED)
             return new ResponseEntity("The invoice is already paid or rejected", HttpStatus.NOT_ACCEPTABLE);
-        if (invoice.getConfirmedBy() != null &&invoice.getConfirmedBy().equals(user))
+        if (invoice.getConfirmedBy() != null && !invoice.getConfirmedBy().equals(user))
             return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
 
         //update invoice status and confirmed by status
@@ -958,38 +958,6 @@ public class InvoiceController extends BaseController {
         this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
-
-
-    /*@PatchMapping(value = {"/patch_for_test/{idInvoice}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
-    @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to change invoice's status to pia for admin")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully get"),
-            @ApiResponse(code = 400, message = "Bad request, check data"),
-            @ApiResponse(code = 406, message = "Not acceptable , you need to defined the invoice relation"),
-            @ApiResponse(code = 302, message = "the invoice number is already in use"),
-            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
-    })
-    public ResponseEntity<Invoice> patch_for_test(@PathVariable Long idInvoice) throws IOException {
-        users user = UserServices.findByUserName(getCurrentUser().getUsername());
-        if (user == null)
-            return new ResponseEntity("this user not found", HttpStatus.NOT_ACCEPTABLE);
-        Invoice invoice = this.service.FindById(idInvoice);
-
-        if (invoice == null)
-            return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_ACCEPTABLE);
-        //update invoice status and confirmed by status
-        users confirmedUser = invoice.getConfirmedBy();
-        Set<Invoice> set = confirmedUser.getInvoicesconfirmed();
-        if(set != null )
-            confirmedUser.getInvoicesconfirmed().remove(invoice);
-        //this.UserServices.UpdateUser(confirmedUser);
-        invoice.setConfirmedBy(null);
-        Invoice result = this.service.Update(invoice);
-
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }*/
 
 
 

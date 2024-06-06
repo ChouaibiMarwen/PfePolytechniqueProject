@@ -427,7 +427,6 @@ public class VehiclesController extends BaseController {
         File_model sideviewimageleft = null;
         File_model sideviewimageright = null;
         Set<File_model> additionalviewimages = new HashSet<>();
-
         if(request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()){
             if (this.filesStorageService.checkformat(request.getFrontviewimage())) {
                 frontviewimage = filesStorageService.save_file_local(request.getFrontviewimage(), "vehicles");
@@ -444,7 +443,6 @@ public class VehiclesController extends BaseController {
                 }
             }
         }
-
         if(request.getInteriorviewimage() != null && !request.getInteriorviewimage().isEmpty()){
             if (this.filesStorageService.checkformat(request.getInteriorviewimage())) {
                 interiorviewimage = filesStorageService.save_file_local(request.getInteriorviewimage(), "vehicles");
@@ -469,7 +467,6 @@ public class VehiclesController extends BaseController {
             }
         }
         }
-
         if(request.getAdditionalviewimages() != null && !request.getAdditionalviewimages().isEmpty()){if (this.filesStorageService.checkformatArrayList(request.getAdditionalviewimages())) {
             List<MultipartFile> fileList = new ArrayList<>(request.getAdditionalviewimages());
             additionalviewimages = filesStorageService.save_all_local(fileList, "vehicles");
@@ -537,7 +534,6 @@ public class VehiclesController extends BaseController {
                 this.vehiclesMediaService.Update(vehiclesmedia);
             }
         }
-
         if(request.getRearviewimage() != null  && !request.getRearviewimage().isEmpty()){
             if (this.filesStorageService.checkformat(request.getRearviewimage())) {
                 rearviewimage = filesStorageService.save_file_local(request.getRearviewimage(), "vehicles");
