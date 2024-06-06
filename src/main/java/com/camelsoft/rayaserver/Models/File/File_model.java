@@ -1,14 +1,15 @@
 package com.camelsoft.rayaserver.Models.File;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Table(name = "filemodel")
-public class File_model {
+@Table(name = "File_model")
+public class File_model implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -31,6 +32,7 @@ public class File_model {
     @Column(name = "file_size")
     private long size;
     // used for mapping users files ! important do not delete
+    @JsonIgnore
     @Column(name = "timestmp")
     private Date timestmp= new Date();
 
@@ -43,6 +45,20 @@ public class File_model {
         this.type = type;
         this.size = size;
         this.timestmp= new Date();
+    }
+    @PreRemove
+    public void preRemove() {
+
+
+    }
+
+
+    public Integer getRange() {
+        return range;
+    }
+
+    public void setRange(Integer range) {
+        this.range = range;
     }
 
     public Long getId() {
@@ -61,14 +77,6 @@ public class File_model {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getUrl() {
         return url;
     }
@@ -85,12 +93,20 @@ public class File_model {
         this.type = type;
     }
 
-    public Integer getRange() {
-        return range;
+    public long getSize() {
+        return size;
     }
 
-    public void setRange(Integer range) {
-        this.range = range;
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Boolean getShare() {
@@ -101,17 +117,10 @@ public class File_model {
         this.share = share;
     }
 
-    public long getSize() {
-        return size;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
     public Date getTimestmp() {
         return timestmp;
     }
+
 
     public void setTimestmp(Date timestmp) {
         this.timestmp = timestmp;

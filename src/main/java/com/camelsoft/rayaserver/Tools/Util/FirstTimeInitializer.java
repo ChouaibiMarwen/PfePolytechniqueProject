@@ -64,8 +64,9 @@ public class FirstTimeInitializer implements CommandLineRunner {
 
         Roleinit();
         initPriveleges();
-        initUser();
         countriesServices.ParseCountry();
+        initUser();
+
 
     }
 
