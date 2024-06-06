@@ -118,17 +118,17 @@ public class SubSupplierController extends BaseController {
 
         // Check email format
         if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
-            return new ResponseEntity("email", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("email not valid", HttpStatus.NOT_ACCEPTABLE);
         String phonenumber = request.getPhonenumber().replaceAll("[\\s()]", "");
         if (userService.existbyphonenumber(phonenumber))
-            return new ResponseEntity("phone-number", HttpStatus.CONFLICT);
+            return new ResponseEntity("phone-number is already exist", HttpStatus.CONFLICT);
         if (userService.existbyemail(request.getEmail().toLowerCase()))
-            return new ResponseEntity("email", HttpStatus.CONFLICT);
+            return new ResponseEntity("email is already exist", HttpStatus.CONFLICT);
         String name = request.getInformationRequest().getFirstnameen() + request.getInformationRequest().getLastnameen();
         String username = userService.GenerateUserName(name, userService.Count());
         users existingUserByUsername = userService.findByUserName(username);
         if (existingUserByUsername != null)
-            return new ResponseEntity("user-name", HttpStatus.CONFLICT);
+            return new ResponseEntity("user-name is already exist", HttpStatus.CONFLICT);
         // Create a new user
         users user = new users();
         PersonalInformation information = new PersonalInformation();

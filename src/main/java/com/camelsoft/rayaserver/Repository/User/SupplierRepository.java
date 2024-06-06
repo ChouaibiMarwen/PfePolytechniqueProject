@@ -19,6 +19,8 @@ public interface SupplierRepository extends JpaRepository<Supplier,Long> {
     @NotNull
     Page<Supplier> findAll(@NotNull Pageable pageable);
 
+    Supplier findBySuppliernumber(Long suppliernumber);
+
    @Query("SELECT DISTINCT u FROM Supplier s " +
            "JOIN s.user u " +
            "JOIN u.personalinformation pi " +

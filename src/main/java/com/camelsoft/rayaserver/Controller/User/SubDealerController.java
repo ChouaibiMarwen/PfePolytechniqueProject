@@ -83,6 +83,10 @@ public class SubDealerController extends BaseController {
     })
     public ResponseEntity<users> add_sub_dealer(@RequestBody SupplierSingUpRequest request) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
+        Supplier supp = this.supplierServices.findBySuppliernumber(request.getSuppliernumber());
+        if(supp!=null){
+            return new ResponseEntity("this sub-dealer number is already exist : "+request.getSuppliernumber(), HttpStatus.BAD_REQUEST);
+        }
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
         if (request.getPhonenumber() == null)
@@ -98,18 +102,18 @@ public class SubDealerController extends BaseController {
 
         String phonenumber = request.getPhonenumber().replaceAll("[\\s()]", "");
         if (userService.existbyphonenumber(phonenumber))
-            return new ResponseEntity("phone-number", HttpStatus.CONFLICT);
+            return new ResponseEntity("phone-number is already exist", HttpStatus.CONFLICT);
         if (userService.existbyemail(request.getEmail().toLowerCase()))
-            return new ResponseEntity("email", HttpStatus.CONFLICT);
+            return new ResponseEntity("email is already exist", HttpStatus.CONFLICT);
         // Check email format
         if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
-            return new ResponseEntity("email", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("email is not valid", HttpStatus.NOT_ACCEPTABLE);
 
         String name = request.getInformationRequest().getFirstnameen() + request.getInformationRequest().getLastnameen();
         String username = userService.GenerateUserName(name, userService.Count());
         users existingUserByUsername = userService.findByUserName(username);
         if (existingUserByUsername != null)
-            return new ResponseEntity("user-name", HttpStatus.CONFLICT);
+            return new ResponseEntity("user-name is already exist", HttpStatus.CONFLICT);
         // Create a new user
         users user = new users();
         PersonalInformation information = new PersonalInformation();

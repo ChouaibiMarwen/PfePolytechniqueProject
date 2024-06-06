@@ -90,6 +90,10 @@ public class SupplierController extends BaseController {
     })
     public ResponseEntity<users> add_supplier(@RequestBody SupplierSingUpRequest request) throws IOException, InterruptedException, MessagingException {
         // Check if email is null
+        Supplier supp = this.supplierServices.findBySuppliernumber(request.getSuppliernumber());
+        if(supp!=null){
+            return new ResponseEntity("this supplier number is already exist : "+request.getSuppliernumber(), HttpStatus.BAD_REQUEST);
+        }
         if (request.getEmail() == null)
             return new ResponseEntity("email", HttpStatus.BAD_REQUEST);
         if (request.getPhonenumber() == null)
