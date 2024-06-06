@@ -214,13 +214,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
     void initUser() {
 
         if (!userService.existbyemail("admin@camel-soft.com")) {
-            File_model file = new File_model(
-                    "initimage",
-                    "https://www.f6s.com/content-resource/media/4705198_cf81554830f70377284a966b1d0fcaf2ab5d2270_large.jpg",
-                    "jpg",
-                    12321L
-            );
-            File_model modelfile = this.fileServices.save_file(file);
+
             logger.info("No users found creating some users ...");
             PersonalInformation personalInformation = new PersonalInformation();
             personalInformation.setFirstnameen("CAMELSOFT");
@@ -235,8 +229,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
                     "+21612345678",
                     information
             );
-            users.setProfileimage(modelfile);
-            userService.saveAdmin(users);
+             userService.saveAdmin(users);
 
         }
 
