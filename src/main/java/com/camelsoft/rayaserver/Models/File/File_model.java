@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+        //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "file_model")
 public class File_model implements Serializable {
 
