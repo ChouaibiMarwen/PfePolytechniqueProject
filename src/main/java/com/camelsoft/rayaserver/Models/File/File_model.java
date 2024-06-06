@@ -8,7 +8,7 @@ import java.util.Date;
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "filemodel")
-public class File_model implements Serializable {
+public class File_model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -45,16 +45,6 @@ public class File_model implements Serializable {
         this.timestmp= new Date();
     }
 
-
-
-    public Integer getRange() {
-        return range;
-    }
-
-    public void setRange(Integer range) {
-        this.range = range;
-    }
-
     public Long getId() {
         return id;
     }
@@ -69,6 +59,14 @@ public class File_model implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getUrl() {
@@ -87,20 +85,12 @@ public class File_model implements Serializable {
         this.type = type;
     }
 
-    public long getSize() {
-        return size;
+    public Integer getRange() {
+        return range;
     }
 
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setRange(Integer range) {
+        this.range = range;
     }
 
     public Boolean getShare() {
@@ -111,10 +101,17 @@ public class File_model implements Serializable {
         this.share = share;
     }
 
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
     public Date getTimestmp() {
         return timestmp;
     }
-
 
     public void setTimestmp(Date timestmp) {
         this.timestmp = timestmp;
