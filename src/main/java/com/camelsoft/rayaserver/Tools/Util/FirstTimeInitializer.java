@@ -6,10 +6,12 @@ import com.camelsoft.rayaserver.Enum.User.IdTypeEnum;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Auth.Role;
+import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Services.Country.CountriesServices;
+import com.camelsoft.rayaserver.Services.File.FileServices;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
@@ -33,6 +35,8 @@ public class FirstTimeInitializer implements CommandLineRunner {
     private RoleService roleService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private FileServices fileServices;
     @Autowired
     private CountriesServices countriesServices;
 
@@ -207,7 +211,15 @@ public class FirstTimeInitializer implements CommandLineRunner {
 
 
     void initUser() {
+
         if (!userService.existbyemail("admin@camel-soft.com")) {
+            File_model file = new File_model(
+                    "initimage",
+                    "https://www.f6s.com/content-resource/media/4705198_cf81554830f70377284a966b1d0fcaf2ab5d2270_large.jpg",
+                    "jpg",
+                    12321L
+            );
+            File_model modelfile = this.fileServices.save_file(file);
             logger.info("No users found creating some users ...");
             PersonalInformation personalInformation = new PersonalInformation();
             personalInformation.setFirstnameen("CAMELSOFT");
@@ -222,7 +234,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
                     "+21612345678",
                     information
             );
-
+            users.setProfileimage(modelfile);
             userService.saveAdmin(users);
 
         }
