@@ -1,7 +1,6 @@
 package com.camelsoft.rayaserver.Models.File;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -32,12 +31,10 @@ public class File_model implements Serializable {
     @Column(name = "file_size")
     private long size;
     // used for mapping users files ! important do not delete
-    @JsonIgnore
     @Column(name = "timestmp")
-    private Date timestmp;
+    private Date timestmp= new Date();
 
     public File_model() {
-        this.timestmp= new Date();
     }
 
     public File_model(String name, String url, String type, long size) {
@@ -47,11 +44,7 @@ public class File_model implements Serializable {
         this.size = size;
         this.timestmp= new Date();
     }
-    @PreRemove
-    public void preRemove() {
 
-
-    }
 
 
     public Integer getRange() {
