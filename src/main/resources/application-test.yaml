@@ -9,6 +9,8 @@ spring:
     password: camelsoft
 logging:
   level:
+    org:
+      hibernate: ERROR
     root: DEBUG
 
 

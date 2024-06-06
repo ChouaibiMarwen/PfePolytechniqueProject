@@ -7,5 +7,6 @@ public enum IdTypeEnum {
     NATIONAL_ID,
     RESIDENCE_PERMIT,
     VISA,
+    NONE,
     OTHER
 }

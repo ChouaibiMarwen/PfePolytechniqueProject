@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Tools.Util;
 
 
 import com.camelsoft.rayaserver.Enum.User.Gender;
+import com.camelsoft.rayaserver.Enum.User.IdTypeEnum;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Auth.Role;
@@ -11,6 +12,7 @@ import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Services.Country.CountriesServices;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
+import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.auth.PrivilegeService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import org.apache.juli.logging.Log;
@@ -34,7 +36,8 @@ public class FirstTimeInitializer implements CommandLineRunner {
     @Autowired
     private CountriesServices countriesServices;
 
-
+    @Autowired
+    private SupplierServices supplierServices;
     @Autowired
     private PrivilegeService privilegeService;
 
@@ -240,6 +243,55 @@ public class FirstTimeInitializer implements CommandLineRunner {
                     information
             );
 
+            userService.saveSupplier(users);
+        }
+        if (!this.userService.existbyemail("mohmaed@google.com")) {
+            logger.info("No users found creating some users ...");
+            PersonalInformation personalInformation = new PersonalInformation();
+            personalInformation.setFirstnameen("mohmaed");
+            personalInformation.setFirstnamear("محمد");
+            personalInformation.setLastnameen("SUPPLIER");
+            personalInformation.setLastnamear("المورد");
+            PersonalInformation information = this.personalInformationService.save(personalInformation);
+            users users = new users(
+                    "RAYASUPPLIER01",
+                    "mohmaed@google.com",
+                    "aze",
+                    "+21699999991",
+                    information
+            );
+
+            Supplier supplier = new Supplier();
+            supplier.setSuppliernumber(104077L);
+            supplier.setIdnumber("104077L");
+            supplier.setIdtype(IdTypeEnum.ID_CARD);
+            Supplier resultsupplier = this.supplierServices.save(supplier);
+            users.setSupplier(resultsupplier);
+            userService.saveSupplier(users);
+        }
+
+     if (!this.userService.existbyemail("almajdouie@yahoo.fr")) {
+            logger.info("No users found creating some users ...");
+            PersonalInformation personalInformation = new PersonalInformation();
+            personalInformation.setFirstnameen("almajdouie");
+            personalInformation.setFirstnamear("المجدوعي");
+            personalInformation.setLastnameen("SUPPLIER");
+            personalInformation.setLastnamear("المورد");
+            PersonalInformation information = this.personalInformationService.save(personalInformation);
+            users users = new users(
+                    "RAYASUPPLIER02",
+                    "almajdouie@yahoo.fr",
+                    "aze",
+                    "+21699999992",
+                    information
+            );
+
+            Supplier supplier = new Supplier();
+            supplier.setSuppliernumber(104385L);
+            supplier.setIdnumber("104385L");
+            supplier.setIdtype(IdTypeEnum.ID_CARD);
+            Supplier resultsupplier = this.supplierServices.save(supplier);
+            users.setSupplier(resultsupplier);
             userService.saveSupplier(users);
         }
 

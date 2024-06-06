@@ -28,7 +28,7 @@ public class Supplier implements Serializable {
     private Long suppliernumber;
 
     @Column(name = "typeid")
-    private IdTypeEnum idtype;
+    private IdTypeEnum idtype=IdTypeEnum.NONE;
     @Column(name = "id_number")
     private String idnumber;
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -89,6 +89,10 @@ public class Supplier implements Serializable {
             this.availableVehiclesCountBySupplier = 0;
         }
 
+    }
+
+
+    public Supplier() {
     }
 
     public Integer getAvailableVehiclesCountBySupplier() {
