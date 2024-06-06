@@ -7,33 +7,37 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "file_project")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "File_model")
 public class File_model implements Serializable {
 
     @Id
-    @GeneratedValue(strategy =   GenerationType.SEQUENCE)
-    @Column(name = "file_id"  )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id" )
     private Long id;
     @Column(name = "file_name")
     private String name;
-    @Column(name = "file_path")
+    @Column(name = "description")
+    private String description;
+    @Column(name = "file_url")
     private String url;
     @Column(name = "file_type")
     private String type;
-   @Column(name = "file_description")
-    private String description;
-    @Column(name = "file_size")
-    private Long size;
-    @Column(name = "timestmp")
-    private Date timestmp=new Date();
+
     @Column(name = "range")
     private Integer range;
 
     @Column(name = "share")
     private Boolean share;
-
+    @Column(name = "file_size")
+    private long size;
+    // used for mapping users files ! important do not delete
+    @JsonIgnore
+    @Column(name = "timestmp")
+    private Date timestmp;
 
     public File_model() {
+        this.timestmp= new Date();
     }
 
     public File_model(String name, String url, String type, long size) {
