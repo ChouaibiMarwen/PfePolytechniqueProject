@@ -47,8 +47,8 @@ public class Supplier implements Serializable {
     @Transient
     private Integer ratingCount;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST}, orphanRemoval = true)
-    @JoinColumn(name = "supplier_files_id")
+    @OneToMany(fetch = FetchType.EAGER, cascade =  CascadeType.ALL , orphanRemoval = true)
+    @JoinColumn(name = "supplier_files_model")
     private Set<File_model> images = new HashSet<>();
     @JsonIgnore
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
