@@ -84,7 +84,6 @@ public class users implements Serializable {
     @JsonIgnore
     private Set<Invoice> invoicesrecived = new HashSet<>();
 
-
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<RequestCorrespondence> requestcorrespendencessended = new HashSet<>();
@@ -95,7 +94,6 @@ public class users implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "manager_id")
     private users manager;
-
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<BankInformation> bankinformations = new HashSet<>();
@@ -153,7 +151,6 @@ public class users implements Serializable {
     @ManyToMany(mappedBy = "usersevents", fetch = FetchType.EAGER)
     private Set<Event> events = new HashSet<>();
 
-
     @Transient
     private String supplierCompanyName;
 
@@ -185,9 +182,11 @@ public class users implements Serializable {
             this.name = this.personalinformation.getFirstnameen() + " " + this.personalinformation.getLastnameen();
         }
         if(this.supplier != null) {
+            this.supplier.setName(this.name);
             if(this.supplier.getName() != null) {
                 this.supplierCompanyName = this.supplier.getName();
             }
+
         }else{
             this.supplierCompanyName = "";
         }

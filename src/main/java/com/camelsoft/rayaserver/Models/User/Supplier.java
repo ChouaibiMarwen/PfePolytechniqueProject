@@ -5,21 +5,25 @@ import com.camelsoft.rayaserver.Enum.User.IdTypeEnum;
 import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.Tools.Rating;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
+import com.camelsoft.rayaserver.Tools.Util.FirstTimeInitializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.Hibernate;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
-
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 @Entity
 @Table(name = "supplier", uniqueConstraints = {
         @UniqueConstraint(columnNames = "supplier_number"),
 
 })
 public class Supplier implements Serializable {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -75,11 +79,14 @@ public class Supplier implements Serializable {
 
     @PostLoad
     private void afterLoad() {
+        System.out.println("00000000000000000000000000");
         if (user != null) {
+            System.out.println("interr userrrrrr");
+            userId = user.getId();
+            if (user.getName() != null) {
+                System.out.println("interr getPersonalinformation");
+                name = user.getName();
 
-            if (user.getPersonalinformation() != null) {
-                name = user.getPersonalinformation().getFirstnameen() + " " + user.getPersonalinformation().getLastnameen();
-                userId = user.getId();
             }
         }
         if (this.vehicles != null) {
@@ -91,6 +98,9 @@ public class Supplier implements Serializable {
         } else {
             availableVehiclesCountBySupplier = 0;
         }
+
+        this.ratingAverage = 0D;
+        this.ratingCount = this.ratings.size();
     }
 
 
