@@ -249,7 +249,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
 
             userService.saveSupplier(users);
         }
-        if (!this.userService.existbyemail("mohmaed@google.com")) {
+        if (!this.userService.existbyemail("mohmaed@google.com")&& this.supplierServices.findBySuppliernumber(Long.valueOf(104077))==null) {
             logger.info("No users found creating some users ...");
             PersonalInformation personalInformation = new PersonalInformation();
             personalInformation.setFirstnameen("mohmaed");
@@ -274,7 +274,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
             userService.saveSupplier(users);
         }
 
-     if (!this.userService.existbyemail("almajdouie@yahoo.fr")) {
+     if (!this.userService.existbyemail("almajdouie@yahoo.fr") && this.supplierServices.findBySuppliernumber(Long.valueOf(104385))==null) {
             logger.info("No users found creating some users ...");
             PersonalInformation personalInformation = new PersonalInformation();
             personalInformation.setFirstnameen("almajdouie");
