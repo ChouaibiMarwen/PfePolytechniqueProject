@@ -10,7 +10,7 @@ spring:
 logging:
   level:
     org:
-      hibernate: ERROR
+      hibernate: DEBUG
   #  root: DEBUG
   file:
     name: /var/lib/jenkins/workspace/rayaserver/src/main/resources/${spring.application.name}.log
