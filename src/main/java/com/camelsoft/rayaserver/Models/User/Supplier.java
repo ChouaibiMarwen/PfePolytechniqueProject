@@ -53,7 +53,7 @@ public class Supplier implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings = new ArrayList<>();
-    @OneToOne(mappedBy = "supplier")
+    @OneToOne(mappedBy = "supplier",fetch = FetchType.EAGER)
     @JsonIgnore
     private users user;
 
@@ -74,22 +74,23 @@ public class Supplier implements Serializable {
     private Integer availableVehiclesCountBySupplier = 0;
 
     @PostLoad
-    private void afterload(){
-        if(user !=null){
+    private void afterLoad() {
+        if (user != null) {
             Hibernate.initialize(user.getPersonalinformation());
-            if(user.getPersonalinformation()!=null){
-                name = user.getPersonalinformation().getFirstnameen()+" "+ user.getPersonalinformation().getLastnameen();
-                userId = this.getUser().getId();
+            if (user.getPersonalinformation() != null) {
+                name = user.getPersonalinformation().getFirstnameen() + " " + user.getPersonalinformation().getLastnameen();
+                userId = user.getId();
             }
         }
-        if(this.vehicles!=null){
-            for (Vehicles vehicles1 :vehicles) {
-                this.availableVehiclesCountBySupplier+= vehicles1.getStock();
+        if (this.vehicles != null) {
+            Hibernate.initialize(this.vehicles);
+            availableVehiclesCountBySupplier = 0;
+            for (Vehicles vehicle : vehicles) {
+                availableVehiclesCountBySupplier += vehicle.getStock();
             }
-        }else{
-            this.availableVehiclesCountBySupplier = 0;
+        } else {
+            availableVehiclesCountBySupplier = 0;
         }
-
     }
 
 

@@ -400,7 +400,16 @@ public class CriteriaService {
         int totalElements = typedQuery.getResultList().size();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
-        return new PageImpl<>(vehicles, PageRequest.of(page, size), totalElements);
-    }
+        int Count = typedQuery.getResultList().size();
 
+        return new PageImpl<>(typedQuery.getResultList(), getPageable(page,size), Count);
+    }
+    private Pageable getPageable(int pageNumber,int size) {
+        int pagesize = size;
+        if (pageNumber < 0)
+            pageNumber = 0;
+        if (size <= 0)
+            pagesize = 1;
+        return PageRequest.of(pageNumber, pagesize);
+    }
 }

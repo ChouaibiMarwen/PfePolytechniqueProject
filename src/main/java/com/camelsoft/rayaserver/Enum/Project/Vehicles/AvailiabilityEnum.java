@@ -4,5 +4,6 @@ public enum AvailiabilityEnum {
     INSTOCK,
     UPCOMING,
     SOLD,
+    NONE,
 
 }
