@@ -8,8 +8,6 @@ import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.Hibernate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,8 +20,6 @@ import java.util.*;
 
 })
 public class Supplier implements Serializable {
-    private static final Logger logger = LoggerFactory.getLogger(Supplier.class);
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -79,36 +75,22 @@ public class Supplier implements Serializable {
 
     @PostLoad
     private void afterLoad() {
-        logger.debug("Entering @PostLoad method for Supplier with ID: {}", id);
-
         if (user != null) {
-            logger.debug("User is not null, initializing personal information for user with ID: {}", user.getId());
             Hibernate.initialize(user.getPersonalinformation());
             if (user.getPersonalinformation() != null) {
                 name = user.getPersonalinformation().getFirstnameen() + " " + user.getPersonalinformation().getLastnameen();
                 userId = user.getId();
-                logger.debug("Set name: {} and userId: {}", name, userId);
-            } else {
-                logger.debug("User personal information is null");
             }
-        } else {
-            logger.debug("User is null");
         }
-
         if (this.vehicles != null) {
-            logger.debug("Vehicles are not null, initializing vehicles collection");
             Hibernate.initialize(this.vehicles);
             availableVehiclesCountBySupplier = 0;
             for (Vehicles vehicle : vehicles) {
                 availableVehiclesCountBySupplier += vehicle.getStock();
             }
-            logger.debug("Set availableVehiclesCountBySupplier: {}", availableVehiclesCountBySupplier);
         } else {
             availableVehiclesCountBySupplier = 0;
-            logger.debug("Vehicles are null, set availableVehiclesCountBySupplier to 0");
         }
-
-        // Add debug logs for ratingAverage and ratingCount if you plan to calculate them here
     }
 
 

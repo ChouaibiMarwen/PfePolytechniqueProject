@@ -3,6 +3,7 @@ package com.camelsoft.rayaserver.Controller.Auth;
 import com.camelsoft.rayaserver.Models.Auth.PasswordResetToken;
 import com.camelsoft.rayaserver.Models.Auth.RefreshToken;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
+import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.User.LogOutRequest;
 import com.camelsoft.rayaserver.Request.User.SignInRequest;
@@ -51,6 +52,8 @@ public class AuthController extends BaseController {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
     @Autowired
+    private SupplierServices supplierServices;
+    @Autowired
     private UserDeviceService userDeviceService;
     @Autowired
     private RefreshTokenService refreshTokenService;
@@ -66,8 +69,7 @@ public class AuthController extends BaseController {
     @Autowired
     private UserDeviceService deviceService;
 
-    @Autowired
-    private SupplierServices supplierServices;
+
 
 
     String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
@@ -76,6 +78,10 @@ public class AuthController extends BaseController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<users> current_user() throws IOException {
         users users = userService.findByUserName(getCurrentUser().getUsername());
+        if(users.getSupplier()!=null) {
+            Supplier supplier = this.supplierServices.findbyid(users.getSupplier().getId());
+            users.setSupplier(supplier);
+        }
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
