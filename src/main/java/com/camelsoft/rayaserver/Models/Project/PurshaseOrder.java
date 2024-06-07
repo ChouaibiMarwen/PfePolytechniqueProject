@@ -82,6 +82,9 @@ public class PurshaseOrder implements Serializable {
     @OneToOne(mappedBy = "purshaseorder")
     @JsonIgnore
     private Invoice invoice;
+    @Column(columnDefinition = "TEXT",name = "declinereason")
+    private String declinereason;
+
 
     @Column(name = "timestamp")
     private Date timestamp;

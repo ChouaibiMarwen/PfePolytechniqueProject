@@ -418,11 +418,13 @@ public class PurchaseOrdersController  extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<PurchaseOrderDto> rejectPurchaseOrderBySupplier(@PathVariable Long purchaseOrderId) throws IOException {
+    public ResponseEntity<PurchaseOrderDto> rejectPurchaseOrderBySupplier(@PathVariable Long purchaseOrderId,  @RequestParam(required = false) String reason) throws IOException {
         PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
         if(purchaseOrder == null)
             return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
         purchaseOrder.setStatus(PurshaseOrderStatus.REJECTED);
+        if(reason != null)
+            purchaseOrder.setDeclinereason(reason);
         PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
@@ -475,11 +477,13 @@ public class PurchaseOrdersController  extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<PurchaseOrderDto> cancelPurchaseOrderByAdmin(@PathVariable Long purchaseOrderId) throws IOException {
+    public ResponseEntity<PurchaseOrderDto> cancelPurchaseOrderByAdmin(@PathVariable Long purchaseOrderId, @RequestParam(required = false) String reason) throws IOException {
         PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
         if(purchaseOrder == null)
             return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
         purchaseOrder.setStatus(PurshaseOrderStatus.CANCELED);
+        if(reason != null)
+            purchaseOrder.setDeclinereason(reason);
         PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());

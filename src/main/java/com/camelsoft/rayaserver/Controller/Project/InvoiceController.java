@@ -7,6 +7,7 @@ import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Project.*;
+import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.InvoiceRepportRequest;
 import com.camelsoft.rayaserver.Request.project.InvoiceRequest;
@@ -760,7 +761,7 @@ public class InvoiceController extends BaseController {
 
     @GetMapping(value = {"/invoice_report_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
-    @ApiOperation(value = "get all invoice by status for admin", notes = "Endpoint to get vehicles")
+    @ApiOperation(value = "get all invoice by status for admin", notes = "Endpoint to invoices' reports for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
@@ -795,6 +796,51 @@ public class InvoiceController extends BaseController {
         return new ResponseEntity<>(report, HttpStatus.OK);
 
     }
+
+
+    @GetMapping(value = {"/invoice_report_supplier"})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get all invoice by status for admin", notes = "Endpoint to invoices reportfor supplier")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<InvoiceReport> invoice_report_supplier(@RequestParam( required = false) Date date) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        Supplier supplier = user.getSupplier();
+        if(supplier == null)
+            return new ResponseEntity("this user is not supplier", HttpStatus.NOT_FOUND);
+        InvoiceReport report = new InvoiceReport();
+
+       /* Date date = request.getDate();
+        InvoiceRelated related = request.getRelated();*/
+        if (date == null)
+            date = new Date();
+        System.out.println(date);
+        report.setDate(date);
+       // report.setInvoicepermonth(this.service.countInvoicePerMonthAndUser(date, user));
+        report.setRefundbymonth(this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.REFUNDS, user));
+        report.setPaymentbymonth(this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.PAID, user) + this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.UNPAID, user));
+        report.setPurshaseorderrequest(supplier.getPurchaseOrders().size());
+        report.setRequestdone(this.requestService.countDoneRequestsByUser(user));
+        report.setRequestpending(this.requestService.countPendingRequestsByUserAndStatus(user));
+        report.setSoldcars(this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.PAID, user) );
+        report.setInvoicepermonth(this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.PAID, user) + this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.UNPAID, user) + this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.REFUNDS, user));
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(report, HttpStatus.OK);
+
+    }
+
+
 
     @PatchMapping(value = {"/add_refund_invoice/{idInvoice}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
