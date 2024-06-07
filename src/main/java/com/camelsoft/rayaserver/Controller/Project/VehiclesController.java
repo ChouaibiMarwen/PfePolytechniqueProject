@@ -61,6 +61,11 @@ public class VehiclesController extends BaseController {
     @Autowired
     private CriteriaService criteriaService;
 
+    private static final List<String> image_accepted_types = Arrays.asList(
+            "JPEG", "jpeg", "svg", "png", "SVG", "PNG", "JPG", "jpg", "pdf", "mp4",
+            "avi", "mpg", "mpeg", "mov", "mkv", "flv", "wmv", "webm", "3gp", "ogv"
+    );
+
     @GetMapping(value = {"/all_vehicles_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all vehicles for admin", notes = "Endpoint to get vehicles")
@@ -111,7 +116,7 @@ public class VehiclesController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the supplier")
     })
-    public ResponseEntity<DynamicResponse> all_vehicles_supplier_by_carmake_carvin_carmodel_availibility(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size ,@RequestParam(required = false) String carmodel, @RequestParam(required = false) String carmake, @RequestParam(required = false) String carvin, @RequestParam(required = false) AvailiabilityEnum availiability) throws IOException {
+    public ResponseEntity<DynamicResponse> all_vehicles_supplier_by_carmake_carvin_carmodel_availibility(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String carmodel, @RequestParam(required = false) String carmake, @RequestParam(required = false) String carvin, @RequestParam(required = false) AvailiabilityEnum availiability) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         Page<Vehicles> result = this.criteriaService.FindAllPgSupplierAndcarmodelWithCriteria(page, size, user.getSupplier(), carmodel, carmake, carvin, availiability);
         DynamicResponse res = new DynamicResponse(result.getContent(), result.getNumber(), result.getTotalElements(), result.getTotalPages());
@@ -134,7 +139,7 @@ public class VehiclesController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the supplier")
     })
-    public ResponseEntity<DynamicResponse> all_vehicles_by_supplier(@PathVariable Long idSupplier ,@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
+    public ResponseEntity<DynamicResponse> all_vehicles_by_supplier(@PathVariable Long idSupplier, @RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
         users user = UserServices.findById(idSupplier);
         if (user == null)
             return new ResponseEntity(" supplier not found or null in the system", HttpStatus.NOT_FOUND);
@@ -161,7 +166,7 @@ public class VehiclesController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the supplier")
     })
-    public ResponseEntity<DynamicResponse> allvehiclesbysupplierAndVinAndPoStatus(@PathVariable Long idSupplier ,@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String vin, @RequestParam(required = false) PurshaseOrderStatus status) throws IOException {
+    public ResponseEntity<DynamicResponse> allvehiclesbysupplierAndVinAndPoStatus(@PathVariable Long idSupplier, @RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String vin, @RequestParam(required = false) PurshaseOrderStatus status) throws IOException {
         users user = UserServices.findById(idSupplier);
         if (user == null)
             return new ResponseEntity(" supplier not found or null in the system", HttpStatus.NOT_FOUND);
@@ -169,7 +174,7 @@ public class VehiclesController extends BaseController {
             return new ResponseEntity(" id provided is not for a supplier", HttpStatus.NOT_FOUND);
 
         // DynamicResponse result = this.Services.FindAllPgSupplier(page, size, user.getSupplier());
-       DynamicResponse result = this.purshaseOrderService.FindAllVehiclesPgBySupplierAndCarvinAndPurchaseOrderStatus(page, size, user.getSupplier(), vin, status);
+        DynamicResponse result = this.purshaseOrderService.FindAllVehiclesPgBySupplierAndCarvinAndPurchaseOrderStatus(page, size, user.getSupplier(), vin, status);
         users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
         //
         UserAction action = new UserAction(
@@ -177,12 +182,12 @@ public class VehiclesController extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
-       return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
     @PostMapping(value = {"/add_vehicle"})
-    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')" )
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -251,12 +256,12 @@ public class VehiclesController extends BaseController {
         if (request.getInteriorfeatures() != null) vehicles.setInteriorfeatures(request.getInteriorfeatures());
         if (request.getDescription() != null) vehicles.setDescription(request.getDescription());
         if (request.getStock() != null) vehicles.setStock(request.getStock());
-        if(request.getCarmake() != null) vehicles.setCarmake(request.getCarmake());
-        if(request.getYear() != null) vehicles.setYear(request.getYear());
-        if(request.getDoors() != null) vehicles.setDoors(request.getDoors());
-        if(request.getAvailiability() != null) vehicles.setAvailiability(request.getAvailiability());
-        if(request.getCondition() != null) vehicles.setCondition(request.getCondition());
-        if(request.getTransmissiontype() != null) vehicles.setTransmissiontype(request.getTransmissiontype());
+        if (request.getCarmake() != null) vehicles.setCarmake(request.getCarmake());
+        if (request.getYear() != null) vehicles.setYear(request.getYear());
+        if (request.getDoors() != null) vehicles.setDoors(request.getDoors());
+        if (request.getAvailiability() != null) vehicles.setAvailiability(request.getAvailiability());
+        if (request.getCondition() != null) vehicles.setCondition(request.getCondition());
+        if (request.getTransmissiontype() != null) vehicles.setTransmissiontype(request.getTransmissiontype());
 
 
         Vehicles result = this.Services.Update(vehicles);
@@ -305,14 +310,14 @@ public class VehiclesController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
     })
     public ResponseEntity<DynamicResponse> vehecles_available_stock_by_supplier(@PathVariable Long idSupplier, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) throws IOException {
-       // users user = UserServices.findByUserName(getCurrentUser().getUsername());
-        users user =  this.UserServices.findById(idSupplier);
-        if(user == null)
+        // users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        users user = this.UserServices.findById(idSupplier);
+        if (user == null)
             return new ResponseEntity("user " + idSupplier + " not found in the system", HttpStatus.NOT_FOUND);
         Supplier supplier = user.getSupplier();
-        if(supplier == null)
+        if (supplier == null)
             return new ResponseEntity("supplier not found in the system", HttpStatus.NOT_FOUND);
-        DynamicResponse result =  this.Services.findAllPgBySupplierAndAvailableStock(page, size, supplier);
+        DynamicResponse result = this.Services.findAllPgBySupplierAndAvailableStock(page, size, supplier);
         users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
         //
         UserAction action = new UserAction(
@@ -355,7 +360,7 @@ public class VehiclesController extends BaseController {
         if (vehicles.getCarimages() != null) {
             vehicles.setStatus(VehiclesPostStatus.PUBLISHED);
         }
-         Vehicles resultvehicles =  this.Services.Update(vehicles);
+        Vehicles resultvehicles = this.Services.Update(vehicles);
         users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
         //
         UserAction action = new UserAction(
@@ -423,53 +428,74 @@ public class VehiclesController extends BaseController {
         MediaModel sideviewimageleft = null;
         MediaModel sideviewimageright = null;
         Set<MediaModel> additionalviewimages = new HashSet<>();
-        if(request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()){
+        if (request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()) {
             if (this.filesStorageService.checkformat(request.getFrontviewimage())) {
                 frontviewimage = filesStorageService.save_file_local(request.getFrontviewimage(), "vehicles");
                 if (frontviewimage == null) {
                     return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
                 }
+            }else{
+                return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
             }
         }
-        if(request.getRearviewimage() != null && !request.getRearviewimage().isEmpty()){
+        if (request.getRearviewimage() != null && !request.getRearviewimage().isEmpty()) {
             if (this.filesStorageService.checkformat(request.getRearviewimage())) {
                 rearviewimage = filesStorageService.save_file_local(request.getRearviewimage(), "vehicles");
                 if (rearviewimage == null) {
                     return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
                 }
+            }else{
+                return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
             }
         }
-        if(request.getInteriorviewimage() != null && !request.getInteriorviewimage().isEmpty()){
+        if (request.getInteriorviewimage() != null && !request.getInteriorviewimage().isEmpty()) {
             if (this.filesStorageService.checkformat(request.getInteriorviewimage())) {
                 interiorviewimage = filesStorageService.save_file_local(request.getInteriorviewimage(), "vehicles");
                 if (interiorviewimage == null) {
                     return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
                 }
+            }else{
+                return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
             }
         }
-        if(request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()){
-            if(request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()){if (this.filesStorageService.checkformat(request.getSideviewimageleft())) {
-                sideviewimageleft = filesStorageService.save_file_local(request.getSideviewimageleft(), "vehicles");
-                if (sideviewimageleft == null) {
+        if (request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()) {
+            if (request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()) {
+                if (this.filesStorageService.checkformat(request.getSideviewimageleft())) {
+                    sideviewimageleft = filesStorageService.save_file_local(request.getSideviewimageleft(), "vehicles");
+                    if (sideviewimageleft == null) {
+                        return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+                    }
+                }else{
+                    return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
+                }
+            }
+        }
+        if (request.getSideviewimageright() != null && !request.getSideviewimageright().isEmpty()) {
+            if (this.filesStorageService.checkformat(request.getSideviewimageright())) {
+                sideviewimageright = filesStorageService.save_file_local(request.getSideviewimageright(), "vehicles");
+                if (sideviewimageright == null) {
                     return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
                 }
-            }}
-        }
-        if(request.getSideviewimageright() != null && !request.getSideviewimageright().isEmpty()){
-            if (this.filesStorageService.checkformat(request.getSideviewimageright())) {
-            sideviewimageright = filesStorageService.save_file_local(request.getSideviewimageright(), "vehicles");
-            if (sideviewimageright == null) {
-                return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+            }else{
+                return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
             }
         }
-        }
-        if(request.getAdditionalviewimages() != null && !request.getAdditionalviewimages().isEmpty()){if (this.filesStorageService.checkformatArrayList(request.getAdditionalviewimages())) {
-            List<MultipartFile> fileList = new ArrayList<>(request.getAdditionalviewimages());
-            additionalviewimages = filesStorageService.save_all_local(fileList, "vehicles");
-            if (additionalviewimages == null || additionalviewimages.isEmpty()) {
-                return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+        if (request.getAdditionalviewimages() != null && !request.getAdditionalviewimages().isEmpty()) {
+            if (this.filesStorageService.checkformatArrayList(request.getAdditionalviewimages())) {
+                List<MultipartFile> fileList = new ArrayList<>(request.getAdditionalviewimages());
+                for (int i = 0; i < fileList.size(); i++) {
+                    String extention = fileList.get(i).getContentType().substring(fileList.get(i).getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+                    if (extention.contains("+xml") && extention.contains("svg"))
+                        extention = "svg";
+                    if (!image_accepted_types.contains(extention))
+                        return new ResponseEntity("type " + extention + " not valid", HttpStatus.BAD_REQUEST);
+                }
+                additionalviewimages = filesStorageService.save_all_local(fileList, "vehicles");
+                if (additionalviewimages == null || additionalviewimages.isEmpty()) {
+                    return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+                }
             }
-        }}
+        }
 
 
         VehiclesMedia model = new VehiclesMedia(
@@ -485,7 +511,7 @@ public class VehiclesController extends BaseController {
         if (vehicles.getVehiclespricefinancing() != null) {
             vehicles.setStatus(VehiclesPostStatus.PUBLISHED);
         }
-        Vehicles resultvehicles =  this.Services.Update(vehicles);
+        Vehicles resultvehicles = this.Services.Update(vehicles);
         users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
         //
         UserAction action = new UserAction(
@@ -517,7 +543,7 @@ public class VehiclesController extends BaseController {
         MediaModel sideviewimageright = null;
         Set<MediaModel> additionalviewimages = new HashSet<>();
 
-        if(request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()){
+        if (request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()) {
             if (this.filesStorageService.checkformat(request.getFrontviewimage())) {
                 frontviewimage = filesStorageService.save_file_local(request.getFrontviewimage(), "vehicles");
                 if (frontviewimage == null) {
@@ -530,7 +556,7 @@ public class VehiclesController extends BaseController {
                 this.vehiclesMediaService.Update(vehiclesmedia);
             }
         }
-        if(request.getRearviewimage() != null  && !request.getRearviewimage().isEmpty()){
+        if (request.getRearviewimage() != null && !request.getRearviewimage().isEmpty()) {
             if (this.filesStorageService.checkformat(request.getRearviewimage())) {
                 rearviewimage = filesStorageService.save_file_local(request.getRearviewimage(), "vehicles");
                 if (rearviewimage == null) {
@@ -539,24 +565,28 @@ public class VehiclesController extends BaseController {
             }
         }
 
-        if(request.getInteriorviewimage() != null  && !request.getInteriorviewimage().isEmpty()){
+        if (request.getInteriorviewimage() != null && !request.getInteriorviewimage().isEmpty()) {
             if (this.filesStorageService.checkformat(request.getInteriorviewimage())) {
                 interiorviewimage = filesStorageService.save_file_local(request.getInteriorviewimage(), "vehicles");
                 if (interiorviewimage == null) {
                     return new ResponseEntity("can't upload interior view image", HttpStatus.BAD_REQUEST);
                 }
+            }else{
+                return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
             }
         }
-        if(request.getSideviewimageleft() != null  && !request.getSideviewimageleft().isEmpty()){
+        if (request.getSideviewimageleft() != null && !request.getSideviewimageleft().isEmpty()) {
             if (this.filesStorageService.checkformat(request.getSideviewimageleft())) {
                 sideviewimageleft = filesStorageService.save_file_local(request.getSideviewimageleft(), "vehicles");
                 if (sideviewimageleft == null) {
                     return new ResponseEntity("can't upload side view image left", HttpStatus.BAD_REQUEST);
                 }
+            }else{
+                return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
             }
         }
 
-        if(request.getSideviewimageright() != null  && !request.getSideviewimageright().isEmpty()){
+        if (request.getSideviewimageright() != null && !request.getSideviewimageright().isEmpty()) {
             if (this.filesStorageService.checkformat(request.getSideviewimageright())) {
                 sideviewimageright = filesStorageService.save_file_local(request.getSideviewimageright(), "vehicles");
                 if (sideviewimageright == null) {
@@ -564,12 +594,14 @@ public class VehiclesController extends BaseController {
                 }
             }
         }
-        if(request.getAdditionalviewimages() != null  && !request.getAdditionalviewimages().isEmpty()){
+        if (request.getAdditionalviewimages() != null && !request.getAdditionalviewimages().isEmpty()) {
             if (this.filesStorageService.checkformatArrayList(request.getAdditionalviewimages())) {
                 additionalviewimages = filesStorageService.save_all_local(request.getAdditionalviewimages(), "vehicles");
                 if (additionalviewimages == null || additionalviewimages.isEmpty()) {
                     return new ResponseEntity("can't upload additional view image", HttpStatus.BAD_REQUEST);
                 }
+            }else{
+                return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
             }
         }
 
@@ -589,9 +621,6 @@ public class VehiclesController extends BaseController {
         this.userActionService.Save(action);
         return new ResponseEntity<>(resulttoshow, HttpStatus.OK);
     }
-
-
-
 
 
     @PatchMapping(value = {"/delete_vehicle/{id_vehicle}"})
@@ -640,9 +669,9 @@ public class VehiclesController extends BaseController {
         if (vehicle == null) {
             return new ResponseEntity("Vehicle with id: " + vehicleId + " is not found", HttpStatus.NOT_FOUND);
         }
-       // VehiclesMedia media = vehicle.getCarimages();
+        // VehiclesMedia media = vehicle.getCarimages();
         vehicle.setCarimages(null);
-       Vehicles result = this.Services.Update(vehicle);
+        Vehicles result = this.Services.Update(vehicle);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
