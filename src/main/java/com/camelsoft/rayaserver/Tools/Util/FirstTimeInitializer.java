@@ -266,7 +266,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
             );
 
             Supplier supplier = new Supplier();
-            supplier.setSuppliernumber(104077L);
+            supplier.setSuppliernumber(Long.valueOf(104077));
             supplier.setIdnumber("104077L");
             supplier.setIdtype(IdTypeEnum.ID_CARD);
             Supplier resultsupplier = this.supplierServices.save(supplier);
@@ -291,7 +291,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
             );
 
             Supplier supplier = new Supplier();
-            supplier.setSuppliernumber(104385L);
+            supplier.setSuppliernumber(Long.valueOf(104385));
             supplier.setIdnumber("104385L");
             supplier.setIdtype(IdTypeEnum.ID_CARD);
             Supplier resultsupplier = this.supplierServices.save(supplier);
