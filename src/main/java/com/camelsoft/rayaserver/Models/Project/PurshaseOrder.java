@@ -64,7 +64,7 @@ public class PurshaseOrder implements Serializable {
     private String country;
     @Column(columnDefinition = "TEXT", name = "description")
     private String description;
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "attachments_po")
     private Set<MediaModel> attachments = new HashSet<>();
     @JsonIgnore
