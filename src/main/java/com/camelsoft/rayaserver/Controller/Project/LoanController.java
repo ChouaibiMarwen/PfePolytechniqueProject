@@ -1,10 +1,8 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
-import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
-import com.camelsoft.rayaserver.Models.File.File_model;
-import com.camelsoft.rayaserver.Models.Project.Invoice;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.User.Supplier;
@@ -113,7 +111,7 @@ public class LoanController extends BaseController {
             return new ResponseEntity("supplier not founded",HttpStatus.NOT_ACCEPTABLE);
         }
         // Processing attachment if provided
-        File_model resourceMedia = null;
+        MediaModel resourceMedia = null;
         if (attachment != null && !attachment.isEmpty()) {
             String extension = attachment.getContentType().substring(attachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
             if (!image_accepte_type.contains(extension)) {

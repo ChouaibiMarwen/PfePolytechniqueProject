@@ -1,10 +1,9 @@
 package com.camelsoft.rayaserver.Models.Project;
 
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -35,7 +34,7 @@ public class RequestCorrespondence implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "image_id")
-    private File_model attachment;
+    private MediaModel attachment;
     @Column(name = "archive")
     private Boolean archive = false;
     @Column(name = "timestamp")
@@ -96,11 +95,11 @@ public class RequestCorrespondence implements Serializable {
         this.request = request;
     }
 
-    public File_model getAttachment() {
+    public MediaModel getAttachment() {
         return attachment;
     }
 
-    public void setAttachment(File_model attachment) {
+    public void setAttachment(MediaModel attachment) {
         this.attachment = attachment;
     }
 

@@ -2,12 +2,9 @@ package com.camelsoft.rayaserver.Models.Chat;
 
 
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
-import com.camelsoft.rayaserver.Models.File.File_model;
-import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -45,7 +42,7 @@ public class ChatMessage implements Serializable {
     @Column(name = "status")
     private MessageStatus status = MessageStatus.SENDING;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<File_model> attachments = new ArrayList<>();
+    private List<MediaModel> attachments = new ArrayList<>();
 
 
 }

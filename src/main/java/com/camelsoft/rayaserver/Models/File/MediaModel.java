@@ -8,8 +8,8 @@ import java.util.Date;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Table(name = "File_model")
-public class File_model implements Serializable {
+@Table(name = "media")
+public class MediaModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -36,11 +36,11 @@ public class File_model implements Serializable {
     @Column(name = "timestmp")
     private Date timestmp;
 
-    public File_model() {
+    public MediaModel() {
         this.timestmp= new Date();
     }
 
-    public File_model(String name, String url, String type, long size) {
+    public MediaModel(String name, String url, String type, long size) {
         this.name = name;
         this.url = url;
         this.type = type;

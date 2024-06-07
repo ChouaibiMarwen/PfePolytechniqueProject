@@ -3,12 +3,11 @@ package com.camelsoft.rayaserver.Models.User;
 import com.camelsoft.rayaserver.Enum.Tools.Provider;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Auth.Role;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.Tools.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -57,7 +56,7 @@ public class users implements Serializable {
     private Role role;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "profileimage")
-    private File_model profileimage;
+    private MediaModel profileimage;
     @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "personal_id", referencedColumnName = "personal_information_id")
     private PersonalInformation personalinformation;
@@ -68,11 +67,11 @@ public class users implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "users_table_id")
-    private Set<File_model> documents = new HashSet<>();
+    private Set<MediaModel> documents = new HashSet<>();
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "users_table_attachmentchat")
-    private Set<File_model> attachmentchat = new HashSet<>();
+    private Set<MediaModel> attachmentchat = new HashSet<>();
     @OneToMany(mappedBy = "createdby", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Invoice> invoicescreated = new HashSet<>();
@@ -299,11 +298,11 @@ public class users implements Serializable {
         this.role = role;
     }
 
-    public File_model getProfileimage() {
+    public MediaModel getProfileimage() {
         return profileimage;
     }
 
-    public void setProfileimage(File_model profileimage) {
+    public void setProfileimage(MediaModel profileimage) {
         this.profileimage = profileimage;
     }
 
@@ -323,11 +322,11 @@ public class users implements Serializable {
         this.actions = actions;
     }
 
-    public Set<File_model> getDocuments() {
+    public Set<MediaModel> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(Set<File_model> documents) {
+    public void setDocuments(Set<MediaModel> documents) {
         this.documents = documents;
     }
 
@@ -467,11 +466,11 @@ public class users implements Serializable {
         this.timestmp = timestmp;
     }
 
-    public Set<File_model> getAttachmentchat() {
+    public Set<MediaModel> getAttachmentchat() {
         return attachmentchat;
     }
 
-    public void setAttachmentchat(Set<File_model> attachmentchat) {
+    public void setAttachmentchat(Set<MediaModel> attachmentchat) {
         this.attachmentchat = attachmentchat;
     }
 

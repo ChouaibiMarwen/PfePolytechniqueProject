@@ -1,6 +1,6 @@
 package com.camelsoft.rayaserver.Models.Project;
 
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -19,22 +19,22 @@ public class VehiclesMedia implements Serializable {
     private Long id;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
     @JoinColumn(name = "frontviewimage_file_id")
-    private File_model frontviewimage;
+    private MediaModel frontviewimage;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
     @JoinColumn(name = "rearviewimage_file_id")
-    private File_model rearviewimage;
+    private MediaModel rearviewimage;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
     @JoinColumn(name = "interiorviewimage_file_id")
-    private File_model interiorviewimage;
+    private MediaModel interiorviewimage;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
     @JoinColumn(name = "sideviewimageleft_file_id")
-    private File_model sideviewimageleft;
+    private MediaModel sideviewimageleft;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
     @JoinColumn(name = "sideviewimageright_file_id")
-    private File_model sideviewimageright;
+    private MediaModel sideviewimageright;
     @OneToMany(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
     @JoinColumn(name = "Vehicles_images_id")
-    private Set<File_model> additionalviewimages = new HashSet<>();
+    private Set<MediaModel> additionalviewimages = new HashSet<>();
     @Column(name = "timestamp")
     private Date timestamp;
 
@@ -42,7 +42,7 @@ public class VehiclesMedia implements Serializable {
         this.timestamp=new Date();
     }
 
-    public VehiclesMedia(File_model frontviewimage, File_model rearviewimage, File_model interiorviewimage, File_model sideviewimageleft, File_model sideviewimageright, Set<File_model> additionalviewimages) {
+    public VehiclesMedia(MediaModel frontviewimage, MediaModel rearviewimage, MediaModel interiorviewimage, MediaModel sideviewimageleft, MediaModel sideviewimageright, Set<MediaModel> additionalviewimages) {
         this.frontviewimage = frontviewimage;
         this.rearviewimage = rearviewimage;
         this.interiorviewimage = interiorviewimage;
@@ -61,52 +61,52 @@ public class VehiclesMedia implements Serializable {
         this.id = id;
     }
 
-    public File_model getFrontviewimage() {
+    public MediaModel getFrontviewimage() {
         return frontviewimage;
     }
 
-    public void setFrontviewimage(File_model frontviewimage) {
+    public void setFrontviewimage(MediaModel frontviewimage) {
         this.frontviewimage = frontviewimage;
     }
 
-    public File_model getRearviewimage() {
+    public MediaModel getRearviewimage() {
         return rearviewimage;
     }
 
-    public void setRearviewimage(File_model rearviewimage) {
+    public void setRearviewimage(MediaModel rearviewimage) {
         this.rearviewimage = rearviewimage;
     }
 
-    public File_model getInteriorviewimage() {
+    public MediaModel getInteriorviewimage() {
         return interiorviewimage;
     }
 
-    public void setInteriorviewimage(File_model interiorviewimage) {
+    public void setInteriorviewimage(MediaModel interiorviewimage) {
         this.interiorviewimage = interiorviewimage;
     }
 
-    public File_model getSideviewimageleft() {
+    public MediaModel getSideviewimageleft() {
         return sideviewimageleft;
     }
 
-    public void setSideviewimageleft(File_model sideviewimageleft) {
+    public void setSideviewimageleft(MediaModel sideviewimageleft) {
         this.sideviewimageleft = sideviewimageleft;
     }
 
-    public File_model getSideviewimageright() {
+    public MediaModel getSideviewimageright() {
         return sideviewimageright;
     }
 
-    public void setSideviewimageright(File_model sideviewimageright) {
+    public void setSideviewimageright(MediaModel sideviewimageright) {
         this.sideviewimageright = sideviewimageright;
     }
 
 
-    public Set<File_model> getAdditionalviewimages() {
+    public Set<MediaModel> getAdditionalviewimages() {
         return additionalviewimages;
     }
 
-    public void setAdditionalviewimages(Set<File_model> additionalviewimages) {
+    public void setAdditionalviewimages(Set<MediaModel> additionalviewimages) {
         this.additionalviewimages = additionalviewimages;
     }
 

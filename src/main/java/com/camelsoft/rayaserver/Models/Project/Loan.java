@@ -5,7 +5,7 @@ import com.camelsoft.rayaserver.Enum.Project.Loan.LoanType;
 import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Models.User.Supplier;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -120,7 +120,7 @@ public class Loan implements Serializable {
     private Integer loanterm;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "image_id")
-    private File_model attachment;
+    private MediaModel attachment;
     @Column(name = "carmark")
 
     private String carmark;
@@ -150,7 +150,7 @@ public class Loan implements Serializable {
     @Column(name = "archive")
     private Boolean archive = false;
 
-    public Loan(String englishfirstname, String englishlastname, String englishsecondname, String englishthirdname, String familyname, String fathername, String grandfathername, Date birthdate, String email, String phonenumber, String postcode, String unitnumber, String name, Date retirementdate, WorkSector sectortype, String copynumber, String additionalnumber, String buildingnumber, MaritalStatus maritalstatus, String numberofdependents, String nationalid, String nationalidissuedate, String nationalidexpirydate, String city, String district, String primaryaddress, String streetname, String worksector, Double salary, String employername, LoanType loantype, Date firstinstallment, String purposeofloan, String balloonloan, Double loanamount, Integer loanterm, File_model attachment, String carmark, String carmodel, String caryear, String carvin, String carcolor, String carquantity, String note, Supplier supplier,String currency) {
+    public Loan(String englishfirstname, String englishlastname, String englishsecondname, String englishthirdname, String familyname, String fathername, String grandfathername, Date birthdate, String email, String phonenumber, String postcode, String unitnumber, String name, Date retirementdate, WorkSector sectortype, String copynumber, String additionalnumber, String buildingnumber, MaritalStatus maritalstatus, String numberofdependents, String nationalid, String nationalidissuedate, String nationalidexpirydate, String city, String district, String primaryaddress, String streetname, String worksector, Double salary, String employername, LoanType loantype, Date firstinstallment, String purposeofloan, String balloonloan, Double loanamount, Integer loanterm, MediaModel attachment, String carmark, String carmodel, String caryear, String carvin, String carcolor, String carquantity, String note, Supplier supplier, String currency) {
         this.englishfirstname = englishfirstname;
         this.englishlastname = englishlastname;
         this.englishsecondname = englishsecondname;
@@ -516,11 +516,11 @@ public class Loan implements Serializable {
         this.loanterm = loanterm;
     }
 
-    public File_model getAttachment() {
+    public MediaModel getAttachment() {
         return attachment;
     }
 
-    public void setAttachment(File_model attachment) {
+    public void setAttachment(MediaModel attachment) {
         this.attachment = attachment;
     }
 

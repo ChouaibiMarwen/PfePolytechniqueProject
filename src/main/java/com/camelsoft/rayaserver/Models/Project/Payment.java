@@ -1,8 +1,6 @@
 package com.camelsoft.rayaserver.Models.Project;
 
-import com.camelsoft.rayaserver.Models.Auth.Role;
-import com.camelsoft.rayaserver.Models.File.File_model;
-import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -32,7 +30,7 @@ public class Payment implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "payment-proof_id")
-    private Set<File_model> attachments = new HashSet<>();
+    private Set<MediaModel> attachments = new HashSet<>();
     @Column(name = "timestmp")
     private Date timestmp = new Date();
 
@@ -71,11 +69,11 @@ public class Payment implements Serializable {
         this.invoice = invoice;
     }
 
-    public Set<File_model> getAttachments() {
+    public Set<MediaModel> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(Set<File_model> attachments) {
+    public void setAttachments(Set<MediaModel> attachments) {
         this.attachments = attachments;
     }
 

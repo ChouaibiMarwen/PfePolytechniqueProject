@@ -1,9 +1,7 @@
 package com.camelsoft.rayaserver.Request.chat;
 
 
-import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
-import com.camelsoft.rayaserver.Models.File.File_model;
-import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +10,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -34,6 +31,6 @@ public class ChatMessageRequest implements Serializable {
     @Column(name = "content")
     private String content;
     @OneToMany
-    private List<File_model> attachments=new ArrayList<>();
+    private List<MediaModel> attachments=new ArrayList<>();
 
 }

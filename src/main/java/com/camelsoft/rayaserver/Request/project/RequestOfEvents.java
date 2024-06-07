@@ -2,9 +2,6 @@ package com.camelsoft.rayaserver.Request.project;
 
 import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
-import com.camelsoft.rayaserver.Models.Auth.Role;
-import com.camelsoft.rayaserver.Models.File.File_model;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;

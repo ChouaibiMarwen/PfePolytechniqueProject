@@ -4,10 +4,9 @@ package com.camelsoft.rayaserver.Models.User;
 import com.camelsoft.rayaserver.Enum.User.IdTypeEnum;
 import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.Tools.Rating;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -49,7 +48,7 @@ public class Supplier implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER, cascade =  CascadeType.ALL , orphanRemoval = true)
     @JoinColumn(name = "supplier_files_model")
-    private Set<File_model> images = new HashSet<>();
+    private Set<MediaModel> images = new HashSet<>();
     @JsonIgnore
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings = new ArrayList<>();
@@ -167,11 +166,11 @@ public class Supplier implements Serializable {
         this.ratings = ratings;
     }
 
-    public Set<File_model> getImages() {
+    public Set<MediaModel> getImages() {
         return images;
     }
 
-    public void setImages(Set<File_model> images) {
+    public void setImages(Set<MediaModel> images) {
         this.images = images;
     }
 

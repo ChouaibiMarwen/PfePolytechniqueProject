@@ -4,7 +4,7 @@ import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.Department;
 import com.camelsoft.rayaserver.Models.Project.RoleDepartment;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
@@ -166,7 +166,7 @@ public class SubAdminController extends BaseController {
         if(file != null){
             if (!this.filesStorageService.checkformat(file))
                 return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
-            File_model resource_media = filesStorageService.save_file_local(file, "profile");
+            MediaModel resource_media = filesStorageService.save_file_local(file, "profile");
             if (resource_media == null)
                 return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
             user.setProfileimage(resource_media);

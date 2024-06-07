@@ -2,12 +2,9 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
-import com.camelsoft.rayaserver.Models.File.File_model;
-import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.User.UsersCategory;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Request.project.RequestOfEvents;
 import com.camelsoft.rayaserver.Request.project.UsersCategoryRequest;
 import com.camelsoft.rayaserver.Services.Project.UserCategoryService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
@@ -21,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;

@@ -1,7 +1,7 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.Project.VehiclesMedia;
@@ -55,7 +55,7 @@ public class MediaController extends BaseController {
     })
     public ResponseEntity<String> remove_media(@PathVariable Long id_file) throws IOException {
         //users user = UserServices.findByUserName(getCurrentUser().getUsername());
-        File_model model = this.filesStorageService.findbyid(id_file);
+        MediaModel model = this.filesStorageService.findbyid(id_file);
         if (model == null)
             return new ResponseEntity<>("media " + id_file + " not found in the system", HttpStatus.NOT_FOUND);
         this.filesStorageService.delete_file_by_path_from_cdn(model.getUrl(), id_file);
@@ -74,13 +74,13 @@ public class MediaController extends BaseController {
     })
     public ResponseEntity<users> update_profile_image(@RequestParam(required = false, name = "file") MultipartFile file) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
-        File_model oldimage = user.getProfileimage();
+        MediaModel oldimage = user.getProfileimage();
         if (file == null) {
             return new ResponseEntity("file is null", HttpStatus.BAD_REQUEST);
         }
         if (!this.filesStorageService.checkformat(file))
             return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
-        File_model resource_media = filesStorageService.save_file_local(file, "profile");
+        MediaModel resource_media = filesStorageService.save_file_local(file, "profile");
         if (resource_media == null)
             return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
         user.setProfileimage(resource_media);
@@ -109,13 +109,13 @@ public class MediaController extends BaseController {
         users user = this.userService.findById(userId);
         if(user == null)
             return new ResponseEntity("user with id: " +userId+ "is not found", HttpStatus.NOT_FOUND);
-        File_model oldimage = user.getProfileimage();
+        MediaModel oldimage = user.getProfileimage();
         if (file == null) {
             return new ResponseEntity("file is null", HttpStatus.BAD_REQUEST);
         }
         if (!this.filesStorageService.checkformat(file))
             return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
-        File_model resource_media = filesStorageService.save_file_local(file, "profile");
+        MediaModel resource_media = filesStorageService.save_file_local(file, "profile");
         if (resource_media == null)
             return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
         user.setProfileimage(resource_media);
@@ -151,7 +151,7 @@ public class MediaController extends BaseController {
             }
 
             VehiclesMedia media = vehicle.getCarimages();
-            File_model model = null;
+            MediaModel model = null;
             boolean found = false;
 
             if (media.getFrontviewimage() != null && media.getFrontviewimage().getId().equals(id_photo)) {
@@ -175,8 +175,8 @@ public class MediaController extends BaseController {
                 media.setSideviewimageright(null);
                 found = true;
             } else {
-                Set<File_model> additionalViewImages = media.getAdditionalviewimages();
-                for (File_model addFile : additionalViewImages) {
+                Set<MediaModel> additionalViewImages = media.getAdditionalviewimages();
+                for (MediaModel addFile : additionalViewImages) {
                     if (addFile.getId().equals(id_photo)) {
                         model = addFile;
                         additionalViewImages.remove(addFile);

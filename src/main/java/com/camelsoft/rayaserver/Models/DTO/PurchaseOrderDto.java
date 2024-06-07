@@ -1,7 +1,7 @@
 package com.camelsoft.rayaserver.Models.DTO;
 
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.Service_Agreement;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
@@ -26,7 +26,7 @@ public class PurchaseOrderDto {
         private String codePostal;
         private String country;
         private String description;
-        private Set<File_model> attachments = new HashSet<>();
+        private Set<MediaModel> attachments = new HashSet<>();
         private Boolean archive = false;
         private Integer poCountBySupplier;
         private Set<Service_Agreement> serviceagreements = new HashSet<>();

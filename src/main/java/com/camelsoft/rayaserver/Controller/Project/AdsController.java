@@ -1,13 +1,11 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.Ads;
-import com.camelsoft.rayaserver.Models.Project.Department;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.AdsRequest;
-import com.camelsoft.rayaserver.Services.File.FileServices;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.AdsService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
@@ -21,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
@@ -67,7 +64,7 @@ public class AdsController extends BaseController {
 
         //save attachmen't files and set it to the new ads
         if (this.filesStorageService.checkformatArrayList(request.getAttachments())) {
-            Set<File_model> adsAttchments = new HashSet<>();
+            Set<MediaModel> adsAttchments = new HashSet<>();
             adsAttchments = filesStorageService.save_all_local(request.getAttachments(), "vehicles");
             if (adsAttchments == null || adsAttchments.isEmpty()) {
                 return new ResponseEntity("can't upload the attachment file", HttpStatus.BAD_REQUEST);
@@ -116,7 +113,7 @@ public class AdsController extends BaseController {
             ads.setDescription(request.getDescription());
         if(request.getAttachments() != null && !request.getAttachments().isEmpty()){
             if (this.filesStorageService.checkformatArrayList(request.getAttachments())) {
-                Set<File_model> adsAttchments = new HashSet<>();
+                Set<MediaModel> adsAttchments = new HashSet<>();
                 adsAttchments = filesStorageService.save_all_local(request.getAttachments(), "vehicles");
                 if (adsAttchments == null || adsAttchments.isEmpty()) {
                     return new ResponseEntity("can't upload the attachment file", HttpStatus.BAD_REQUEST);

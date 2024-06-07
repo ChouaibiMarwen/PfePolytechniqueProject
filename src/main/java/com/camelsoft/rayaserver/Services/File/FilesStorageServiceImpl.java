@@ -7,17 +7,14 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Repository.File.File_Repository;
 import com.camelsoft.rayaserver.Repository.File.FilesStorageService;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +23,6 @@ import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -98,7 +94,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         return true;
     }
     @Override
-    public File_model save_file(MultipartFile file, String folderName) throws IOException {
+    public MediaModel save_file(MultipartFile file, String folderName) throws IOException {
 
         // Create a new PutObjectRequest object.
         ObjectMetadata metadata = new ObjectMetadata();
@@ -124,7 +120,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         space.putObject(putObjectRequest);
 
         String fileNameresult = extractFileName(objectKey, file.getOriginalFilename());
-        File_model fileresult = new File_model(
+        MediaModel fileresult = new MediaModel(
                 fileNameresult,
                 objectKey,
                 file.getContentType(),
@@ -135,7 +131,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
 
 
-    public File_model save_file001(MultipartFile file, String folderName) throws IOException {
+    public MediaModel save_file001(MultipartFile file, String folderName) throws IOException {
 
         // Create a new PutObjectRequest object.
         ObjectMetadata metadata = new ObjectMetadata();
@@ -161,7 +157,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         space.putObject(putObjectRequest);
 
         String fileNameresult = extractFileName(objectKey, file.getOriginalFilename());
-        return  new File_model(
+        return  new MediaModel(
                 fileNameresult,
                 objectKey,
                 file.getContentType(),
@@ -187,7 +183,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
 
     @Override
-    public File_model save_fileBMP(MultipartFile file, String directory, String name, String extention) {
+    public MediaModel save_fileBMP(MultipartFile file, String directory, String name, String extention) {
         try {
             Path root = Paths.get("WebContent/" + directory);
             if (!Files.exists(root))
@@ -219,7 +215,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
             Resource resource = new UrlResource(file_info.toUri());
 
             if (resource.exists() || resource.isReadable()) {
-                File_model fileresult = new File_model(
+                MediaModel fileresult = new MediaModel(
                         name,
                         resource.getURI().getPath(),
                         "image/bmp", // Set content type to BMP
@@ -256,7 +252,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
     }
 
-    public File_model findbyid(Long media_id){
+    public MediaModel findbyid(Long media_id){
         if (this.repository.existsById(media_id))
         {
             return  this.repository.findById(media_id).get();
@@ -266,8 +262,8 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     @Override
-    public void delete_all_file_by_path(Set<File_model> images) {
-        for (File_model  fileModel: images) {
+    public void delete_all_file_by_path(Set<MediaModel> images) {
+        for (MediaModel fileModel: images) {
             if (fileModel.getUrl()!=null)
             space.deleteObject(bucketName, fileModel.getUrl());
             if (this.repository.existsById(fileModel.getId()))
@@ -277,9 +273,9 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     @Override
-    public Set<File_model> save_all(Set<MultipartFile> files, String folderName) {
+    public Set<MediaModel> save_all(Set<MultipartFile> files, String folderName) {
         try {
-            Set<File_model> images = new HashSet<>();
+            Set<MediaModel> images = new HashSet<>();
             for (MultipartFile file : files){
                 // Create a new PutObjectRequest object.
                 ObjectMetadata metadata = new ObjectMetadata();
@@ -305,7 +301,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
                 space.putObject(putObjectRequest);
 
                 String fileNameresult = extractFileName(objectKey, file.getOriginalFilename());
-                File_model fileresult = new File_model(
+                MediaModel fileresult = new MediaModel(
                         fileNameresult,
                         objectKey,
                         file.getContentType(),
@@ -323,7 +319,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
     /******************************************************************************************/
     @Override
-    public File_model save_file_local(MultipartFile file, String directory) {
+    public MediaModel save_file_local(MultipartFile file, String directory) {
 
         try {
             String name = ((new Date()).getTime() + file.getOriginalFilename()).replaceAll("\\s+", "");
@@ -344,7 +340,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
             Resource resource = new UrlResource(file_info.toUri());
 
             if (resource.exists() || resource.isReadable()) {
-                File_model fileresult = new File_model(
+                MediaModel fileresult = new MediaModel(
                         name,
                         resource.getURI().getPath(),
                         file.getContentType(),
@@ -373,7 +369,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     @Override
-    public void delete_all_file_by_path_local(Set<File_model> images) {
+    public void delete_all_file_by_path_local(Set<MediaModel> images) {
         for(int i = 0 ; i<images.size();i++){
             Path root_local= Paths.get(images.iterator().next().getUrl());
             if(this.repository.existsById(images.iterator().next().getId()))
@@ -384,9 +380,9 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     @Override
-    public Set<File_model> save_all_local(List<MultipartFile> file, String directory){
+    public Set<MediaModel> save_all_local(List<MultipartFile> file, String directory){
         try {
-            Set<File_model> images = new HashSet<>();
+            Set<MediaModel> images = new HashSet<>();
             for(int i = 0 ; i<file.size();i++){
                 String extention = file.get(i).getContentType().substring(file.get(i).getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
                 if (extention.contains("+xml") && extention.contains("svg"))
@@ -395,7 +391,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
                 if (!image_accepted_types.contains(extention))
                     throw new RuntimeException("Could not read the file!");
-                File_model   resource_media = this.save_file_local(file.get(i), directory);
+                MediaModel resource_media = this.save_file_local(file.get(i), directory);
                 resource_media.setRange(i);
                 images.add(resource_media);
             }

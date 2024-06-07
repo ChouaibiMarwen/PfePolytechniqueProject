@@ -1,13 +1,10 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
-import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
-import com.camelsoft.rayaserver.Enum.Project.Vehicles.ConditionEnum;
-import com.camelsoft.rayaserver.Enum.Project.Vehicles.TransmissionTypeEnum;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.VehiclesPostStatus;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.Project.VehiclesMedia;
@@ -31,7 +28,6 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -421,12 +417,12 @@ public class VehiclesController extends BaseController {
             return new ResponseEntity("vehicle " + id_vehicle + " not found in the system", HttpStatus.NOT_FOUND);
      /*   if (vehicles.getVehiclespricefinancing() != null)
             return new ResponseEntity("this vehicle " + id_vehicle + " already have media", HttpStatus.BAD_REQUEST);*/
-        File_model frontviewimage = null;
-        File_model rearviewimage = null;
-        File_model interiorviewimage = null;
-        File_model sideviewimageleft = null;
-        File_model sideviewimageright = null;
-        Set<File_model> additionalviewimages = new HashSet<>();
+        MediaModel frontviewimage = null;
+        MediaModel rearviewimage = null;
+        MediaModel interiorviewimage = null;
+        MediaModel sideviewimageleft = null;
+        MediaModel sideviewimageright = null;
+        Set<MediaModel> additionalviewimages = new HashSet<>();
         if(request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()){
             if (this.filesStorageService.checkformat(request.getFrontviewimage())) {
                 frontviewimage = filesStorageService.save_file_local(request.getFrontviewimage(), "vehicles");
@@ -514,12 +510,12 @@ public class VehiclesController extends BaseController {
         VehiclesMedia vehiclesmedia = this.vehiclesMediaService.FindById(id_media);
         if (vehiclesmedia == null)
             return new ResponseEntity("vehicle media " + id_media + " not found in the system", HttpStatus.NOT_FOUND);
-        File_model frontviewimage = null;
-        File_model rearviewimage = null;
-        File_model interiorviewimage = null;
-        File_model sideviewimageleft = null;
-        File_model sideviewimageright = null;
-        Set<File_model> additionalviewimages = new HashSet<>();
+        MediaModel frontviewimage = null;
+        MediaModel rearviewimage = null;
+        MediaModel interiorviewimage = null;
+        MediaModel sideviewimageleft = null;
+        MediaModel sideviewimageright = null;
+        Set<MediaModel> additionalviewimages = new HashSet<>();
 
         if(request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()){
             if (this.filesStorageService.checkformat(request.getFrontviewimage())) {
@@ -527,7 +523,7 @@ public class VehiclesController extends BaseController {
                 if (frontviewimage == null) {
                     return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
                 }
-                File_model media = vehiclesmedia.getFrontviewimage();
+                MediaModel media = vehiclesmedia.getFrontviewimage();
                 vehiclesmedia.setFrontviewimage(null);
                 this.filesStorageService.delete_file_by_path_local(media.getUrl(), media.getId());
                 vehiclesmedia.setFrontviewimage(frontviewimage);

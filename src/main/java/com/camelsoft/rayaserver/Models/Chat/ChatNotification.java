@@ -1,7 +1,7 @@
 package com.camelsoft.rayaserver.Models.Chat;
 
 
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +34,7 @@ public class ChatNotification implements Serializable {
     @Column(name = "chatId")
     private String chatId;
     @OneToMany
-    private List<File_model> attachments;
+    private List<MediaModel> attachments;
     @Column(name = "timestmp")
     private Date timestmp;
 

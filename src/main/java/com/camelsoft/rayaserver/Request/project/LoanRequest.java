@@ -3,7 +3,7 @@ package com.camelsoft.rayaserver.Request.project;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanType;
 import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import lombok.Data;
 
 import java.util.Date;
@@ -47,7 +47,7 @@ public class LoanRequest {
     private String balloonloan;
     private Double loanamount;
     private Integer loanterm;
-    private File_model attachment;
+    private MediaModel attachment;
     private String carmark;
     private String carmodel;
     private String caryear;

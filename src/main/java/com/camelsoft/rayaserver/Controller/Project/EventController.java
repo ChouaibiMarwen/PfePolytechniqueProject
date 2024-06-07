@@ -1,19 +1,12 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
-import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
-import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
-import com.camelsoft.rayaserver.Models.Auth.Role;
-import com.camelsoft.rayaserver.Models.DTO.PurchaseOrderDto;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.*;
-import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.UsersCategory;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Request.project.EventRequest;
-import com.camelsoft.rayaserver.Request.project.LoanRequest;
 import com.camelsoft.rayaserver.Request.project.RequestOfEvents;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
@@ -220,7 +213,7 @@ public class EventController extends BaseController {
             return new ResponseEntity("Event date can't be null", HttpStatus.BAD_REQUEST);
         if ((request.getAssignedto() == null || request.getAssignedto().isEmpty()) && (request.getCategoriesId() == null || request.getCategoriesId().isEmpty()))
             return new ResponseEntity("must select at list one role assigned to or one category", HttpStatus.BAD_REQUEST);
-        File_model resourceMedia = null;
+        MediaModel resourceMedia = null;
         if (attachment != null && !attachment.isEmpty()) {
             String extension = attachment.getContentType().substring(attachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
             if (!image_accepte_type.contains(extension)) {
@@ -339,11 +332,11 @@ public class EventController extends BaseController {
 
         Event event =  this.service.FindById(idEvent);
 
-        File_model resourceMedia = null;
+        MediaModel resourceMedia = null;
         if (attachment != null && !attachment.isEmpty()) {
 
             if(event.getAttachment() != null){
-                File_model model = this.filesStorageService.findbyid(event.getAttachment().getId());
+                MediaModel model = this.filesStorageService.findbyid(event.getAttachment().getId());
                 this.filesStorageService.delete_file_by_path_from_cdn(model.getUrl(), event.getAttachment().getId());
             }
 

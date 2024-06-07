@@ -5,9 +5,8 @@ import com.camelsoft.rayaserver.Controller.Chat.ChatController;
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Enum.Tools.Action;
 import com.camelsoft.rayaserver.Models.Chat.ChatMessage;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Notification.Notification;
-import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Chat.ChatMessageRepository;
 import com.camelsoft.rayaserver.Response.Chat.ChatMessageResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
@@ -50,10 +49,10 @@ public class ChatMessageService {
     public ChatMessage save(ChatMessage chatMessage) throws InterruptedException {
         chatMessage.setStatus(MessageStatus.RECEIVED);
 
-        List<File_model> attachedFiles = new ArrayList<>();
-        for (File_model fileId : chatMessage.getAttachments()) {
+        List<MediaModel> attachedFiles = new ArrayList<>();
+        for (MediaModel fileId : chatMessage.getAttachments()) {
             // Pre-load File_model objects from repository (replace with your logic)
-            File_model attachedFile = this.filesStorageService.findbyid(fileId.getId());
+            MediaModel attachedFile = this.filesStorageService.findbyid(fileId.getId());
             attachedFiles.add(attachedFile);
         }
         chatMessage.setAttachments(attachedFiles);

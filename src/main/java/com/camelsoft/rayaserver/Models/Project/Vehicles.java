@@ -1,7 +1,6 @@
 package com.camelsoft.rayaserver.Models.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.*;
-import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

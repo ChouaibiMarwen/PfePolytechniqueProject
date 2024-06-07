@@ -1,38 +1,25 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
-import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
-import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
-import com.camelsoft.rayaserver.Enum.Project.Request.RequestCorrespondant;
 import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
-import com.camelsoft.rayaserver.Models.Auth.Role;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Repository.Project.RequestRepository;
 import com.camelsoft.rayaserver.Request.project.CorrespendanceRequest;
-import com.camelsoft.rayaserver.Request.project.EventRequest;
-import com.camelsoft.rayaserver.Request.project.RequestOfEvents;
 import com.camelsoft.rayaserver.Request.project.RequestsRequest;
-import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.RequestResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
-import com.camelsoft.rayaserver.Services.Project.EventService;
 import com.camelsoft.rayaserver.Services.Project.InvoiceService;
 import com.camelsoft.rayaserver.Services.Project.RequestCorrespondenceService;
 import com.camelsoft.rayaserver.Services.Project.RequestService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
-import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
-import com.google.firestore.v1.CommitRequest;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -88,7 +75,7 @@ public class RequestController  extends BaseController {
                 invoices
         );
         Request result = this.service.Save(requestdata);
-        File_model resourceMedia = null;
+        MediaModel resourceMedia = null;
         if (attachment != null && !attachment.isEmpty()) {
             String extension = attachment.getContentType().substring(attachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
             if (!image_accepte_type.contains(extension)) {
@@ -133,7 +120,7 @@ public class RequestController  extends BaseController {
 
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
 
-        File_model resourceMedia = null;
+        MediaModel resourceMedia = null;
         if (attachment != null && !attachment.isEmpty()) {
             String extension = attachment.getContentType().substring(attachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
             if (!image_accepte_type.contains(extension)) {

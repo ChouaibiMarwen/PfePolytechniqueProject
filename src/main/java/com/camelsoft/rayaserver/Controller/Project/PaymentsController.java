@@ -1,7 +1,7 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Payment;
 import com.camelsoft.rayaserver.Models.Project.Product;
@@ -87,9 +87,9 @@ public class PaymentsController extends BaseController {
             payment.setNotes(request.getNotes());
         Payment result = this.service.Save(payment);
         if (files != null) {
-            List<File_model> filesw = new ArrayList<>();
+            List<MediaModel> filesw = new ArrayList<>();
             for (MultipartFile file : files) {
-                File_model resource_media = filesStorageService.save_file_local(file, "payments");
+                MediaModel resource_media = filesStorageService.save_file_local(file, "payments");
                 result.getAttachments().add(resource_media);
                 filesw.add(resource_media);
                 this.service.Update(result);

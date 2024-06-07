@@ -1,6 +1,6 @@
 package com.camelsoft.rayaserver.Services.File;
 
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 
 import com.camelsoft.rayaserver.Repository.File.File_Repository;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -15,9 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 @Service
 public class FileServices {
@@ -63,13 +61,13 @@ public class FileServices {
 
 
 
-    public File_model save_file(File_model model){
+    public MediaModel save_file(MediaModel model){
         return this.repository.save(model);
     }
-    public File_model update_file(File_model model){
+    public MediaModel update_file(MediaModel model){
         return this.repository.save(model);
     }
-    public File_model findbyid(Long id){
+    public MediaModel findbyid(Long id){
         try {
             return this.repository.findById(id).get();
         }catch (NoSuchElementException ex){
@@ -86,7 +84,7 @@ public class FileServices {
         }
 
     }
-    public void delete(File_model id){
+    public void delete(MediaModel id){
         try {
              this.repository.delete(id);
         }catch (NoSuchElementException ex){

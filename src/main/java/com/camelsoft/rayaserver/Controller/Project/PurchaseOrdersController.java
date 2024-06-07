@@ -4,16 +4,13 @@ import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.PurchaseOrderDto;
-import com.camelsoft.rayaserver.Models.File.File_model;
-import com.camelsoft.rayaserver.Models.Project.Product;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Repository.File.FilesStorageService;
 import com.camelsoft.rayaserver.Request.project.PurshaseOrderRequest;
-import com.camelsoft.rayaserver.Request.project.VehiclesRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.PurshaseOrderService;
@@ -106,7 +103,7 @@ public class PurchaseOrdersController  extends BaseController {
         purshaseOrder.setDescription(request.getDescription());
         purshaseOrder.setCreatedby(currentuser);
         if(!request.getAttachments().isEmpty()){
-            Set<File_model> attachmentsList = new HashSet<>();
+            Set<MediaModel> attachmentsList = new HashSet<>();
             if (this.filesStorageService.checkformatList(request.getAttachments())) {
                 List<MultipartFile> list = new ArrayList<>(request.getAttachments());
                 attachmentsList = filesStorageService.save_all_local(list, "purshase_order");

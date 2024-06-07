@@ -2,14 +2,10 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
-import com.camelsoft.rayaserver.Models.File.File_model;
 import com.camelsoft.rayaserver.Models.Project.Department;
-import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.Project.RoleDepartment;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Request.project.DepartmentRequest;
-import com.camelsoft.rayaserver.Request.project.RequestOfEvents;
 import com.camelsoft.rayaserver.Services.Project.DepartmentService;
 import com.camelsoft.rayaserver.Services.Project.RoleDepartmentService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;

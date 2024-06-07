@@ -1,7 +1,7 @@
 package com.camelsoft.rayaserver.Models.Tools;
 
 
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -39,7 +39,7 @@ public class Rating implements Serializable {
     private String phoneNumber;
 
     @Transient
-    private File_model userImage;
+    private MediaModel userImage;
 
 
 
@@ -145,11 +145,11 @@ public class Rating implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public File_model getUserImage() {
+    public MediaModel getUserImage() {
         return userImage;
     }
 
-    public void setUserImage(File_model userImage) {
+    public void setUserImage(MediaModel userImage) {
         this.userImage = userImage;
     }
 }

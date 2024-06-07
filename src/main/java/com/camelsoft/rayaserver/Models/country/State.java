@@ -1,5 +1,5 @@
 package com.camelsoft.rayaserver.Models.country;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -32,7 +32,7 @@ public class State implements Serializable {
     private List<City> cities;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "file_id")
-    private File_model image;
+    private MediaModel image;
     @JsonIgnore
     @OneToMany(mappedBy = "city")
     private Set<Address> addresses = new HashSet<>();
@@ -55,11 +55,11 @@ public class State implements Serializable {
         this.addresses = addresses;
     }
 
-    public File_model getImage() {
+    public MediaModel getImage() {
         return image;
     }
 
-    public void setImage(File_model image) {
+    public void setImage(MediaModel image) {
         this.image = image;
     }
 

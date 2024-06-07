@@ -1,11 +1,10 @@
 package com.camelsoft.rayaserver.Controller.Chat;
 
 
-import com.camelsoft.rayaserver.Controller.Project.LoanController;
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Models.Chat.ChatMessage;
 import com.camelsoft.rayaserver.Models.Chat.ChatNotification;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.chat.ChatMessageRequest;
 import com.camelsoft.rayaserver.Response.Notification.AdminNotificationResponse;
@@ -168,11 +167,11 @@ public class ChatController  extends BaseController {
 
     @PostMapping("/add_files")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    public ResponseEntity<List<File_model>> add_files(@RequestParam(value = "files") List<MultipartFile> files) throws IOException {
+    public ResponseEntity<List<MediaModel>> add_files(@RequestParam(value = "files") List<MultipartFile> files) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
-        List<File_model> filesw = new ArrayList<>();
+        List<MediaModel> filesw = new ArrayList<>();
         for (MultipartFile file:files) {
-            File_model resource_media = filesStorageService.save_file_local(file,  "messages");
+            MediaModel resource_media = filesStorageService.save_file_local(file,  "messages");
             user.getAttachmentchat().add(resource_media);
             filesw.add(resource_media);
             this.userService.UpdateUser(user);

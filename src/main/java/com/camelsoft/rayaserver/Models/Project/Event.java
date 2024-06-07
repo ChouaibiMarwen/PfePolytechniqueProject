@@ -1,15 +1,12 @@
 package com.camelsoft.rayaserver.Models.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
-import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
-import com.camelsoft.rayaserver.Models.Auth.Role;
-import com.camelsoft.rayaserver.Models.File.File_model;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 
 import com.camelsoft.rayaserver.Models.User.UsersCategory;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -32,7 +29,7 @@ public class Event implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "image_id")
-    private File_model attachment;
+    private MediaModel attachment;
     @Column(name = "event_date")
     private Date eventDate;
 
@@ -69,7 +66,7 @@ public class Event implements Serializable {
     public int hashCode() {
         return 33; // Replace with any prime number
     }
-    public Event(String title, String description, Date eventDate, File_model attachment, Set<RoleEnum> assignedto, EventStatus status) {
+    public Event(String title, String description, Date eventDate, MediaModel attachment, Set<RoleEnum> assignedto, EventStatus status) {
         this.title = title;
         this.description = description;
         this.eventDate = eventDate;
@@ -104,11 +101,11 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public File_model getAttachment() {
+    public MediaModel getAttachment() {
         return attachment;
     }
 
-    public void setAttachment(File_model attachment) {
+    public void setAttachment(MediaModel attachment) {
         this.attachment = attachment;
     }
 
