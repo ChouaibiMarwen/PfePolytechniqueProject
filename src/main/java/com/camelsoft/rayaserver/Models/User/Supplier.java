@@ -7,6 +7,7 @@ import com.camelsoft.rayaserver.Models.Tools.Rating;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -75,6 +76,7 @@ public class Supplier implements Serializable {
     @PostLoad
     private void afterload(){
         if(user !=null){
+            Hibernate.initialize(user.getPersonalinformation());
             if(user.getPersonalinformation()!=null){
                 name = user.getPersonalinformation().getFirstnameen()+" "+ user.getPersonalinformation().getLastnameen();
                 userId = this.getUser().getId();
