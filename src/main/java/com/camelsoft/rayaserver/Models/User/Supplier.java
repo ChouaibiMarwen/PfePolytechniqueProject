@@ -53,7 +53,7 @@ public class Supplier implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings = new ArrayList<>();
-    @OneToOne(mappedBy = "supplier",fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "supplier",fetch = FetchType.LAZY)
     @JsonIgnore
     private users user;
 
@@ -76,14 +76,14 @@ public class Supplier implements Serializable {
     @PostLoad
     private void afterLoad() {
         if (user != null) {
-            Hibernate.initialize(user.getPersonalinformation());
+
             if (user.getPersonalinformation() != null) {
                 name = user.getPersonalinformation().getFirstnameen() + " " + user.getPersonalinformation().getLastnameen();
                 userId = user.getId();
             }
         }
         if (this.vehicles != null) {
-            Hibernate.initialize(this.vehicles);
+
             availableVehiclesCountBySupplier = 0;
             for (Vehicles vehicle : vehicles) {
                 availableVehiclesCountBySupplier += vehicle.getStock();
