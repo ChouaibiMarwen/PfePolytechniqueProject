@@ -29,7 +29,7 @@ public class Payment implements Serializable {
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "payment-proof_id")
+    @JoinColumn(name = "payment_proof_media")
     private Set<MediaModel> attachments = new HashSet<>();
     @Column(name = "timestmp")
     private Date timestmp = new Date();

@@ -55,7 +55,7 @@ public class users implements Serializable {
     @JoinColumn(name = "role_id")
     private Role role;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "profileimage")
+    @JoinColumn(name = "profileimage_media")
     private MediaModel profileimage;
     @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "personal_id", referencedColumnName = "personal_information_id")
@@ -66,11 +66,11 @@ public class users implements Serializable {
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "users_table_id")
+    @JoinColumn(name = "users_table_documents")
     private Set<MediaModel> documents = new HashSet<>();
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "users_table_attachmentchat")
+    @JoinColumn(name = "users_table_attachmentchat_media")
     private Set<MediaModel> attachmentchat = new HashSet<>();
     @OneToMany(mappedBy = "createdby", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

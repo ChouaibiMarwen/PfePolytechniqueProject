@@ -18,22 +18,22 @@ public class VehiclesMedia implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
-    @JoinColumn(name = "frontviewimage_file_id")
+    @JoinColumn(name = "frontviewimage_file_media")
     private MediaModel frontviewimage;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
     @JoinColumn(name = "rearviewimage_file_id")
     private MediaModel rearviewimage;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
-    @JoinColumn(name = "interiorviewimage_file_id")
+    @JoinColumn(name = "interiorviewimage_file_media")
     private MediaModel interiorviewimage;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
-    @JoinColumn(name = "sideviewimageleft_file_id")
+    @JoinColumn(name = "sideviewimageleft_file_media")
     private MediaModel sideviewimageleft;
     @OneToOne(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
-    @JoinColumn(name = "sideviewimageright_file_id")
+    @JoinColumn(name = "sideviewimageright_file_media")
     private MediaModel sideviewimageright;
     @OneToMany(fetch = FetchType.EAGER,cascade ={CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE},orphanRemoval = true)
-    @JoinColumn(name = "Vehicles_images_id")
+    @JoinColumn(name = "Vehicles_images_media")
     private Set<MediaModel> additionalviewimages = new HashSet<>();
     @Column(name = "timestamp")
     private Date timestamp;

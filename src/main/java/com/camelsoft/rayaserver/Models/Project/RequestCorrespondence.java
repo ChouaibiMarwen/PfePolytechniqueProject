@@ -33,7 +33,7 @@ public class RequestCorrespondence implements Serializable {
     private Request request;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name = "request_media")
     private MediaModel attachment;
     @Column(name = "archive")
     private Boolean archive = false;

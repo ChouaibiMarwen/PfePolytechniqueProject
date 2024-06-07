@@ -119,7 +119,7 @@ public class Loan implements Serializable {
 
     private Integer loanterm;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name = "loan_media")
     private MediaModel attachment;
     @Column(name = "carmark")
 

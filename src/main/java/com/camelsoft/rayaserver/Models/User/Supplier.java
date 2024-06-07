@@ -47,7 +47,7 @@ public class Supplier implements Serializable {
     private Integer ratingCount;
 
     @OneToMany(fetch = FetchType.EAGER, cascade =  CascadeType.ALL , orphanRemoval = true)
-    @JoinColumn(name = "images")  // Change to "images" if that's the actual column name
+    @JoinColumn(name = "images_media")  // Change to "images" if that's the actual column name
     private Set<MediaModel> images = new HashSet<>();
     @JsonIgnore
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

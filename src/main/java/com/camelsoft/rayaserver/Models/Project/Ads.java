@@ -24,7 +24,7 @@ public class Ads  implements Serializable {
     private String description;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "list_ads_id")
+    @JoinColumn(name = "list_ads_media")
     private Set<MediaModel> attachments = new HashSet<>();
     @Column(name = "timestmp")
     private Date timestmp = new Date();

@@ -28,7 +28,7 @@ public class Event implements Serializable {
     private String description;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name = "event_media")
     private MediaModel attachment;
     @Column(name = "event_date")
     private Date eventDate;
