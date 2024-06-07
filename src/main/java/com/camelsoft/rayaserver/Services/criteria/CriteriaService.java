@@ -189,6 +189,10 @@ public class CriteriaService {
             }
             if (active != null)
                 finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
+
+            if (verified != null)
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("verified"), verified));
+
             finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("manager"), manager));
             if (deleted != null) {
                 finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.or(

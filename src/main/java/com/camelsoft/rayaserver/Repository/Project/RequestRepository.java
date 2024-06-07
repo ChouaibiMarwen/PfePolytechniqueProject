@@ -8,6 +8,7 @@ import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.Project.Request;
 import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.users;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,6 +26,8 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     Page<Request> findAllByArchiveIsFalse(Pageable page);
 
     Integer countByCreatorrequestRoleRoleAndStatusIn(RoleEnum role, Set<RequestState> states);
+    Integer countByCreatorrequestAndStatusIn(users user, Set<RequestState> states);
     Integer countByCreatorrequestRoleRoleAndStatus(RoleEnum role, RequestState state);
+    Integer countByCreatorrequestAndStatus(users user, RequestState state);
 
 }

@@ -5,6 +5,7 @@ import com.camelsoft.rayaserver.Enum.Project.Request.RequestState;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Project.Request;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Project.RequestRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -174,6 +175,12 @@ public class RequestService {
 
     }
 
+
+    public Integer countPendingRequestsByUserAndStatus(users user) {
+        Set<RequestState> state = new HashSet<>(Arrays.asList(RequestState.WAITING, RequestState.IN_PROGRESS));
+        return this.repository.countByCreatorrequestAndStatusIn(user, state);
+    }
+
     public Integer countDoneRequestsByUserRole(InvoiceRelated related) {
         Set<RequestState> state = new HashSet<>(Arrays.asList(RequestState.WAITING, RequestState.IN_PROGRESS));
         if( InvoiceRelated.SUPPLIER == related )
@@ -183,5 +190,13 @@ public class RequestService {
         }
 
     }
+
+
+
+    public Integer countDoneRequestsByUser(users user) {
+        return this.repository.countByCreatorrequestAndStatus(user, RequestState.DONE);
+    }
+
+
 
 }
