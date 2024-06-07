@@ -17,7 +17,7 @@ import java.util.List;
 public interface SupplierRepository extends JpaRepository<Supplier,Long> {
 
     @NotNull
-    Page<Supplier> findAll(@NotNull Pageable pageable);
+    Page<Supplier> findAll(Pageable pageable);
 
     Supplier findBySuppliernumber(Long suppliernumber);
 
