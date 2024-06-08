@@ -207,7 +207,7 @@ public class VehiclesController extends BaseController {
 
 
         if(this.Services.existsByCarvin(request.getCarvin()))
-            return new ResponseEntity(" Carvin not found", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Vehicle's vin already exists", HttpStatus.BAD_REQUEST);
 
         Vehicles model = new Vehicles(
                 request.getCarmodel(),
