@@ -205,6 +205,10 @@ public class VehiclesController extends BaseController {
         if (supplier == null)
             return new ResponseEntity(" supplier not found or null in the system", HttpStatus.NOT_FOUND);
 
+
+        if(this.Services.existsByCarvin(request.getCarvin()))
+            return new ResponseEntity(" Carvin not found", HttpStatus.BAD_REQUEST);
+
         Vehicles model = new Vehicles(
                 request.getCarmodel(),
                 request.getColor(),
