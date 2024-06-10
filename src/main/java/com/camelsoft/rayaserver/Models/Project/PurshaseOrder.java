@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import lombok.Getter;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -38,9 +39,11 @@ public class PurshaseOrder implements Serializable {
     private PurshaseOrderStatus status = PurshaseOrderStatus.PENDING;
     @Column(name = "supplier_id")
     private Long supplierId;
+    @BatchSize(size = 10)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicles_id")
     private Vehicles vehicles;
+    @BatchSize(size = 10)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id_purchaseorder", nullable = false)
     private Supplier supplier;
