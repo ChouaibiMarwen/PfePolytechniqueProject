@@ -336,7 +336,7 @@ public class PurchaseOrdersController  extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<PurchaseOrderDto> acceptAndSendPurchaseOrderr(@PathVariable Long purchaseOrderId) throws IOException {
+    public ResponseEntity<PurchaseOrderDto> send_purchase_order(@PathVariable Long purchaseOrderId) throws IOException {
         PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
         if(purchaseOrder == null)
             return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
