@@ -269,7 +269,7 @@ public class InvoiceController extends BaseController {
 
         }
 
-        if (request.getVehicleprice() != null) {
+        if (request.getVehicleprice() != null && request.getVehicleprice() != 0.0d ) {
             invoice.setVehicleprice(request.getVehicleprice());
         } else if (vehicles.getVehiclespricefinancing() != null) {
             invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
