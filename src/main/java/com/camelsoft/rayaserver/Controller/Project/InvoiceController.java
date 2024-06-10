@@ -317,7 +317,7 @@ public class InvoiceController extends BaseController {
             return new ResponseEntity(request.getInvoicenumber() + "is already found , please try something else !", HttpStatus.FOUND);
         }
         if (user.getRole().getRole() != RoleEnum.ROLE_ADMIN && user.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN) {
-            request.setRelated(InvoiceRelated.SUPPLIER);
+            request.setRelated(InvoiceRelated.RAYAFINANCING);
             request.setRelatedtouserid(user.getId());
             relatedto = user;
         } else {
