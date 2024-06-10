@@ -319,6 +319,7 @@ public class InvoiceController extends BaseController {
         if (user.getRole().getRole() != RoleEnum.ROLE_ADMIN || user.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN) {
             request.setRelated(InvoiceRelated.SUPPLIER);
             request.setRelatedtouserid(user.getId());
+            relatedto = user;
         } else {
             if (request.getRelated() == null || request.getRelated() == InvoiceRelated.NONE) {
                 return new ResponseEntity("you need to defined the invoice relation " + request.getRelated(), HttpStatus.NOT_ACCEPTABLE);
