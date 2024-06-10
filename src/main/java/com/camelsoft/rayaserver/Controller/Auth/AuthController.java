@@ -78,7 +78,11 @@ public class AuthController extends BaseController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<users> current_user() throws IOException {
         users users = userService.findByUserName(getCurrentUser().getUsername());
+    /*    if(users.getSupplier() != null){
+            users.getSupplier().setUserId(users.getId());
+            users.getSupplier().setName(users.getPersonalinformation().getFirstnameen() + " " + users.getPersonalinformation().getLastnameen());
 
+        }*/
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 

@@ -51,6 +51,8 @@ public class VehiclesService {
         }
 
     }
+
+
   public Vehicles FindByVehiclesmediaid(Long id) {
         try {
                 return this.repository.findByCarimages_Id(id);
@@ -79,7 +81,12 @@ public class VehiclesService {
 
     }
 
-    public DynamicResponse FindAllPg(int page, int size) {
+
+    public boolean existsByCarvin(String carvin) {
+        return this.repository.existsByCarvinAndArchiveIsFalse(carvin);
+    }
+
+        public DynamicResponse FindAllPg(int page, int size) {
         try {
             PageRequest pg = PageRequest.of(page, size);
             Page<Vehicles> pckge = this.repository.findAllByArchiveIsFalse(pg);

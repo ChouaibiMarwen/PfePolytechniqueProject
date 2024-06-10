@@ -28,7 +28,7 @@ public interface VehiclesRepository extends JpaRepository<Vehicles,Long> {
             + "WHERE v.supplier = :supplier AND v.stock > 0 AND v.archive = false")
     Page<Vehicles> findVehiclesBySupplierAndStockGreaterThanAndArchiveFalse(Pageable pageable, Supplier supplier);
 
-   // Vehicles findByVehiclespricefinancing(VehiclesPriceFinancing vehiclesPriceFinancing);
-    //Vehicles findByCarimages(VehiclesMedia vehiclesMedia);
+    boolean existsByCarvinAndArchiveIsFalse(String carvin);
+
 
 }
