@@ -73,10 +73,10 @@ public class PurchaseOrdersController  extends BaseController {
         if(vehicles.getCarvin()==null)
             return new ResponseEntity("VIN should be not null", HttpStatus.NOT_ACCEPTABLE);
         // check if there is purchase order for the same car vin and have status pending or in progress
-        boolean condition = this.purshaseOrderService.isTherePoPendingOrInProgressWithCarVin(vehicles.getCarvin());
+  /*      boolean condition = this.purshaseOrderService.isTherePoPendingOrInProgressWithCarVin(vehicles.getCarvin());
         if(condition)
-            return new ResponseEntity("this Vehicle's carvin have a Pending or Inprogress purchase order", HttpStatus.NOT_ACCEPTABLE);
-
+            return new ResponseEntity("this Vehicle's carvin have a Pending or progress purchase order", HttpStatus.NOT_ACCEPTABLE);
+*/
         users user = this.userService.findById(request.getSupplierId());
         if(user == null ){
             return new ResponseEntity("User is not founded", HttpStatus.BAD_REQUEST);
