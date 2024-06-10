@@ -554,8 +554,10 @@ public class VehiclesController extends BaseController {
                     return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
                 }
                 MediaModel media = vehiclesmedia.getFrontviewimage();
-                vehiclesmedia.setFrontviewimage(null);
-                this.filesStorageService.delete_file_by_path_local(media.getUrl(), media.getId());
+                if(media!=null) {
+                    vehiclesmedia.setFrontviewimage(null);
+                    this.filesStorageService.delete_file_by_path_local(media.getUrl(), media.getId());
+                }
                 vehiclesmedia.setFrontviewimage(frontviewimage);
                 this.vehiclesMediaService.Update(vehiclesmedia);
             }
