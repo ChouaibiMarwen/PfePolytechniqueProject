@@ -453,6 +453,8 @@ public class InvoiceController extends BaseController {
         }
         invoice.setPurshaseorder(po);
         Invoice result = this.service.Save(invoice);
+        po.setStatus(PurshaseOrderStatus.IN_PROGRESS);
+        this.purshaseOrderService.Update(po);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
@@ -994,10 +996,11 @@ public class InvoiceController extends BaseController {
 
         //update purchase order status
         PurshaseOrder po = invoice.getPurshaseorder();
-        if (po == null)
-            return new ResponseEntity("no po founded to update po status", HttpStatus.NOT_ACCEPTABLE);
-        po.setStatus(PurshaseOrderStatus.COMPLETED);
-        this.purshaseOrderService.Update(po);
+        if (po != null){
+            po.setStatus(PurshaseOrderStatus.COMPLETED);
+            this.purshaseOrderService.Update(po);
+        }
+
 
         //save new action
         UserAction action = new UserAction(

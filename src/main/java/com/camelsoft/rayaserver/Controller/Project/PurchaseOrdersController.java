@@ -340,7 +340,7 @@ public class PurchaseOrdersController  extends BaseController {
         PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
         if(purchaseOrder == null)
             return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
-        purchaseOrder.setStatus(PurshaseOrderStatus.IN_PROGRESS);
+        purchaseOrder.setStatus(PurshaseOrderStatus.CONFIRMED);
         PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
