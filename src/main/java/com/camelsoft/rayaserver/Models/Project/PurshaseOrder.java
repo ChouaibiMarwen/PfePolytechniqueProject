@@ -50,6 +50,7 @@ public class PurshaseOrder implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private users customer;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "createdby_id")
     private users createdby;
