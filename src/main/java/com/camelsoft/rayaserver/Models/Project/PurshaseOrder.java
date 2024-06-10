@@ -17,7 +17,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-
+@NamedEntityGraph(
+        name = "PurshaseOrder.withDetails",
+        attributeNodes = {
+                @NamedAttributeNode("supplier"),
+                @NamedAttributeNode("vehicles")
+        }
+)
 @Data
 @Entity
 public class PurshaseOrder implements Serializable {

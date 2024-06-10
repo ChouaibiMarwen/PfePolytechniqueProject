@@ -17,7 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -45,8 +45,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -315,17 +313,14 @@ public class PurshaseOrderService {
             Root<PurshaseOrder> root = cq.from(PurshaseOrder.class);
 
             List<Predicate> predicates = new ArrayList<>();
-
             predicates.add(cb.isFalse(root.get("archive")));
 
             if (idSupplier != null) {
-
-                predicates.add(cb.equal(root.get("supplierId"), idSupplier));
+                predicates.add(cb.equal(root.get("supplier").get("id"), idSupplier));
             }
 
             if (idVehicle != null) {
-
-                predicates.add(cb.equal(root.get("vehicleId"), idVehicle));
+                predicates.add(cb.equal(root.get("vehicles").get("id"), idVehicle));
             }
 
             if (status != null) {
@@ -339,7 +334,10 @@ public class PurshaseOrderService {
             cq.where(predicates.toArray(new Predicate[0]));
             cq.orderBy(cb.desc(root.get("timestamp")));
 
+            // Use EntityGraph to optimize fetching related entities
+            EntityGraph<?> entityGraph = entityManager.getEntityGraph("PurshaseOrder.withDetails");
             TypedQuery<PurshaseOrder> query = entityManager.createQuery(cq);
+            query.setHint("javax.persistence.loadgraph", entityGraph);
             query.setFirstResult((int) pageable.getOffset());
             query.setMaxResults(pageable.getPageSize());
 
