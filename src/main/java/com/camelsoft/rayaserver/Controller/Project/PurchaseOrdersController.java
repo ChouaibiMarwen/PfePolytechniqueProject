@@ -91,7 +91,7 @@ public class PurchaseOrdersController  extends BaseController {
         purshaseOrder.setSupplier(supplier);
         purshaseOrder.setVehicles(vehicles);
         if( vehicles.getStock() - request.getQuantity() < 0)
-            return new ResponseEntity(" vehiclas Quantity demanded is not founded in stock", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity(" vehicles Quantity demanded is not founded in stock", HttpStatus.NOT_ACCEPTABLE);
         purshaseOrder.setQuantity(request.getQuantity());
         purshaseOrder.setDiscountamount(request.getDiscountamount());
         purshaseOrder.setRequestDeliveryDate(request.getRequestDeliveryDate());
