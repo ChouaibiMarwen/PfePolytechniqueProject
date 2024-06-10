@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 
 @Service
 public class FCMService {
@@ -25,6 +28,10 @@ public class FCMService {
 
 
     public String sendNotification(Note note, String token) throws FirebaseMessagingException {
+        // Ensure note and token are not null
+        if (note == null || token == null) {
+            throw new IllegalArgumentException("Note and token must not be null");
+        }
 
         Notification notification = Notification
                 .builder()
@@ -32,11 +39,16 @@ public class FCMService {
                 .setBody(note.getContent())
                 .build();
 
+        // Create a new map and filter out null values
+        Map<String, String> data = note.getData().entrySet().stream()
+                .filter(entry -> entry.getKey() != null && entry.getValue() != null)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         Message message = Message
                 .builder()
                 .setToken(token)
                 .setNotification(notification)
-                .putAllData(note.getData())
+                .putAllData(data)
                 .build();
 
         return firebaseMessaging.send(message);
