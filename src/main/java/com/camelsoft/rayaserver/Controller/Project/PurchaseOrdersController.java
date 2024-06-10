@@ -212,7 +212,7 @@ public class PurchaseOrdersController  extends BaseController {
     })
     public ResponseEntity<DynamicResponse> allPurchaseOrdersByStatusAndDateAndVehicleAndSupplier(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idvehecle,  @RequestParam(required = false) Long idSupplier) throws IOException {
 
-        DynamicResponse result = this.purshaseOrderService.FindAllPurchaseOrderPgByVehecleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier);
+        DynamicResponse result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentuser == null)
             return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);

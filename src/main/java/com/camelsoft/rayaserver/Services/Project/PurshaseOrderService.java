@@ -14,13 +14,46 @@ import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
+import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
+import com.camelsoft.rayaserver.Models.Auth.Role;
+import com.camelsoft.rayaserver.Models.Project.Invoice;
+import com.camelsoft.rayaserver.Models.Project.Vehicles;
+import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
+import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
+import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
+import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 @Service
 public class PurshaseOrderService {
 
@@ -32,7 +65,12 @@ public class PurshaseOrderService {
     private SupplierServices supplierServices;
     @Autowired
     private VehiclesService vehiclesService;
-
+    private final EntityManager entityManager;
+    private final CriteriaBuilder criteriaBuilder;
+    public PurshaseOrderService(EntityManager entityManager) {
+        this.entityManager = entityManager;
+        this.criteriaBuilder = entityManager.getCriteriaBuilder();
+    }
     public PurshaseOrder Save(PurshaseOrder model) {
         try {
             return this.repository.save(model);
@@ -177,7 +215,7 @@ public class PurshaseOrderService {
 
 // get po by status ,and date and vehicle and supplier
 
-    public DynamicResponse FindAllPurchaseOrderPgByVehecleAndDateAndPurchaseOrderStatusAndSupplier(int page, int size, Long idvehecle, PurshaseOrderStatus status , Date date , Long idSupplier ) {
+  /*  public DynamicResponse FindAllPurchaseOrderPgByVehecleAndDateAndPurchaseOrderStatusAndSupplier(int page, int size, Long idvehecle, PurshaseOrderStatus status , Date date , Long idSupplier ) {
         try {
             PageRequest pg = PageRequest.of(page, size);
             if(idSupplier != null){
@@ -267,8 +305,60 @@ public class PurshaseOrderService {
         }
 
     }
+*/
 
+    public DynamicResponse findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(int page, int size, Long idVehicle, PurshaseOrderStatus status, Date date, Long idSupplier) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<PurshaseOrder> cq = cb.createQuery(PurshaseOrder.class);
+            Root<PurshaseOrder> root = cq.from(PurshaseOrder.class);
 
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.isFalse(root.get("archive")));
+
+            if (idSupplier != null) {
+
+                predicates.add(cb.equal(root.get("supplierId"), idSupplier));
+            }
+
+            if (idVehicle != null) {
+
+                predicates.add(cb.equal(root.get("vehicleId"), idVehicle));
+            }
+
+            if (status != null) {
+                predicates.add(cb.equal(root.get("status"), status));
+            }
+
+            if (date != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("timestamp"), date));
+            }
+
+            cq.where(predicates.toArray(new Predicate[0]));
+            cq.orderBy(cb.desc(root.get("timestamp")));
+
+            TypedQuery<PurshaseOrder> query = entityManager.createQuery(cq);
+            query.setFirstResult((int) pageable.getOffset());
+            query.setMaxResults(pageable.getPageSize());
+
+            List<PurshaseOrder> resultList = query.getResultList();
+            long total = getTotalCount(predicates);
+
+            return new DynamicResponse(resultList, pageable.getPageNumber(), total, (int) Math.ceil((double) total / size));
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+    }
+
+    private long getTotalCount(List<Predicate> predicates) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<PurshaseOrder> countRoot = countQuery.from(PurshaseOrder.class);
+        countQuery.select(cb.count(countRoot)).where(predicates.toArray(new Predicate[0]));
+        return entityManager.createQuery(countQuery).getSingleResult();
+    }
     public Integer countPurchaseOrdersWithCustomerOrSupllier(InvoiceRelated related ) {
         if(related == InvoiceRelated.CUSTOMER)
             return this.repository.countByArchiveIsFalseAndCustomerIsNotNull();

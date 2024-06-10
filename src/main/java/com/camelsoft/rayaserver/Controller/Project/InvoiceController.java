@@ -481,7 +481,7 @@ public class InvoiceController extends BaseController {
         if (existingInvoice == null) {
             return new ResponseEntity(invoice_id + " is not found in the system!", HttpStatus.NOT_ACCEPTABLE);
         }
-        if (existingInvoice.getStatus() == InvoiceStatus.CANCELLED) {
+        if (existingInvoice.getStatus() == InvoiceStatus.CANCELED) {
             return new ResponseEntity(invoice_id + " this invoice is canceled!", HttpStatus.NOT_ACCEPTABLE);
         }
         if (existingInvoice.getStatus() == InvoiceStatus.PAID) {
