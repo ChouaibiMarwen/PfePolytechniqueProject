@@ -29,8 +29,11 @@ public class FCMService {
 
     public String sendNotification(Note note, String token) throws FirebaseMessagingException {
         // Ensure note and token are not null
-        if (note == null || token == null) {
-            throw new IllegalArgumentException("Note and token must not be null");
+        if ( token == null) {
+            throw new IllegalArgumentException(" token must not be null");
+        }
+ if (note == null  ) {
+            throw new IllegalArgumentException("Note   must not be null");
         }
 
         Notification notification = Notification
