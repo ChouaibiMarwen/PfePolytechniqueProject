@@ -342,7 +342,7 @@ public class PurshaseOrderService {
             query.setMaxResults(pageable.getPageSize());
 
             List<PurshaseOrder> resultList = query.getResultList();
-            long total = getTotalCount(predicates);
+            long total = getTotalCountPO(predicates);
 
             return new DynamicResponse(resultList, pageable.getPageNumber(), total, (int) Math.ceil((double) total / size));
         } catch (NoSuchElementException ex) {
@@ -350,7 +350,7 @@ public class PurshaseOrderService {
         }
     }
 
-    private long getTotalCount(List<Predicate> predicates) {
+    private long getTotalCountPO(List<Predicate> predicates) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<PurshaseOrder> countRoot = countQuery.from(PurshaseOrder.class);

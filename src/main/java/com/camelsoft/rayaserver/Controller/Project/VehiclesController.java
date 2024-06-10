@@ -118,13 +118,8 @@ public class VehiclesController extends BaseController {
     })
     public ResponseEntity<DynamicResponse> all_vehicles_supplier_by_carmake_carvin_carmodel_availibility(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String carmodel, @RequestParam(required = false) String carmake, @RequestParam(required = false) String carvin, @RequestParam(required = false) AvailiabilityEnum availiability) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
-        Page<Vehicles> result = this.criteriaService.FindAllPgSupplierAndcarmodelWithCriteria(page, size, user.getSupplier(), carmodel, carmake, carvin, availiability);
-        List<Vehicles> vehicles = result.getContent();
-        DynamicResponse dynamicresponse = new DynamicResponse();
-        dynamicresponse.setCurrentPage(result.getNumber());
-        dynamicresponse.setTotalPages(result.getTotalPages());
-        dynamicresponse.setTotalItems(result.getTotalElements());
-        dynamicresponse.setResult(vehicles);
+        DynamicResponse result = this.criteriaService.FindAllPgSupplierAndcarmodelWithCriteria(page, size, user.getSupplier(), carmodel, carmake, carvin, availiability);
+
          users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
         //
         UserAction action = new UserAction(
@@ -132,7 +127,7 @@ public class VehiclesController extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(dynamicresponse, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 

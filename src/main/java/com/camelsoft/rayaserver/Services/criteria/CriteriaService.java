@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
+import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -362,7 +363,8 @@ public class CriteriaService {
         }
     }
 
-    public PageImpl<Vehicles> FindAllPgSupplierAndcarmodelWithCriteria(int page, int size, Supplier supplier, String carmodel, String carmake, String carvin, AvailiabilityEnum availiability) {
+    public DynamicResponse FindAllPgSupplierAndcarmodelWithCriteria(int page, int size, Supplier supplier, String carmodel, String carmake, String carvin, AvailiabilityEnum availiability) {
+        Pageable pageable = PageRequest.of(page, size);
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Vehicles> query = builder.createQuery(Vehicles.class);
         Root<Vehicles> root = query.from(Vehicles.class);
@@ -396,20 +398,19 @@ public class CriteriaService {
         typedQuery.setFirstResult(page * size);
         typedQuery.setMaxResults(size);
 
-        List<Vehicles> vehicles = typedQuery.getResultList();
-        int totalElements = typedQuery.getResultList().size();
-        int totalPages = (int) Math.ceil((double) totalElements / size);
+        typedQuery.setFirstResult((int) pageable.getOffset());
+        typedQuery.setMaxResults(pageable.getPageSize());
 
-        int Count = typedQuery.getResultList().size();
+        List<Vehicles> resultList = typedQuery.getResultList();
+        long total = getTotalCountVehicles(predicates);
 
-        return new PageImpl<>(typedQuery.getResultList(), getPageable(page,size), Count);
+        return new DynamicResponse(resultList, pageable.getPageNumber(), total, (int) Math.ceil((double) total / size));
     }
-    private Pageable getPageable(int pageNumber,int size) {
-        int pagesize = size;
-        if (pageNumber < 0)
-            pageNumber = 0;
-        if (size <= 0)
-            pagesize = 1;
-        return PageRequest.of(pageNumber, pagesize);
+    private long getTotalCountVehicles(List<Predicate> predicates) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<PurshaseOrder> countRoot = countQuery.from(PurshaseOrder.class);
+        countQuery.select(cb.count(countRoot)).where(predicates.toArray(new Predicate[0]));
+        return em.createQuery(countQuery).getSingleResult();
     }
 }
