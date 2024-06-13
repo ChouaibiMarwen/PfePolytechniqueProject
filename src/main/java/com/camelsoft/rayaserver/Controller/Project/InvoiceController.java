@@ -98,7 +98,7 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_invoice_supplier(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam(required = false) InvoiceRelated related, @RequestParam(required = false) Boolean thirdparty,@RequestParam(required = false) Integer invoicenumber) throws IOException {
+    public ResponseEntity<DynamicResponse> all_invoice_supplier(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam(required = false) InvoiceRelated related, @RequestParam(required = false) Boolean thirdparty, @RequestParam(required = false) Integer invoicenumber) throws IOException {
 
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
 
@@ -108,7 +108,7 @@ public class InvoiceController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
-        Page<Invoice> invoice = this.criteriaService.findAllByStatusAndRelatedAndUsers(page, size, status, related, user,thirdparty, invoicenumber);
+        Page<Invoice> invoice = this.criteriaService.findAllByStatusAndRelatedAndUsers(page, size, status, related, user, thirdparty, invoicenumber);
         DynamicResponse res = new DynamicResponse(invoice.getContent(), invoice.getNumber(), invoice.getTotalElements(), invoice.getTotalPages());
 
         // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
@@ -131,7 +131,7 @@ public class InvoiceController extends BaseController {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
-        if(request.getVehiclevin()==null)
+        if (request.getVehiclevin() == null)
             return new ResponseEntity("VIN should be not null", HttpStatus.NOT_ACCEPTABLE);
 
         Vehicles vehicles = this.vehiclesService.FindByVIN(request.getVehiclevin());
@@ -269,9 +269,9 @@ public class InvoiceController extends BaseController {
 
         }
 
-        if (request.getVehicleprice()!=null ) {
+        if (request.getVehicleprice() != null && request.getVehicleprice() != 0.0d ) {
             invoice.setVehicleprice(request.getVehicleprice());
-        }else if( vehicles.getVehiclespricefinancing() != null){
+        } else if (vehicles.getVehiclespricefinancing() != null) {
             invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
         }
         Invoice result = this.service.Save(invoice);
@@ -305,30 +305,34 @@ public class InvoiceController extends BaseController {
             return new ResponseEntity("this po not found", HttpStatus.NOT_FOUND);
         if (po.getInvoice() != null)
             return new ResponseEntity("this po already have invoice", HttpStatus.NOT_ACCEPTABLE);
-        if(request.getVehiclevin()==null)
+        if (request.getVehiclevin() == null)
             return new ResponseEntity("VIN should be not null", HttpStatus.NOT_ACCEPTABLE);
         Vehicles vehicles = this.vehiclesService.FindByVIN(request.getVehiclevin());
         if (vehicles == null)
             return new ResponseEntity(request.getVehiclevin() + "this vehicle VIN  not found", HttpStatus.NOT_ACCEPTABLE);
-        users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
-        users relatedto = UserServices.findById(request.getRelatedtouserid());
+        users createdby = user;
+        users relatedto = null;
 
         if (request.getInvoicenumber() == null || this.service.ExistByInvoiceNumber(request.getInvoicenumber())) {
             return new ResponseEntity(request.getInvoicenumber() + "is already found , please try something else !", HttpStatus.FOUND);
         }
-        if (request.getRelated() == null || request.getRelated() == InvoiceRelated.NONE) {
-            return new ResponseEntity("you need to defined the invoice relation " + request.getRelated(), HttpStatus.NOT_ACCEPTABLE);
-        }
-        if (relatedto.getRole().getRole() != RoleEnum.ROLE_ADMIN && relatedto.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN) {
-            if (relatedto.getSupplier() != null) {
-                if (request.getRelated() != InvoiceRelated.SUPPLIER && request.getRelated() != InvoiceRelated.SUB_DEALER)
-                    return new ResponseEntity("the related to is a supplier or sub-dealer and the related is not a supplier or sub-dealer", HttpStatus.NOT_ACCEPTABLE);
-
-            } else {
-                if (request.getRelated() != InvoiceRelated.CUSTOMER)
-                    return new ResponseEntity("the related to is a customer and the related is not a customer", HttpStatus.NOT_ACCEPTABLE);
+        if (user.getRole().getRole() != RoleEnum.ROLE_ADMIN && user.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN) {
+            request.setRelated(InvoiceRelated.RAYAFINANCING);
+            request.setRelatedtouserid(user.getId());
+            relatedto = user;
+        } else {
+            if (request.getRelated() == null || request.getRelated() == InvoiceRelated.NONE) {
+                return new ResponseEntity("you need to defined the invoice relation " + request.getRelated(), HttpStatus.NOT_ACCEPTABLE);
+            }
+            if (request.getRelatedtouserid() == null) {
+                return new ResponseEntity("you need to defined the invoice relation " + request.getRelated(), HttpStatus.NOT_ACCEPTABLE);
+            }
+            relatedto = UserServices.findById(request.getRelatedtouserid());
+            if (relatedto.getRole().getRole() == RoleEnum.ROLE_ADMIN || relatedto.getRole().getRole() == RoleEnum.ROLE_SUB_ADMIN || relatedto.getRole().getRole() == RoleEnum.ROLE_USER) {
+                return new ResponseEntity("Admin or sub-admin or customer cannot be related", HttpStatus.NOT_ACCEPTABLE);
             }
         }
+
         Set<Product> products = this.productservice.GetProductList(request.getProducts());
         Invoice invoice = new Invoice();
         if (request.getThirdpartypoid() != null) {
@@ -442,13 +446,15 @@ public class InvoiceController extends BaseController {
 
         }
 
-        if (request.getVehicleprice()!=null ) {
+        if (request.getVehicleprice() != null && request.getVehicleprice() != 0.0d ) {
             invoice.setVehicleprice(request.getVehicleprice());
-        }else if( vehicles.getVehiclespricefinancing() != null){
+        } else if (vehicles.getVehiclespricefinancing() != null) {
             invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
         }
         invoice.setPurshaseorder(po);
         Invoice result = this.service.Save(invoice);
+        po.setStatus(PurshaseOrderStatus.IN_PROGRESS);
+        this.purshaseOrderService.Update(po);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
@@ -477,7 +483,7 @@ public class InvoiceController extends BaseController {
         if (existingInvoice == null) {
             return new ResponseEntity(invoice_id + " is not found in the system!", HttpStatus.NOT_ACCEPTABLE);
         }
-        if (existingInvoice.getStatus() == InvoiceStatus.CANCELLED) {
+        if (existingInvoice.getStatus() == InvoiceStatus.CANCELED) {
             return new ResponseEntity(invoice_id + " this invoice is canceled!", HttpStatus.NOT_ACCEPTABLE);
         }
         if (existingInvoice.getStatus() == InvoiceStatus.PAID) {
@@ -807,12 +813,12 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<InvoiceReport> invoice_report_supplier(@RequestParam( required = false) Date date) throws IOException {
+    public ResponseEntity<InvoiceReport> invoice_report_supplier(@RequestParam(required = false) Date date) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         Supplier supplier = user.getSupplier();
-        if(supplier == null)
+        if (supplier == null)
             return new ResponseEntity("this user is not supplier", HttpStatus.NOT_FOUND);
         InvoiceReport report = new InvoiceReport();
 
@@ -822,13 +828,13 @@ public class InvoiceController extends BaseController {
             date = new Date();
         System.out.println(date);
         report.setDate(date);
-       // report.setInvoicepermonth(this.service.countInvoicePerMonthAndUser(date, user));
+        // report.setInvoicepermonth(this.service.countInvoicePerMonthAndUser(date, user));
         report.setRefundbymonth(this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.REFUNDS, user));
         report.setPaymentbymonth(this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.PAID, user) + this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.UNPAID, user));
         report.setPurshaseorderrequest(supplier.getPurchaseOrders().size());
         report.setRequestdone(this.requestService.countDoneRequestsByUser(user));
         report.setRequestpending(this.requestService.countPendingRequestsByUserAndStatus(user));
-        report.setSoldcars(this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.PAID, user) );
+        report.setSoldcars(this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.PAID, user));
         report.setInvoicepermonth(this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.PAID, user) + this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.UNPAID, user) + this.service.countInvoicePerMonthAndStatusAndUser(date, InvoiceStatus.REFUNDS, user));
         //save new action
         UserAction action = new UserAction(
@@ -839,7 +845,6 @@ public class InvoiceController extends BaseController {
         return new ResponseEntity<>(report, HttpStatus.OK);
 
     }
-
 
 
     @PatchMapping(value = {"/add_refund_invoice/{idInvoice}"})
@@ -938,7 +943,7 @@ public class InvoiceController extends BaseController {
 
         if (invoice.getStatus() == InvoiceStatus.PAID || invoice.getStatus() == InvoiceStatus.REJECTED || invoice.getStatus() == InvoiceStatus.REFUNDS)
             return new ResponseEntity("The invoice is already paid ", HttpStatus.NOT_ACCEPTABLE);
-        if (invoice.getConfirmedBy() != null  && !invoice.getConfirmedBy().equals(user))
+        if (invoice.getConfirmedBy() != null && !invoice.getConfirmedBy().equals(user))
             return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
         invoice.setStatus(InvoiceStatus.REJECTED);
         invoice.setConfirmedBy(user);
@@ -991,10 +996,11 @@ public class InvoiceController extends BaseController {
 
         //update purchase order status
         PurshaseOrder po = invoice.getPurshaseorder();
-        if (po == null)
-            return new ResponseEntity("no po founded to update po status", HttpStatus.NOT_ACCEPTABLE);
-        po.setStatus(PurshaseOrderStatus.COMPLETED);
-        this.purshaseOrderService.Update(po);
+        if (po != null){
+            po.setStatus(PurshaseOrderStatus.COMPLETED);
+            this.purshaseOrderService.Update(po);
+        }
+
 
         //save new action
         UserAction action = new UserAction(
@@ -1004,7 +1010,6 @@ public class InvoiceController extends BaseController {
         this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
 
 
 }

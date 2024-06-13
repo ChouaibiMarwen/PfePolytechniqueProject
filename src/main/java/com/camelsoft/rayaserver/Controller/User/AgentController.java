@@ -5,6 +5,7 @@ import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
+import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -12,6 +13,7 @@ import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
+import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -38,6 +41,8 @@ public class AgentController extends BaseController {
 
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
+    @Autowired
+    private SupplierServices supplierServices;
 
     @Autowired
     private UserActionService userActionService;
@@ -136,5 +141,18 @@ public class AgentController extends BaseController {
     })
     public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name) throws IOException {
         return new ResponseEntity<>(this.userService.filterAllUser(page, size,active,name, RoleEnum.ROLE_AGENT, null), HttpStatus.OK);
+    }
+    @GetMapping(value = {"/all_short_model"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all agent without pagination", notes = "Endpoint to get suppliers")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request,"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
+            @ApiResponse(code = 409, message = "Conflict, phone-number or email or user-name is already exists"),
+            @ApiResponse(code = 406, message = "Not Acceptable , the email is not valid")
+    })
+    public ResponseEntity<List<UserShortDto>> all_short_model(@RequestParam(required = false) Boolean active, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean verified) throws IOException {
+        return new ResponseEntity<>(this.supplierServices.getAllUsersWithoutPagination(active, name, RoleEnum.ROLE_AGENT, verified), HttpStatus.OK);
     }
 }

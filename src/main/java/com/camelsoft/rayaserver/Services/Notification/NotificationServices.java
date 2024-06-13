@@ -152,7 +152,7 @@ public class NotificationServices {
                 List<UserDevice> devices = this.userDeviceService.findbyuserdevice(notificationuser.getReciver());
                 for (UserDevice device: devices) {
                     if(device!=null && device.getTokendevice()!=null){
-                        if(this.pushNotificationService.isValidFCMToken(device.getTokendevice())){
+                        if(note!=null && this.pushNotificationService.isValidFCMToken(device.getTokendevice())){
 
                             this.pushNotificationService.sendNotification(note,device.getTokendevice());
                             Thread.sleep(1000);

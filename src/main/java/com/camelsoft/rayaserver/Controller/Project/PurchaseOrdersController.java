@@ -73,10 +73,10 @@ public class PurchaseOrdersController  extends BaseController {
         if(vehicles.getCarvin()==null)
             return new ResponseEntity("VIN should be not null", HttpStatus.NOT_ACCEPTABLE);
         // check if there is purchase order for the same car vin and have status pending or in progress
-        boolean condition = this.purshaseOrderService.isTherePoPendingOrInProgressWithCarVin(vehicles.getCarvin());
+  /*      boolean condition = this.purshaseOrderService.isTherePoPendingOrInProgressWithCarVin(vehicles.getCarvin());
         if(condition)
-            return new ResponseEntity("this Vehicle's carvin have a Pending or Inprogress purchase order", HttpStatus.NOT_ACCEPTABLE);
-
+            return new ResponseEntity("this Vehicle's carvin have a Pending or progress purchase order", HttpStatus.NOT_ACCEPTABLE);
+*/
         users user = this.userService.findById(request.getSupplierId());
         if(user == null ){
             return new ResponseEntity("User is not founded", HttpStatus.BAD_REQUEST);
@@ -91,7 +91,7 @@ public class PurchaseOrdersController  extends BaseController {
         purshaseOrder.setSupplier(supplier);
         purshaseOrder.setVehicles(vehicles);
         if( vehicles.getStock() - request.getQuantity() < 0)
-            return new ResponseEntity(" vehiclas Quantity demanded is not founded in stock", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity(" vehicles Quantity demanded is not founded in stock", HttpStatus.NOT_ACCEPTABLE);
         purshaseOrder.setQuantity(request.getQuantity());
         purshaseOrder.setDiscountamount(request.getDiscountamount());
         purshaseOrder.setRequestDeliveryDate(request.getRequestDeliveryDate());
@@ -212,7 +212,7 @@ public class PurchaseOrdersController  extends BaseController {
     })
     public ResponseEntity<DynamicResponse> allPurchaseOrdersByStatusAndDateAndVehicleAndSupplier(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idvehecle,  @RequestParam(required = false) Long idSupplier) throws IOException {
 
-        DynamicResponse result = this.purshaseOrderService.FindAllPurchaseOrderPgByVehecleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier);
+        DynamicResponse result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentuser == null)
             return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
@@ -336,11 +336,11 @@ public class PurchaseOrdersController  extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<PurchaseOrderDto> acceptAndSendPurchaseOrderr(@PathVariable Long purchaseOrderId) throws IOException {
+    public ResponseEntity<PurchaseOrderDto> send_purchase_order(@PathVariable Long purchaseOrderId) throws IOException {
         PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
         if(purchaseOrder == null)
             return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
-        purchaseOrder.setStatus(PurshaseOrderStatus.PENDING);
+        purchaseOrder.setStatus(PurshaseOrderStatus.CONFIRMED);
         PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());

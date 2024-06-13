@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import lombok.Getter;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,7 +18,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-
+@NamedEntityGraph(
+        name = "PurshaseOrder.withDetails",
+        attributeNodes = {
+                @NamedAttributeNode("supplier"),
+                @NamedAttributeNode("vehicles")
+        }
+)
 @Data
 @Entity
 public class PurshaseOrder implements Serializable {
@@ -32,15 +39,18 @@ public class PurshaseOrder implements Serializable {
     private PurshaseOrderStatus status = PurshaseOrderStatus.PENDING;
     @Column(name = "supplier_id")
     private Long supplierId;
+    @BatchSize(size = 10)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicles_id")
     private Vehicles vehicles;
+    @BatchSize(size = 10)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id_purchaseorder", nullable = false)
     private Supplier supplier;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private users customer;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "createdby_id")
     private users createdby;

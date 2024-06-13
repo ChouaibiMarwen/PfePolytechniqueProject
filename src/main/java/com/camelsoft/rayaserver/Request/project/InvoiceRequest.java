@@ -13,7 +13,7 @@ public class InvoiceRequest {
     private InvoiceStatus status = InvoiceStatus.PENDING;
     private Date invoicedate = new Date();
     private Date duedate = new Date();
-    private Double vehicleprice = 0.0;
+    private Double vehicleprice = null;
 
     private String currency="SAR";
     private String suppliername;
