@@ -48,6 +48,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
     private String SPRING_PROFILE;
     @Value("${spring.datasource.url}")
     private String SPRING_DATA_SOURCE;
+    private static final List<String> adminPrivileges = Arrays.asList("USER_READ", "SUPPLIER_READ", "USER_WRITE", "SUPPLIER_WRITE", "SUB_ADMIN_READ", "SUB_ADMIN_WRITE", "CUSTOMER_READ", "CUSTOMER_WRITE", "AGENT_READ", "AGENT_WRITE", "EVENT_WRITE");
 
 
     @Override
@@ -204,6 +205,36 @@ public class FirstTimeInitializer implements CommandLineRunner {
             List<Privilege> privilegeList = this.privilegeService.findAll();
             Set<Privilege> privileges = user.getPrivileges();
             for (Privilege privilege : privilegeList) {
+                if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
+                    logger.error(privilege.getId());
+                    user.getPrivileges().add(privilege);
+                }
+            }
+            userService.UpdateUser(user);
+
+        }
+
+        if (this.userService.existbyemail("mohmaed@google.com")) {
+            users user = userService.findbyemail("mohmaed@google.com");
+            List<Privilege> privilegeList = this.privilegeService.findAll();
+            Set<Privilege> privileges = user.getPrivileges();
+            for (Privilege privilege : privilegeList) {
+                if(adminPrivileges.contains(privilege.getName()))
+                    continue;
+                if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
+                    logger.error(privilege.getId());
+                    user.getPrivileges().add(privilege);
+                }
+            }
+            userService.UpdateUser(user);
+
+        }  if (this.userService.existbyemail("almajdouie@yahoo.fr")) {
+            users user = userService.findbyemail("almajdouie@yahoo.fr");
+            List<Privilege> privilegeList = this.privilegeService.findAll();
+            Set<Privilege> privileges = user.getPrivileges();
+            for (Privilege privilege : privilegeList) {
+                if(adminPrivileges.contains(privilege.getName()))
+                    continue;
                 if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
                     logger.error(privilege.getId());
                     user.getPrivileges().add(privilege);

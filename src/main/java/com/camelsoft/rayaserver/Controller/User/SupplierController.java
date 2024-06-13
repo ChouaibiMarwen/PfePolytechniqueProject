@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
+import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.Address;
@@ -26,6 +27,7 @@ import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Services.auth.PrivilegeService;
 import com.camelsoft.rayaserver.Services.criteria.CriteriaService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
@@ -41,7 +43,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @CrossOrigin
@@ -69,6 +73,10 @@ public class SupplierController extends BaseController {
     private CriteriaService criteriaService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
+
+    @Autowired
+    private PrivilegeService privilegeService;
+    private static final List<String> adminPrivileges = Arrays.asList("USER_READ", "SUPPLIER_READ", "USER_WRITE", "SUPPLIER_WRITE", "SUB_ADMIN_READ", "SUB_ADMIN_WRITE", "CUSTOMER_READ", "CUSTOMER_WRITE", "AGENT_READ", "AGENT_WRITE", "EVENT_WRITE");
 
     @PostMapping(value = {"/add"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
@@ -158,6 +166,15 @@ public class SupplierController extends BaseController {
         user.setPassword(request.getPassword());
         user.setPersonalinformation(resultinformation);
         user.setSupplier(resultsupplier);
+        List<Privilege> privilegeList = this.privilegeService.findAll();
+        Set<Privilege> privileges = user.getPrivileges();
+        for (Privilege privilege : privilegeList) {
+            if(adminPrivileges.contains(privilege.getName()))
+                continue;
+            if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
+                user.getPrivileges().add(privilege);
+            }
+        }
 
         /*if(file != null){
             if (!this.filesStorageService.checkformat(file))
@@ -224,6 +241,8 @@ public class SupplierController extends BaseController {
 
 
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+
+        userService.UpdateUser(user);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.SUPPLIER_MANAGEMENT,
