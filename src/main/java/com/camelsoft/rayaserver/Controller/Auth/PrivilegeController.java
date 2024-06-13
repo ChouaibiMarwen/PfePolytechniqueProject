@@ -34,7 +34,7 @@ public class PrivilegeController  extends BaseController {
 
 
     @GetMapping(value = {"/get_all_privileges"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all privileges for admin", notes = "Endpoint to get all privileges for admin ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
