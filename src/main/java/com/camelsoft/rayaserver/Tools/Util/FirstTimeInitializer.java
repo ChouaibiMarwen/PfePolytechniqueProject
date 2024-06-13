@@ -109,7 +109,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
         if (!privilegeService.existsByName("LOAN_READ"))
             privilegeService.save(new Privilege("LOAN_READ"));
 
-        if (!privilegeService.existsByName("LOAN_READ"))
+        if (!privilegeService.existsByName("LOAN_WRITE"))
             privilegeService.save(new Privilege("LOAN_WRITE"));
 
         if (!privilegeService.existsByName("INVOICE_READ"))
@@ -177,6 +177,12 @@ public class FirstTimeInitializer implements CommandLineRunner {
 
         if (!privilegeService.existsByName("NOTIFICATION_WRITE"))
             privilegeService.save(new Privilege("NOTIFICATION_WRITE"));
+
+        if (!privilegeService.existsByName("VEHICLE_READ"))
+            privilegeService.save(new Privilege("VEHICLE_READ"));
+
+        if (!privilegeService.existsByName("VEHICLE_WRTIE"))
+            privilegeService.save(new Privilege("VEHICLE_WRTIE"));
 
 
         if (this.userService.existbyemail("admin@camel-soft.com")) {
