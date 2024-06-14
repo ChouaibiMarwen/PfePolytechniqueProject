@@ -153,7 +153,7 @@ public class RequestController  extends BaseController {
 
     @GetMapping(value = {"/all_requests"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    @ApiOperation(value = "get all requests by status for supplier and dealer", notes = "Endpoint to get requests for supplier")
+    @ApiOperation(value = "get all requests by status for supplier and dealer", notes = "Endpoint to get requests for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
