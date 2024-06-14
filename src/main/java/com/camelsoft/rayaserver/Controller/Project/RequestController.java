@@ -8,6 +8,7 @@ import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.CorrespendanceRequest;
 import com.camelsoft.rayaserver.Request.project.RequestsRequest;
+import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.RequestResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.InvoiceService;
@@ -50,7 +51,7 @@ public class RequestController  extends BaseController {
     @Autowired
     private UserService UserServices;
     @PostMapping(value = {"/add_Request"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "Add a new request request from the admin", notes = "Endpoint to add a new request")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added the loan request"),
@@ -150,11 +151,9 @@ public class RequestController  extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
-
     @GetMapping(value = {"/all_requests"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    @ApiOperation(value = "get all requests by status for admin", notes = "Endpoint to get requests")
+    @ApiOperation(value = "get all requests by status for supplier and dealer", notes = "Endpoint to get requests for supplier")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
@@ -176,6 +175,29 @@ public class RequestController  extends BaseController {
             return new ResponseEntity<>(this.service.findAllByStateAndRole(page, size, status, role), HttpStatus.OK);
 
         return new ResponseEntity<>(this.service.findAllByRole(page, size, role), HttpStatus.OK);
+
+    }
+
+
+    @GetMapping(value = {"/my_requests"})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get all requests by status for current_user", notes = "Endpoint to get requests")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
+    })
+    public ResponseEntity<DynamicResponse> my_requests(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) RequestState status) throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.REQUEST_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+
+        return new ResponseEntity<>(this.service.findAllByCreatedByAndStatus(page, size, user, status), HttpStatus.OK);
 
     }
 

@@ -24,6 +24,8 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     Page<Request> findAllByStatusAndCreatorrequest_RoleAndArchiveIsFalse(Pageable page, RequestState status, Role role);
     Page<Request> findAllByCreatorrequest_RoleAndArchiveIsFalse(Pageable page,Role role);
     Page<Request> findAllByArchiveIsFalse(Pageable page);
+    Page<Request> findAllByArchiveIsFalseAndCreatorrequest(Pageable page, users user);
+    Page<Request> findAllByArchiveIsFalseAndCreatorrequestAndStatus(Pageable page, users user, RequestState state);
 
     Integer countByCreatorrequestRoleRoleAndStatusIn(RoleEnum role, Set<RequestState> states);
     Integer countByCreatorrequestAndStatusIn(users user, Set<RequestState> states);

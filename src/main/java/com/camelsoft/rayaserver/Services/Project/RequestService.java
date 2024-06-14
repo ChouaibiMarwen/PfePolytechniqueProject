@@ -68,6 +68,26 @@ public class RequestService {
         }
 
     }
+
+
+    public DynamicResponse findAllByCreatedByAndStatus(int page, int size, users user , RequestState status) {
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Request> pckge;
+            if(status == null)
+               pckge = this.repository.findAllByArchiveIsFalseAndCreatorrequest(pg, user);
+            else{
+               pckge = this.repository.findAllByArchiveIsFalseAndCreatorrequestAndStatus(pg, user, status);
+            }
+
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
         public RequestResponse findAllByStateAndRole(int page, int size, RequestState status, RoleEnum role) {
         try {
             Role userRole = roleRepository.findByRole(role);
