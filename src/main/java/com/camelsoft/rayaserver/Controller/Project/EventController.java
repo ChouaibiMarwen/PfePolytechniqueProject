@@ -232,21 +232,23 @@ public class EventController extends BaseController {
                 request.getAssignedto(),
                 request.getStatus()
         );
-        Event result = this.service.Save(event);
         if(!request.getCategoriesId().isEmpty()){
             for (Long categoryid : request.getCategoriesId()) {
                 UsersCategory cat = this.userCategoryService.FindById(categoryid);
                 if(cat == null)
                     return new ResponseEntity("category with id: " + categoryid + " is not found", HttpStatus.NOT_FOUND);
-                if(!cat.getUsers().isEmpty()){
+               /* if(!cat.getUsers().isEmpty()){
                     for(users u : cat.getUsers()){
                         u.getEvents().add(event);
                         this.userService.UpdateUser(u);
                     }
-                }
+                }*/
+                event.getCategories().add(cat);
 
             }
         }
+        Event result = this.service.Save(event);
+
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.EVENT_MANAGEMENT,
