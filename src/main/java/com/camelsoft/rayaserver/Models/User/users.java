@@ -191,7 +191,9 @@ public class users implements Serializable {
             if(this.supplier.getName() != null) {
                 this.supplierCompanyName = this.supplier.getName();
             }
-
+            if(this.supplierclassification != null) {
+                this.supplier.setClassificationname(this.supplierclassification.getName());
+            }
         }else{
             this.supplierCompanyName = "";
         }

@@ -77,16 +77,18 @@ public class Supplier implements Serializable {
     @Transient
     private Integer availableVehiclesCountBySupplier = 0;
 
+    @Transient
+    private String classificationname;
+
     @PostLoad
     private void afterLoad() {
-        System.out.println("00000000000000000000000000");
         if (user != null) {
-            System.out.println("interr userrrrrr");
             userId = user.getId();
+            if(user.getSupplierclassification() != null){
+                classificationname = user.getSupplierclassification().getName();
+            }
             if (user.getName() != null) {
-                System.out.println("interr getPersonalinformation");
                 name = user.getName();
-
             }
         }
         if (this.vehicles != null) {
@@ -243,4 +245,12 @@ public class Supplier implements Serializable {
         this.id = id;
     }
 
+
+    public String getClassificationname() {
+        return classificationname;
+    }
+
+    public void setClassificationname(String classificationname) {
+        this.classificationname = classificationname;
+    }
 }
