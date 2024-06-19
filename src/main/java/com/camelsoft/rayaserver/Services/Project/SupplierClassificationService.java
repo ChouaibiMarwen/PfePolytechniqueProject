@@ -63,6 +63,19 @@ public class SupplierClassificationService {
 
     }
 
+    public DynamicResponse FindAllByNamePg(int page, int size, String name) {
+        try {
+
+            PageRequest pg = PageRequest.of(page, size);
+            Page<SuppliersClassification> pckge = this.repository.findByArchiveIsFalseAndNameContainingIgnoreCase(pg, name);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
     public List<SuppliersClassification> FindAllList() {
         try {
             return this.repository.findByArchiveIsFalse();
