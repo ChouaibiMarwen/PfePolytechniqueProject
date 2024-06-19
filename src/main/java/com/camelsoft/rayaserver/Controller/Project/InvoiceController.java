@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -14,6 +15,7 @@ import com.camelsoft.rayaserver.Request.project.InvoiceRequest;
 import com.camelsoft.rayaserver.Request.project.RefundInvoiceRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.InvoiceReport;
+import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.*;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
@@ -30,9 +32,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -61,6 +65,8 @@ public class InvoiceController extends BaseController {
     private RequestService requestService;
     @Autowired
     private VehiclesService vehiclesService;
+    @Autowired
+    private FilesStorageServiceImpl filesStorageService;
 
     @GetMapping(value = {"/all_invoice_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
@@ -274,6 +280,22 @@ public class InvoiceController extends BaseController {
         } else if (vehicles.getVehiclespricefinancing() != null) {
             invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
         }
+
+        if (request.getEstimarafile() != null && !request.getEstimarafile().isEmpty()) {
+            MediaModel estimarafile = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
+            if (estimarafile == null) {
+                return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
+            }
+            invoice.setEstimarafile(estimarafile);
+        }
+
+        if (request.getDeliverynotedocument() != null && !request.getDeliverynotedocument().isEmpty()) {
+            MediaModel deliverynotedocument = filesStorageService.save_file_local(request.getDeliverynotedocument(), "invoice");
+            if (deliverynotedocument == null) {
+                return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
+            }
+            invoice.setEstimarafile(deliverynotedocument);
+        }
         Invoice result = this.service.Save(invoice);
         //save new action
         UserAction action = new UserAction(
@@ -452,6 +474,23 @@ public class InvoiceController extends BaseController {
             invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
         }
         invoice.setPurshaseorder(po);
+
+        if (request.getEstimarafile() != null && !request.getEstimarafile().isEmpty()) {
+            MediaModel estimarafile = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
+                if (estimarafile == null) {
+                    return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
+                }
+                invoice.setEstimarafile(estimarafile);
+        }
+
+        if (request.getDeliverynotedocument() != null && !request.getDeliverynotedocument().isEmpty()) {
+            MediaModel deliverynotedocument = filesStorageService.save_file_local(request.getDeliverynotedocument(), "invoice");
+            if (deliverynotedocument == null) {
+                return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
+            }
+            invoice.setEstimarafile(deliverynotedocument);
+        }
+
         Invoice result = this.service.Save(invoice);
         po.setStatus(PurshaseOrderStatus.IN_PROGRESS);
         this.purshaseOrderService.Update(po);

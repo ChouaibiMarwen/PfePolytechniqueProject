@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Models.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -120,6 +121,13 @@ public class Invoice implements Serializable {
     @ManyToMany(mappedBy = "invoices")
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
+    @OneToOne(fetch = FetchType.EAGER,cascade =CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "estimara_file_media")
+    private MediaModel estimarafile;
+    @OneToOne(fetch = FetchType.EAGER,cascade =CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "notedocument_file_media")
+    private MediaModel deliverynotedocument;
+
 
 
     public Invoice() {
@@ -527,5 +535,21 @@ public class Invoice implements Serializable {
 
     public void setThirdpartypoid(String thirdpartypoid) {
         this.thirdpartypoid = thirdpartypoid;
+    }
+
+    public MediaModel getEstimarafile() {
+        return estimarafile;
+    }
+
+    public void setEstimarafile(MediaModel estimarafile) {
+        this.estimarafile = estimarafile;
+    }
+
+    public MediaModel getDeliverynotedocument() {
+        return deliverynotedocument;
+    }
+
+    public void setDeliverynotedocument(MediaModel deliverynotedocument) {
+        this.deliverynotedocument = deliverynotedocument;
     }
 }

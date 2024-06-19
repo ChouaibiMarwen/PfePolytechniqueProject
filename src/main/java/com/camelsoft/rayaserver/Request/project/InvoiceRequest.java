@@ -4,6 +4,7 @@ import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Models.Project.Product;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -37,5 +38,7 @@ public class InvoiceRequest {
     private String bankrip;
     private InvoiceRelated related=InvoiceRelated.NONE;
     private Long relatedtouserid;
+    private MultipartFile estimarafile;
+    private MultipartFile deliverynotedocument;
     private List<Long> products = new ArrayList<>();
 }
