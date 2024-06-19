@@ -211,6 +211,16 @@ public class PurchaseOrdersController  extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<DynamicResponse> allPurchaseOrdersByStatusAndDateAndVehicleAndSupplier(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idvehecle,  @RequestParam(required = false) Long idSupplier) throws IOException {
+        users user ;
+        if(idSupplier != null){
+            user = this.userService.findById(idSupplier);
+            if(user == null)
+                return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+            Supplier supplier = user.getSupplier();
+            if(supplier == null)
+                return new ResponseEntity("can't get the current supplier", HttpStatus.NOT_FOUND);
+            idSupplier = supplier.getId();
+        }
 
         DynamicResponse result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
