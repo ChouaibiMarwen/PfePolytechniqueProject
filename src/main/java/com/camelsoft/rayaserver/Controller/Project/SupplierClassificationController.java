@@ -149,6 +149,8 @@ public class SupplierClassificationController extends BaseController {
                 users u = this.userService.findById(id);
                 if(u == null)
                     return new ResponseEntity("User not found with this id :" + id, HttpStatus.NOT_FOUND);
+                if(u.getSupplier() == null)
+                    return new ResponseEntity("this id: "+ id +  " does not belong to supplier:" + id, HttpStatus.NOT_FOUND);
                 classification.getSuppliers().add(u);
             }
         }
@@ -192,6 +194,8 @@ public class SupplierClassificationController extends BaseController {
                 users u = this.userService.findById(id);
                 if(u == null)
                     return new ResponseEntity("User not found with this id :" + id, HttpStatus.NOT_FOUND);
+                if(u.getSupplier() == null)
+                    return new ResponseEntity("this id: "+ id +  " does not belong to supplier:" + id, HttpStatus.NOT_FOUND);
                 classification.getSuppliers().add(u);
             }
 
