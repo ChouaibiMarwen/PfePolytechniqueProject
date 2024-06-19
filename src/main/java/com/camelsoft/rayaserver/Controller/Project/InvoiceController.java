@@ -624,6 +624,29 @@ public class InvoiceController extends BaseController {
             existingInvoice.setRelated(request.getRelated());
         }
 
+        // update estimara file and notdocument file
+
+        if (request.getEstimarafile() != null && !request.getEstimarafile().isEmpty()) {
+            /*if(existingInvoice.getEstimarafile() != null)
+                filesStorageService.delete_file_by_path_local(existingInvoice.getEstimarafile().getUrl(), existingInvoice.getEstimarafile().getId());*/
+
+            MediaModel estimarafile = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
+            if (estimarafile == null) {
+                return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
+            }
+            existingInvoice.setEstimarafile(estimarafile);
+        }
+
+        if (request.getDeliverynotedocument() != null && !request.getDeliverynotedocument().isEmpty()) {
+            /*if(existingInvoice.getDeliverynotedocument() != null)
+                filesStorageService.delete_file_by_path_local(existingInvoice.getDeliverynotedocument() .getUrl(), existingInvoice.getDeliverynotedocument() .getId());*/
+            MediaModel deliverynotedocument = filesStorageService.save_file_local(request.getDeliverynotedocument(), "invoice");
+            if (deliverynotedocument == null) {
+                return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
+            }
+            existingInvoice.setEstimarafile(deliverynotedocument);
+        }
+
         // Save the updated invoice
         Invoice result = this.service.Update(existingInvoice);
 
