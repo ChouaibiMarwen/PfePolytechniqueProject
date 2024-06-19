@@ -107,6 +107,15 @@ public class SupplierClassificationService {
 
     }
 
+    public boolean existbyname(String name) {
+        try {
+            return this.repository.existsByNameIgnoreCase(name);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(String.format("No data found"));
+        }
+
+    }
+
 
    /* public List<SuppliersClassification> FindAllByCategoryRoleList(RoleEnum role) {
         try {

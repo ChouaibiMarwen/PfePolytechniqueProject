@@ -14,4 +14,5 @@ public interface SupplierClassificationRepository extends JpaRepository<Supplier
     List<SuppliersClassification> findByArchiveIsFalse();
     List<SuppliersClassification> findByArchiveIsFalseAndNameContainingIgnoreCase(String name);
     Page<SuppliersClassification> findByArchiveIsFalseAndNameContainingIgnoreCase(Pageable page,String name);
+    boolean existsByNameIgnoreCase(String name);
 }

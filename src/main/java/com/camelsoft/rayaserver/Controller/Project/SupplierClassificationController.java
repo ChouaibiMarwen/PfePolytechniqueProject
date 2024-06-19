@@ -138,6 +138,8 @@ public class SupplierClassificationController extends BaseController {
 
         if (request.getName() == null)
             return new ResponseEntity("Name can't be null or empty", HttpStatus.BAD_REQUEST);
+        if(this.service.existbyname(request.getName()))
+            return new ResponseEntity("name already exists", HttpStatus.CONFLICT);
         SuppliersClassification classification = new SuppliersClassification();
         classification.setName(request.getName());
 
@@ -182,8 +184,11 @@ public class SupplierClassificationController extends BaseController {
         if (classification == null)
             return new ResponseEntity("classification not found with id: " + classification_id, HttpStatus.NOT_FOUND);
 
-        if (request.getName() != null)
+        if (request.getName() != null){
+            if(this.service.existbyname(request.getName()))
+                return new ResponseEntity("name already exists", HttpStatus.CONFLICT);
             classification.setName(request.getName());
+        }
 
         if (request.getDescription() != null)
             classification.setDescription(request.getDescription());
