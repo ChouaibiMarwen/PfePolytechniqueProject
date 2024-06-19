@@ -20,12 +20,62 @@ public class SuppliersClassification implements Serializable {
     private String name;
     @Column(columnDefinition = "TEXT",name = "description")
     private String description;
-    @Column(name = "timestamp")
-    private Date timestamp;
-    @Column(name = "archive")
-    private Boolean archive = false;
     @JsonIgnore
     @OneToMany(mappedBy = "supplierclassification" ,fetch = FetchType.EAGER)
     private Set<users> suppliers = new HashSet<>();
+    @Column(name = "timestamp")
+    private Date timestamp = new Date();
+    @Column(name = "archive")
+    private Boolean archive = false;
 
+    public SuppliersClassification() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Set<users> getSuppliers() {
+        return suppliers;
+    }
+
+    public void setSuppliers(Set<users> suppliers) {
+        this.suppliers = suppliers;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Boolean getArchive() {
+        return archive;
+    }
+
+    public void setArchive(Boolean archive) {
+        this.archive = archive;
+    }
 }

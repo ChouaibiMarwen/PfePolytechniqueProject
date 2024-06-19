@@ -38,7 +38,5 @@ public class InvoiceRequest {
     private String bankrip;
     private InvoiceRelated related=InvoiceRelated.NONE;
     private Long relatedtouserid;
-    private MultipartFile estimarafile;
-    private MultipartFile deliverynotedocument;
     private List<Long> products = new ArrayList<>();
 }

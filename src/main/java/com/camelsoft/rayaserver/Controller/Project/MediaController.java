@@ -2,11 +2,14 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
+import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.Project.VehiclesMedia;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Request.project.InvoiceMediaRequest;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
+import com.camelsoft.rayaserver.Services.Project.InvoiceService;
 import com.camelsoft.rayaserver.Services.Project.VehiclesMediaService;
 import com.camelsoft.rayaserver.Services.Project.VehiclesService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
@@ -44,6 +47,9 @@ public class MediaController extends BaseController {
 
     @Autowired
     private VehiclesMediaService vehiclesMediaService;
+
+    @Autowired
+    private InvoiceService service;
 
     @DeleteMapping(value = {"/remove_media/{id_file}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
@@ -197,6 +203,79 @@ public class MediaController extends BaseController {
             logger.error("Error deleting media: ", e);
             return new ResponseEntity<>("Error deleting media", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+
+    @PostMapping(value = {"/add_invoice_media/{id_invoice}"})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add invoice attachments")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully add"),
+            @ApiResponse(code = 400, message = "Bad request, check the data ,or the image please use the patch api"),
+            @ApiResponse(code = 404, message = "Not found, check the car id"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
+    })
+    public ResponseEntity<Invoice> add_vehicle_media(@PathVariable Long id_invoice, @ModelAttribute InvoiceMediaRequest request) throws IOException {
+        //users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        Invoice invoice = this.service.FindById(id_invoice);
+        if (invoice == null)
+            return new ResponseEntity("invoice " + id_invoice + " not found in the system", HttpStatus.NOT_FOUND);
+
+
+        if (request.getEstimarafile() != null && !request.getEstimarafile().isEmpty()) {
+            MediaModel estimarafile = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
+            if (estimarafile == null) {
+                return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
+            }
+            invoice.setEstimarafile(estimarafile);
+        }
+
+        if (request.getDeliverynotedocument() != null && !request.getDeliverynotedocument().isEmpty()) {
+            MediaModel deliverynotedocument = filesStorageService.save_file_local(request.getDeliverynotedocument(), "invoice");
+            if (deliverynotedocument == null) {
+                return new ResponseEntity("can't upload delivery note document", HttpStatus.BAD_REQUEST);
+            }
+            invoice.setEstimarafile(deliverynotedocument);
+        }
+        Invoice result = this.service.Update(invoice);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping(value = {"/update_invoice_media/{id_invoice}"})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add invoice attachments")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully add"),
+            @ApiResponse(code = 400, message = "Bad request, check the data ,or the image please use the patch api"),
+            @ApiResponse(code = 404, message = "Not found, check the car id"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
+    })
+    public ResponseEntity<Invoice> update_invoice_media(@PathVariable Long id_invoice, @ModelAttribute InvoiceMediaRequest request) throws IOException {
+        //users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        Invoice invoice = this.service.FindById(id_invoice);
+        if (invoice == null)
+            return new ResponseEntity("invoice " + id_invoice + " not found in the system", HttpStatus.NOT_FOUND);
+
+
+        if (request.getEstimarafile() != null && !request.getEstimarafile().isEmpty()) {
+            MediaModel estimarafile = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
+            if (estimarafile == null) {
+                return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
+            }
+            invoice.setEstimarafile(estimarafile);
+        }
+
+        if (request.getDeliverynotedocument() != null && !request.getDeliverynotedocument().isEmpty()) {
+            MediaModel deliverynotedocument = filesStorageService.save_file_local(request.getDeliverynotedocument(), "invoice");
+            if (deliverynotedocument == null) {
+                return new ResponseEntity("can't upload delivery note document", HttpStatus.BAD_REQUEST);
+            }
+            invoice.setEstimarafile(deliverynotedocument);
+        }
+        Invoice result = this.service.Update(invoice);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }

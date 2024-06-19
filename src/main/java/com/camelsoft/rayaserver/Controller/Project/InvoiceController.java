@@ -10,9 +10,7 @@ import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Request.project.InvoiceRepportRequest;
-import com.camelsoft.rayaserver.Request.project.InvoiceRequest;
-import com.camelsoft.rayaserver.Request.project.RefundInvoiceRequest;
+import com.camelsoft.rayaserver.Request.project.*;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.InvoiceReport;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
@@ -281,21 +279,6 @@ public class InvoiceController extends BaseController {
             invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
         }
 
-        if (request.getEstimarafile() != null && !request.getEstimarafile().isEmpty()) {
-            MediaModel estimarafile = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
-            if (estimarafile == null) {
-                return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
-            }
-            invoice.setEstimarafile(estimarafile);
-        }
-
-        if (request.getDeliverynotedocument() != null && !request.getDeliverynotedocument().isEmpty()) {
-            MediaModel deliverynotedocument = filesStorageService.save_file_local(request.getDeliverynotedocument(), "invoice");
-            if (deliverynotedocument == null) {
-                return new ResponseEntity("can't upload delivery note document", HttpStatus.BAD_REQUEST);
-            }
-            invoice.setEstimarafile(deliverynotedocument);
-        }
         Invoice result = this.service.Save(invoice);
         //save new action
         UserAction action = new UserAction(
@@ -475,21 +458,6 @@ public class InvoiceController extends BaseController {
         }
         invoice.setPurshaseorder(po);
 
-        if (request.getEstimarafile() != null && !request.getEstimarafile().isEmpty()) {
-            MediaModel estimarafile = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
-                if (estimarafile == null) {
-                    return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
-                }
-                invoice.setEstimarafile(estimarafile);
-        }
-
-        if (request.getDeliverynotedocument() != null && !request.getDeliverynotedocument().isEmpty()) {
-            MediaModel deliverynotedocument = filesStorageService.save_file_local(request.getDeliverynotedocument(), "invoice");
-            if (deliverynotedocument == null) {
-                return new ResponseEntity("can't upload delivery note document", HttpStatus.BAD_REQUEST);
-            }
-            invoice.setEstimarafile(deliverynotedocument);
-        }
 
         Invoice result = this.service.Save(invoice);
         po.setStatus(PurshaseOrderStatus.IN_PROGRESS);
@@ -624,28 +592,6 @@ public class InvoiceController extends BaseController {
             existingInvoice.setRelated(request.getRelated());
         }
 
-        // update estimara file and notdocument file
-
-        if (request.getEstimarafile() != null && !request.getEstimarafile().isEmpty()) {
-            /*if(existingInvoice.getEstimarafile() != null)
-                filesStorageService.delete_file_by_path_local(existingInvoice.getEstimarafile().getUrl(), existingInvoice.getEstimarafile().getId());*/
-
-            MediaModel estimarafile = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
-            if (estimarafile == null) {
-                return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
-            }
-            existingInvoice.setEstimarafile(estimarafile);
-        }
-
-        if (request.getDeliverynotedocument() != null && !request.getDeliverynotedocument().isEmpty()) {
-            /*if(existingInvoice.getDeliverynotedocument() != null)
-                filesStorageService.delete_file_by_path_local(existingInvoice.getDeliverynotedocument() .getUrl(), existingInvoice.getDeliverynotedocument() .getId());*/
-            MediaModel deliverynotedocument = filesStorageService.save_file_local(request.getDeliverynotedocument(), "invoice");
-            if (deliverynotedocument == null) {
-                return new ResponseEntity("can't upload delivery note document", HttpStatus.BAD_REQUEST);
-            }
-            existingInvoice.setEstimarafile(deliverynotedocument);
-        }
 
         // Save the updated invoice
         Invoice result = this.service.Update(existingInvoice);
@@ -1072,6 +1018,7 @@ public class InvoiceController extends BaseController {
         this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
 
 }
