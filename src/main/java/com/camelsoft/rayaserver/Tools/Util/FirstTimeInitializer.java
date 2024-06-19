@@ -116,7 +116,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
         if (!privilegeService.existsByName("INVOICE_READ"))
             privilegeService.save(new Privilege("INVOICE_READ"));
 
-        if (!privilegeService.existsByName("INVOICE_READ"))
+        if (!privilegeService.existsByName("INVOICE_WRITE"))
             privilegeService.save(new Privilege("INVOICE_WRITE"));
 
         if (!privilegeService.existsByName("CUSTOMER_READ"))

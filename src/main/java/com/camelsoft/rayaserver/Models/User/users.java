@@ -151,6 +151,11 @@ public class users implements Serializable {
     @ManyToMany(mappedBy = "usersevents", fetch = FetchType.EAGER)
     private Set<Event> events = new HashSet<>();
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "classification_id")
+    private SuppliersClassification supplierclassification;
+
     @Transient
     private String supplierCompanyName;
 
@@ -495,5 +500,13 @@ public class users implements Serializable {
 
     public void setEvents(Set<Event> events) {
         this.events = events;
+    }
+
+    public SuppliersClassification getSupplierclassification() {
+        return supplierclassification;
+    }
+
+    public void setSupplierclassification(SuppliersClassification supplierclassification) {
+        this.supplierclassification = supplierclassification;
     }
 }
