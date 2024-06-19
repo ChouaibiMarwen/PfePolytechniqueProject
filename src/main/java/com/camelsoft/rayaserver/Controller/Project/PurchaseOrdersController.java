@@ -213,6 +213,7 @@ public class PurchaseOrdersController  extends BaseController {
     public ResponseEntity<DynamicResponse> allPurchaseOrdersByStatusAndDateAndVehicleAndSupplier(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idvehecle,  @RequestParam(required = false) Long idSupplier) throws IOException {
         users user ;
         if(idSupplier != null){
+            System.out.println("fiiirsttt IIIIIIIIIIIIIIIIIIIIIDDDDDDDDDDDDDDDDDD SUPPPLIIIIIIIIIIIIIERRRR:" + idSupplier);
             user = this.userService.findById(idSupplier);
             if(user == null)
                 return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
@@ -220,6 +221,7 @@ public class PurchaseOrdersController  extends BaseController {
             if(supplier == null)
                 return new ResponseEntity("can't get the current supplier", HttpStatus.NOT_FOUND);
             idSupplier = supplier.getId();
+            System.out.println("NEW IIIIIIIIIIIIIIIIIIIIIDDDDDDDDDDDDDDDDDD SUPPPLIIIIIIIIIIIIIERRRR:" + idSupplier);
         }
 
         DynamicResponse result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier);
