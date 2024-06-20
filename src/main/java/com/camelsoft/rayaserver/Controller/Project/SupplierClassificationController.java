@@ -173,7 +173,7 @@ public class SupplierClassificationController extends BaseController {
         SuppliersClassification classification = new SuppliersClassification();
         classification.setName(request.getName());
 
-        if (request.getDescription() == null)
+        if (request.getDescription() != null)
             classification.setDescription(request.getDescription());
 
         if(request.getUsersId() != null && !request.getUsersId().isEmpty()){

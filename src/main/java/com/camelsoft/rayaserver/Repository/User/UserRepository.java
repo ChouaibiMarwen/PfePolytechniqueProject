@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<users, Long> {
@@ -91,6 +92,8 @@ public interface UserRepository extends JpaRepository<users, Long> {
 
     List<users> findAllByRoleAndActive(Role role, Boolean active);
     List<users> findByRoleAndDeletedIsFalse(Role role);
+    List<users> findByRoleInAndDeletedIsFalse(Set<Role> roles);
+
 
     Page<users> findAllByNameContains(Pageable page, String name);
 }

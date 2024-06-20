@@ -275,6 +275,19 @@ public class UsersController extends BaseController {
         return new ResponseEntity<>(shortuser, HttpStatus.OK);
     }
 
+    @GetMapping(value = {"/all_users_list_by_roles_set"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
+    @ApiOperation(value = "get all users by role and status for admin", notes = "Endpoint to get users")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
+    })
+    public ResponseEntity<List<UserShortDto>> all_users_list_by_roles_set(@RequestParam Set<RoleEnum> role) throws IOException {
+        List<users> user = null;
+        user = this.userService.getUsersByRoles(role);
+        List<UserShortDto> shortuser =  user.stream().map(UserShortDto::mapToUserShortDTO)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(shortuser, HttpStatus.OK);
+    }
 
 
 

@@ -401,6 +401,24 @@ public class UserService extends BaseController implements UserDetailsService {
     }
 
 
+    public List<users> getUsersByRoles(Set<RoleEnum> roleEnums) {
+        try {
+            Set<Role> roles = roleEnums.stream()
+                    .map(roleRepository::findByRole)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+
+            if (roles.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            return userRepository.findByRoleInAndDeletedIsFalse(roles);
+        } catch (Exception ex) {
+            throw new RuntimeException("Error retrieving users by roles: " + roleEnums, ex);
+        }
+    }
+
+
     public users findbyemail(String email) {
         try {
             return userRepository.findByEmail(email);
