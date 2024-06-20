@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Repository.User;
 
 
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import org.jetbrains.annotations.NotNull;
@@ -49,9 +50,9 @@ public interface SupplierRepository extends JpaRepository<Supplier,Long> {
 
 
 
-    @Query(value = "SELECT s FROM Supplier s JOIN s.vehicles v WHERE v.stock > 0 GROUP BY s HAVING COUNT(v) > 0",
-            countQuery = "SELECT COUNT(DISTINCT s) FROM Supplier s JOIN s.vehicles v WHERE v.stock > 0")
-    Page<Supplier> findSuppliersWithAvailableVehicles(Pageable pageable);
+    @Query(value = "SELECT s FROM Supplier s JOIN s.vehicles v WHERE v.availiability = :availiability GROUP BY s HAVING COUNT(v) > 0",
+            countQuery = "SELECT COUNT(DISTINCT s) FROM Supplier s JOIN s.vehicles v WHERE v.availiability = :availiability")
+    Page<Supplier> findSuppliersWithAvailableVehicles(Pageable pageable, AvailiabilityEnum availiability);
 
 
 
