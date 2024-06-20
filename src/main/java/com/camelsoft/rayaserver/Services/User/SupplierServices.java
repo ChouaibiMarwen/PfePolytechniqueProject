@@ -8,6 +8,7 @@ import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Tools.PersonalInformationRepository;
@@ -203,6 +204,17 @@ public class SupplierServices {
         try {
             PageRequest pg = PageRequest.of(page, size);
             Page<Supplier> pckge = this.repository.findSuppliersWithAvailableVehicles(pg, AvailiabilityEnum.INSTOCK);
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+    public DynamicResponse getAllSuppliersHavingAvailbalVeheclesStockForSubAdminWithClassification(int page, int size, SuppliersClassification classification){
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+            Page<Supplier> pckge = this.repository.findSuppliersWithAvailableVehiclesForSubAdmin(pg, AvailiabilityEnum.INSTOCK, classification);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());

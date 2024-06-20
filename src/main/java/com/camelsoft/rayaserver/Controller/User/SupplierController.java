@@ -13,6 +13,7 @@ import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Models.country.Root;
 import com.camelsoft.rayaserver.Models.country.State;
@@ -331,8 +332,6 @@ public class SupplierController extends BaseController {
         return new ResponseEntity<>(this.suppliersServices.DynamicResponsefindyNameorPurshaseOrderStatus(page, size, name, status), HttpStatus.OK);
 
     }
-
-
     @GetMapping(value = {"/all_suppliers_with_available_vehecles_stock"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all suppliers that have available stock for admin", notes = "Endpoint get all suppliers that have available vehecles' stock for admin")
@@ -350,6 +349,14 @@ public class SupplierController extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
+        if(currentuser.getRole().getRole() == RoleEnum.ROLE_SUB_ADMIN){
+            SuppliersClassification classification = currentuser.getSupplierclassification();
+            if(classification != null)
+                return new ResponseEntity<>(this.suppliersServices.getAllSuppliersHavingAvailbalVeheclesStockForSubAdminWithClassification(page, size, classification), HttpStatus.OK);
+            else
+                return  new ResponseEntity("this sub-admin have not any classification yet", HttpStatus.NOT_FOUND);
+        }
+        // if the curent user is admin, he will get all list without classifications
         return new ResponseEntity<>(this.suppliersServices.getAllSuppliersHavingAvailbalVeheclesStock(page, size), HttpStatus.OK);
 
     }
