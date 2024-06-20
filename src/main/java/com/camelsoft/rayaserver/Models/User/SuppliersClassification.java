@@ -20,7 +20,7 @@ public class SuppliersClassification implements Serializable {
     private String name;
     @Column(columnDefinition = "TEXT",name = "description")
     private String description;
-    @JsonIgnore
+
     @OneToMany(mappedBy = "supplierclassification" ,fetch = FetchType.EAGER)
     private Set<users> suppliers = new HashSet<>();
     @Column(name = "timestamp")
