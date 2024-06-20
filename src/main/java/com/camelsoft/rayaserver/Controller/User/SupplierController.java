@@ -172,8 +172,9 @@ public class SupplierController extends BaseController {
         for (Privilege privilege : privilegeList) {
             if(adminPrivileges.contains(privilege.getName()))
                 continue;
-            /*if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
-
+            /*Privilege p = this.privilegeService.findByName(privilege);
+            if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
+                user.getPrivileges().add(privilege);
             }*/
             user.getPrivileges().add(privilege);
         }

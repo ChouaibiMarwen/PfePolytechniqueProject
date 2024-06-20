@@ -49,6 +49,16 @@ public class PrivilegeService {
         }
 
     }
+
+    public Privilege findByName(String name) {
+        try {
+            return this.repository.findByName(name);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(String.format("No file found with id [%s] in our data base", name));
+        }
+
+    }
+
     public DynamicResponse findAll(int page, int size) {
         try {
             PageRequest pg = PageRequest.of(page, size);

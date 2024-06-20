@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface PrivilegeRepository extends JpaRepository<Privilege,Long> {
     Boolean existsByName(String name);
     Boolean existsByIdAndUser(Long id, users user);
+    Privilege findByName(String name);
 }

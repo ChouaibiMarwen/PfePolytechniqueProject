@@ -169,9 +169,10 @@ public class SubDealerController extends BaseController {
         for (Privilege privilege : privilegeList) {
             if(adminPrivileges.contains(privilege.getName()))
                 continue;
-            if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
-                user.getPrivileges().add(privilege);
-            }
+            /*if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
+
+            }*/
+            user.getPrivileges().add(privilege);
         }
         users result = userService.saveSubDealer(user);
         BillingAddress billingAddress = new BillingAddress();
