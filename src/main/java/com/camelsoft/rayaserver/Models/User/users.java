@@ -523,4 +523,9 @@ public class users implements Serializable {
     public void setPoassigned(Set<PurshaseOrder> poassigned) {
         this.poassigned = poassigned;
     }
+
+    public void addUsersPrivilege(Privilege privilege) {
+        privileges.add(privilege);
+        privilege.getUser().add(this);
+    }
 }
