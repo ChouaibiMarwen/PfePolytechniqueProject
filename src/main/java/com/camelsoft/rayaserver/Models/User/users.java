@@ -101,7 +101,7 @@ public class users implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_address_id")
     private BillingAddress billingAddress;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_privileges",
             joinColumns =
             @JoinColumn(name = "usar_id", referencedColumnName = "user_id"),
