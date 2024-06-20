@@ -78,14 +78,24 @@ public class InvoiceController extends BaseController {
     public ResponseEntity<DynamicResponse> all_invoice_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam List<RoleEnum> role ,  @RequestParam(required = false) Integer invoicenumber,  @RequestParam(required = false) Long poid,  @RequestParam(required = false) String suppliername) throws IOException {
 
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        Page<Invoice> invoice;
+        if(user.getRole().getRole() == RoleEnum.ROLE_SUB_ADMIN){
+            //sub_admin get list of invoices of suppliers with the same classification
+            if(user.getSupplierclassification()!= null)
+                invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role, invoicenumber, poid, suppliername, user.getSupplierclassification());
+            else
+                return  new ResponseEntity("this sub-admin have not any classification yet", HttpStatus.NOT_FOUND);
 
+        }else{
+            // if the current user is admin , he get all invoices list
+            invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role, invoicenumber, poid, suppliername, null);
+        }
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
-        Page<Invoice> invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role, invoicenumber, poid, suppliername);
         DynamicResponse res = new DynamicResponse(invoice.getContent(), invoice.getNumber(), invoice.getTotalElements(), invoice.getTotalPages());
 
         return new ResponseEntity<>(res, HttpStatus.OK);

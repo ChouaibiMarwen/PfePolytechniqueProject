@@ -9,6 +9,7 @@ import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
@@ -324,7 +325,7 @@ public class CriteriaService {
         }
     }*/
 
-    public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, List<RoleEnum> role, Integer invoicenumber, Long poid, String suppliername) {
+    public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, List<RoleEnum> role, Integer invoicenumber, Long poid, String suppliername, SuppliersClassification classification) {
         try {
             // Prepare criteria builder and query
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -359,6 +360,12 @@ public class CriteriaService {
                 Join<Invoice, PurshaseOrder> purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("id"), poid));
             }
+
+            // Apply classification filter if present
+            if (classification != null) {
+                predicates.add(criteriaBuilder.equal(invoiceRoot.get("createdby").get("supplierclassification"), classification));
+            }
+
 
             // Apply predicates to query
             criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
