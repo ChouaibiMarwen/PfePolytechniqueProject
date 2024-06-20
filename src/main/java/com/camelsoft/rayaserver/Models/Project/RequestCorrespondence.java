@@ -46,7 +46,7 @@ public class RequestCorrespondence implements Serializable {
     @PostLoad
     private void afterload(){
         if(this.creator!=null){
-            this.sender = this.creator.getRole().getRole().name();
+            this.sender = this.creator.getName();
         }
     }
 
