@@ -305,7 +305,7 @@ public class PurshaseOrderService {
     }
 */
 
-    public DynamicResponse findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(int page, int size, Long idVehicle, PurshaseOrderStatus status, Date date, Long idSupplier) {
+    public DynamicResponse findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(int page, int size, Long idVehicle, PurshaseOrderStatus status, Date date, Long idSupplier , users subadmin) {
         try {
             Pageable pageable = PageRequest.of(page, size);
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -329,6 +329,10 @@ public class PurshaseOrderService {
 
             if (date != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("timestamp"), date));
+            }
+
+            if (subadmin != null) {
+                predicates.add(cb.equal(root.get("subadminassignedto"), subadmin));
             }
 
             cq.where(predicates.toArray(new Predicate[0]));

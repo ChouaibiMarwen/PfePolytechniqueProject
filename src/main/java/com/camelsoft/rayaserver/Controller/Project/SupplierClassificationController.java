@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
+import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.UsersCategory;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -59,6 +61,34 @@ public class SupplierClassificationController extends BaseController {
         } else {
             result = this.service.FindAllByNameList(name);
         }
+
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.USERS_CATEGORIES_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping(value = {"/sub_admin_list_by_classification/{classification_id}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "get all suppliers classification for admin by name", notes = "Endpoint to get suppliers classification list by name and character")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<List<UserShortDto>> all_categories_by_name(@PathVariable Long classification_id) throws IOException {
+        users user = userService.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        SuppliersClassification classification = this.service.FindById(classification_id);
+        if (classification == null)
+            return new ResponseEntity("classification not found with id: " + classification_id, HttpStatus.NOT_FOUND);
+
+        List<UserShortDto> result = this.userService.findAllSubAdminsWithClassification(classification).stream()
+                .map(UserShortDto :: mapToUserShortDTO).collect(Collectors.toList());
 
         //save new action
         UserAction action = new UserAction(

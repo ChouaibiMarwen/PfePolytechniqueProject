@@ -156,6 +156,10 @@ public class users implements Serializable {
     @JoinColumn(name = "classification_id")
     private SuppliersClassification supplierclassification;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "subadminassignedto", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<PurshaseOrder> poassigned = new HashSet<>();
+
     @Transient
     private String supplierCompanyName;
 
@@ -510,5 +514,13 @@ public class users implements Serializable {
 
     public void setSupplierclassification(SuppliersClassification supplierclassification) {
         this.supplierclassification = supplierclassification;
+    }
+
+    public Set<PurshaseOrder> getPoassigned() {
+        return poassigned;
+    }
+
+    public void setPoassigned(Set<PurshaseOrder> poassigned) {
+        this.poassigned = poassigned;
     }
 }

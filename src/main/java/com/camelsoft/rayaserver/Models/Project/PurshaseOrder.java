@@ -95,6 +95,10 @@ public class PurshaseOrder implements Serializable {
     @Column(columnDefinition = "TEXT",name = "declinereason")
     private String declinereason;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub_admin_id_purchaseorder", nullable = false)
+    private users subadminassignedto;
+
 
     @Column(name = "timestamp")
     private Date timestamp;

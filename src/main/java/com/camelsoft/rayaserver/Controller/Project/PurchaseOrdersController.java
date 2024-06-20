@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.PurchaseOrderDto;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
@@ -115,6 +116,20 @@ public class PurchaseOrdersController  extends BaseController {
             }
             purshaseOrder.setAttachments(attachmentsList);
         }
+
+        //assign the po to a sub admin with same classification as the supplier
+        if(request.getIdsubadminassignto()!= null){
+            users subadmin = this.userService.findById(request.getIdsubadminassignto());
+            if(subadmin == null)
+                return new ResponseEntity("subadmin is not founded", HttpStatus.BAD_REQUEST);
+            if(subadmin.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN)
+                return new ResponseEntity("can't assign this po to a non sub-admin ", HttpStatus.BAD_REQUEST);
+            // check if po's supplier classification is the dame as the sub admin classification
+            if(user.getSupplierclassification().getId() != subadmin.getSupplierclassification().getId())
+                 return new ResponseEntity("Sub-admin classification is different from supplier classification", HttpStatus.BAD_REQUEST);
+            purshaseOrder.setSubadminassignedto(subadmin);
+        }
+
         PurshaseOrder po = this.purshaseOrderService.Save(purshaseOrder);
         PurchaseOrderDto purchaseOrderDto = PurchaseOrderDto.PurchaseOrderToDto(po);
         //save new action
@@ -126,6 +141,46 @@ public class PurchaseOrdersController  extends BaseController {
 
         return  new ResponseEntity<>(purchaseOrderDto, HttpStatus.OK);
     }
+
+    @PatchMapping(value ="/update_purchase_order_assigned_to/{purchaseOrderId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to update the sub admin assigned to po for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<PurchaseOrderDto> update_purchase_order_assigned_to(@PathVariable Long purchaseOrderId, @RequestParam Long idsubadmin) throws IOException{
+        PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
+        if(purchaseOrder == null)
+            return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
+        if(idsubadmin!= null){
+            users subadmin = this.userService.findById(idsubadmin);
+            if(subadmin == null)
+                return new ResponseEntity("subadmin is not founded", HttpStatus.NOT_FOUND);
+            if(subadmin.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN)
+                return new ResponseEntity("can't assign this po to a non sub-admin ", HttpStatus.NOT_ACCEPTABLE);
+            // check if po's supplier classification is the dame as the sub admin classification
+            if(!Objects.equals(purchaseOrder.getSupplier().getUser().getSupplierclassification().getId(), subadmin.getSupplierclassification().getId()))
+                return new ResponseEntity("Sub-admin classification is different from supplier classification", HttpStatus.NOT_ACCEPTABLE);
+            purchaseOrder.setSubadminassignedto(subadmin);
+        }
+
+        PurshaseOrder po = this.purshaseOrderService.Update(purchaseOrder);
+        PurchaseOrderDto purchaseOrderDto = PurchaseOrderDto.PurchaseOrderToDto(po);
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(purchaseOrderDto, HttpStatus.OK);
+
+    }
+
 
     @GetMapping(value = {"/all_purchase_orders_by_status"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
@@ -213,7 +268,6 @@ public class PurchaseOrdersController  extends BaseController {
     public ResponseEntity<DynamicResponse> allPurchaseOrdersByStatusAndDateAndVehicleAndSupplier(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idvehecle,  @RequestParam(required = false) Long idSupplier) throws IOException {
         users user ;
         if(idSupplier != null){
-            System.out.println("fiiirsttt IIIIIIIIIIIIIIIIIIIIIDDDDDDDDDDDDDDDDDD SUPPPLIIIIIIIIIIIIIERRRR:" + idSupplier);
             user = this.userService.findById(idSupplier);
             if(user == null)
                 return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
@@ -221,10 +275,9 @@ public class PurchaseOrdersController  extends BaseController {
             if(supplier == null)
                 return new ResponseEntity("can't get the current supplier", HttpStatus.NOT_FOUND);
             idSupplier = supplier.getId();
-            System.out.println("NEW IIIIIIIIIIIIIIIIIIIIIDDDDDDDDDDDDDDDDDD SUPPPLIIIIIIIIIIIIIERRRR:" + idSupplier);
         }
 
-        DynamicResponse result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier);
+        DynamicResponse result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier, null);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentuser == null)
             return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
@@ -237,8 +290,43 @@ public class PurchaseOrdersController  extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping(value = {"/all_purchase_orders_for_admin"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "get all purchase orders by status and date and vehicle and supplier  for admin by name", notes = "Endpoint to get purchase orders by status and date and vehicle and supplier for admin ")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> all_purchase_orders_for_admin(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idvehecle,  @RequestParam(required = false) Long idSupplier) throws IOException {
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        users user ;
+        if(idSupplier != null){
+            user = this.userService.findById(idSupplier);
+            if(user == null)
+                return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
+            Supplier supplier = user.getSupplier();
+            if(supplier == null)
+                return new ResponseEntity("can't get the current supplier", HttpStatus.NOT_FOUND);
+            idSupplier = supplier.getId();
+        }
+        DynamicResponse result;
+        if(currentuser.getRole().getRole() ==   RoleEnum.ROLE_SUB_ADMIN){
+            // get the po list that assigned to that subadmin
+            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier, currentuser);
+        }else{
+            // this user is admin , so get all list of po
+            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier, null);
+        }
 
-
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.PURCHASE_ORDER_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
     @PatchMapping(value ="/update_purchase_order/{purchaseOrderId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
@@ -298,6 +386,19 @@ public class PurchaseOrdersController  extends BaseController {
         }
         if (request.getDescription() != null) {
             purchaseOrder.setDescription(request.getDescription());
+        }
+
+        //assign the po to a sub admin with same classification as the supplier
+        if(request.getIdsubadminassignto()!= null){
+            users subadmin = this.userService.findById(request.getIdsubadminassignto());
+            if(subadmin == null)
+                return new ResponseEntity("subadmin is not founded", HttpStatus.BAD_REQUEST);
+            if(subadmin.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN)
+                return new ResponseEntity("can't assign this po to a non sub-admin ", HttpStatus.BAD_REQUEST);
+            // check if po's supplier classification is the dame as the sub admin classification
+            if(!Objects.equals(purchaseOrder.getSupplier().getUser().getSupplierclassification().getId(), subadmin.getSupplierclassification().getId()))
+                return new ResponseEntity("Sub-admin classification is different from supplier classification", HttpStatus.BAD_REQUEST);
+            purchaseOrder.setSubadminassignedto(subadmin);
         }
 
         PurshaseOrder po = this.purshaseOrderService.Update(purchaseOrder);

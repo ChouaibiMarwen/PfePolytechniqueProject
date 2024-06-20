@@ -9,12 +9,14 @@ import com.camelsoft.rayaserver.Models.Project.Department;
 import com.camelsoft.rayaserver.Models.Project.RoleDepartment;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
+import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.DepartmentService;
 import com.camelsoft.rayaserver.Services.Project.RoleDepartmentService;
+import com.camelsoft.rayaserver.Services.Project.SupplierClassificationService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
@@ -63,6 +65,9 @@ public class SubAdminController extends BaseController {
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
 
+    @Autowired
+    private SupplierClassificationService classificationService;
+
 
 
     @GetMapping(value = {"/search_admin"})
@@ -82,7 +87,6 @@ public class SubAdminController extends BaseController {
         List<users> userList = this.criteriaService.UsersSearchCreatiriaRolesListNotPaginated(active, false, name, list);
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
-
 
     @PostMapping(value = {"/add_sub_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
@@ -170,6 +174,13 @@ public class SubAdminController extends BaseController {
             if (resource_media == null)
                 return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
             user.setProfileimage(resource_media);
+        }
+        // add classification to sub-admin if founded idclassification
+        if(request.getIdclassification() != null){
+            SuppliersClassification classification = this.classificationService.FindById(request.getIdclassification());
+            if(classification == null)
+                return new ResponseEntity("classification not found with id: " + request.getIdclassification(), HttpStatus.NOT_FOUND);
+            user.setSupplierclassification(classification);
         }
 
         // Save the user

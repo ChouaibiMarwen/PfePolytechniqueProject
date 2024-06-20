@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Repository.User;
 
 
 import com.camelsoft.rayaserver.Models.Auth.Role;
+import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.users;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ public interface UserRepository extends JpaRepository<users, Long> {
     users findByUsername(String username);
     users findTopByOrderByIdDesc();
 
+    List<users> findByRoleAndSupplierclassificationAndActiveIsTrue(Role role, SuppliersClassification classification);
 
 
     users findByRole(Role role);

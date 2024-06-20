@@ -8,6 +8,7 @@ import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
+import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Models.country.Root;
 import com.camelsoft.rayaserver.Models.country.State;
@@ -722,5 +723,11 @@ public class UserService extends BaseController implements UserDetailsService {
          return UpdateUser(user);
     }
 
+
+    public List<users> findAllSubAdminsWithClassification(SuppliersClassification classification){
+        Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_ADMIN);
+        return this.userRepository.findByRoleAndSupplierclassificationAndActiveIsTrue( userRole,classification);
+
+    }
 
 }

@@ -117,6 +117,8 @@ public class SupplierClassificationService {
     }
 
 
+
+
    /* public List<SuppliersClassification> FindAllByCategoryRoleList(RoleEnum role) {
         try {
             return this.repository.findByArchiveIsFalseAndCategoryrole(role);

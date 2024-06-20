@@ -30,6 +30,7 @@ public class PurchaseOrderDto {
     private Set<MediaModel> attachments = new HashSet<>();
     private Boolean archive = false;
     private Integer poCountBySupplier;
+    private Long idsubadminassignedto;
     private Set<Service_Agreement> serviceagreements = new HashSet<>();
     private Date timestamp;
 
@@ -54,6 +55,11 @@ public class PurchaseOrderDto {
         dto.setArchive(purchaseOrder.getArchive());
         dto.setTimestamp(purchaseOrder.getTimestamp());
         dto.setPoCountBySupplier(purchaseOrder.getPoCountBySupplier());
+        if(purchaseOrder.getSubadminassignedto() != null){
+            dto.setIdsubadminassignedto(purchaseOrder.getSubadminassignedto().getId());
+        }else{
+            dto.setIdsubadminassignedto(null);
+        }
         return dto;
     }
 

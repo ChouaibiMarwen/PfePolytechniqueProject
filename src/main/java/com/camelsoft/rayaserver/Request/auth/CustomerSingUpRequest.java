@@ -12,6 +12,7 @@ public class CustomerSingUpRequest {
     private String phonenumber;
     private Long  iddepartment;
     private Long  idroledepartment;
+    private Long  idclassification;
     private PersonalInformationRequest informationRequest;
 
     public CustomerSingUpRequest() {

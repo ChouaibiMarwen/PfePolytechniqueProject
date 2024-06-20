@@ -14,6 +14,7 @@ public class PurshaseOrderRequest {
     private PurshaseOrderStatus status;
     private Long supplierId;
     private Long vehicleId;
+    private Long idsubadminassignto;
     private Integer quantity;
     private Double discountamount;
     private Date requestDeliveryDate;
