@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Services.User;
 
 
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
@@ -198,11 +199,10 @@ public class SupplierServices {
 
    }
 
-
     public DynamicResponse getAllSuppliersHavingAvailbalVeheclesStock(int page,int size){
         try {
             PageRequest pg = PageRequest.of(page, size);
-            Page<Supplier> pckge = this.repository.findSuppliersWithAvailableVehicles(pg);
+            Page<Supplier> pckge = this.repository.findSuppliersWithAvailableVehicles(pg, AvailiabilityEnum.INSTOCK);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
