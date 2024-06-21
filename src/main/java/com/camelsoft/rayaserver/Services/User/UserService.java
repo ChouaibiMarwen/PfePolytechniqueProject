@@ -748,4 +748,13 @@ public class UserService extends BaseController implements UserDetailsService {
 
     }
 
+    public Integer countAllSubAdminsWithClassification(SuppliersClassification classification){
+        Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_ADMIN);
+        return this.userRepository.countByRoleAndSubadminClassificationAndActiveIsTrue( userRole,classification);
+
+    }
+
+
+
+
 }

@@ -552,7 +552,6 @@ public class PurchaseOrdersController  extends BaseController {
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 
-
     @PatchMapping(value = "/accept_purchase_order_by_Admin/{purchaseOrderId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "accept purchase order status by admin", notes = "Endpoint to accept purchase order status by admin")

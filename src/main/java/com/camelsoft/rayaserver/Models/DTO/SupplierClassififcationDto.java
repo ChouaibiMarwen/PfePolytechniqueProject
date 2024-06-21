@@ -3,6 +3,7 @@ package com.camelsoft.rayaserver.Models.DTO;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Services.User.UserService;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -21,6 +22,7 @@ public class SupplierClassififcationDto {
     private Set<UserShortDto> suppliers = new HashSet<>();
     private Date timestamp = new Date();
     private Boolean archive = false;
+
 
     public static SupplierClassififcationDto supplierClassififcationDtolassToDto(SuppliersClassification classification) {
         SupplierClassififcationDto dto = new SupplierClassififcationDto();

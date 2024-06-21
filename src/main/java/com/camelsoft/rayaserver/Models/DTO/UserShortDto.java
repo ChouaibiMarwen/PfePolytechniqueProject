@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Models.DTO;
 
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
 import lombok.Data;
@@ -10,6 +11,7 @@ public class UserShortDto {
     private String name;
     private String pic;
     private String email;
+    private String subadminclassname;
 
     public static UserShortDto mapToUserShortDTO(users user) {
         UserShortDto dto = new UserShortDto();
@@ -26,6 +28,8 @@ public class UserShortDto {
 
         dto.setPic(user.getProfileimage() != null ? user.getProfileimage().getUrl() : null);
         dto.setEmail(user.getEmail());
+        if(user.getRole().getRole() == RoleEnum.ROLE_SUB_ADMIN && user.getSubadminClassification() != null)
+            dto.setSubadminclassname(user.getSubadminClassification().getName());
 
         return dto;
     }

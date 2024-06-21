@@ -168,6 +168,12 @@ public class users implements Serializable {
     @Transient
     private String supplierCompanyName;
 
+    @Transient
+    private Long idsubadminclassification;
+
+    @Transient
+    private String namesubadminclassification;
+
 
     public users() {
 
@@ -205,6 +211,11 @@ public class users implements Serializable {
             }
         }else{
             this.supplierCompanyName = "";
+        }
+
+        if(subadminClassification != null){
+            idsubadminclassification = subadminClassification.getId();
+            namesubadminclassification = subadminClassification.getName();
         }
     }
 
@@ -540,5 +551,21 @@ public class users implements Serializable {
 
     public void setSubadminClassification(SuppliersClassification subadminClassification) {
         this.subadminClassification = subadminClassification;
+    }
+
+    public Long getIdsubadminclassification() {
+        return idsubadminclassification;
+    }
+
+    public void setIdsubadminclassification(Long idsubadminclassification) {
+        this.idsubadminclassification = idsubadminclassification;
+    }
+
+    public String getNamesubadminclassification() {
+        return namesubadminclassification;
+    }
+
+    public void setNamesubadminclassification(String namesubadminclassification) {
+        this.namesubadminclassification = namesubadminclassification;
     }
 }
