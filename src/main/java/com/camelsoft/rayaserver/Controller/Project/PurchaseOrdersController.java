@@ -125,7 +125,7 @@ public class PurchaseOrdersController  extends BaseController {
             if(subadmin.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN)
                 return new ResponseEntity("can't assign this po to a non sub-admin ", HttpStatus.BAD_REQUEST);
             // check if po's supplier classification is the dame as the sub admin classification
-            if(user.getSupplierclassification().getId() != subadmin.getSupplierclassification().getId())
+            if(user.getSupplierclassification().getId() != subadmin.getSubadminClassification().getId())
                  return new ResponseEntity("Sub-admin classification is different from supplier classification", HttpStatus.BAD_REQUEST);
             purshaseOrder.setSubadminassignedto(subadmin);
         }
@@ -396,7 +396,7 @@ public class PurchaseOrdersController  extends BaseController {
             if(subadmin.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN)
                 return new ResponseEntity("can't assign this po to a non sub-admin ", HttpStatus.BAD_REQUEST);
             // check if po's supplier classification is the dame as the sub admin classification
-            if(!Objects.equals(purchaseOrder.getSupplier().getUser().getSupplierclassification().getId(), subadmin.getSupplierclassification().getId()))
+            if(!Objects.equals(purchaseOrder.getSupplier().getUser().getSupplierclassification().getId(), subadmin.getSubadminClassification().getId()))
                 return new ResponseEntity("Sub-admin classification is different from supplier classification", HttpStatus.BAD_REQUEST);
             purchaseOrder.setSubadminassignedto(subadmin);
         }

@@ -81,8 +81,8 @@ public class InvoiceController extends BaseController {
         Page<Invoice> invoice;
         if(user.getRole().getRole() == RoleEnum.ROLE_SUB_ADMIN){
             //sub_admin get list of invoices of suppliers with the same classification
-            if(user.getSupplierclassification()!= null)
-                invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role, invoicenumber, poid, suppliername, user.getSupplierclassification());
+            if(user.getSubadminClassification()!= null)
+                invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role, invoicenumber, poid, suppliername, user.getSubadminClassification());
             else
                 return  new ResponseEntity("this sub-admin have not any classification yet", HttpStatus.NOT_FOUND);
 
