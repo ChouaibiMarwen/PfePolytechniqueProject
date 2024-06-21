@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.Department;
+import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.RoleDepartment;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
@@ -15,6 +16,7 @@ import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.DepartmentService;
+import com.camelsoft.rayaserver.Services.Project.PurshaseOrderService;
 import com.camelsoft.rayaserver.Services.Project.RoleDepartmentService;
 import com.camelsoft.rayaserver.Services.Project.SupplierClassificationService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
@@ -68,6 +70,8 @@ public class SubAdminController extends BaseController {
     @Autowired
     private SupplierClassificationService classificationService;
 
+    @Autowired
+    private PurshaseOrderService purshaseOrderService;
 
 
     @GetMapping(value = {"/search_admin"})
@@ -198,10 +202,13 @@ public class SubAdminController extends BaseController {
     //api to update or delete sub admin classification
     @PatchMapping(value = {"/update_sub_admin_classification/{sub_admin_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
-    public ResponseEntity<users> add_sub_admin(@PathVariable Long sub_admin_id ,@RequestParam(required = false) Long classification_id) throws IOException, InterruptedException {
+    public ResponseEntity<users> add_sub_admin(@PathVariable Long sub_admin_id , @RequestParam Long other_sub_admin_id, @RequestParam(required = false) Long classification_id) throws IOException, InterruptedException {
         users user = userService.findById(sub_admin_id);
         if(user == null)
             return new ResponseEntity("sub admin not found", HttpStatus.NOT_FOUND);
+        users othersubadmin = userService.findById(other_sub_admin_id);
+        if(user == null)
+            return new ResponseEntity("other sub admin not found", HttpStatus.NOT_FOUND);
 
         if(classification_id == null){
             user.setSubadminClassification(null);
@@ -210,9 +217,16 @@ public class SubAdminController extends BaseController {
 
             if (classresult == null)
                 return new ResponseEntity("classification not found with id: " + classification_id, HttpStatus.NOT_FOUND);
-
             user.setSubadminClassification(classresult);
         }
+
+        List<PurshaseOrder> polist = this.purshaseOrderService.getPoListByAssignedSubAdmin(user);
+        for(PurshaseOrder p : polist){
+            user.getPoassigned().remove(p);
+            p.setSubadminassignedto(othersubadmin);
+            this.purshaseOrderService.Update(p);
+        }
+
         user =  userService.UpdateUser(user);
         return new ResponseEntity(user, HttpStatus.OK);
     }

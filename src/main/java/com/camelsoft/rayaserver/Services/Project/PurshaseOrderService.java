@@ -382,5 +382,10 @@ public class PurshaseOrderService {
     }
 
 
+    public List<PurshaseOrder> getPoListByAssignedSubAdmin(users subadmin){
+        return this.repository.findBySubadminassignedtoAndAndArchiveIsFalse(subadmin);
+    }
+
+
 
 }

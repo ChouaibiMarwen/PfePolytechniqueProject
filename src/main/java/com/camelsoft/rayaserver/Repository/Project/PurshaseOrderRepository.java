@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.users;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -70,4 +71,6 @@ public interface PurshaseOrderRepository extends JpaRepository<PurshaseOrder, Lo
 
     Integer countByArchiveIsFalseAndCustomerIsNotNull();
     Integer countByArchiveIsFalseAndSupplierIsNotNull();
+
+    List<PurshaseOrder> findBySubadminassignedtoAndAndArchiveIsFalse(users subadmin);
 }
