@@ -401,12 +401,12 @@ public class UserService extends BaseController implements UserDetailsService {
     }
 
 
-    public List<users> getUsersByRoles(Set<RoleEnum> roleEnums) {
+    public List<users> getUsersByRoles(List<RoleEnum> roleEnums) {
         try {
-            Set<Role> roles = roleEnums.stream()
+            List<Role> roles = roleEnums.stream()
                     .map(roleRepository::findByRole)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
             if (roles.isEmpty()) {
                 return Collections.emptyList();
