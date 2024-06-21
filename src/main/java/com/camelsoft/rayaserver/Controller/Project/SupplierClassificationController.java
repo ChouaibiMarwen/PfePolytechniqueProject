@@ -184,6 +184,7 @@ public class SupplierClassificationController extends BaseController {
                     return new ResponseEntity("User not found with this id :" + id, HttpStatus.NOT_FOUND);
                 if(u.getSupplier() == null)
                     return new ResponseEntity("this id: "+ id +  " does not belong to supplier:" + id, HttpStatus.NOT_FOUND);
+                u.setSupplierclassification(classification);
                 classification.getSuppliers().add(u);
             }
         }
@@ -291,7 +292,6 @@ public class SupplierClassificationController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
     @PatchMapping(value = {"/delete_classification/{classification_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "delete category by id for admin ", notes = "Endpoint to delete classification by id")
@@ -319,7 +319,6 @@ public class SupplierClassificationController extends BaseController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
     @PatchMapping("/add_sub_admins_to_classification/{classification_id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
