@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
@@ -290,6 +291,7 @@ public class SupplierClassificationController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+
     @PatchMapping(value = {"/delete_classification/{classification_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "delete category by id for admin ", notes = "Endpoint to delete classification by id")
@@ -317,4 +319,51 @@ public class SupplierClassificationController extends BaseController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
+    @PatchMapping("/add_sub_admins_to_classification/{classification_id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "Update an existing category", notes = "Endpoint to update an existing classification for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated the category"),
+            @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Category not found")
+    })
+    public ResponseEntity<SuppliersClassification> add_sub_admin_to_classification(@PathVariable Long classification_id,@RequestParam List<Long> usersIds) {
+        users currentUser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentUser == null)
+            return new ResponseEntity("Current user not found", HttpStatus.NOT_FOUND);
+
+        SuppliersClassification classification = this.service.FindById(classification_id);
+        if (classification == null)
+            return new ResponseEntity("classification not found with id: " + classification_id, HttpStatus.NOT_FOUND);
+
+        if (usersIds != null && !usersIds.isEmpty()){
+            for(Long id : usersIds){
+                users u = this.userService.findById(id);
+                if(u == null)
+                    return new ResponseEntity("User not found with this id :" + id, HttpStatus.NOT_FOUND);
+                if(u.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN)
+                    return new ResponseEntity("this id: "+ id +  " is not a sub admin:" + id, HttpStatus.NOT_FOUND);
+                if(u.getSupplierclassification() != null)
+                    return new ResponseEntity("this id: "+ id +  " already have classification : " + u.getSupplierclassification().getName(), HttpStatus.NOT_FOUND);
+                u.setSupplierclassification(classification);
+                this.userService.UpdateUser(u);
+            }
+
+        }
+
+       // SuppliersClassification result = this.service.Update(classification);
+
+        // Save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIERS_CLASSIFICATION_MANAGEMENT,
+                currentUser
+        );
+        this.userActionService.Save(action);
+
+        return new ResponseEntity<>(classification, HttpStatus.OK);
+    }
+
 }
