@@ -198,7 +198,7 @@ public class SubAdminController extends BaseController {
     //api to update or delete sub admin classification
     @PatchMapping(value = {"/update_sub_admin_classification/{sub_admin_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
-    public ResponseEntity<users> add_sub_admin(@PathVariable Long sub_admin_id ,@RequestParam Long classification_id) throws IOException, InterruptedException {
+    public ResponseEntity<users> add_sub_admin(@PathVariable Long sub_admin_id ,@RequestParam(required = false) Long classification_id) throws IOException, InterruptedException {
         users user = userService.findById(sub_admin_id);
         if(user == null)
             return new ResponseEntity("sub admin not found", HttpStatus.NOT_FOUND);
