@@ -32,7 +32,7 @@ public interface UserRepository extends JpaRepository<users, Long> {
     users findByUsername(String username);
     users findTopByOrderByIdDesc();
 
-    List<users> findByRoleAndSupplierclassificationAndActiveIsTrue(Role role, SuppliersClassification classification);
+    List<users> findByRoleAndSubadminClassificationAndActiveIsTrue(Role role, SuppliersClassification classification);
 
 
     users findByRole(Role role);

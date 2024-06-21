@@ -180,7 +180,7 @@ public class SubAdminController extends BaseController {
             SuppliersClassification classification = this.classificationService.FindById(request.getIdclassification());
             if(classification == null)
                 return new ResponseEntity("classification not found with id: " + request.getIdclassification(), HttpStatus.NOT_FOUND);
-            user.setSupplierclassification(classification);
+            user.setSubadminClassification(classification);
         }
 
         // Save the user

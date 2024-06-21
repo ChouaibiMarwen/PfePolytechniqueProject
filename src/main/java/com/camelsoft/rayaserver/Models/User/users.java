@@ -157,6 +157,11 @@ public class users implements Serializable {
     private SuppliersClassification supplierclassification;
 
     @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "subadmin_classification_id")
+    private SuppliersClassification subadminClassification;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "subadminassignedto", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<PurshaseOrder> poassigned = new HashSet<>();
 
@@ -527,5 +532,13 @@ public class users implements Serializable {
     public void addUsersPrivilege(Privilege privilege) {
         privileges.add(privilege);
         privilege.getUser().add(this);
+    }
+
+    public SuppliersClassification getSubadminClassification() {
+        return subadminClassification;
+    }
+
+    public void setSubadminClassification(SuppliersClassification subadminClassification) {
+        this.subadminClassification = subadminClassification;
     }
 }
