@@ -51,8 +51,6 @@ public class SupplierClassificationService {
 
     public DynamicResponse FindAllPg(int page, int size) {
         try {
-
-
             PageRequest pg = PageRequest.of(page, size);
             Page<SuppliersClassification> pckge = this.repository.findByArchiveIsFalse(pg);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());

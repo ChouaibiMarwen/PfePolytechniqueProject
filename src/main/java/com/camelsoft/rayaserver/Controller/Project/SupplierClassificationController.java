@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
+import com.camelsoft.rayaserver.Models.DTO.SupplierClassififcationDto;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
@@ -52,15 +53,19 @@ public class SupplierClassificationController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<List<SuppliersClassification>> all_categories_by_name(@RequestParam(required = false) String name) throws IOException {
+    public ResponseEntity<List<SupplierClassififcationDto>> all_categories_by_name(@RequestParam(required = false) String name) throws IOException {
         users user = userService.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
-        List<SuppliersClassification> result = new ArrayList<>();
+        List<SupplierClassififcationDto> result = new ArrayList<>();
         if (name == null) {
-            result = this.service.FindAll();
+            result = this.service.FindAll().stream()
+                    .map(SupplierClassififcationDto::supplierClassififcationDtolassToDto)
+                    .collect(Collectors.toList());
         } else {
-            result = this.service.FindAllByNameList(name);
+            result = this.service.FindAllByNameList(name).stream()
+                    .map(SupplierClassififcationDto::supplierClassififcationDtolassToDto)
+                    .collect(Collectors.toList());;
         }
 
         //save new action
@@ -137,15 +142,16 @@ public class SupplierClassificationController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<SuppliersClassification> classification_by_id(@PathVariable Long classification_id) throws IOException {
+    public ResponseEntity<SupplierClassififcationDto> classification_by_id(@PathVariable Long classification_id) throws IOException {
         users currentUser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentUser == null)
             return new ResponseEntity("Current user not found", HttpStatus.NOT_FOUND);
 
-        SuppliersClassification classification = this.service.FindById(classification_id);
-        if (classification == null)
+        SuppliersClassification classresult = this.service.FindById(classification_id);
+
+        if (classresult == null)
             return new ResponseEntity("classification not found with id: " + classification_id, HttpStatus.NOT_FOUND);
-        this.service.Update(classification);
+        SupplierClassififcationDto classification = SupplierClassififcationDto.supplierClassififcationDtolassToDto(classresult);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.SUPPLIERS_CLASSIFICATION_MANAGEMENT,
@@ -164,7 +170,7 @@ public class SupplierClassificationController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<SuppliersClassification> add_category(@ModelAttribute SupplierClassRequest request) throws IOException {
+    public ResponseEntity<SupplierClassififcationDto> add_category(@ModelAttribute SupplierClassRequest request) throws IOException {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
 
         if (request.getName() == null)
@@ -188,7 +194,8 @@ public class SupplierClassificationController extends BaseController {
                 classification.getSuppliers().add(u);
             }
         }
-        SuppliersClassification result = this.service.Save(classification);
+        SuppliersClassification classresult = this.service.Save(classification);
+        SupplierClassififcationDto result = SupplierClassififcationDto.supplierClassififcationDtolassToDto(classresult);
 
         //save new action
         UserAction action = new UserAction(
@@ -207,7 +214,7 @@ public class SupplierClassificationController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Category not found")
     })
-    public ResponseEntity<SuppliersClassification> update_category(@PathVariable Long classification_id, @ModelAttribute SupplierClassRequest request) {
+    public ResponseEntity<SupplierClassififcationDto> update_category(@PathVariable Long classification_id, @ModelAttribute SupplierClassRequest request) {
         users currentUser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentUser == null)
             return new ResponseEntity("Current user not found", HttpStatus.NOT_FOUND);
@@ -241,7 +248,8 @@ public class SupplierClassificationController extends BaseController {
 
         }
 
-        SuppliersClassification result = this.service.Update(classification);
+        SuppliersClassification classresult = this.service.Update(classification);
+        SupplierClassififcationDto result = SupplierClassififcationDto.supplierClassififcationDtolassToDto(classresult);
 
         // Save new action
         UserAction action = new UserAction(
@@ -262,7 +270,7 @@ public class SupplierClassificationController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Category not found")
     })
-    public ResponseEntity<SuppliersClassification> update_category(@PathVariable Long classification_id,@RequestParam List<Long> usersIds) {
+    public ResponseEntity<SupplierClassififcationDto> update_category(@PathVariable Long classification_id,@RequestParam List<Long> usersIds) {
         users currentUser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentUser == null)
             return new ResponseEntity("Current user not found", HttpStatus.NOT_FOUND);
@@ -286,7 +294,8 @@ public class SupplierClassificationController extends BaseController {
 
         }
 
-        SuppliersClassification result = this.service.Update(classification);
+        SuppliersClassification classresult = this.service.Update(classification);
+        SupplierClassififcationDto result = SupplierClassififcationDto.supplierClassififcationDtolassToDto(classresult);
 
         // Save new action
         UserAction action = new UserAction(
