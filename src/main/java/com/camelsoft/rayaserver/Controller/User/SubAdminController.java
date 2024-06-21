@@ -195,8 +195,26 @@ public class SubAdminController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    //api to update or delete sub admin classification
+    @PatchMapping(value = {"/update_sub_admin_classification/{sub_admin_id}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    public ResponseEntity<users> add_sub_admin(@PathVariable Long sub_admin_id ,@RequestParam Long classification_id) throws IOException, InterruptedException {
+        users user = userService.findById(sub_admin_id);
+        if(user == null)
+            return new ResponseEntity("sub admin not found", HttpStatus.NOT_FOUND);
 
+        if(classification_id == null){
+            user.setSubadminClassification(null);
+        }else{
+            SuppliersClassification classresult = this.classificationService.FindById(classification_id);
 
+            if (classresult == null)
+                return new ResponseEntity("classification not found with id: " + classification_id, HttpStatus.NOT_FOUND);
 
+            user.setSubadminClassification(classresult);
+        }
+        user =  userService.UpdateUser(user);
+        return new ResponseEntity(user, HttpStatus.OK);
+    }
 
 }
