@@ -220,6 +220,7 @@ public class SubAdminController extends BaseController {
             user.setSubadminClassification(classresult);
         }
 
+        //update all po assigned to sub admin and set it to the other sub admin
         List<PurshaseOrder> polist = this.purshaseOrderService.getPoListByAssignedSubAdmin(user);
         for(PurshaseOrder p : polist){
             user.getPoassigned().remove(p);

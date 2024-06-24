@@ -325,7 +325,7 @@ public class CriteriaService {
         }
     }*/
 
-    public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, List<RoleEnum> role, Integer invoicenumber, Long poid, String suppliername, SuppliersClassification classification) {
+    public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, List<RoleEnum> role, Integer invoicenumber, Long poid, String suppliername, users assignedto) {
         try {
             // Prepare criteria builder and query
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -361,9 +361,9 @@ public class CriteriaService {
                 predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("id"), poid));
             }
 
-            // Apply classification filter if present
-            if (classification != null) {
-                predicates.add(criteriaBuilder.equal(invoiceRoot.get("createdby").get("supplierclassification"), classification));
+            if (assignedto != null) {
+                Join<Invoice, PurshaseOrder> purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
+                predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("subadminassignedto"), assignedto));
             }
 
 

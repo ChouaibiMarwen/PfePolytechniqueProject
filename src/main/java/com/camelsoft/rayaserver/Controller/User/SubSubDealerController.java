@@ -146,12 +146,6 @@ public class SubSubDealerController extends BaseController {
         user.setEmail(request.getEmail().toLowerCase());
         user.setPassword(request.getPassword());
         user.setPersonalinformation(resultinformation);
-       /* if (!this.filesStorageService.checkformat(file))
-            return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
-        File_model resource_media = filesStorageService.save_file_local(file, "profile");
-        if (resource_media == null)
-            return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
-        user.setProfileimage(resource_media);*/
         // Save the user
         users result = userService.saveSubSubDealer(user);
         //save new action
