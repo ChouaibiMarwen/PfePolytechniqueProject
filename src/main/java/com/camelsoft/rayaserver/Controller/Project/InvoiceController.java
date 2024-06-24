@@ -699,7 +699,6 @@ public class InvoiceController extends BaseController {
 
 
     }
-
     @GetMapping(value = {"/user_all_invoices/{user_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get user's invoices", notes = "Endpoint to get invoice")
@@ -727,7 +726,6 @@ public class InvoiceController extends BaseController {
 
 
     }
-
     @GetMapping(value = {"/get_my_invoices"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or  hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get user's invoices", notes = "Endpoint to get invoice")
@@ -820,8 +818,6 @@ public class InvoiceController extends BaseController {
         return new ResponseEntity<>(report, HttpStatus.OK);
 
     }
-
-
     @GetMapping(value = {"/invoice_report_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all invoice by status for admin", notes = "Endpoint to invoices reportfor supplier")
@@ -863,7 +859,6 @@ public class InvoiceController extends BaseController {
         return new ResponseEntity<>(report, HttpStatus.OK);
 
     }
-
 
     @PatchMapping(value = {"/add_refund_invoice/{idInvoice}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
@@ -940,7 +935,6 @@ public class InvoiceController extends BaseController {
 
     }
 
-
     @PatchMapping(value = {"/reject_invoice/{idInvoice}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to reject invoice for admin")
@@ -975,7 +969,6 @@ public class InvoiceController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
-
 
     @PatchMapping(value = {"/paid_invoice/{idInvoice}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
