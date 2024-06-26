@@ -401,6 +401,15 @@ public class UserService extends BaseController implements UserDetailsService {
     }
 
 
+    public List<users> allusers() {
+        try {
+            return this.userRepository.findByDeletedIsFalseAndActiveIsTrue();
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("hourbor id not found data");
+        }
+    }
+
+
     public List<users> getUsersByRoles(List<RoleEnum> roleEnums) {
         try {
             List<Role> roles = roleEnums.stream()
