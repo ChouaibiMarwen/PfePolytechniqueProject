@@ -8,6 +8,7 @@ import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
+import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
@@ -21,6 +22,7 @@ import com.camelsoft.rayaserver.Request.auth.SupplierSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.Country.CountriesServices;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
+import com.camelsoft.rayaserver.Services.Project.SupplierClassificationService;
 import com.camelsoft.rayaserver.Services.Tools.AddressServices;
 import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
@@ -74,6 +76,9 @@ public class SupplierController extends BaseController {
     private CriteriaService criteriaService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
+
+    @Autowired
+    private SupplierClassificationService classificationService;
 
     @Autowired
     private PrivilegeService privilegeService;
@@ -183,6 +188,15 @@ public class SupplierController extends BaseController {
                 return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
             user.setProfileimage(resource_media);
         }*/
+
+        // add classification to supplier if founded idsupplierclassification
+        if(request.getIdsupplierclassification() != null){
+            SuppliersClassification classification = this.classificationService.FindById(request.getIdsupplierclassification());
+            if(classification == null)
+                return new ResponseEntity("classification not found with id: " + request.getIdsupplierclassification(), HttpStatus.NOT_FOUND);
+            user.setSupplierclassification(classification);
+        }
+
         users result = userService.saveSupplier(user);
         BillingAddress billingAddress = new BillingAddress();
         if(request.getBillingaddressRequest()!=null){
@@ -357,6 +371,30 @@ public class SupplierController extends BaseController {
         // if the curent user is admin, he will get all list without classifications
         return new ResponseEntity<>(this.suppliersServices.getAllSuppliersHavingAvailbalVeheclesStock(page, size), HttpStatus.OK);
 
+    }
+
+
+    //api to update or delete supplier classification classification
+    @PatchMapping(value = {"/update_supplier_classification/{supplier_id}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    public ResponseEntity<users> add_sub_admin(@PathVariable Long supplier_id ,@RequestParam(required = false) Long classification_id) throws IOException, InterruptedException {
+        users user = userService.findById(supplier_id);
+        if(user == null)
+            return new ResponseEntity("sub admin not found", HttpStatus.NOT_FOUND);
+
+        if(classification_id == null){
+            user.setSupplierclassification(null);
+        }else{
+            SuppliersClassification classresult = this.classificationService.FindById(classification_id);
+
+            if (classresult == null)
+                return new ResponseEntity("classification not found with id: " + classification_id, HttpStatus.NOT_FOUND);
+            user.setSupplierclassification(classresult);
+        }
+
+
+        user =  userService.UpdateUser(user);
+        return new ResponseEntity(user, HttpStatus.OK);
     }
 
 

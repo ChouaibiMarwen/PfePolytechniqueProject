@@ -12,12 +12,14 @@ import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.Supplier;
+import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Models.country.Root;
 import com.camelsoft.rayaserver.Models.country.State;
 import com.camelsoft.rayaserver.Request.auth.SupplierSingUpRequest;
 import com.camelsoft.rayaserver.Services.Country.CountriesServices;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
+import com.camelsoft.rayaserver.Services.Project.SupplierClassificationService;
 import com.camelsoft.rayaserver.Services.Tools.AddressServices;
 import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
@@ -74,6 +76,10 @@ public class SubDealerController extends BaseController {
 
     @Autowired
     private PrivilegeService privilegeService;
+
+    @Autowired
+    private SupplierClassificationService classificationService;
+
     private static final List<String> adminPrivileges = Arrays.asList("USER_READ", "SUPPLIER_READ", "USER_WRITE", "SUPPLIER_WRITE", "SUB_ADMIN_READ", "SUB_ADMIN_WRITE", "CUSTOMER_READ", "CUSTOMER_WRITE", "AGENT_READ", "AGENT_WRITE", "EVENT_WRITE");
 
     @PostMapping(value = {"/add"})
@@ -174,6 +180,16 @@ public class SubDealerController extends BaseController {
             }*/
             user.getPrivileges().add(privilege);
         }
+
+        // add classification to supplier if founded idsupplierclassification
+        if(request.getIdsupplierclassification() != null){
+            SuppliersClassification classification = this.classificationService.FindById(request.getIdsupplierclassification());
+            if(classification == null)
+                return new ResponseEntity("classification not found with id: " + request.getIdsupplierclassification(), HttpStatus.NOT_FOUND);
+            user.setSupplierclassification(classification);
+        }
+
+
         users result = userService.saveSubDealer(user);
         BillingAddress billingAddress = new BillingAddress();
         if(request.getBillingaddressRequest()!=null){
