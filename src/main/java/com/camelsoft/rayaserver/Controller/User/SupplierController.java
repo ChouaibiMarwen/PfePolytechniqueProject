@@ -399,8 +399,14 @@ public class SupplierController extends BaseController {
             user.setSupplierclassification(classresult);
         }
 
-
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         user =  userService.UpdateUser(user);
+
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIERS_CLASSIFICATION_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
         return new ResponseEntity(user, HttpStatus.OK);
     }
 
