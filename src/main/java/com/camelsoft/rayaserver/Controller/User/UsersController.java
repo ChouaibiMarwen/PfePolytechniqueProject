@@ -278,7 +278,7 @@ public class UsersController extends BaseController {
 
     @GetMapping(value = {"/users_list"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
-    @ApiOperation(value = "get all users's short form for admin", notes = "Endpoint to get users")
+    @ApiOperation(value = "get all users' short form for admin", notes = "Endpoint to get users")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
     })
