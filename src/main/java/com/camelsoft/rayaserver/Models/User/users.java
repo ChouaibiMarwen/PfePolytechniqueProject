@@ -219,7 +219,9 @@ public class users implements Serializable {
         if(subadminClassification != null){
             idsubadminclassification = subadminClassification.getId();
             namesubadminclassification = subadminClassification.getName();
-        } if(supplierclassification != null){
+
+        }
+        if(supplierclassification != null){
             supplierclassificationname = supplierclassification.getName();
         }
     }

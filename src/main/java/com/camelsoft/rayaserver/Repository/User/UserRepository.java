@@ -32,7 +32,8 @@ public interface UserRepository extends JpaRepository<users, Long> {
     users findByUsername(String username);
     users findTopByOrderByIdDesc();
 
-    List<users> findByRoleAndSubadminClassificationAndActiveIsTrue(Role role, SuppliersClassification classification);
+    List<users> findByRoleAndSubadminClassificationAndActiveIsTrueAndDeletedIsFalse(Role role, SuppliersClassification classification);
+    List<users> findByRoleAndSubadminClassificationOrSubadminClassificationIsNullAndActiveIsTrueAndDeletedIsFalse(Role role, SuppliersClassification classification);
     Integer countByRoleAndSubadminClassificationAndActiveIsTrue(Role role, SuppliersClassification classification);
 
 
