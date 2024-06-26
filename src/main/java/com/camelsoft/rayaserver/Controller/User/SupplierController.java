@@ -380,11 +380,18 @@ public class SupplierController extends BaseController {
     public ResponseEntity<users> add_sub_admin(@PathVariable Long supplier_id ,@RequestParam(required = false) Long classification_id) throws IOException, InterruptedException {
         users user = userService.findById(supplier_id);
         if(user == null)
-            return new ResponseEntity("sub admin not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("supplier is not found", HttpStatus.NOT_FOUND);
+
+        //old user classification if founded
+        SuppliersClassification c = user.getSubadminClassification();
+        if(c != null)
+            c.getSuppliers().remove(user);
 
         if(classification_id == null){
+
             user.setSupplierclassification(null);
         }else{
+            //new classification
             SuppliersClassification classresult = this.classificationService.FindById(classification_id);
 
             if (classresult == null)
