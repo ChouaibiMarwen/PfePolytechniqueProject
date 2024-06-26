@@ -418,6 +418,24 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
+    public List<users> getSuppliersByRolesAndWithoutClassification() {
+        try {
+            List<RoleEnum> roleEnums = Arrays.asList(RoleEnum.ROLE_SUPPLIER, RoleEnum.ROLE_SUB_DEALER);
+            List<Role> roles = roleEnums.stream()
+                    .map(roleRepository::findByRole)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            if (roles.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            return userRepository.findByRoleInAndSupplierclassificationIsNullAndDeletedIsFalse(roles);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
 
     public users findbyemail(String email) {
         try {

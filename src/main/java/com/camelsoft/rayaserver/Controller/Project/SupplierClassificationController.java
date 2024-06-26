@@ -133,6 +133,27 @@ public class SupplierClassificationController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping(value = {"/suppliers_without_classification_list"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "get all suppliers classification for admin by name", notes = "Endpoint to get suppliers classification list by name and character")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<List<UserShortDto>> suppliers_without_classification_list() throws IOException {
+        users currentuser = this.userService.findByUserName(getCurrentUser().getUsername());
+        List<UserShortDto> shortuser = this.userService.getSuppliersByRolesAndWithoutClassification()
+                .stream().map(UserShortDto::mapToUserShortDTO).collect(Collectors.toList());
+
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.USERS_CATEGORIES_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(shortuser, HttpStatus.OK);
+    }
 
     @GetMapping(value = {"/all_suppliers_classifications_pg_by_name"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
