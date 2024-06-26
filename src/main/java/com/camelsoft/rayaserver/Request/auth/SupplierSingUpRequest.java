@@ -17,6 +17,7 @@ public class SupplierSingUpRequest {
     private PersonalInformationRequest informationRequest;
     private AddressRequest useraddressRequest;
     private AddressRequest billingaddressRequest;
+    private Long idsupplierclassification;
 
     public SupplierSingUpRequest() {
     }
