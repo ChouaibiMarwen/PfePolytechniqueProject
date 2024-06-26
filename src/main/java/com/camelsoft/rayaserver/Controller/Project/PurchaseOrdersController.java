@@ -161,11 +161,14 @@ public class PurchaseOrdersController  extends BaseController {
             if(subadmin.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN)
                 return new ResponseEntity("can't assign this po to a non sub-admin ", HttpStatus.NOT_ACCEPTABLE);
             // check if po's supplier classification is the dame as the sub admin classification
-            if(!Objects.equals(purchaseOrder.getSupplier().getUser().getSupplierclassification().getId(), subadmin.getSupplierclassification().getId()))
-                return new ResponseEntity("Sub-admin classification is different from supplier classification", HttpStatus.NOT_ACCEPTABLE);
+            /*if(!Objects.equals(purchaseOrder.getSupplier().getUser().getSupplierclassification().getId(), subadmin.getSupplierclassification().getId()))
+                return new ResponseEntity("Sub-admin classification is different from supplier classification", HttpStatus.NOT_ACCEPTABLE);*/
+            users user = purchaseOrder.getSubadminassignedto();
+            if(user != null){
+                user.getPoassigned().remove(purchaseOrder);
+            }
             purchaseOrder.setSubadminassignedto(subadmin);
         }
-
         PurshaseOrder po = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto purchaseOrderDto = PurchaseOrderDto.PurchaseOrderToDto(po);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());

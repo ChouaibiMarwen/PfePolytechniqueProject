@@ -136,6 +136,16 @@ public class InvoiceService {
     }
 
 
+    public List<Invoice> findAllByDueDateAndArchiveIsFalse(Date duedate) {
+        try {
+            return this.repository.findByDuedateAndArchiveIsFalse(duedate);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+
     public boolean ExistById(Long id) {
         try {
             return this.repository.existsById(id);

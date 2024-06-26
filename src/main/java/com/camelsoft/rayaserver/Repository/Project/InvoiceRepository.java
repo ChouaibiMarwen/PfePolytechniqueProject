@@ -32,6 +32,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     List<Invoice> findAllByCreatedby(users user);
     List<Invoice> findAllByCreatedby_Role_RoleIn(List<RoleEnum> role);
     List<Invoice> findAllByRelatedto(users user);
+    List<Invoice> findByDuedateAndArchiveIsFalse(Date duedate);
 
     @Query("SELECT SUM(p.subtotal) FROM Invoice i JOIN i.products p WHERE i.invoicedate BETWEEN :startDate AND :endDate AND i.status = 'PAID'")
     Double sumSubtotalOfProductsByInvoiceDateBetween(Date startDate, Date endDate);
