@@ -259,7 +259,7 @@ public class PurchaseOrdersController  extends BaseController {
 
     @GetMapping(value = {"/all_purchase_orders_by_status_and_date_and_vehicle_and_supplier"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    @ApiOperation(value = "get all purchase orders by status and date and vehicle and supplier  for admin", notes = "Endpoint to get purchase orders by status and date and vehicle and supplier for admin ")
+    @ApiOperation(value = "all pos by status,date,vehicle and supplier  for admin", notes = "Endpoint to get purchase orders by status and date and vehicle and supplier for admin ")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request"),
