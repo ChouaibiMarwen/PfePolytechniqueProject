@@ -366,7 +366,7 @@ public class SupplierController extends BaseController {
             if(classification != null)
                 return new ResponseEntity<>(this.suppliersServices.getAllSuppliersHavingAvailbalVeheclesStockForSubAdminWithClassification(page, size, classification), HttpStatus.OK);
             else
-                return  new ResponseEntity("this sub-admin have not any classification yet", HttpStatus.NOT_FOUND);
+                return  new ResponseEntity("this sub-admin have not any classification yet", HttpStatus.NOT_ACCEPTABLE);
         }
         // if the curent user is admin, he will get all list without classifications
         return new ResponseEntity<>(this.suppliersServices.getAllSuppliersHavingAvailbalVeheclesStock(page, size), HttpStatus.OK);
