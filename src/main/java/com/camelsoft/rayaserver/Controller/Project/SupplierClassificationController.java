@@ -412,7 +412,7 @@ public class SupplierClassificationController extends BaseController {
                 if(u.getRole().getRole() != RoleEnum.ROLE_SUB_ADMIN)
                     return new ResponseEntity("this id: "+ id +  " is not a sub admin:" + id, HttpStatus.NOT_FOUND);
                 if(u.getSubadminClassification() != null && !u.getSubadminClassification().getArchive())
-                    return new ResponseEntity("this id: "+ id +  " already have classification : " + u.getSupplierclassification().getName(), HttpStatus.NOT_FOUND);
+                    return new ResponseEntity("this id: "+ id +  " already have classification : ", HttpStatus.NOT_FOUND);
                 u.setSubadminClassification(classification);
                 this.userService.UpdateUser(u);
             }
