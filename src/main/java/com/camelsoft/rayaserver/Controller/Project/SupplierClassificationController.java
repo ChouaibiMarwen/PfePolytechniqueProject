@@ -107,7 +107,7 @@ public class SupplierClassificationController extends BaseController {
 
     @GetMapping(value = {"/available_classification/{id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
-    @ApiOperation(value = "get all suppliers classification for admin by name", notes = "Endpoint to get suppliers classification list by name and character")
+    @ApiOperation(value = "all subadmins with classification or null class for admin", notes = "all subadmins with classification or null class for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request"),

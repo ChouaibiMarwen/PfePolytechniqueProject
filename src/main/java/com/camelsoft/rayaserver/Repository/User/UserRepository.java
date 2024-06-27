@@ -33,7 +33,10 @@ public interface UserRepository extends JpaRepository<users, Long> {
     users findTopByOrderByIdDesc();
 
     List<users> findByRoleAndSubadminClassificationAndActiveIsTrueAndDeletedIsFalse(Role role, SuppliersClassification classification);
-    List<users> findByRoleAndSubadminClassificationOrSubadminClassificationIsNullAndActiveIsTrueAndDeletedIsFalse(Role role, SuppliersClassification classification);
+
+    @Query("SELECT u FROM users u WHERE u.role = :role AND (u.subadminClassification = :classification OR u.subadminClassification IS NULL) AND u.active = true AND u.deleted = false")
+    List<users> findByRoleAndSubadminClassificationOrSubadminClassificationIsNullAndActiveIsTrueAndDeletedIsFalse(Role role,SuppliersClassification classification
+    );
     Integer countByRoleAndSubadminClassificationAndActiveIsTrue(Role role, SuppliersClassification classification);
 
 
