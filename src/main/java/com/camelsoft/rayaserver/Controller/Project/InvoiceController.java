@@ -84,7 +84,7 @@ public class InvoiceController extends BaseController {
             if(user.getSubadminClassification()!= null)
                 invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role, invoicenumber, poid, suppliername, user);
             else
-                return  new ResponseEntity("this sub-admin have not any classification yet", HttpStatus.NOT_FOUND);
+                return  new ResponseEntity("this sub-admin have not any classification yet", HttpStatus.NOT_ACCEPTABLE);
 
         }else{
             // if the current user is admin , he get all invoices list
