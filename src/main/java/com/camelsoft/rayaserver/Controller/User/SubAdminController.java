@@ -225,7 +225,12 @@ public class SubAdminController extends BaseController {
         for(PurshaseOrder p : polist){
             user.getPoassigned().remove(p);
             p.setSubadminassignedto(othersubadmin);
+            othersubadmin.getPoassigned().add(p);
             this.purshaseOrderService.Update(p);
+        }
+        if(othersubadmin.getSubadminClassification() == null){
+            othersubadmin.setSubadminClassification(user.getSubadminClassification());
+            this.userService.UpdateUser(othersubadmin);
         }
 
         user =  userService.UpdateUser(user);
