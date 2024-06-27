@@ -284,7 +284,11 @@ public class SupplierClassificationController extends BaseController {
             classification.setDescription(request.getDescription());
 
         if (request.getUsersId() != null && !request.getUsersId().isEmpty()){
-            classification.getSuppliers().clear();
+            for(users suppuser : classification.getSuppliers()){
+                suppuser.setSupplierclassification(null);
+                classification.getSuppliers().remove(suppuser);
+                this.userService.UpdateUser(suppuser);
+            }
             for(Long id : request.getUsersId()){
                 users u = this.userService.findById(id);
                 if(u == null)
