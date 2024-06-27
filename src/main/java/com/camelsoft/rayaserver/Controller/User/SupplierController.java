@@ -388,8 +388,9 @@ public class SupplierController extends BaseController {
             c.getSuppliers().remove(user);
 
         if(classification_id == null){
-
             user.setSupplierclassification(null);
+
+
         }else{
             //new classification
             SuppliersClassification classresult = this.classificationService.FindById(classification_id);
@@ -399,6 +400,14 @@ public class SupplierController extends BaseController {
             user.setSupplierclassification(classresult);
         }
         users  resultuser =  userService.UpdateUser(user);
+        //manually set the postLoad values in the first return
+        if (resultuser.getSupplierclassification() == null) {
+            resultuser.getSupplier().setClassificationId(null);
+            resultuser.getSupplier().setClassificationname(null);
+        }else{
+            resultuser.getSupplier().setClassificationId(resultuser.getSupplierclassification().getId());
+            resultuser.getSupplier().setClassificationname(resultuser.getSupplierclassification().getName());
+        }
 
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         UserAction action = new UserAction(
