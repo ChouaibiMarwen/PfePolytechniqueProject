@@ -168,8 +168,6 @@ public class users implements Serializable {
     @Transient
     private String supplierCompanyName;
 
-    @Transient
-    private String supplierclassificationname;
 
     @Transient
     private Long idsubadminclassification;
@@ -222,7 +220,8 @@ public class users implements Serializable {
 
         }
         if(supplierclassification != null){
-            supplierclassificationname = supplierclassification.getName();
+            this.supplier.setClassificationname(supplierclassification.getName());
+            this.supplier.setClassificationId(supplierclassification.getId());
         }
     }
 
@@ -575,4 +574,5 @@ public class users implements Serializable {
     public void setNamesubadminclassification(String namesubadminclassification) {
         this.namesubadminclassification = namesubadminclassification;
     }
+
 }

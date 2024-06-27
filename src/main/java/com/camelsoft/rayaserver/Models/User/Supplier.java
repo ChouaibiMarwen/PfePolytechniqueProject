@@ -80,6 +80,9 @@ public class Supplier implements Serializable {
     @Transient
     private String classificationname;
 
+    @Transient
+    private Long classificationId;
+
     @PostLoad
     private void afterLoad() {
         if (user != null) {
@@ -89,6 +92,11 @@ public class Supplier implements Serializable {
             }
             if (user.getName() != null) {
                 name = user.getName();
+            }
+
+            if(user.getSupplierclassification() != null){
+                classificationId = user.getSupplierclassification().getId();
+                classificationname = user.getSupplierclassification().getName();
             }
         }
         if (this.vehicles != null) {
@@ -252,5 +260,13 @@ public class Supplier implements Serializable {
 
     public void setClassificationname(String classificationname) {
         this.classificationname = classificationname;
+    }
+
+    public Long getClassificationId() {
+        return classificationId;
+    }
+
+    public void setClassificationId(Long classificationId) {
+        this.classificationId = classificationId;
     }
 }
