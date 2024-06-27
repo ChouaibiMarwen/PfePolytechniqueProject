@@ -398,16 +398,15 @@ public class SupplierController extends BaseController {
                 return new ResponseEntity("classification not found with id: " + classification_id, HttpStatus.NOT_FOUND);
             user.setSupplierclassification(classresult);
         }
+        users  resultuser =  userService.UpdateUser(user);
 
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        user =  userService.UpdateUser(user);
-
         UserAction action = new UserAction(
                 UserActionsEnum.SUPPLIERS_CLASSIFICATION_MANAGEMENT,
                 currentuser
         );
         this.userActionService.Save(action);
-        return new ResponseEntity(user, HttpStatus.OK);
+        return new ResponseEntity(resultuser, HttpStatus.OK);
     }
 
 

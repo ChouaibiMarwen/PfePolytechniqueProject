@@ -338,7 +338,7 @@ public class SupplierClassificationController extends BaseController {
                 if(u.getSupplier() == null)
                     return new ResponseEntity("this id: "+ id +  " does not belong to supplier:" + id, HttpStatus.NOT_FOUND);
                 if(u.getSupplierclassification() != null)
-                    return new ResponseEntity("this supplier with id: " +u.getId()+ " aalready have a classification", HttpStatus.NOT_ACCEPTABLE);
+                    return new ResponseEntity("this supplier with id: " +u.getId()+ " is already have a classification", HttpStatus.NOT_ACCEPTABLE);
                 u.setSupplierclassification(classification);
                 classification.getSuppliers().add(u);
             }
