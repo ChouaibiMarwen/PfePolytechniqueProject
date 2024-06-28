@@ -142,6 +142,12 @@ public class PurchaseOrdersController  extends BaseController {
         return  new ResponseEntity<>(purchaseOrderDto, HttpStatus.OK);
     }
 
+    @PatchMapping(value = "manualUpdates")
+    public Integer updateallassignedtoPurchases(){
+        return  this.purshaseOrderService.all();
+    }
+
+
     @PatchMapping(value ="/update_purchase_order_assigned_to/{purchaseOrderId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all purchase orders by status for admin by name", notes = "Endpoint to update the sub admin assigned to po for admin")

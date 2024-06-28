@@ -15,7 +15,7 @@ import java.util.Set;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 
 @Entity
-@Table(name = "UserCategory")
+@Table(name = "Category")
 public class UsersCategory implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
