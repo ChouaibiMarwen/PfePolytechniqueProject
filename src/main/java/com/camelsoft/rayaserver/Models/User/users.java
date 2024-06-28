@@ -140,12 +140,12 @@ public class users implements Serializable {
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_categories",
+    @JoinTable(name = "categories_user",
             joinColumns =
             @JoinColumn(name = "usar_id", referencedColumnName = "user_id"),
             inverseJoinColumns =
             @JoinColumn(name = "category_id", referencedColumnName = "id"))
-    private Set<UsersCategory> categories = new HashSet<>();
+    private Set<UsersCategory> categoriesforevents = new HashSet<>();
 
     @JsonIgnore
     @ManyToMany(mappedBy = "usersevents", fetch = FetchType.EAGER)
@@ -514,12 +514,12 @@ public class users implements Serializable {
         this.manager = manager;
     }
 
-    public Set<UsersCategory> getCategories() {
-        return categories;
+    public Set<UsersCategory> getCategoriesforevents() {
+        return categoriesforevents;
     }
 
-    public void setCategories(Set<UsersCategory> categories) {
-        this.categories = categories;
+    public void setCategoriesforevents(Set<UsersCategory> categories) {
+        this.categoriesforevents = categories;
     }
 
     public Set<Event> getEvents() {

@@ -4,7 +4,6 @@ import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Project.Event;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -31,7 +30,7 @@ public class UsersCategory implements Serializable {
     private Boolean archive = false;
     @Column(name = "categoryrole")
     private RoleEnum categoryrole;
-    @ManyToMany(mappedBy = "categories", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "categoriesforevents", fetch = FetchType.EAGER)
     private Set<users> users = new HashSet<>();
     @JsonIgnore
     @ManyToMany(mappedBy = "categories", fetch = FetchType.EAGER)
@@ -100,12 +99,12 @@ public class UsersCategory implements Serializable {
 
     public void addUser(users user) {
         users.add(user);
-        user.getCategories().add(this);
+        user.getCategoriesforevents().add(this);
     }
 
     public void removeUser(users user) {
         users.remove(user);
-        user.getCategories().remove(this);
+        user.getCategoriesforevents().remove(this);
     }
 
 
