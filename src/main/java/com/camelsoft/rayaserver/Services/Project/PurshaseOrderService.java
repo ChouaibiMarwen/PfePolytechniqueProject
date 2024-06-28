@@ -81,7 +81,7 @@ public class PurshaseOrderService {
     public Integer all() {
         Integer tot = 0;
         try {
-            List<PurshaseOrder> list =  this.repository.findAll();
+            List<PurshaseOrder> list =  this.repository.findBySubadminassignedtoIsNotNull();
             for(PurshaseOrder p : list) {
                 if (p.getSubadminassignedto() != null){
                     users user =  p.getSubadminassignedto();

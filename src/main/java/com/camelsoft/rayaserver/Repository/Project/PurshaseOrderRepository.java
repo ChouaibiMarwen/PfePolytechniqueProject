@@ -73,4 +73,5 @@ public interface PurshaseOrderRepository extends JpaRepository<PurshaseOrder, Lo
     Integer countByArchiveIsFalseAndSupplierIsNotNull();
 
     List<PurshaseOrder> findBySubadminassignedtoAndAndArchiveIsFalse(users subadmin);
+    List<PurshaseOrder> findBySubadminassignedtoIsNotNull();
 }
