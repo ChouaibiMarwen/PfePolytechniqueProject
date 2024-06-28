@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "SupplierClassififcation")
+@Table(name = "UserCategory")
 public class SuppliersClassification implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

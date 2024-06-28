@@ -379,6 +379,10 @@ public class SupplierClassificationController extends BaseController {
         if (classification == null)
             return new ResponseEntity("classification not found with id: " + classification_id, HttpStatus.NOT_FOUND);
         classification.setArchive(true);
+        for(users u : classification.getSuppliers()){
+            u.setSupplierclassification(null);
+        }
+        classification.getSuppliers().clear();
         this.service.Update(classification);
         //save new action
         UserAction action = new UserAction(
