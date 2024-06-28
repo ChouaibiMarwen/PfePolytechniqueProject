@@ -142,7 +142,7 @@ public class users implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_categories",
             joinColumns =
-            @JoinColumn(name = "usar_id", referencedColumnName = "user_id"),
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
             inverseJoinColumns =
             @JoinColumn(name = "category_id", referencedColumnName = "id"))
     private Set<UsersCategory> categories = new HashSet<>();
