@@ -270,6 +270,12 @@ public class UsersController extends BaseController {
     public ResponseEntity<List<UserShortDto>> all_users_list_by_role(@RequestParam RoleEnum role) throws IOException {
         List<users> user = null;
         user = this.userService.allusersByRole(role);
+        if(role == RoleEnum.ROLE_SUB_ADMIN){
+            for(users u : user){
+                u.setSubadminClassification(null);
+                this.userService.UpdateUser(u);
+            }
+        }
         List<UserShortDto> shortuser =  user.stream().map(UserShortDto::mapToUserShortDTO)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(shortuser, HttpStatus.OK);
