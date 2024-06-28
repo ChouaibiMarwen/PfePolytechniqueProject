@@ -106,7 +106,7 @@ public class EventController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_events_by_title__and_date_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String  title, @RequestParam(required = false) Date  creationdate) throws IOException {
+    public ResponseEntity<DynamicResponse> all_events_by_title_and_date_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) String  title, @RequestParam(required = false) Date  creationdate) throws IOException {
         users user = userService.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
