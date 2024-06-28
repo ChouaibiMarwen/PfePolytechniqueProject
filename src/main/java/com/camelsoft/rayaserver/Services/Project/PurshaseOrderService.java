@@ -78,25 +78,6 @@ public class PurshaseOrderService {
 
     }
 
-    public Integer all() {
-        Integer tot = 0;
-        try {
-            List<PurshaseOrder> list =  this.repository.findBySubadminassignedtoIsNotNull();
-            for(PurshaseOrder p : list) {
-                if (p.getSubadminassignedto() != null){
-                    users user =  p.getSubadminassignedto();
-                    user.getPoassigned().remove(p);
-                    p.setSubadminassignedto(null);
-                    Update(p);
-                    tot ++;
-                }
-            }
-            return tot;
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(ex.getMessage());
-        }
-
-    }
     public PurshaseOrder Update(PurshaseOrder model) {
         try {
             return this.repository.save(model);

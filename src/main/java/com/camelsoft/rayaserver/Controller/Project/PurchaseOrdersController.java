@@ -142,11 +142,6 @@ public class PurchaseOrdersController  extends BaseController {
         return  new ResponseEntity<>(purchaseOrderDto, HttpStatus.OK);
     }
 
-    @PatchMapping(value = "manualUpdates")
-    public Integer updateallassignedtoPurchases(){
-        return  this.purshaseOrderService.all();
-    }
-
 
     @PatchMapping(value ="/update_purchase_order_assigned_to/{purchaseOrderId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
