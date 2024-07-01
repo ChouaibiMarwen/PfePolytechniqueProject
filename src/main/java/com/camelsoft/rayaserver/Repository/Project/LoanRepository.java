@@ -29,6 +29,8 @@ public interface LoanRepository extends JpaRepository<Loan,Long> {
     Integer countAllByStatusAndSupplierAndArchiveIsFalse(LoanStatus status, Supplier supplier);
 
     Integer countAllBySupplierAndArchiveIsFalseAndStatusIn(Supplier supplier, List<LoanStatus> statuses);
+    Integer countAllByArchiveIsFalse();
+    List<Loan> findByArchiveIsFalse();
 
 
 

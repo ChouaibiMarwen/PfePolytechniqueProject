@@ -137,6 +137,23 @@ public class LoanServices {
 
     }
 
+
+    public Integer totalNotArchiveLoans(){
+        return this.repository.countAllByArchiveIsFalse();
+    }
+
+    public Double totalLoansAmounts(){
+        Double sum = 0.0;
+        List<Loan> list = this.repository.findByArchiveIsFalse();
+        for (Loan loan : list) {
+            sum += loan.getLoanamount();
+        }
+        return sum;
+
+    }
+
+
+
     public DynamicResponse FindAllByStateAndSupplier(int page, int size, LoanStatus status, Supplier supplier) {
         try {
             PageRequest pg = PageRequest.of(page, size);
