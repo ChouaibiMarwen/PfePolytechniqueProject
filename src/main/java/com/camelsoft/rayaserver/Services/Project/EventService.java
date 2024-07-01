@@ -244,7 +244,7 @@ public class EventService {
             calendar.add(Calendar.MONTH, 1);
             Date endDate = calendar.getTime();
 
-            Page<Event> eventsPage = repository.findComingSoonEvents(pg, currentDate, endDate, user.getRole().getRole(), user);
+            Page<Event> eventsPage = repository.comingsoonuserevents(pg,user.getRole().getRole(),user ,  EventStatus.PUBLISHED,  currentDate, endDate);
             return new DynamicResponse(eventsPage.getContent(), eventsPage.getNumber(), eventsPage.getTotalElements(), eventsPage.getTotalPages());
 
         } catch (NoSuchElementException ex) {

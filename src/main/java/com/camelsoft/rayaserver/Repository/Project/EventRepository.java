@@ -37,6 +37,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e LEFT JOIN e.categories c WHERE e.archive = false AND e.status = :status  AND (:role MEMBER OF e.assignedto OR EXISTS (SELECT 1 FROM UsersCategory uc JOIN uc.users u WHERE uc IN elements(e.categories) AND u = :user))")
     Page<Event> findEventsByRoleOrCategoryAndArchiveIsFalse(Pageable pageable, RoleEnum role, users user,  EventStatus status);
 
+    @Query("SELECT e FROM Event e LEFT JOIN e.categories c WHERE e.archive = false AND e.status = :status AND e.eventDate BETWEEN :startDate AND :endDate AND (:role MEMBER OF e.assignedto OR EXISTS (SELECT 1 FROM UsersCategory uc JOIN uc.users u WHERE uc IN elements(e.categories) AND u = :user))")
+    Page<Event> comingsoonuserevents(Pageable pageable, RoleEnum role, users user,  EventStatus status, Date startDate,Date endDate);
+
 }
 
 
