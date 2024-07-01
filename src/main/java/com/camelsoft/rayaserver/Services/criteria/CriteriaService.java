@@ -5,17 +5,20 @@ import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
+import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
+import com.camelsoft.rayaserver.Models.User.UsersCategory;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -476,5 +479,50 @@ public class CriteriaService {
         Root<PurshaseOrder> countRoot = countQuery.from(PurshaseOrder.class);
         countQuery.select(cb.count(countRoot)).where(predicates.toArray(new Predicate[0]));
         return em.createQuery(countQuery).getSingleResult();
+    }
+
+
+    public DynamicResponse findEventsByRoleOrCategoryAndArchiveIsFalse(int page, int size, Boolean archive, RoleEnum role, users user) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Event> query = cb.createQuery(Event.class);
+        Root<Event> eventRoot = query.from(Event.class);
+        Join<Event, UsersCategory> categoryJoin = eventRoot.join("categories", JoinType.LEFT);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(eventRoot.get("archive"), archive));
+
+        // Check if role is in assignedto set
+        predicates.add(cb.isMember(role, eventRoot.get("assignedto")));
+
+        // Check if user belongs to any category of the event
+        Subquery<UsersCategory> subquery = query.subquery(UsersCategory.class);
+        Root<UsersCategory> categoryRoot = subquery.from(UsersCategory.class);
+        Join<UsersCategory, users> userJoin = categoryRoot.join("users", JoinType.INNER);
+        subquery.select(categoryRoot)
+                .where(cb.equal(categoryRoot, categoryJoin),
+                        cb.equal(userJoin, user));
+        predicates.add(cb.exists(subquery));
+
+        query.select(eventRoot)
+                .distinct(true)
+                .where(cb.and(predicates.toArray(new Predicate[0])))
+                .orderBy(cb.desc(eventRoot.get("timestamp")));
+
+        TypedQuery<Event> typedQuery = em.createQuery(query);
+        typedQuery.setFirstResult(page * size);
+        typedQuery.setMaxResults(size);
+
+        List<Event> resultList = typedQuery.getResultList();
+
+        // Total count query
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<Event> countRoot = countQuery.from(Event.class);
+        countQuery.select(cb.countDistinct(countRoot))
+                .where(cb.and(predicates.toArray(new Predicate[0])));
+        Long total = em.createQuery(countQuery).getSingleResult();
+
+        int totalPages = (int) Math.ceil((double) total / size);
+
+        return new DynamicResponse(resultList, page, total, totalPages);
     }
 }

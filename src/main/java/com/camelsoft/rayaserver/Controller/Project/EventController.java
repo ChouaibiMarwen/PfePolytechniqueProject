@@ -15,6 +15,7 @@ import com.camelsoft.rayaserver.Services.Project.UserCategoryService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Services.criteria.CriteriaService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -51,6 +52,9 @@ public class EventController extends BaseController {
 
     @Autowired
     private UserCategoryService userCategoryService;
+
+    @Autowired
+    private CriteriaService criteriaService;
 
 
     @GetMapping(value = {"/all_events_by_title"})
@@ -164,7 +168,7 @@ public class EventController extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(this.service.getEventsForUserPg(page, size ,user), HttpStatus.OK);
+        return new ResponseEntity<>(this.criteriaService.findEventsByRoleOrCategoryAndArchiveIsFalse(page, size, false ,user.getRole().getRole(), user), HttpStatus.OK);
 
     }
 
