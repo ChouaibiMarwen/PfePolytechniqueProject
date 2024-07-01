@@ -29,7 +29,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContains(RoleEnum role, users user);
     Page<Event> findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContains(Pageable page , RoleEnum role, users user);
 
-    @Query("SELECT e FROM Event e WHERE e.archive = false AND e.eventDate BETWEEN :currentDate AND :endDate AND (e.assignedto = :role OR e.usersevents = :user)")
+    @Query("SELECT e FROM Event e WHERE e.archive = false AND e.eventDate BETWEEN :currentDate AND :endDate AND (:role MEMBER OF e.assignedto OR e.usersevents = :user)")
     Page<Event> findComingSoonEvents(Pageable pageable, Date currentDate, Date endDate, RoleEnum role, users user);
 
 
