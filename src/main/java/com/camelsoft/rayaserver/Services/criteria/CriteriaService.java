@@ -483,45 +483,49 @@ public class CriteriaService {
 
 
     public DynamicResponse findEventsByRoleOrCategoryAndArchiveIsFalse(int page, int size, Boolean archive, RoleEnum role, users user) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Event> query = cb.createQuery(Event.class);
-        Root<Event> eventRoot = query.from(Event.class);
-        Join<Event, UsersCategory> categoryJoin = eventRoot.join("categories", JoinType.LEFT);
+        Pageable pageable = PageRequest.of(page, size);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Event> query = builder.createQuery(Event.class);
+        Root<Event> root = query.from(Event.class);
+
+        query.distinct(true);
+        root.fetch("categories", JoinType.LEFT);
 
         List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(eventRoot.get("archive"), archive));
+        predicates.add(builder.equal(root.get("archive"), archive));
 
-        // Check if role is in assignedto set
-        predicates.add(cb.isMember(role, eventRoot.get("assignedto")));
+        if (role != null) {
+            predicates.add(builder.isMember(role, root.get("assignedto")));
+        }
 
-        // Check if user belongs to any category of the event
-        Subquery<UsersCategory> subquery = query.subquery(UsersCategory.class);
-        Root<UsersCategory> subqueryRoot = subquery.from(UsersCategory.class);
-        subquery.select(subqueryRoot)
-                .where(cb.equal(subqueryRoot, categoryJoin),
-                        cb.equal(subqueryRoot.get("users"), user));
-        predicates.add(cb.exists(subquery));
+        Subquery<Long> subquery = query.subquery(Long.class);
+        Root<UsersCategory> categoryRoot = subquery.from(UsersCategory.class);
+        Join<UsersCategory, users> usersJoin = categoryRoot.join("users");
+        subquery.select(builder.literal(1L))
+                .where(builder.and(
+                        builder.equal(categoryRoot, root.join("categories")),
+                        builder.equal(usersJoin, user)
+                ));
+        predicates.add(builder.exists(subquery));
 
-        query.select(eventRoot)
-                .distinct(true)
-                .where(cb.and(predicates.toArray(new Predicate[0])))
-                .orderBy(cb.desc(eventRoot.get("timestamp")));
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
+        query.orderBy(builder.desc(root.get("timestamp")));
 
         TypedQuery<Event> typedQuery = em.createQuery(query);
-        typedQuery.setFirstResult(page * size);
-        typedQuery.setMaxResults(size);
+        typedQuery.setFirstResult((int) pageable.getOffset());
+        typedQuery.setMaxResults(pageable.getPageSize());
 
         List<Event> resultList = typedQuery.getResultList();
+        long total = getTotalCountEvents(predicates);
 
-        // Total count query
+        return new DynamicResponse(resultList, page, total, (int) Math.ceil((double) total / size));
+    }
+
+    private long getTotalCountEvents(List<Predicate> predicates) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Event> countRoot = countQuery.from(Event.class);
-        countQuery.select(cb.countDistinct(countRoot))
-                .where(cb.and(predicates.toArray(new Predicate[0])));
-        Long total = em.createQuery(countQuery).getSingleResult();
-
-        int totalPages = (int) Math.ceil((double) total / size);
-
-        return new DynamicResponse(resultList, page, total, totalPages);
+        countQuery.select(cb.count(countRoot)).where(predicates.toArray(new Predicate[0]));
+        return em.createQuery(countQuery).getSingleResult();
     }
 }

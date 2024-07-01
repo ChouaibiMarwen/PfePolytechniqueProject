@@ -168,7 +168,7 @@ public class EventController extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(this.criteriaService.findEventsByRoleOrCategoryAndArchiveIsFalse(page, size, false ,user.getRole().getRole(), user), HttpStatus.OK);
+        return new ResponseEntity<>(this.service.getEventsForUserPg(page, size, user), HttpStatus.OK);
 
     }
 
