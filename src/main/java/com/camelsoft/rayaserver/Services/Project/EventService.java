@@ -55,7 +55,7 @@ public class EventService {
 
 
             PageRequest pg = PageRequest.of(page, size);
-            Page<Event> pckge = this.repository.findAll(pg);
+            Page<Event> pckge = this.repository.findByArchiveIsFalseOrderByTimestampDesc(pg);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {
@@ -82,7 +82,7 @@ public class EventService {
         public DynamicResponse FindAllByTitlePg(int page, int size , String tit) {
         try {
             PageRequest pg = PageRequest.of(page, size);
-            Page<Event> pckge = this.repository.findAllByTitleContainingIgnoreCaseAndArchiveIsFalse(pg,tit);
+            Page<Event> pckge = this.repository.findAllByTitleContainingIgnoreCaseAndArchiveIsFalseOrderByTimestampDesc(pg,tit);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {
@@ -95,7 +95,7 @@ public class EventService {
     public DynamicResponse FindAllByStatusPg(int page, int size , EventStatus status) {
         try {
             PageRequest pg = PageRequest.of(page, size);
-            Page<Event> pckge = this.repository.findAllByStatusAndArchiveIsFalse(pg,status);
+            Page<Event> pckge = this.repository.findAllByStatusAndArchiveIsFalseOrderByTimestampDesc(pg,status);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {
@@ -109,7 +109,7 @@ public class EventService {
     public DynamicResponse FindAllByTitleAndStatusPg(int page, int size ,String title ,EventStatus status) {
         try {
             PageRequest pg = PageRequest.of(page, size);
-            Page<Event> pckge = this.repository.findAllByTitleContainingIgnoreCaseAndStatusAndArchiveIsFalse(pg, title ,status);
+            Page<Event> pckge = this.repository.findAllByTitleContainingIgnoreCaseAndStatusAndArchiveIsFalseOrderByTimestampDesc(pg, title ,status);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {

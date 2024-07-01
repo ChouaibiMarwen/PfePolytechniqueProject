@@ -18,10 +18,11 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByTitleContainingIgnoreCaseAndArchiveIsFalse(String name);
-    Page<Event> findAllByTitleContainingIgnoreCaseAndArchiveIsFalse(Pageable page, String name);
-    Page<Event> findAllByTitleContainingIgnoreCaseAndStatusAndArchiveIsFalse(Pageable page, String name, EventStatus status);
+    Page<Event> findAllByTitleContainingIgnoreCaseAndArchiveIsFalseOrderByTimestampDesc(Pageable page, String name);
+    Page<Event> findByArchiveIsFalseOrderByTimestampDesc(Pageable page);
+    Page<Event> findAllByTitleContainingIgnoreCaseAndStatusAndArchiveIsFalseOrderByTimestampDesc(Pageable page, String name, EventStatus status);
     Page<Event> findAllByArchiveIsFalseAndTitleContainingIgnoreCaseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page, String name, Date date);
-    Page<Event> findAllByStatusAndArchiveIsFalse(Pageable page, EventStatus status);
+    Page<Event> findAllByStatusAndArchiveIsFalseOrderByTimestampDesc(Pageable page, EventStatus status);
     Page<Event> findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable page, Date date);
 
     Page<Event> findByAssignedtoContaining(Pageable page, RoleEnum role);
