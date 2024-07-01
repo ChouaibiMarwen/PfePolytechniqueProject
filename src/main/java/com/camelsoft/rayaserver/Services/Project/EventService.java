@@ -224,7 +224,7 @@ public class EventService {
     public DynamicResponse getEventsForUserPg(int page, int size , users user) {
         try {
             PageRequest pg = PageRequest.of(page, size);
-            Page<Event> pckge = this.repository.findEventsByRoleOrCategoryAndArchiveIsFalse(pg,user.getRole().getRole(),user);
+            Page<Event> pckge = this.repository.findEventsByRoleOrCategoryAndArchiveIsFalse(pg,user.getRole().getRole(),user ,  EventStatus.PUBLISHED);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {

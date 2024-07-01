@@ -34,8 +34,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e WHERE e.archive = false AND e.eventDate BETWEEN :currentDate AND :endDate AND (:role MEMBER OF e.assignedto OR :user MEMBER OF e.usersevents)")
     Page<Event> findComingSoonEvents(Pageable pageable, Date currentDate, Date endDate, RoleEnum role, users user);
 
-    @Query("SELECT e FROM Event e LEFT JOIN e.categories c WHERE e.archive = false AND (:role MEMBER OF e.assignedto OR EXISTS (SELECT 1 FROM UsersCategory uc JOIN uc.users u WHERE uc IN elements(e.categories) AND u = :user))")
-    Page<Event> findEventsByRoleOrCategoryAndArchiveIsFalse(Pageable pageable, RoleEnum role, users user);
+    @Query("SELECT e FROM Event e LEFT JOIN e.categories c WHERE e.archive = false AND e.status = :status  AND (:role MEMBER OF e.assignedto OR EXISTS (SELECT 1 FROM UsersCategory uc JOIN uc.users u WHERE uc IN elements(e.categories) AND u = :user))")
+    Page<Event> findEventsByRoleOrCategoryAndArchiveIsFalse(Pageable pageable, RoleEnum role, users user,  EventStatus status);
 
 }
 
