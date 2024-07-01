@@ -230,5 +230,24 @@ public class EventService {
         }
 
     }
+
+
+    public DynamicResponse getComingSoonEvents(int page, int size, users user) {
+        try {
+            PageRequest pg = PageRequest.of(page, size);
+
+            // Get current date and end date (one month from now)
+            Date currentDate = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MONTH, 1);
+            Date endDate = calendar.getTime();
+
+            Page<Event> eventsPage = repository.findComingSoonEvents(pg, currentDate, endDate, user.getRole().getRole(), user);
+            return new DynamicResponse(eventsPage.getContent(), eventsPage.getNumber(), eventsPage.getTotalElements(), eventsPage.getTotalPages());
+
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+    }
     
 }

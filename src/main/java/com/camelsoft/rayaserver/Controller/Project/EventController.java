@@ -168,6 +168,34 @@ public class EventController extends BaseController {
 
     }
 
+
+    @GetMapping(value = {"/coming_soon_events_paginated/{userId}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get all this month user's events paginated ", notes = "Endpoint to get coming soon user's events paginated ")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<DynamicResponse> coming_soon_events_paginated(@PathVariable Long userId , @RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
+        if (currentuser == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        users user = userService.findById(userId);
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.EVENT_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(this.service.getComingSoonEvents(page, size ,user), HttpStatus.OK);
+
+    }
+
+
+
     @GetMapping(value = {"/user_events_List/{userId}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all user's events paginated ", notes = "Endpoint to get all user's events paginated ")
