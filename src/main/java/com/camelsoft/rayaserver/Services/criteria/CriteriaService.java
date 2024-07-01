@@ -498,8 +498,8 @@ public class CriteriaService {
         Subquery<UsersCategory> subquery = query.subquery(UsersCategory.class);
         Root<UsersCategory> subqueryRoot = subquery.from(UsersCategory.class);
         subquery.select(subqueryRoot)
-                .where(cb.equal(subqueryRoot.get("category"), categoryJoin),
-                        cb.equal(subqueryRoot.get("user"), user));
+                .where(cb.equal(subqueryRoot, categoryJoin),
+                        cb.equal(subqueryRoot.get("users"), user));
         predicates.add(cb.exists(subquery));
 
         query.select(eventRoot)
