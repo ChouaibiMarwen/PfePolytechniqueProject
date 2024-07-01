@@ -492,7 +492,7 @@ public class CriteriaService {
         predicates.add(cb.equal(eventRoot.get("archive"), archive));
 
         // Check if role is in assignedto set
-        predicates.add(cb.isMember(role, eventRoot.get("assignedTo")));
+        predicates.add(cb.isMember(role, eventRoot.get("assignedto")));
 
         // Check if user belongs to any category of the event
         Subquery<UsersCategory> subquery = query.subquery(UsersCategory.class);
