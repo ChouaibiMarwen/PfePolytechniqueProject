@@ -215,7 +215,7 @@ public class MediaController extends BaseController {
             @ApiResponse(code = 404, message = "Not found, check the car id"),
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
     })
-    public ResponseEntity<Invoice> add_vehicle_media(@PathVariable Long id_invoice, @ModelAttribute InvoiceMediaRequest request) throws IOException {
+    public ResponseEntity<Invoice> add_invoice_media(@PathVariable Long id_invoice, @ModelAttribute InvoiceMediaRequest request) throws IOException {
         //users user = UserServices.findByUserName(getCurrentUser().getUsername());
         Invoice invoice = this.service.FindById(id_invoice);
         if (invoice == null)

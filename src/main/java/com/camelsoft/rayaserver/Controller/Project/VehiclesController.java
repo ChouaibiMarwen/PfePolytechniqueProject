@@ -436,52 +436,50 @@ public class VehiclesController extends BaseController {
             if (this.filesStorageService.checkformat(request.getFrontviewimage())) {
                 frontviewimage = filesStorageService.save_file_local(request.getFrontviewimage(), "vehicles");
                 if (frontviewimage == null) {
-                    return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity("can't upload frontviewimage", HttpStatus.BAD_REQUEST);
                 }
             }else{
-                return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity(" frontviewimage type not valid", HttpStatus.BAD_REQUEST);
             }
         }
         if (request.getRearviewimage() != null && !request.getRearviewimage().isEmpty()) {
             if (this.filesStorageService.checkformat(request.getRearviewimage())) {
                 rearviewimage = filesStorageService.save_file_local(request.getRearviewimage(), "vehicles");
                 if (rearviewimage == null) {
-                    return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity("can't upload rearviewimage", HttpStatus.BAD_REQUEST);
                 }
             }else{
-                return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("rearviewimage type not valid", HttpStatus.BAD_REQUEST);
             }
         }
         if (request.getInteriorviewimage() != null && !request.getInteriorviewimage().isEmpty()) {
             if (this.filesStorageService.checkformat(request.getInteriorviewimage())) {
                 interiorviewimage = filesStorageService.save_file_local(request.getInteriorviewimage(), "vehicles");
                 if (interiorviewimage == null) {
-                    return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity("can't upload interiorviewimage", HttpStatus.BAD_REQUEST);
                 }
             }else{
-                return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("interiorviewimage type not valid", HttpStatus.BAD_REQUEST);
             }
         }
-        if (request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()) {
-            if (request.getFrontviewimage() != null && !request.getFrontviewimage().isEmpty()) {
-                if (this.filesStorageService.checkformat(request.getSideviewimageleft())) {
-                    sideviewimageleft = filesStorageService.save_file_local(request.getSideviewimageleft(), "vehicles");
-                    if (sideviewimageleft == null) {
-                        return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
-                    }
-                }else{
-                    return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
+        if (request.getSideviewimageleft() != null && !request.getSideviewimageleft().isEmpty()) {
+            if (this.filesStorageService.checkformat(request.getSideviewimageleft())) {
+                sideviewimageright = filesStorageService.save_file_local(request.getSideviewimageleft(), "vehicles");
+                if (sideviewimageright == null) {
+                    return new ResponseEntity("can't upload sideviewimageleft", HttpStatus.BAD_REQUEST);
                 }
+            }else{
+                return new ResponseEntity("sideviewimageleft type not valid", HttpStatus.BAD_REQUEST);
             }
         }
         if (request.getSideviewimageright() != null && !request.getSideviewimageright().isEmpty()) {
             if (this.filesStorageService.checkformat(request.getSideviewimageright())) {
                 sideviewimageright = filesStorageService.save_file_local(request.getSideviewimageright(), "vehicles");
                 if (sideviewimageright == null) {
-                    return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity("can't upload sideviewimageright", HttpStatus.BAD_REQUEST);
                 }
             }else{
-                return new ResponseEntity("image type not valid", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("sideviewimageright type not valid", HttpStatus.BAD_REQUEST);
             }
         }
         if (request.getAdditionalviewimages() != null && !request.getAdditionalviewimages().isEmpty()) {
@@ -496,7 +494,7 @@ public class VehiclesController extends BaseController {
                 }
                 additionalviewimages = filesStorageService.save_all_local(fileList, "vehicles");
                 if (additionalviewimages == null || additionalviewimages.isEmpty()) {
-                    return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity("can't upload additionalviewimages", HttpStatus.BAD_REQUEST);
                 }
             }
         }
