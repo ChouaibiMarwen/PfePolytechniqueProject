@@ -33,8 +33,8 @@ public class LoanDto {
         dto.setTimestamp(loan.getTimestamp()) ;
         dto.setId(loan.getId()) ;
         if(loan.getSupplier() != null){
-            this.creatorname = loan.getSupplier().getName();
-            this.idcreatorid = loan.getSupplier().getId();
+            dto.creatorname = loan.getSupplier().getName();
+            dto.idcreatorid = loan.getSupplier().getId();
         }
 
         return dto;
