@@ -12,10 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class LoanServices {
@@ -166,23 +164,21 @@ public class LoanServices {
         try {
             PageRequest pg = PageRequest.of(page, size);
             Page<Loan> pckge = this.repository.findAllByStatusAndSupplierAndArchiveIsFalse(pg, status, supplier);
-
+           // List<Loan> list = this.repository.findAllByStatusAndSupplierAndArchiveIsFalse(status, supplier);
             // Convert Page<Loan> to Page<LoanDto>
-            Page<LoanDto> loanDtoPage = pckge.map(loan -> {
+           /* Page<LoanDto> loanDtoPage = pckge.map(loan -> {
                 LoanDto dto = new LoanDto();
                 dto.mapLoanToDto(loan);
                 return dto;
-            });
+            });*/
 
-            return new DynamicResponse(loanDtoPage.getContent(), loanDtoPage.getNumber(), loanDtoPage.getTotalElements(), loanDtoPage.getTotalPages());
+            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
 
     }
-
-
 
     public DynamicResponse FindAllBySupplier(int page, int size, Supplier supplier) {
         try {

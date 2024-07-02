@@ -163,7 +163,7 @@ public class LoanController extends BaseController {
                 supplier,
                 request.getCurrency()
         );
-
+        loan.setStatus(LoanStatus.WAITING);
         // Saving the loan object
         Loan result = this.Services.Save(loan);
         LoanDto resultdto = new LoanDto().mapLoanToDto(result);
