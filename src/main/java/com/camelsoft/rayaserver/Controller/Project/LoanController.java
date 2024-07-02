@@ -1,7 +1,9 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
+import com.camelsoft.rayaserver.Enum.Project.Loan.LoanType;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
+import com.camelsoft.rayaserver.Models.DTO.LoanDto;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
@@ -129,7 +131,7 @@ public class LoanController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Loan> addLoan(
+    public ResponseEntity<LoanDto> addLoan(
             @ModelAttribute LoanRequest request,
             @RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
@@ -154,61 +156,24 @@ public class LoanController extends BaseController {
         Loan loan = new Loan(
                 request.getEnglishfirstname(),
                 request.getEnglishlastname(),
-                request.getEnglishsecondname(),
-                request.getEnglishthirdname(),
-                request.getFamilyname(),
-                request.getFathername(),
-                request.getGrandfathername(),
-                request.getBirthdate(),
-                request.getEmail(),
                 request.getPhonenumber(),
-                request.getPostcode(),
-                request.getUnitnumber(),
-                request.getName(),
-                request.getRetirementdate(),
-                request.getSectortype(),
-                request.getCopynumber(),
-                request.getAdditionalnumber(),
-                request.getBuildingnumber(),
-                request.getMaritalstatus(),
-                request.getNumberofdependents(),
-                request.getNationalid(),
-                request.getNationalidissuedate(),
-                request.getNationalidexpirydate(),
-                request.getCity(),
-                request.getDistrict(),
-                request.getPrimaryaddress(),
-                request.getStreetname(),
-                request.getWorksector(),
-                request.getSalary(),
-                request.getEmployername(),
                 request.getLoantype(),
-                request.getFirstinstallment(),
-                request.getPurposeofloan(),
-                request.getBalloonloan(),
                 request.getLoanamount(),
-                request.getLoanterm(),
                 resourceMedia,
-                request.getCarmark(),
-                request.getCarmodel(),
-                request.getCaryear(),
-                request.getCarvin(),
-                request.getCarcolor(),
-                request.getCarquantity(),
-                request.getNote(),
                 supplier,
                 request.getCurrency()
         );
 
         // Saving the loan object
         Loan result = this.Services.Save(loan);
+        LoanDto resultdto = new LoanDto().mapLoanToDto(result);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.LOAN_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(resultdto, HttpStatus.OK);
     }
 
     @DeleteMapping("/remove_loan/{id}")
@@ -245,32 +210,34 @@ public class LoanController extends BaseController {
             @ApiResponse(code = 406, message = "Not Acceptable,this request is not related to supplier"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Loan> get_loan_by_id(@PathVariable Long id) throws IOException {
+    public ResponseEntity<LoanDto> get_loan_by_id(@PathVariable Long id) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if(!this.Services.ExistById(id))
             return new ResponseEntity("this id is not found in the system", HttpStatus.BAD_REQUEST);
         Loan result = this.Services.FindById(id);
+        LoanDto resultdto = new LoanDto().mapLoanToDto(result);
+
+
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.LOAN_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
         if(user.getSupplier()!=null){
             Supplier supplier = user.getSupplier();
             if (this.Services.ExistByIdAndSupplier(id, supplier)) {
-                //save new action
-                UserAction action = new UserAction(
-                        UserActionsEnum.LOAN_MANAGEMENT,
-                        user
-                );
-                this.userActionService.Save(action);
-                return new ResponseEntity<>(result, HttpStatus.OK);
+
+                return new ResponseEntity<>(resultdto, HttpStatus.OK);
             } else {
                 return new ResponseEntity("this invoice is not related to this supplier", HttpStatus.NOT_ACCEPTABLE);
             }
         }else{
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return new ResponseEntity<>(resultdto, HttpStatus.OK);
 
         }
 
     }
-
-
 
     @PatchMapping(value = {"/approve_loan/{loan_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
@@ -281,7 +248,7 @@ public class LoanController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
             @ApiResponse(code = 404, message = "Not found, check invoice id")
     })
-    public ResponseEntity<Loan> approve_loan(@PathVariable Long loan_id) throws IOException {
+    public ResponseEntity<LoanDto> approve_loan(@PathVariable Long loan_id) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (this.Services.FindById(loan_id)== null) {
             return new ResponseEntity(loan_id + " is not found in the system!", HttpStatus.NOT_FOUND);
@@ -289,13 +256,14 @@ public class LoanController extends BaseController {
         Loan loan = this.Services.FindById(loan_id);
         loan.setStatus(LoanStatus.APPROVED);
         Loan result = this.Services.Update(loan);
+        LoanDto resultdto = new LoanDto().mapLoanToDto(result);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.LOAN_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(resultdto, HttpStatus.OK);
 
 
     }
@@ -310,7 +278,7 @@ public class LoanController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
             @ApiResponse(code = 404, message = "Not found, check invoice id")
     })
-    public ResponseEntity<Loan> reject_loan(@PathVariable Long loan_id) throws IOException {
+    public ResponseEntity<LoanDto> reject_loan(@PathVariable Long loan_id) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (this.Services.FindById(loan_id)== null) {
             return new ResponseEntity(loan_id + " is not found in the system!", HttpStatus.NOT_FOUND);
@@ -318,13 +286,14 @@ public class LoanController extends BaseController {
         Loan loan = this.Services.FindById(loan_id);
         loan.setStatus(LoanStatus.REJECTED);
         Loan result = this.Services.Update(loan);
+        LoanDto resultdto = new LoanDto().mapLoanToDto(result);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.LOAN_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(resultdto, HttpStatus.OK);
 
 
     }

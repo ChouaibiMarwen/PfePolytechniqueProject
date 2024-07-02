@@ -200,6 +200,18 @@ public class Loan implements Serializable {
         this.timestamp = new Date();
     }
 
+    public Loan(String englishfirstname, String englishlastname, String phonenumber, LoanType loantype, Double loanamount, MediaModel attachment, Supplier supplier, String currency) {
+        this.englishfirstname = englishfirstname;
+        this.englishlastname = englishlastname;
+        this.phonenumber = phonenumber;
+        this.loantype = loantype;
+        this.loanamount = loanamount;
+        this.attachment = attachment;
+        this.supplier = supplier;
+        this.currency = currency;
+        this.timestamp = new Date();
+    }
+
     public String getCurrency() {
         return currency;
     }
