@@ -22,7 +22,7 @@ public class LoanDto {
     private LoanStatus status;
 
 
-    public LoanDto mapLoanToDto(Loan loan) {
+    public static LoanDto mapLoanToDto(Loan loan) {
         LoanDto dto = new LoanDto();
         dto.setEnglishfirstname(loan.getEnglishfirstname()) ;
         dto.setEnglishlastname(loan.getEnglishlastname()) ;

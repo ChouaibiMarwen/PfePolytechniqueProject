@@ -22,6 +22,7 @@ public interface LoanRepository extends JpaRepository<Loan,Long> {
     Page<Loan> findAllByStatusAndSupplierAndArchiveIsFalse(Pageable page, LoanStatus status,Supplier supplier);
     List<Loan> findAllByStatusAndSupplierAndArchiveIsFalse(LoanStatus status,Supplier supplier);
     Page<Loan> findAllBySupplierAndArchiveIsFalse(Pageable page, Supplier supplier);
+    List<Loan> findAllBySupplierAndArchiveIsFalse(Supplier supplier);
     long countByStatus(LoanStatus status);
 
     @Query("SELECT SUM(l.loanamount) FROM Loan l WHERE l.status = :status")

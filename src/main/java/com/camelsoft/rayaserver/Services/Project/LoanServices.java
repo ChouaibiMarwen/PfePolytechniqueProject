@@ -9,7 +9,9 @@ import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -162,17 +164,23 @@ public class LoanServices {
 
     public DynamicResponse FindAllByStateAndSupplier(int page, int size, LoanStatus status, Supplier supplier) {
         try {
-            PageRequest pg = PageRequest.of(page, size);
-            Page<Loan> pckge = this.repository.findAllByStatusAndSupplierAndArchiveIsFalse(pg, status, supplier);
-           // List<Loan> list = this.repository.findAllByStatusAndSupplierAndArchiveIsFalse(status, supplier);
+            //Page<Loan> pckge = this.repository.findAllByStatusAndSupplierAndArchiveIsFalse(pg, status, supplier);
+            List<Loan> list = this.repository.findAllByStatusAndSupplierAndArchiveIsFalse(status, supplier);
+            List<LoanDto> dtoList = list.stream().map(LoanDto::mapLoanToDto).collect(Collectors.toList());
+
+            Pageable pageable = PageRequest.of(page, size);
+            int start = Math.min((int) pageable.getOffset(), dtoList.size());
+            int end = Math.min((start + pageable.getPageSize()), dtoList.size());
+            Page<LoanDto> usersPage = new PageImpl<>(dtoList.subList(start, end), pageable, dtoList.size());
+            return new DynamicResponse(usersPage.getContent(), usersPage.getNumber(), usersPage.getTotalElements(), usersPage.getTotalPages());
+
+
             // Convert Page<Loan> to Page<LoanDto>
            /* Page<LoanDto> loanDtoPage = pckge.map(loan -> {
                 LoanDto dto = new LoanDto();
                 dto.mapLoanToDto(loan);
                 return dto;
             });*/
-
-            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
@@ -182,15 +190,15 @@ public class LoanServices {
 
     public DynamicResponse FindAllBySupplier(int page, int size, Supplier supplier) {
         try {
-            PageRequest pg = PageRequest.of(page, size);
-            Page<Loan> pckge = this.repository.findAllBySupplierAndArchiveIsFalse(pg, supplier);
-            // Convert Page<Loan> to Page<LoanDto>
-            Page<LoanDto> loanDtoPage = pckge.map(loan -> {
-                LoanDto dto = new LoanDto();
-                dto.mapLoanToDto(loan);
-                return dto;
-            });
-            return new DynamicResponse(loanDtoPage.getContent(), loanDtoPage.getNumber(), loanDtoPage.getTotalElements(), loanDtoPage.getTotalPages());
+
+            List<Loan> list = this.repository.findAllBySupplierAndArchiveIsFalse(supplier);
+            List<LoanDto> dtoList = list.stream().map(LoanDto::mapLoanToDto).collect(Collectors.toList());
+
+            Pageable pageable = PageRequest.of(page, size);
+            int start = Math.min((int) pageable.getOffset(), dtoList.size());
+            int end = Math.min((start + pageable.getPageSize()), dtoList.size());
+            Page<LoanDto> usersPage = new PageImpl<>(dtoList.subList(start, end), pageable, dtoList.size());
+            return new DynamicResponse(usersPage.getContent(), usersPage.getNumber(), usersPage.getTotalElements(), usersPage.getTotalPages());
 
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
