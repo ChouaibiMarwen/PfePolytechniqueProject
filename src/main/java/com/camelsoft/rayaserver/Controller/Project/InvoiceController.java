@@ -99,9 +99,42 @@ public class InvoiceController extends BaseController {
         DynamicResponse res = new DynamicResponse(invoice.getContent(), invoice.getNumber(), invoice.getTotalElements(), invoice.getTotalPages());
 
         return new ResponseEntity<>(res, HttpStatus.OK);
-
-
     }
+
+
+    @GetMapping(value = {"/all_invoice_list_admin"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "get all invoice by status for admin", notes = "Endpoint to get vehicles")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<List<Invoice>> all_invoice_list_admin() throws IOException {
+
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        List<Invoice> invoiceslist;
+        if(user.getRole().getRole() == RoleEnum.ROLE_SUB_ADMIN){
+            //sub_admin get list of invoices of suppliers with the same classification
+            if(user.getSubadminClassification()!= null)
+                invoiceslist = this.service.findAllInvoicesBySubAdmin(user);
+            else
+                return  new ResponseEntity("this sub-admin have not any classification yet", HttpStatus.NOT_ACCEPTABLE);
+
+        }else{
+            // if the current user is admin , he get all invoices list
+            invoiceslist = this.service.findAllInvoicesForAdmin();        }
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.INVOICE_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+
+        return new ResponseEntity<>(invoiceslist, HttpStatus.OK);
+    }
+
 
     @GetMapping(value = {"/all_invoice_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")

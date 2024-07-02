@@ -145,6 +145,24 @@ public class InvoiceService {
 
     }
 
+    public List<Invoice> findAllInvoicesBySubAdmin(users user) {
+        try {
+            return this.repository.findByPurshaseorder_SubadminassignedtoAndArchiveIsFalseOrderByTimestampDesc(user);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
+    public List<Invoice> findAllInvoicesForAdmin() {
+        try {
+            return this.repository.findByArchiveIsFalseOrderByTimestampDesc();
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
 
     public boolean ExistById(Long id) {
         try {
