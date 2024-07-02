@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Services.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
+import com.camelsoft.rayaserver.Models.DTO.LoanDto;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Repository.Project.LoanRepository;
@@ -118,19 +119,26 @@ public class LoanServices {
     public DynamicResponse FindAllByStateAndDatenNewerThen(int page, int size, LoanStatus status , Date date) {
         try {
             PageRequest pg = PageRequest.of(page, size);
+            Page<Loan> pckge;
             if (status == null &&  date == null){
                return  FindAllPg(page, size);
             }
             else if(status != null &&  date == null){
-                Page<Loan> pckge = this.repository.findAllByStatusAndArchiveIsFalse(pg, status);
-                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+                pckge = this.repository.findAllByStatusAndArchiveIsFalse(pg, status);
             }else if (status == null && date != null ) {
-                Page<Loan> pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,date);
-                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+                pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,date);
             } else{
-                Page<Loan> pckge = this.repository.findAllByStatusAndArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg, status, date);
-                return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+              pckge = this.repository.findAllByStatusAndArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg, status, date);
             }
+
+            // Convert Page<Loan> to Page<LoanDto>
+            Page<LoanDto> loanDtoPage = pckge.map(loan -> {
+                LoanDto dto = new LoanDto();
+                dto.mapLoanToDto(loan);
+                return dto;
+            });
+
+            return new DynamicResponse(loanDtoPage.getContent(), loanDtoPage.getNumber(), loanDtoPage.getTotalElements(), loanDtoPage.getTotalPages());
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
@@ -158,7 +166,15 @@ public class LoanServices {
         try {
             PageRequest pg = PageRequest.of(page, size);
             Page<Loan> pckge = this.repository.findAllByStatusAndSupplierAndArchiveIsFalse(pg, status, supplier);
-            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+
+            // Convert Page<Loan> to Page<LoanDto>
+            Page<LoanDto> loanDtoPage = pckge.map(loan -> {
+                LoanDto dto = new LoanDto();
+                dto.mapLoanToDto(loan);
+                return dto;
+            });
+
+            return new DynamicResponse(loanDtoPage.getContent(), loanDtoPage.getNumber(), loanDtoPage.getTotalElements(), loanDtoPage.getTotalPages());
 
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
@@ -172,7 +188,13 @@ public class LoanServices {
         try {
             PageRequest pg = PageRequest.of(page, size);
             Page<Loan> pckge = this.repository.findAllBySupplierAndArchiveIsFalse(pg, supplier);
-            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            // Convert Page<Loan> to Page<LoanDto>
+            Page<LoanDto> loanDtoPage = pckge.map(loan -> {
+                LoanDto dto = new LoanDto();
+                dto.mapLoanToDto(loan);
+                return dto;
+            });
+            return new DynamicResponse(loanDtoPage.getContent(), loanDtoPage.getNumber(), loanDtoPage.getTotalElements(), loanDtoPage.getTotalPages());
 
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
