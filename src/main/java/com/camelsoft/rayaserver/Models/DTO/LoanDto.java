@@ -31,6 +31,7 @@ public class LoanDto {
         dto.setCurrency(loan.getCurrency()) ;
         dto.setLoantype(loan.getLoantype()) ;
         dto.setTimestamp(loan.getTimestamp()) ;
+        dto.setStatus(loan.getStatus()) ;
         dto.setId(loan.getId()) ;
         if(loan.getSupplier() != null){
             dto.creatorname = loan.getSupplier().getName();
