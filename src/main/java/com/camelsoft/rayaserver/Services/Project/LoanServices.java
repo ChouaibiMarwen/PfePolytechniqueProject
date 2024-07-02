@@ -119,26 +119,26 @@ public class LoanServices {
     public DynamicResponse FindAllByStateAndDatenNewerThen(int page, int size, LoanStatus status , Date date) {
         try {
             PageRequest pg = PageRequest.of(page, size);
-            Page<Loan> pckge;
+            List<Loan> list;
             if (status == null &&  date == null){
-               return  FindAllPg(page, size);
+               list = findAll();
             }
             else if(status != null &&  date == null){
-                pckge = this.repository.findAllByStatusAndArchiveIsFalse(pg, status);
+                list = this.repository.findAllByStatusAndArchiveIsFalse(status);
             }else if (status == null && date != null ) {
-                pckge = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg,date);
+                list = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(date);
             } else{
-              pckge = this.repository.findAllByStatusAndArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(pg, status, date);
+                list = this.repository.findAllByStatusAndArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(status, date);
             }
 
-            // Convert Page<Loan> to Page<LoanDto>
-            Page<LoanDto> loanDtoPage = pckge.map(loan -> {
-                LoanDto dto = new LoanDto();
-                dto.mapLoanToDto(loan);
-                return dto;
-            });
+            List<LoanDto> dtoList = list.stream().map(LoanDto::mapLoanToDto).collect(Collectors.toList());
 
-            return new DynamicResponse(loanDtoPage.getContent(), loanDtoPage.getNumber(), loanDtoPage.getTotalElements(), loanDtoPage.getTotalPages());
+            Pageable pageable = PageRequest.of(page, size);
+            int start = Math.min((int) pageable.getOffset(), dtoList.size());
+            int end = Math.min((start + pageable.getPageSize()), dtoList.size());
+            Page<LoanDto> usersPage = new PageImpl<>(dtoList.subList(start, end), pageable, dtoList.size());
+            return new DynamicResponse(usersPage.getContent(), usersPage.getNumber(), usersPage.getTotalElements(), usersPage.getTotalPages());
+
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }

@@ -16,8 +16,11 @@ import java.util.List;
 @Repository
 public interface LoanRepository extends JpaRepository<Loan,Long> {
     Page<Loan> findAllByStatusAndArchiveIsFalse(Pageable page, LoanStatus status);
+    List<Loan> findAllByStatusAndArchiveIsFalse(LoanStatus status);
     Page<Loan> findAllByStatusAndArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable pageable, LoanStatus status, Date timestamp);
+    List<Loan> findAllByStatusAndArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(LoanStatus status, Date timestamp);
     Page<Loan> findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Pageable pageable,Date timestamp);
+    List<Loan> findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(Date timestamp);
     boolean existsByIdAndSupplier(Long id , Supplier supplier);
     Page<Loan> findAllByStatusAndSupplierAndArchiveIsFalse(Pageable page, LoanStatus status,Supplier supplier);
     List<Loan> findAllByStatusAndSupplierAndArchiveIsFalse(LoanStatus status,Supplier supplier);
