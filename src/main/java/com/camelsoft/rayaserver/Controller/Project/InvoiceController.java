@@ -104,11 +104,11 @@ public class InvoiceController extends BaseController {
 
     @GetMapping(value = {"/all_invoice_list_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
-    @ApiOperation(value = "get all invoice by status for admin", notes = "Endpoint to get vehicles")
+    @ApiOperation(value = "get all invoices list for admin", notes = "Endpoint to get all invoices list")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
-            @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
+            @ApiResponse(code = 406, message = "NOT ACCEPTABLE"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<List<Invoice>> all_invoice_list_admin() throws IOException {
