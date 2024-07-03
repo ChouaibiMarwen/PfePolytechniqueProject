@@ -27,7 +27,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Page<Event> findByAssignedtoContaining(Pageable page, RoleEnum role);
 
-    List<Event> findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContains(RoleEnum role, users user);
+    List<Event> findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContainsAndStatus(RoleEnum role, users user, EventStatus status);
     Page<Event> findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContains(Pageable page , RoleEnum role, users user);
 
 

@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Services.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
+import com.camelsoft.rayaserver.Models.DTO.LoanDto;
 import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Project.EventRepository;
@@ -9,12 +10,14 @@ import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -217,15 +220,19 @@ public class EventService {
 
 
     public List<Event> getEventsForUserList(users user) {
-        return this.repository.findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContains(user.getRole().getRole(),user);
+        return this.repository.findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContainsAndStatus(user.getRole().getRole(),user, EventStatus.PUBLISHED);
     }
 
 
     public DynamicResponse getEventsForUserPg(int page, int size , users user) {
         try {
-            PageRequest pg = PageRequest.of(page, size);
-            Page<Event> pckge = this.repository.findEventsByRoleOrCategoryAndArchiveIsFalse(pg,user.getRole().getRole(),user ,  EventStatus.PUBLISHED);
-            return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
+            List<Event> events = this.repository.findByArchiveIsFalseAndAssignedtoContainsOrUserseventsContainsAndStatus(user.getRole().getRole(),user, EventStatus.PUBLISHED);
+           // List<LoanDto> dtoList = list.stream().map(LoanDto::mapLoanToDto).collect(Collectors.toList());
+            Pageable pageable = PageRequest.of(page, size);
+            int start = Math.min((int) pageable.getOffset(), events.size());
+            int end = Math.min((start + pageable.getPageSize()), events.size());
+            Page<Event> usersPage = new PageImpl<>(events.subList(start, end), pageable, events.size());
+            return new DynamicResponse(usersPage.getContent(), usersPage.getNumber(), usersPage.getTotalElements(), usersPage.getTotalPages());
 
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());

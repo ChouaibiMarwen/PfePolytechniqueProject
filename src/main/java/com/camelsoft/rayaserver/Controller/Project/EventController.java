@@ -147,7 +147,7 @@ public class EventController extends BaseController {
 
     }
 
-    @GetMapping(value = {"/user_events_paginated/{userId}"})
+    @GetMapping(value = {"/my_events_paginated"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all user's events paginated ", notes = "Endpoint to get all user's events paginated ")
     @ApiResponses(value = {
@@ -155,12 +155,9 @@ public class EventController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> user_events(@PathVariable Long userId , @RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
+    public ResponseEntity<DynamicResponse> my_events_paginated(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentuser == null)
-            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
-        users user = userService.findById(userId);
-        if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         //save new action
         UserAction action = new UserAction(
@@ -168,7 +165,7 @@ public class EventController extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(this.service.getEventsForUserPg(page, size, user), HttpStatus.OK);
+        return new ResponseEntity<>(this.service.getEventsForUserPg(page, size, currentuser), HttpStatus.OK);
 
     }
 
@@ -200,7 +197,7 @@ public class EventController extends BaseController {
 
 
 
-    @GetMapping(value = {"/user_events_List/{userId}"})
+    @GetMapping(value = {"/my_events_List"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all user's events paginated ", notes = "Endpoint to get all user's events paginated ")
     @ApiResponses(value = {
@@ -208,12 +205,9 @@ public class EventController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<List<Event>> user_events_List(@PathVariable Long userId , @RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size) throws IOException {
+    public ResponseEntity<List<Event>> my_events_List() throws IOException {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentuser == null)
-            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
-        users user = userService.findById(userId);
-        if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         //save new action
         UserAction action = new UserAction(
@@ -221,7 +215,7 @@ public class EventController extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(this.service.getEventsForUserList(user), HttpStatus.OK);
+        return new ResponseEntity<>(this.service.getEventsForUserList(currentuser), HttpStatus.OK);
 
     }
 
