@@ -32,7 +32,7 @@ public class FCMService {
         if ( token == null) {
             throw new IllegalArgumentException(" token must not be null");
         }
- if (note == null  ) {
+         if (note == null || note.getData().isEmpty() ) {
             throw new IllegalArgumentException("Note   must not be null");
         }
 

@@ -305,18 +305,6 @@ public class EventController extends BaseController {
            e.getMessage();
         }
 
-
-      /*
-        users admin =  this.userService.findAllAdmin().get(0);
-        Notification notificationuser = new Notification(admin, user, Action.EVENT, "NEW_EVENT", "a new event has been created" , result.getId());
-        // Send the notification
-        try {
-            List<users> usersList = new ArrayList<>();
-            usersList.add(admin);
-            this.notificationServices.sendnotifications(notificationuser, usersList);
-        } catch (FirebaseMessagingException | InterruptedException e) {
-            e.getMessage();
-        }*/
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
