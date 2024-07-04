@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Models.File.MediaModel;
 
 import com.camelsoft.rayaserver.Models.User.UsersCategory;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -52,6 +53,7 @@ public class Event implements Serializable {
     @Column(name = "assignedto")
     private Set<RoleEnum> assignedto = new HashSet<>();
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "events_users",
             joinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id"),

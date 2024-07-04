@@ -160,8 +160,6 @@ public class LoanServices {
 
     }
 
-
-
     public DynamicResponse FindAllByStateAndSupplier(int page, int size, LoanStatus status, Supplier supplier) {
         try {
             //Page<Loan> pckge = this.repository.findAllByStatusAndSupplierAndArchiveIsFalse(pg, status, supplier);
