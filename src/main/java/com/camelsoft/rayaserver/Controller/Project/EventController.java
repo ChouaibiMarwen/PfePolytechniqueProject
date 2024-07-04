@@ -235,7 +235,7 @@ public class EventController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Event> addEvent(@ModelAttribute RequestOfEvents request,@RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
+    public ResponseEntity<Event> addEvent(@ModelAttribute RequestOfEvents request,@RequestParam(value = "file", required = false) MultipartFile attachment)  throws InterruptedException, FirebaseMessagingException  {
         users user = userService.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
@@ -288,6 +288,25 @@ public class EventController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
+
+            // send notification
+        Notification notificationuser = new Notification(
+                user,
+               user,
+                Action.EVENT,
+                "NEW_EVENT",
+                "a new event has been created",
+                result.getId()
+        );
+        try {
+            this.notificationServices.sendnotification(notificationuser,null);
+
+            }  catch (FirebaseMessagingException e) {
+           e.getMessage();
+        }
+
+
+      /*
         users admin =  this.userService.findAllAdmin().get(0);
         Notification notificationuser = new Notification(admin, user, Action.EVENT, "NEW_EVENT", "a new event has been created" , result.getId());
         // Send the notification
@@ -297,7 +316,7 @@ public class EventController extends BaseController {
             this.notificationServices.sendnotifications(notificationuser, usersList);
         } catch (FirebaseMessagingException | InterruptedException e) {
             e.getMessage();
-        }
+        }*/
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
