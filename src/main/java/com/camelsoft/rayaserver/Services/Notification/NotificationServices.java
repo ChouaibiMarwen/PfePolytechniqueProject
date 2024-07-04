@@ -92,6 +92,25 @@ public class NotificationServices {
         }
 
     }
+
+    public DynamicResponse waitinGnOTIFICATIONSuSER(int page, int size, users user) {
+        try {
+            List<Notification> resultlist = this.repository.findAllByReciverAndStatusNot(user, MessageStatus.READ);
+            List<NotificationDto> resultdto = resultlist.stream()
+                    .map(NotificationDto::NotificationToDto).collect(Collectors.toList());
+
+            Pageable pageable = PageRequest.of(page, size);
+            int start = Math.min((int) pageable.getOffset(), resultdto.size());
+            int end = Math.min((start + pageable.getPageSize()), resultdto.size());
+            Page<NotificationDto> usersPage = new PageImpl<>(resultdto.subList(start, end), pageable, resultdto.size());
+            DynamicResponse dynamicresponse = new DynamicResponse(usersPage.getContent(), usersPage.getNumber(), usersPage.getTotalElements(), usersPage.getTotalPages());
+            return dynamicresponse;
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(String.format("No data found"));
+        }
+
+    }
+
     private void changenotificationstate( List<Notification> notification){
         for (Notification nf:notification) {
             nf.setStatus(MessageStatus.DELIVERED);

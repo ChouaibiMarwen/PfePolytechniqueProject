@@ -16,6 +16,7 @@ import java.util.List;
 public interface NotificationRepository extends JpaRepository<Notification,Long> {
     Page<Notification> findAllByReciver(Pageable pageable, users user);
     List<Notification> findAllByReciver(users user);
+    List<Notification> findAllByReciverAndStatusNot(users user, MessageStatus status);
     Page<Notification> findAllByReciverAndStatus(Pageable pageable, users user, MessageStatus status);
 
 }

@@ -47,7 +47,7 @@ public class NotificationController  extends BaseController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')  or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<DynamicResponse> all_my_notification_waiting(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
-        DynamicResponse result = this.services.allnotificationbyuser(page, size,user);
+        DynamicResponse result = this.services.waitinGnOTIFICATIONSuSER(page, size,user);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
