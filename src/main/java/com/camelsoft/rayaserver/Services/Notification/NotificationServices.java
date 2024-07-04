@@ -135,7 +135,7 @@ public class NotificationServices {
                 return "You have new notification";
         }
     }
-    public void sendnotification(Notification notificationuser,Notification notificationadmin) throws InterruptedException, FirebaseMessagingException {
+ /*   public void sendnotification(Notification notificationuser,Notification notificationadmin) throws InterruptedException, FirebaseMessagingException {
         Action action=Action.IDLE;
         if(notificationuser!=null){
             Notification resultadminnotificationuser =  this.save(notificationuser);
@@ -177,7 +177,62 @@ public class NotificationServices {
             }
         }
 
+    }*/
 
+    public void sendnotification(Notification notificationuser, Notification notificationadmin) throws InterruptedException, FirebaseMessagingException {
+        Action action = Action.IDLE;
+
+        if (notificationuser != null) {
+            Notification resultadminnotificationuser = this.save(notificationuser);
+            action = resultadminnotificationuser.getAction();
+            messagingTemplate.convertAndSendToUser(resultadminnotificationuser.getReciver().getId().toString(), "/queue/user", resultadminnotificationuser);
+            Thread.sleep(1000);
+
+            Note note = new Note();
+            note.setSubject(action.name());
+            note.setContent(this.converMessageenum(action));
+            note.setData(notificationuser.toMap());
+
+            // Track sent devices to avoid duplicates
+            Set<String> sentDevices = new HashSet<>();
+
+            List<UserDevice> devices = this.userDeviceService.findbyuserdevice(notificationuser.getReciver());
+
+            for (UserDevice device : devices) {
+                // Generate a unique identifier for the physical device
+                String deviceIdentifier = generateUniqueDeviceIdentifier(device);
+
+                // Check if this physical device has already been sent a notification
+                if (deviceIdentifier != null && !sentDevices.contains(deviceIdentifier)) {
+                    if (this.pushNotificationService.isValidFCMToken(device.getTokendevice())) {
+                        this.pushNotificationService.sendNotification(note, device.getTokendevice());
+                        Thread.sleep(1000);
+                        sentDevices.add(deviceIdentifier);
+                    } else {
+                        // Handle invalid tokens or remove invalid devices from database
+                        this.userDeviceService.deletebyid(device.getId());
+                    }
+                }
+            }
+        }
+
+        if (notificationadmin != null) {
+            List<users> admins = this.userService.findAllAdmin();
+            for (users admin : admins) {
+                notificationadmin.setReciver(admin);
+                Notification resultadminnotification = this.save(notificationadmin);
+                messagingTemplate.convertAndSendToUser(resultadminnotification.getReciver().getId().toString(), "/queue/admin", resultadminnotification);
+                Thread.sleep(1000);
+            }
+        }
+    }
+
+    private String generateUniqueDeviceIdentifier(UserDevice device) {
+        if (device == null) {
+            return null;
+        }
+        // Example: Combine relevant attributes to create a unique identifier for the physical device
+        return device.getDeviceType() + "_" + device.getDeviceId();
     }
 
     public void sendnotifications(Notification notificationuser, List<users> usersList) throws InterruptedException, FirebaseMessagingException {
