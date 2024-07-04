@@ -19,7 +19,6 @@ import java.util.Map;
 
 @Entity
 @Table(name = "notification_model")
-@Data
 public class Notification implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -62,5 +61,62 @@ public class Notification implements Serializable {
         data.put("action", this.action.name());
         data.put("timestmp",this.timestmp.toString());
         return data;
+    }
+
+
+    public Date getTimestmp() {
+        return timestmp;
+    }
+
+    public void setTimestmp(Date timestmp) {
+        this.timestmp = timestmp;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public MessageStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(MessageStatus status) {
+        this.status = status;
+    }
+
+    public ChatMessage getChat() {
+        return chat;
+    }
+
+    public void setChat(ChatMessage chat) {
+        this.chat = chat;
+    }
+
+    public users getReciver() {
+        return reciver;
+    }
+
+    public void setReciver(users reciver) {
+        this.reciver = reciver;
+    }
+
+    public users getSender() {
+        return sender;
+    }
+
+    public void setSender(users sender) {
+        this.sender = sender;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
