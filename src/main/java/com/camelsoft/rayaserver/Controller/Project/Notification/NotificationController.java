@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Controller.Project.Notification;
 
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
+import com.camelsoft.rayaserver.Models.DTO.NotificationDto;
 import com.camelsoft.rayaserver.Models.Notification.Notification;
 import com.camelsoft.rayaserver.Models.Project.Ads;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -50,7 +52,7 @@ public class NotificationController  extends BaseController {
 
     @PatchMapping(value = {"/read_my_waiting_notification"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')  or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    public ResponseEntity<List<Notification>> read_my_waiting_notification (@RequestParam Long[] notificationid) throws IOException {
+    public ResponseEntity<List<NotificationDto>> read_my_waiting_notification (@RequestParam Long[] notificationid) throws IOException {
 
         List<Notification> result = new ArrayList<>();
         for (Long id: notificationid) {
@@ -71,7 +73,11 @@ public class NotificationController  extends BaseController {
             }
         }
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        List<NotificationDto> dtos  = result.stream().map(NotificationDto::NotificationToDto)
+                .collect(Collectors.toList());
+
+
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @GetMapping(value = {"/notification_by_id/{notification_id}"})
@@ -82,15 +88,15 @@ public class NotificationController  extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Notification> notification_by_id (@PathVariable Long notification_id) {
+    public ResponseEntity<NotificationDto> notification_by_id (@PathVariable Long notification_id) {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
          Notification notif = this.services.findbyid(notification_id);
          if(notif == null)
              return new ResponseEntity("invalid id "  + notification_id, HttpStatus.NOT_ACCEPTABLE);
          if(notif.getReciver() !=  user)
              return new ResponseEntity("you are not authorized to get this notification"  + notification_id, HttpStatus.NOT_ACCEPTABLE);
-
-        return new ResponseEntity<>(notif, HttpStatus.OK);
+        NotificationDto resultdto = NotificationDto.NotificationToDto(notif);
+        return new ResponseEntity<>(resultdto, HttpStatus.OK);
     }
 
 }

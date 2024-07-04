@@ -5,6 +5,7 @@ package com.camelsoft.rayaserver.Services.Notification;
 import com.camelsoft.rayaserver.Enum.Project.Notification.MessageStatus;
 import com.camelsoft.rayaserver.Enum.Tools.Action;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
+import com.camelsoft.rayaserver.Models.DTO.NotificationDto;
 import com.camelsoft.rayaserver.Models.Notification.Notification;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Tools.NotificationRepository;
@@ -22,6 +23,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationServices {
@@ -74,9 +76,12 @@ public class NotificationServices {
     public PaginationResponse allnotificationbyuser(int page, int size, users user) {
         try {
             List<Notification> resultlist = new ArrayList<Notification>();
+            List<NotificationDto> resultdto;
             Pageable paging = PageRequest.of(page, size);
             Page<Notification> pageTuts = this.repository.findAllByReciver(paging,user);
-            resultlist = pageTuts.getContent();
+            resultdto = pageTuts.getContent().stream()
+                    .map(NotificationDto::NotificationToDto).collect(Collectors.toList());
+
             PaginationResponse response = new PaginationResponse(
                     resultlist,
                     pageTuts.getNumber(),
@@ -206,11 +211,11 @@ public class NotificationServices {
                         Thread.sleep(1000);
                         sentDevices.add(device.getTokendevice()); // Track sent device
                     }
-                } else {
+                } /*else {
                     // Handle invalid tokens or remove invalid devices from database
                    // this.userDeviceService.deletebyid(device.getId());
                     System.out.println("Invalid FCM token");
-                }
+                }*/
             }
         }
 
