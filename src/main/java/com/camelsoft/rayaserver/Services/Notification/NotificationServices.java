@@ -10,6 +10,7 @@ import com.camelsoft.rayaserver.Models.Notification.Notification;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Tools.NotificationRepository;
 import com.camelsoft.rayaserver.Request.Tools.Note;
+import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Tools.PaginationResponse;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
@@ -17,6 +18,7 @@ import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -73,23 +75,18 @@ public class NotificationServices {
         }
     }
     /*public PaginationResponse allnotificationbyuser(int page, int size, users user) {*/
-    public PaginationResponse allnotificationbyuser(int page, int size, users user) {
+    public DynamicResponse allnotificationbyuser(int page, int size, users user) {
         try {
-            List<Notification> resultlist = new ArrayList<Notification>();
-            List<NotificationDto> resultdto;
-            Pageable paging = PageRequest.of(page, size);
-            Page<Notification> pageTuts = this.repository.findAllByReciver(paging,user);
-            resultdto = pageTuts.getContent().stream()
+            List<Notification> resultlist = this.repository.findAllByReciver(user);
+            List<NotificationDto> resultdto = resultlist.stream()
                     .map(NotificationDto::NotificationToDto).collect(Collectors.toList());
 
-            PaginationResponse response = new PaginationResponse(
-                    resultlist,
-                    pageTuts.getNumber(),
-                    pageTuts.getTotalElements(),
-                    pageTuts.getTotalPages()
-            );
-            this.changenotificationstate(resultlist);
-            return response;
+            Pageable pageable = PageRequest.of(page, size);
+            int start = Math.min((int) pageable.getOffset(), resultdto.size());
+            int end = Math.min((start + pageable.getPageSize()), resultdto.size());
+            Page<NotificationDto> usersPage = new PageImpl<>(resultdto.subList(start, end), pageable, resultdto.size());
+            DynamicResponse dynamicresponse = new DynamicResponse(usersPage.getContent(), usersPage.getNumber(), usersPage.getTotalElements(), usersPage.getTotalPages());
+            return dynamicresponse;
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(String.format("No data found"));
         }

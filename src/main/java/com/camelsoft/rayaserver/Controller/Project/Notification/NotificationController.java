@@ -5,6 +5,7 @@ import com.camelsoft.rayaserver.Models.DTO.NotificationDto;
 import com.camelsoft.rayaserver.Models.Notification.Notification;
 import com.camelsoft.rayaserver.Models.Project.Ads;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Tools.PaginationResponse;
 import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
@@ -36,17 +37,17 @@ public class NotificationController  extends BaseController {
 
     @GetMapping(value = {"/all_my_notification"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    public ResponseEntity<PaginationResponse> all_my_notification(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) throws IOException {
+    public ResponseEntity<DynamicResponse> all_my_notification(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
-        PaginationResponse result = this.services.allnotificationbyuser(page, size,user);
+        DynamicResponse result = this.services.allnotificationbyuser(page, size,user);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping(value = {"/all_my_notification_waiting"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPPLIER')  or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    public ResponseEntity<PaginationResponse> all_my_notification_waiting(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) throws IOException {
+    public ResponseEntity<DynamicResponse> all_my_notification_waiting(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
-        PaginationResponse result = this.services.allnotificationbyuser(page, size,user);
+        DynamicResponse result = this.services.allnotificationbyuser(page, size,user);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
