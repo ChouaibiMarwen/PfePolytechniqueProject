@@ -21,9 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
 public class NotificationServices {
@@ -179,6 +177,41 @@ public class NotificationServices {
             }
         }
 
+
+    }
+
+    public void sendnotifications(Notification notificationuser, List<users> usersList) throws InterruptedException, FirebaseMessagingException {
+        Action action = notificationuser.getAction();
+
+        Set<String> processedTokens = new HashSet<>();
+        for (users user : usersList) {
+            notificationuser.setReciver(user);
+            Note note = new Note();
+            note.setSubject(action == null ? notificationuser.getSubject() : action.name());
+            action = notificationuser.getAction() == null ? notificationuser.getAction() : action;
+            notificationuser.setAction(action);
+            Thread.sleep(1000);
+            note.setContent(notificationuser.getContent());
+            if (!this.userDeviceService.findbyuserdevice(notificationuser.getReciver()).isEmpty() && !notificationuser.getSender().getId().equals(user.getId())) {
+                List<UserDevice> devices = this.userDeviceService.findbyuserdevice(notificationuser.getReciver());
+                for (UserDevice device : devices) {
+                    if (device != null && device.getTokendevice() != null) {
+                        if (this.pushNotificationService.isValidFCMToken(device.getTokendevice())) {
+                            if (!processedTokens.contains(device.getTokendevice())) {
+                                notificationuser = this.save(notificationuser);
+                                note.setData(notificationuser.toMap());
+                                this.pushNotificationService.sendNotification(note, device.getTokendevice());
+                                processedTokens.add(device.getTokendevice());
+                            }
+                            Thread.sleep(1000);
+                        } else {
+                            this.userDeviceService.deletebyid(device.getId());
+                        }
+                    }
+                }
+            }
+            processedTokens.clear();
+        }
 
     }
 }

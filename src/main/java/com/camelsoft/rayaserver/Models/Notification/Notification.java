@@ -35,6 +35,14 @@ public class Notification implements Serializable {
     private MessageStatus status= MessageStatus.WAITING;
     @Column(name = "action")
     private Action action=Action.IDLE;
+
+    @Column(name = "action_id")
+    private Long actionId;
+    @Column(name = "subject")
+    private String subject ;
+    @Column(name = "content")
+    private String content ;
+
     @Column(name = "timestmp")
     private Date timestmp;
 
@@ -51,6 +59,18 @@ public class Notification implements Serializable {
     }
 
 
+    public Notification(users sender, users reciver, Action action, String subject, String content,Long actionId) {
+        this.actionId = actionId;
+        this.sender = sender;
+        this.reciver = reciver;
+        this.action = action;
+        this.subject = subject;
+        this.content = content;
+        this.timestmp = new Date();
+    }
+
+
+
     public Map<String,String> toMap(){
         Map<String,String> data = new HashMap<>();
         data.put("id",this.id.toString());
@@ -59,6 +79,9 @@ public class Notification implements Serializable {
         data.put("chat",this.chat!=null?this.chat.getChatId():"null");
         data.put("status",this.status.name());
         data.put("action", this.action.name());
+        data.put("actionId", this.actionId.toString());
+        data.put("subject",this.subject);
+        data.put("content",this.content);
         data.put("timestmp",this.timestmp.toString());
         return data;
     }
@@ -118,5 +141,29 @@ public class Notification implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getActionId() {
+        return actionId;
+    }
+
+    public void setActionId(Long actionId) {
+        this.actionId = actionId;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

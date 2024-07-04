@@ -1,15 +1,18 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Event.EventStatus;
+import com.camelsoft.rayaserver.Enum.Tools.Action;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.*;
 import com.camelsoft.rayaserver.Models.User.UsersCategory;
 import com.camelsoft.rayaserver.Models.User.users;
+import com.camelsoft.rayaserver.Models.Notification.Notification;
 import com.camelsoft.rayaserver.Request.project.RequestOfEvents;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
+import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.Project.EventService;
 import com.camelsoft.rayaserver.Services.Project.UserCategoryService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
@@ -17,6 +20,7 @@ import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.criteria.CriteriaService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -55,6 +59,9 @@ public class EventController extends BaseController {
 
     @Autowired
     private CriteriaService criteriaService;
+
+    @Autowired
+    private NotificationServices notificationServices;
 
 
     @GetMapping(value = {"/all_events_by_title"})
@@ -281,6 +288,16 @@ public class EventController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
+        users admin =  this.userService.findAllAdmin().get(0);
+        Notification notificationuser = new Notification(admin, user, Action.EVENT, "NEW_EVENT", "a new event has been created" , result.getId());
+        // Send the notification
+        try {
+            List<users> usersList = new ArrayList<>();
+            usersList.add(admin);
+            this.notificationServices.sendnotifications(notificationuser, usersList);
+        } catch (FirebaseMessagingException | InterruptedException e) {
+            e.getMessage();
+        }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

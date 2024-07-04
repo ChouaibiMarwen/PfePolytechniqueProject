@@ -9,6 +9,7 @@ public enum Action {
     LOAN,
     CUSTOMER,
     SUPPLIER,
-    PURCHASE
+    PURCHASE,
+    EVENT
 
 }

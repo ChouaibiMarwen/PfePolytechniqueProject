@@ -76,19 +76,19 @@ public class NotificationController  extends BaseController {
 
     @GetMapping(value = {"/notification_by_id/{notification_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    @ApiOperation(value = "get all ads list from the admin", notes = "Endpoint to get all ads list for admin")
+    @ApiOperation(value = "get notification by id", notes = "Endpoint to getget notification by id")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully update the ads"),
-            @ApiResponse(code = 400, message = "Bad request, check required fields"),
+            @ApiResponse(code = 200, message = "Successfull"),
+            @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity<Notification> notification_by_id (@PathVariable Long notification_id) {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
          Notification notif = this.services.findbyid(notification_id);
          if(notif == null)
-             return new ResponseEntity("invalid id "  + notification_id, HttpStatus.BAD_REQUEST);
+             return new ResponseEntity("invalid id "  + notification_id, HttpStatus.NOT_ACCEPTABLE);
          if(notif.getReciver() !=  user)
-             return new ResponseEntity("you are not authorized to get this notification"  + notification_id, HttpStatus.BAD_REQUEST);
+             return new ResponseEntity("you are not authorized to get this notification"  + notification_id, HttpStatus.NOT_ACCEPTABLE);
 
         return new ResponseEntity<>(notif, HttpStatus.OK);
     }
