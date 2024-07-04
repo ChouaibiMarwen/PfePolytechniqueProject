@@ -56,6 +56,7 @@ public class FCMService {
 
         return firebaseMessaging.send(message);
     }
+
     public Boolean isValidFCMToken(String fcmToken) {
         Message message = Message.builder().setToken(fcmToken).build();
         try {

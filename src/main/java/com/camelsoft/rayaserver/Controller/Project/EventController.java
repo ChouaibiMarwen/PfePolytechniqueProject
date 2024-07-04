@@ -299,7 +299,7 @@ public class EventController extends BaseController {
                 result.getId()
         );
         try {
-            this.notificationServices.sendnotification(notificationuser,null);
+            this.notificationServices.sendnotification(null,notificationuser);
 
             }  catch (FirebaseMessagingException e) {
            e.getMessage();

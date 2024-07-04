@@ -144,7 +144,7 @@ public class NotificationServices {
             Thread.sleep(1000);
             Note note = new Note();
             note.setSubject(action.name());
-            note.setContent(this.converMessageenum(action));
+            note.setContent(notificationuser.getContent());
             note.setData(notificationuser.toMap());
             if(!this.userDeviceService.findbyuserdevice(notificationuser.getReciver()).isEmpty()){
                 List<UserDevice> devices = this.userDeviceService.findbyuserdevice(notificationuser.getReciver());
