@@ -208,7 +208,8 @@ public class NotificationServices {
                     }
                 } else {
                     // Handle invalid tokens or remove invalid devices from database
-                    this.userDeviceService.deletebyid(device.getId());
+                   // this.userDeviceService.deletebyid(device.getId());
+                    System.out.println("Invalid FCM token");
                 }
             }
         }
