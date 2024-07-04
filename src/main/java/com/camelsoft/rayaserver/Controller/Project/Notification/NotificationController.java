@@ -93,5 +93,4 @@ public class NotificationController  extends BaseController {
         return new ResponseEntity<>(notif, HttpStatus.OK);
     }
 
-
 }
