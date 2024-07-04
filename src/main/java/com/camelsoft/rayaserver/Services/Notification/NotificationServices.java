@@ -190,7 +190,7 @@ public class NotificationServices {
 
             Note note = new Note();
             note.setSubject(action.name());
-            note.setContent(this.converMessageenum(action));
+            note.setContent(notificationuser.getContent());
             note.setData(notificationuser.toMap());
 
             // Track sent devices to avoid duplicates
@@ -199,19 +199,16 @@ public class NotificationServices {
             List<UserDevice> devices = this.userDeviceService.findbyuserdevice(notificationuser.getReciver());
 
             for (UserDevice device : devices) {
-                // Generate a unique identifier for the physical device
-                String deviceIdentifier = generateUniqueDeviceIdentifier(device);
-
-                // Check if this physical device has already been sent a notification
-                if (deviceIdentifier != null && !sentDevices.contains(deviceIdentifier)) {
-                    if (this.pushNotificationService.isValidFCMToken(device.getTokendevice())) {
+                if (device != null && device.getTokendevice() != null && this.pushNotificationService.isValidFCMToken(device.getTokendevice())) {
+                    // Check if device has already received a notification
+                    if (!sentDevices.contains(device.getTokendevice())) {
                         this.pushNotificationService.sendNotification(note, device.getTokendevice());
                         Thread.sleep(1000);
-                        sentDevices.add(deviceIdentifier);
-                    } else {
-                        // Handle invalid tokens or remove invalid devices from database
-                        this.userDeviceService.deletebyid(device.getId());
+                        sentDevices.add(device.getTokendevice()); // Track sent device
                     }
+                } else {
+                    // Handle invalid tokens or remove invalid devices from database
+                    this.userDeviceService.deletebyid(device.getId());
                 }
             }
         }
