@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Models.DTO;
 
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanType;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class LoanDto {
     private Long idcreatorid;
     private String creatorname;
     private LoanStatus status;
+    private MediaModel attachment;
 
 
     public static LoanDto mapLoanToDto(Loan loan) {
@@ -33,6 +35,7 @@ public class LoanDto {
         dto.setTimestamp(loan.getTimestamp()) ;
         dto.setStatus(loan.getStatus()) ;
         dto.setId(loan.getId()) ;
+        dto.setAttachment(loan.getAttachment()) ;
         if(loan.getSupplier() != null){
             dto.creatorname = loan.getSupplier().getName();
             dto.idcreatorid = loan.getSupplier().getId();

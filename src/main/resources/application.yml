@@ -59,7 +59,7 @@ spring:
     host: ${WORKER_HOST}
     port: 443
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         default_schema: public

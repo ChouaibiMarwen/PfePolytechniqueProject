@@ -225,6 +225,30 @@ public class InvoiceService {
     }
 
 
+    public Integer countInvoicePerMonthAndStatus(Date date, InvoiceRelated related) {
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int month = calendar.get(Calendar.MONTH) + 1; // Calendar month is zero-based
+            int year = calendar.get(Calendar.YEAR);
+
+            // Set the start date to the first day of the specified month
+            calendar.set(year, month , 1, 0, 0, 0);
+            Date startDate = calendar.getTime();
+
+            // Set the end date to the last day of the specified month
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+            Date endDate = calendar.getTime();
+
+            // Call repository method to count invoices within the specified month
+            return this.repository.countByTimestampBetweenAndRelated(startDate, endDate, related);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+    }
+
+
+
 
     public Integer countInvoicePerMonthAndUser(Date date, users user) {
         try {
