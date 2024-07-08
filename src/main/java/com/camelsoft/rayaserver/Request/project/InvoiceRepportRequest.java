@@ -9,5 +9,4 @@ import java.util.*;
 @Data
 public class InvoiceRepportRequest {
     private Date date;
-    private InvoiceRelated related;
 }
