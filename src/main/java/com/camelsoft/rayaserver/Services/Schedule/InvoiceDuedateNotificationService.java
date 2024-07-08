@@ -33,7 +33,7 @@ public class InvoiceDuedateNotificationService {
     private NotificationServices notificationServices;
 
 
-    @Scheduled(cron = "0 * * * * ?")
+   // @Scheduled(cron = "0 * * * * ?")
     public void notifySupplierTowdaysBeforeDueDate() {
         LocalDate today = LocalDate.now();
         LocalDate dueDateLocal = today.plusDays(2);
