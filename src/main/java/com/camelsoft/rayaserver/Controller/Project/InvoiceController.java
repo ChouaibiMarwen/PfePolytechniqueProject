@@ -834,14 +834,14 @@ public class InvoiceController extends BaseController {
             date = new Date();
         System.out.println(date);
         report.setDate(date);
-        report.setInvoicepermonth(this.service.countInvoicePerMonth(date, related));
-        report.setRefundbymonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS, related));
-        report.setPaymentbymonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.UNPAID, related));
-        report.setPurshaseorderrequest(this.purshaseOrderService.countPurchaseOrdersWithCustomerOrSupllier(related));
-        report.setRequestdone(this.requestService.countDoneRequestsByUserRole(related));
-        report.setRequestpending(this.requestService.countRequestsByUserRoleAndStatus(related));
-        report.setSoldcars(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related));
-        report.setInvoicepermonth(this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.PAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.UNPAID, related) + this.service.countInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS, related));
+        report.setInvoicepermonth(this.service.countAllInvoicesPerMonth(date));
+        report.setRefundbymonth(this.service.countAllInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS));
+        report.setPaymentbymonth(this.service.countAllInvoicePerMonthAndStatus(date, InvoiceStatus.PAID) + this.service.countAllInvoicePerMonthAndStatus(date, InvoiceStatus.UNPAID));
+        report.setPurshaseorderrequest(this.purshaseOrderService.countPurchaseOrdersWithSupllier());
+        report.setRequestdone(this.requestService.countDoneRequestsBySuppliers());
+        report.setRequestpending(this.requestService.countRequestsByStatusForSuppliers());
+        report.setSoldcars(this.service.countAllInvoicePerMonthAndStatus(date, InvoiceStatus.PAID));
+        report.setInvoicepermonth(this.service.countAllInvoicePerMonthAndStatus(date, InvoiceStatus.PAID) + this.service.countAllInvoicePerMonthAndStatus(date, InvoiceStatus.UNPAID) + this.service.countAllInvoicePerMonthAndStatus(date, InvoiceStatus.REFUNDS));
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,

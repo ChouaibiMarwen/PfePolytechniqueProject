@@ -195,6 +195,12 @@ public class RequestService {
 
     }
 
+    public Integer countRequestsByStatusForSuppliers() {
+        Set<RequestState> state = new HashSet<>(Arrays.asList(RequestState.WAITING, RequestState.IN_PROGRESS));
+        return this.repository.countByCreatorrequestRoleRoleAndStatusIn(RoleEnum.ROLE_SUPPLIER, state);
+
+    }
+
 
     public Integer countPendingRequestsByUserAndStatus(users user) {
         Set<RequestState> state = new HashSet<>(Arrays.asList(RequestState.WAITING, RequestState.IN_PROGRESS));
@@ -208,6 +214,11 @@ public class RequestService {
         else{
             return this.repository.countByCreatorrequestRoleRoleAndStatus(RoleEnum.ROLE_USER, RequestState.DONE);
         }
+
+    }
+
+    public Integer countDoneRequestsBySuppliers() {
+        return this.repository.countByCreatorrequestRoleRoleAndStatus(RoleEnum.ROLE_SUPPLIER, RequestState.DONE);
 
     }
 

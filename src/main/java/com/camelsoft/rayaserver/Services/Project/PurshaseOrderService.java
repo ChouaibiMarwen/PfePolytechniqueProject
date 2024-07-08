@@ -372,6 +372,12 @@ public class PurshaseOrderService {
     }
 
 
+    public Integer countPurchaseOrdersWithSupllier() {
+        return this.repository.countByArchiveIsFalseAndSupplierIsNotNull();
+
+    }
+
+
     public boolean isTherePoPendingOrInProgressWithCarVin(String carvin){
         List<PurshaseOrderStatus> statusList = Arrays.asList(PurshaseOrderStatus.PENDING, PurshaseOrderStatus.IN_PROGRESS);
         Integer total = this.repository.countPendingOrInProgressPurshaseOrdersByCarvin(statusList, carvin);

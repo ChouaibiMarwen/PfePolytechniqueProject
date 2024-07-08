@@ -25,8 +25,10 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     Page<Invoice> findAllByArchiveIsFalseAndRelated(Pageable page, InvoiceRelated related);
     boolean existsByInvoicenumber(Integer invoicenumber);
     Integer countByTimestampBetweenAndRelated(Date startDate, Date endDate,InvoiceRelated related);
+    Integer countByTimestampBetween(Date startDate, Date endDate);
     Integer countByTimestampBetweenAndCreatedbyOrRelatedto(Date startDate, Date endDate,users createdby, users releatedto);
     Integer countByTimestampBetweenAndStatusAndRelated(Date startDate, Date endDate,InvoiceStatus status,InvoiceRelated related);
+    Integer countByTimestampBetweenAndStatus(Date startDate, Date endDate,InvoiceStatus status);
     Integer countByTimestampBetweenAndStatusAndCreatedbyOrRelatedto(Date startDate, Date endDate,InvoiceStatus status, users createdby, users releatedto);
     List<Invoice> findByStatus(InvoiceStatus status);
     List<Invoice> findAllByCreatedby(users user);

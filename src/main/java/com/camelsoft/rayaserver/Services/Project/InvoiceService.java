@@ -225,6 +225,29 @@ public class InvoiceService {
     }
 
 
+    public Integer countAllInvoicesPerMonth(Date date) {
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int month = calendar.get(Calendar.MONTH) + 1; // Calendar month is zero-based
+            int year = calendar.get(Calendar.YEAR);
+
+            // Set the start date to the first day of the specified month
+            calendar.set(year, month , 1, 0, 0, 0);
+            Date startDate = calendar.getTime();
+
+            // Set the end date to the last day of the specified month
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+            Date endDate = calendar.getTime();
+
+            // Call repository method to count invoices within the specified month
+            return this.repository.countByTimestampBetween(startDate, endDate);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+    }
+
+
     public Integer countInvoicePerMonthAndStatus(Date date, InvoiceRelated related) {
         try {
             Calendar calendar = Calendar.getInstance();
@@ -294,6 +317,29 @@ public class InvoiceService {
 
             // Call repository method to count invoices within the specified month
             return this.repository.countByTimestampBetweenAndStatusAndRelated(startDate, endDate, status, related);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+    }
+
+
+    public Integer countAllInvoicePerMonthAndStatus(Date date, InvoiceStatus status) {
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int month = calendar.get(Calendar.MONTH) + 1; // Calendar month is zero-based
+            int year = calendar.get(Calendar.YEAR);
+
+            // Set the start date to the first day of the specified month
+            calendar.set(year, month - 1, 1, 0, 0, 0);
+            Date startDate = calendar.getTime();
+
+            // Set the end date to the last day of the specified month
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+            Date endDate = calendar.getTime();
+
+            // Call repository method to count invoices within the specified month
+            return this.repository.countByTimestampBetweenAndStatus(startDate, endDate, status);
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
