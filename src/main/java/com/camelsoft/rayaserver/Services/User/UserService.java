@@ -529,7 +529,12 @@ public class UserService extends BaseController implements UserDetailsService {
 
     }
 
+    public users findFirstAdmin() {
+        Role userRole = roleRepository.findByRole(RoleEnum.ROLE_ADMIN);
+        users firstAdmin = userRepository.findTopByRoleAndDeletedIsFalse(userRole);
 
+        return firstAdmin;
+    }
 
 
     public List<users> findAllAdmin() {

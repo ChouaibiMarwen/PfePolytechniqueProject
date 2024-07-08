@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -81,13 +82,14 @@ public interface UserRepository extends JpaRepository<users, Long> {
 
     Page<users> findByRoleOrderByTimestmpDesc(Pageable page, Role role);
 
+
     Page<users> findByRoleAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(Pageable page, Role role, Boolean aBoolean, String userName);
 
     Page<users> findByRoleOrderBySupplier_RatingsDesc(Pageable page, Role role);
 
     List<users> findAllByRole(Role role);
 
-    users findTopByRole(Role role);
+    users findTopByRoleAndDeletedIsFalse(Role role);
 
     Long countAllByRole(Role role);
 

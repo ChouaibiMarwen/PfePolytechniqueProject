@@ -33,7 +33,7 @@ public class InvoiceDuedateNotificationService {
     private NotificationServices notificationServices;
 
 
-   // @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void notifySupplierTowdaysBeforeDueDate() {
         LocalDate today = LocalDate.now();
         LocalDate dueDateLocal = today.plusDays(2);
@@ -42,39 +42,60 @@ public class InvoiceDuedateNotificationService {
         Date dueDate = Date.from(dueDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         List<Invoice> invoices = invoiceService.findAllByDueDateAndArchiveIsFalse(dueDate);
-        users user = this.userService.findById(153822L);
-        // send notification
-        Notification notificationuser = new Notification(
-                user,
-                user,
-                Action.INVOICE,
-                "INVOICE_DUE_DATE",
-                "Test notification",
-                156509L
-        );
-        try {
-            this.notificationServices.sendnotification(notificationuser, null);
+        if (!invoices.isEmpty()) {
 
-        } catch (InterruptedException | FirebaseMessagingException e) {
-            throw new RuntimeException(e);
+            users admin = this.userService.findFirstAdmin();
+            if (admin == null)
+                return;
+
+            for (Invoice invoice : invoices) {
+                if (invoice.getPurshaseorder().getSubadminassignedto() != null) {
+                    users subadmin = invoice.getPurshaseorder().getSubadminassignedto();
+                    Notification notificationuser = new Notification(
+                            admin,
+                            subadmin,
+                            Action.INVOICE,
+                            "INVOICE_DUE_DATE",
+                            "Due of invoice with id " + invoice.getId() + " is after tow days",
+                            invoice.getId()
+                    );
+
+                    // send notification to sub admin and admin
+                    try {
+                        this.notificationServices.sendnotification(notificationuser, notificationuser);
+
+                    } catch (InterruptedException | FirebaseMessagingException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+
+                    Notification notificationuser = new Notification(
+                            admin,
+                            admin,
+                            Action.INVOICE,
+                            "INVOICE_DUE_DATE",
+                            "Due of invoice with id " + invoice.getId() + " is after tow days",
+                            invoice.getId()
+                    );
+
+                    // send notification to tha admin as user
+                    try {
+                        this.notificationServices.sendnotification(notificationuser, null);
+
+                    } catch (InterruptedException | FirebaseMessagingException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+
+            }
+
+
         }
 
-      /*  for (Invoice invoice : invoices) {
-            Action action = Action.IDLE;
-            Notification notificationsupplier = new Notification(null, invoice.getCreatedby(), null, action);
-            Notification notificationsubadmin = new Notification(null, invoice.getPurshaseorder().getSubadminassignedto(), null, action);
 
-            try {
-                notificationServices.sendnotification(notificationsupplier, null);
-                notificationServices.sendnotification(notificationsubadmin, null);
-            } catch (FirebaseMessagingException | InterruptedException ex) {
-                // Handle the exception, for example log the error
-                ex.printStackTrace();
-            }*/
-
-
-        }
     }
+}
 
 
 
