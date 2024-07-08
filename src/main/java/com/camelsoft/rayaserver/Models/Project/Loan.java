@@ -139,6 +139,8 @@ public class Loan implements Serializable {
     private String currency="SAR";
     @Column(columnDefinition = "TEXT",name = "note")
     private String note;
+    @Column(columnDefinition = "TEXT",name = "rejectraison")
+    private String rejectraison;
     @Column(name = "LoanStatus")
     private LoanStatus status = LoanStatus.WAITING;
     @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
@@ -614,5 +616,13 @@ public class Loan implements Serializable {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getRejectraison() {
+        return rejectraison;
+    }
+
+    public void setRejectraison(String rejectraison) {
+        this.rejectraison = rejectraison;
     }
 }

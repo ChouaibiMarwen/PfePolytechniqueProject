@@ -829,7 +829,6 @@ public class InvoiceController extends BaseController {
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
         InvoiceReport report = new InvoiceReport();
         Date date = request.getDate();
-        InvoiceRelated related = request.getRelated();
         if (date == null)
             date = new Date();
         System.out.println(date);

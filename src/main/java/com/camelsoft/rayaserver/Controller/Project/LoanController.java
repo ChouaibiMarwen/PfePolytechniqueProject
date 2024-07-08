@@ -278,13 +278,15 @@ public class LoanController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin"),
             @ApiResponse(code = 404, message = "Not found, check invoice id")
     })
-    public ResponseEntity<LoanDto> reject_loan(@PathVariable Long loan_id) throws IOException {
+    public ResponseEntity<LoanDto> reject_loan(@PathVariable Long loan_id, @RequestParam(required = false) String rejectraison) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (this.Services.FindById(loan_id)== null) {
             return new ResponseEntity(loan_id + " is not found in the system!", HttpStatus.NOT_FOUND);
         }
         Loan loan = this.Services.FindById(loan_id);
         loan.setStatus(LoanStatus.REJECTED);
+        if(rejectraison != null)
+            loan.setRejectraison(rejectraison);
         Loan result = this.Services.Update(loan);
         LoanDto resultdto = new LoanDto().mapLoanToDto(result);
         //save new action

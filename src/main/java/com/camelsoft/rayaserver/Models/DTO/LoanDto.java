@@ -22,6 +22,7 @@ public class LoanDto {
     private String creatorname;
     private LoanStatus status;
     private MediaModel attachment;
+    private String rejectraison;
 
 
     public static LoanDto mapLoanToDto(Loan loan) {
@@ -36,6 +37,7 @@ public class LoanDto {
         dto.setStatus(loan.getStatus()) ;
         dto.setId(loan.getId()) ;
         dto.setAttachment(loan.getAttachment()) ;
+        dto.setRejectraison(loan.getRejectraison());
         if(loan.getSupplier() != null){
             dto.creatorname = loan.getSupplier().getName();
             dto.idcreatorid = loan.getSupplier().getId();
