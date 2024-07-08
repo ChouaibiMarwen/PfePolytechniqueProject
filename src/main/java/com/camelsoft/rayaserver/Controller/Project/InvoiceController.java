@@ -103,7 +103,7 @@ public class InvoiceController extends BaseController {
 
 
     @GetMapping(value = {"/all_invoice_list_admin"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all invoices list for admin", notes = "Endpoint to get all invoices list")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),

@@ -32,7 +32,7 @@ public class InvoiceDuedateNotificationService {
     @Autowired
     private NotificationServices notificationServices;
 
-
+    // this service is scheduled every day at midnight(00:00)
     @Scheduled(cron = "0 0 0 * * ?")
     public void notifySupplierTowdaysBeforeDueDate() {
         LocalDate today = LocalDate.now();
@@ -43,7 +43,6 @@ public class InvoiceDuedateNotificationService {
 
         List<Invoice> invoices = invoiceService.findAllByDueDateAndArchiveIsFalse(dueDate);
         if (!invoices.isEmpty()) {
-
             users admin = this.userService.findFirstAdmin();
             if (admin == null)
                 return;
@@ -92,8 +91,6 @@ public class InvoiceDuedateNotificationService {
 
 
         }
-
-
     }
 }
 
