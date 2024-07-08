@@ -95,7 +95,7 @@ public class users implements Serializable {
     @JoinColumn(name = "manager_id")
     private users manager;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<BankInformation> bankinformations = new HashSet<>();
 
     @OneToOne(fetch = FetchType.LAZY)
