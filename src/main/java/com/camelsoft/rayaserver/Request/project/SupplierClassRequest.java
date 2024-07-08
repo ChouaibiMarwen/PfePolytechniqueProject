@@ -10,6 +10,7 @@ import java.util.Set;
 public class SupplierClassRequest {
     private String name;
     private String description;
+    private Integer dueDateOffset;
     private Set<Long> usersId = new HashSet<>();
 
 }

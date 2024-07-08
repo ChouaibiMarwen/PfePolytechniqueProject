@@ -23,6 +23,10 @@ public class SuppliersClassification implements Serializable {
 
     @OneToMany(mappedBy = "supplierclassification" ,fetch = FetchType.EAGER)
     private Set<users> suppliers = new HashSet<>();
+
+    @Column(name = "dueDateOffset")
+    private Integer dueDateOffset;
+
     @Column(name = "timestamp")
     private Date timestamp = new Date();
     @Column(name = "archive")
@@ -77,5 +81,13 @@ public class SuppliersClassification implements Serializable {
 
     public void setArchive(Boolean archive) {
         this.archive = archive;
+    }
+
+    public Integer getDueDateOffset() {
+        return dueDateOffset;
+    }
+
+    public void setDueDateOffset(Integer dueDateOffset) {
+        this.dueDateOffset = dueDateOffset;
     }
 }

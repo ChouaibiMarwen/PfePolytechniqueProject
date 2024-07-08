@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
+import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -146,11 +147,17 @@ public class Loan implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "processedby")
+    private users processedby;
     @Column(name = "timestamp")
     private Date timestamp;
     @JsonIgnore
     @Column(name = "archive")
     private Boolean archive = false;
+
+
 
     public Loan(String englishfirstname, String englishlastname, String englishsecondname, String englishthirdname, String familyname, String fathername, String grandfathername, Date birthdate, String email, String phonenumber, String postcode, String unitnumber, String name, Date retirementdate, WorkSector sectortype, String copynumber, String additionalnumber, String buildingnumber, MaritalStatus maritalstatus, String numberofdependents, String nationalid, String nationalidissuedate, String nationalidexpirydate, String city, String district, String primaryaddress, String streetname, String worksector, Double salary, String employername, LoanType loantype, Date firstinstallment, String purposeofloan, String balloonloan, Double loanamount, Integer loanterm, MediaModel attachment, String carmark, String carmodel, String caryear, String carvin, String carcolor, String carquantity, String note, Supplier supplier, String currency) {
         this.englishfirstname = englishfirstname;
@@ -624,5 +631,13 @@ public class Loan implements Serializable {
 
     public void setRejectraison(String rejectraison) {
         this.rejectraison = rejectraison;
+    }
+
+    public users getProcessedby() {
+        return processedby;
+    }
+
+    public void setProcessedby(users processedby) {
+        this.processedby = processedby;
     }
 }

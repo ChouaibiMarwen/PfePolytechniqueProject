@@ -255,6 +255,7 @@ public class LoanController extends BaseController {
         }
         Loan loan = this.Services.FindById(loan_id);
         loan.setStatus(LoanStatus.APPROVED);
+        loan.setProcessedby(user);
         Loan result = this.Services.Update(loan);
         LoanDto resultdto = new LoanDto().mapLoanToDto(result);
         //save new action
@@ -267,7 +268,6 @@ public class LoanController extends BaseController {
 
 
     }
-
 
     @PatchMapping(value = {"/reject_loan/{loan_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
@@ -285,6 +285,7 @@ public class LoanController extends BaseController {
         }
         Loan loan = this.Services.FindById(loan_id);
         loan.setStatus(LoanStatus.REJECTED);
+        loan.setProcessedby(user);
         if(rejectraison != null)
             loan.setRejectraison(rejectraison);
         Loan result = this.Services.Update(loan);
@@ -296,7 +297,6 @@ public class LoanController extends BaseController {
         );
         this.userActionService.Save(action);
         return new ResponseEntity<>(resultdto, HttpStatus.OK);
-
 
     }
 

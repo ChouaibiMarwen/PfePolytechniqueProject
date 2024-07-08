@@ -226,9 +226,11 @@ public class SupplierClassificationController extends BaseController {
             return new ResponseEntity("Name can't be null or empty", HttpStatus.BAD_REQUEST);
         if(this.service.existbyname(request.getName()))
             return new ResponseEntity("name already exists", HttpStatus.CONFLICT);
+        if(request.getDueDateOffset() == null)
+            return new ResponseEntity("Due date offset can't be null", HttpStatus.BAD_REQUEST);
         SuppliersClassification classification = new SuppliersClassification();
         classification.setName(request.getName());
-
+        classification.setDueDateOffset(request.getDueDateOffset());
         if (request.getDescription() != null)
             classification.setDescription(request.getDescription());
 
@@ -239,8 +241,8 @@ public class SupplierClassificationController extends BaseController {
                     return new ResponseEntity("User not found with this id :" + id, HttpStatus.NOT_FOUND);
                 if(u.getSupplier() == null)
                     return new ResponseEntity("this id: "+ id +  " does not belong to supplier:" + id, HttpStatus.NOT_FOUND);
-               /* if(u.getSupplierclassification() != null && !u.getSupplierclassification().getArchive())
-                    return new ResponseEntity("this supplier: "+ id +  "already have a classification" + id, HttpStatus.NOT_FOUND);*/
+                if(u.getSupplierclassification() != null && !u.getSupplierclassification().getArchive())
+                    return new ResponseEntity("this supplier: "+ id +  "already have a classification" + id, HttpStatus.NOT_FOUND);
                 u.setSupplierclassification(classification);
                 classification.getSuppliers().add(u);
             }
@@ -279,6 +281,8 @@ public class SupplierClassificationController extends BaseController {
                 return new ResponseEntity("name already exists", HttpStatus.CONFLICT);
             classification.setName(request.getName());
         }
+        if(request.getDueDateOffset() != null)
+            classification.setDueDateOffset(request.getDueDateOffset());
 
         if (request.getDescription() != null)
             classification.setDescription(request.getDescription());
@@ -405,9 +409,6 @@ public class SupplierClassificationController extends BaseController {
     })
     public ResponseEntity<SuppliersClassification> add_sub_admin_to_classification(@PathVariable Long classification_id,@RequestParam List<Long> usersIds) {
         users currentUser = userService.findByUserName(getCurrentUser().getUsername());
-        if (currentUser == null)
-            return new ResponseEntity("Current user not found", HttpStatus.NOT_FOUND);
-
         SuppliersClassification classification = this.service.FindById(classification_id);
         if (classification == null)
             return new ResponseEntity("classification not found with id: " + classification_id, HttpStatus.NOT_FOUND);

@@ -20,6 +20,7 @@ public class SupplierClassififcationDto {
     private String name;
     private String description;
     private Set<UserShortDto> suppliers = new HashSet<>();
+    private Integer dueDateOffset;
     private Date timestamp = new Date();
     private Boolean archive = false;
 
@@ -33,6 +34,7 @@ public class SupplierClassififcationDto {
                 .map(UserShortDto::mapToUserShortDTO).collect(Collectors.toSet()));
         dto.setTimestamp(classification.getTimestamp());
         dto.setArchive(classification.getArchive());
+        dto.setDueDateOffset(classification.getDueDateOffset());
         return dto;
     }
 }

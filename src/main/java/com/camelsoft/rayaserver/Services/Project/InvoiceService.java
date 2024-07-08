@@ -26,6 +26,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -556,6 +558,24 @@ public class InvoiceService {
                 .flatMap(Set::stream)
                 .mapToDouble(Product::getSubtotal)
                 .sum();
+    }
+
+    public Date calculateInvoiceDueDate(Date timestamp, int dueDateOffset) {
+        // Use Calendar to manipulate the date
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(timestamp);
+
+        // Add the dueDateOffset days
+        calendar.add(Calendar.DAY_OF_MONTH, dueDateOffset);
+
+        // Set the time part to 00:00:00
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // Return the resulting date
+        return calendar.getTime();
     }
 
 

@@ -218,10 +218,6 @@ public class InvoiceController extends BaseController {
             invoice.setInvoicedate(request.getInvoicedate());
 
         }
-        if (request.getDuedate() != null) {
-            invoice.setDuedate(request.getDuedate());
-
-        }
         if (request.getCurrency() != null) {
             invoice.setCurrency(request.getCurrency());
 
@@ -323,13 +319,20 @@ public class InvoiceController extends BaseController {
         }
 
         Invoice result = this.service.Save(invoice);
+        if(result.getCreatedby().getSupplierclassification() != null ){
+            Date duedate = this.service.calculateInvoiceDueDate(result.getTimestamp(), result.getCreatedby().getSupplierclassification().getDueDateOffset());
+            result.setDuedate(duedate);
+        }
+
+        Invoice result1 = this.service.Save(result);
+
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(result1, HttpStatus.OK);
 
 
     }
@@ -396,10 +399,9 @@ public class InvoiceController extends BaseController {
             invoice.setInvoicedate(request.getInvoicedate());
 
         }
-        if (request.getDuedate() != null) {
-            invoice.setDuedate(request.getDuedate());
+        /*if (request.getDuedate() != null)
+            invoice.setDuedate(request.getDuedate());*/
 
-        }
         if (request.getCurrency() != null) {
             invoice.setCurrency(request.getCurrency());
 
@@ -505,13 +507,21 @@ public class InvoiceController extends BaseController {
         Invoice result = this.service.Save(invoice);
         po.setStatus(PurshaseOrderStatus.IN_PROGRESS);
         this.purshaseOrderService.Update(po);
+
+        if(result.getCreatedby().getSupplierclassification() != null ){
+            Date duedate = this.service.calculateInvoiceDueDate(result.getTimestamp(), result.getCreatedby().getSupplierclassification().getDueDateOffset());
+            result.setDuedate(duedate);
+        }
+
+        Invoice result1 = this.service.Save(result);
+
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(result1, HttpStatus.OK);
 
 
     }
@@ -557,9 +567,9 @@ public class InvoiceController extends BaseController {
         }
 
         // Update other fields if provided
-        if (request.getDuedate() != null) {
+        /*if (request.getDuedate() != null) {
             existingInvoice.setDuedate(request.getDuedate());
-        }
+        }*/
         if (request.getCurrency() != null) {
             existingInvoice.setCurrency(request.getCurrency());
         }
@@ -813,7 +823,6 @@ public class InvoiceController extends BaseController {
 
 
     }
-
     @GetMapping(value = {"/invoice_report_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all invoice by status for admin", notes = "Endpoint to invoices' reports for admin")
@@ -951,9 +960,17 @@ public class InvoiceController extends BaseController {
 
         if (invoice == null)
             return new ResponseEntity("no invoice founded with that id", HttpStatus.NOT_ACCEPTABLE);
+        if(invoice.getCreatedby().getSupplierclassification() == null)
+            return new ResponseEntity("Supplier is not classified", HttpStatus.NOT_ACCEPTABLE);
 
         if (invoice.getStatus() == InvoiceStatus.PAID || invoice.getStatus() == InvoiceStatus.REJECTED)
             return new ResponseEntity("The invoice is already paid or rejected", HttpStatus.NOT_ACCEPTABLE);
+
+        if(invoice.getDuedate() == null){
+            Date duedate = this.service.calculateInvoiceDueDate(invoice.getTimestamp(), invoice.getCreatedby().getSupplierclassification().getDueDateOffset());
+            invoice.setDuedate(duedate);
+        }
+
         invoice.setStatus(InvoiceStatus.UNPAID);
         invoice.setConfirmedBy(user);
         Invoice result = this.service.Update(invoice);

@@ -55,7 +55,7 @@ public class InvoiceDuedateNotificationService {
                             subadmin,
                             Action.INVOICE,
                             "INVOICE_DUE_DATE",
-                            "Due of invoice with id " + invoice.getId() + " is after tow days",
+                            "Due date of invoice with id " + invoice.getId() + " is after two days",
                             invoice.getId()
                     );
 
@@ -73,7 +73,7 @@ public class InvoiceDuedateNotificationService {
                             admin,
                             Action.INVOICE,
                             "INVOICE_DUE_DATE",
-                            "Due of invoice with id " + invoice.getId() + " is after tow days",
+                            "Due of invoice with id " + invoice.getId() + " is after two days",
                             invoice.getId()
                     );
 

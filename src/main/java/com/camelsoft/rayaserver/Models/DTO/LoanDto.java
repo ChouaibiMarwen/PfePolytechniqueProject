@@ -23,6 +23,8 @@ public class LoanDto {
     private LoanStatus status;
     private MediaModel attachment;
     private String rejectraison;
+    private Long idprocessedby;
+    private String nameprocessedby;
 
 
     public static LoanDto mapLoanToDto(Loan loan) {
@@ -41,6 +43,10 @@ public class LoanDto {
         if(loan.getSupplier() != null){
             dto.creatorname = loan.getSupplier().getName();
             dto.idcreatorid = loan.getSupplier().getId();
+        }
+        if(loan.getProcessedby() != null){
+            dto.setIdprocessedby(loan.getProcessedby().getId());
+            dto.setNameprocessedby(loan.getProcessedby().getName());
         }
 
         return dto;
