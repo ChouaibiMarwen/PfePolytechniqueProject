@@ -849,8 +849,8 @@ public class InvoiceController extends BaseController {
         );
         this.userActionService.Save(action);
         return new ResponseEntity<>(report, HttpStatus.OK);
-
     }
+
     @GetMapping(value = {"/invoice_report_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all invoice by status for admin", notes = "Endpoint to invoices reportfor supplier")
