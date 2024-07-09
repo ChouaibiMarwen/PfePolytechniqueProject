@@ -163,19 +163,23 @@ public class SubSupplierController extends BaseController {
         Supplier resultsupplier = this.supplierServices.save(supplier);
         user.setSupplier(resultsupplier);
         user.setUsername(username);
-        if(currentuser.getRole().getRole() == RoleEnum.ROLE_SUPPLIER )
+        if(currentuser.getRole().getRole() == RoleEnum.ROLE_SUPPLIER ){
             user.setManager(currentuser);
+            user.setSupplierclassification(currentuser.getSupplierclassification());
+        }
         else if(currentuser.getManager() != null && currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUB_SUPPLIER) {
             user.setManager(currentuser.getManager());
+            user.setSupplierclassification(currentuser.getManager().getSupplierclassification());
         }else if(currentuser.getManager()!= null && currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUPPLIER){
             user.setManager(currentuser);
-
+            user.setSupplierclassification(currentuser.getSupplierclassification());
         }else{
             return new ResponseEntity("you're not a supplier or you don't have manager : ", HttpStatus.NOT_ACCEPTABLE);
 
         }
         user.setEmail(request.getEmail().toLowerCase());
         user.setPassword(request.getPassword());
+        user.setPhonenumber(phonenumber);
         user.setPersonalinformation(resultinformation);
 
         // Save the user
@@ -190,8 +194,4 @@ public class SubSupplierController extends BaseController {
 
 
     }
-
-
-
-
 }

@@ -140,19 +140,23 @@ public class SubSubDealerController extends BaseController {
         Supplier resultsupplier = this.supplierServices.save(supplier);
         user.setSupplier(resultsupplier);
         user.setUsername(username);
-        if(currentuser.getRole().getRole() ==   RoleEnum.ROLE_SUB_DEALER)
+        if(currentuser.getRole().getRole() == RoleEnum.ROLE_SUB_DEALER){
             user.setManager(currentuser);
+            user.setSupplierclassification(currentuser.getSupplierclassification());
+        }
         else if(currentuser.getManager() != null && currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUB_SUB_DEALER) {
             user.setManager(currentuser.getManager());
+            user.setSupplierclassification(currentuser.getManager().getSupplierclassification());
         }else if(currentuser.getManager() != null && currentuser.getManager().getRole().getRole()== RoleEnum.ROLE_SUB_DEALER){
             user.setManager(currentuser);
-
+            user.setSupplierclassification(currentuser.getSupplierclassification());
         }else{
             return new ResponseEntity("you're not a sub_dealer or you don't have manager : ", HttpStatus.NOT_ACCEPTABLE);
 
         }
         user.setEmail(request.getEmail().toLowerCase());
         user.setPassword(request.getPassword());
+        user.setPhonenumber(phonenumber);
         user.setPersonalinformation(resultinformation);
         // Save the user
         users result = userService.saveSubSubDealer(user);
