@@ -70,7 +70,7 @@ public class SupplierClassificationController extends BaseController {
 
         //save new action
         UserAction action = new UserAction(
-                UserActionsEnum.USERS_CATEGORIES_MANAGEMENT,
+                UserActionsEnum.SUPPLIERS_CLASSIFICATION_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
@@ -98,7 +98,7 @@ public class SupplierClassificationController extends BaseController {
 
         //save new action
         UserAction action = new UserAction(
-                UserActionsEnum.USERS_CATEGORIES_MANAGEMENT,
+                UserActionsEnum.SUPPLIERS_CLASSIFICATION_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
@@ -126,7 +126,7 @@ public class SupplierClassificationController extends BaseController {
 
         //save new action
         UserAction action = new UserAction(
-                UserActionsEnum.USERS_CATEGORIES_MANAGEMENT,
+                UserActionsEnum.SUPPLIERS_CLASSIFICATION_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
@@ -148,7 +148,29 @@ public class SupplierClassificationController extends BaseController {
 
         //save new action
         UserAction action = new UserAction(
-                UserActionsEnum.USERS_CATEGORIES_MANAGEMENT,
+                UserActionsEnum.SUPPLIERS_CLASSIFICATION_MANAGEMENT,
+                currentuser
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(shortuser, HttpStatus.OK);
+    }
+
+    @GetMapping(value = {"/agents_without_classification_list"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "get all agents classification for admin", notes = "Endpoint to get all agents classification for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<List<UserShortDto>> agnets_without_classification_list() throws IOException {
+        users currentuser = this.userService.findByUserName(getCurrentUser().getUsername());
+        List<UserShortDto> shortuser = this.userService.getSubAdminByRolesAndWithoutClassification()
+                .stream().map(UserShortDto::mapToUserShortDTO).collect(Collectors.toList());
+
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.SUPPLIERS_CLASSIFICATION_MANAGEMENT,
                 currentuser
         );
         this.userActionService.Save(action);

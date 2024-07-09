@@ -102,6 +102,7 @@ public interface UserRepository extends JpaRepository<users, Long> {
     List<users> findByDeletedIsFalseAndActiveIsTrue();
     List<users> findByRoleInAndDeletedIsFalse(List<Role> roles);
     List<users> findByRoleInAndSupplierclassificationIsNullAndDeletedIsFalse(List<Role> roles);
+    List<users> findByRoleInAndSubadminClassificationIsNullAndDeletedIsFalse(List<Role> roles);
 
 
     Page<users> findAllByNameContains(Pageable page, String name);
