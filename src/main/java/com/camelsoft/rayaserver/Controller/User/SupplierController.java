@@ -387,7 +387,7 @@ public class SupplierController extends BaseController {
     //api to update or delete supplier classification classification
     @PatchMapping(value = {"/update_supplier_classification/{supplier_id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
-    public ResponseEntity<users> add_sub_admin(@PathVariable Long supplier_id ,@RequestParam(required = false) Long classification_id) throws IOException, InterruptedException {
+    public ResponseEntity<users> update_supplier_classification(@PathVariable Long supplier_id ,@RequestParam(required = false) Long classification_id) throws IOException, InterruptedException {
         users user = userService.findById(supplier_id);
         if(user == null)
             return new ResponseEntity("supplier is not found", HttpStatus.NOT_FOUND);

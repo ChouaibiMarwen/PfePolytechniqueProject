@@ -87,10 +87,6 @@ public class SubSupplierController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
-
-
-
     @PostMapping(value = {"/add_sub_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')")
     public ResponseEntity<users> add_sub_admin(@RequestBody CustomerSingUpRequest request) throws IOException, InterruptedException, MessagingException {
