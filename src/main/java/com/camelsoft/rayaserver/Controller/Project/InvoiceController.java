@@ -743,7 +743,7 @@ public class InvoiceController extends BaseController {
 
     }
     @GetMapping(value = {"/user_all_invoices/{user_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or  hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or  hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get user's invoices", notes = "Endpoint to get invoice")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully get"),
