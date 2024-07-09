@@ -228,8 +228,27 @@ public class SupplierController extends BaseController {
 
         Address address = new Address();
 
+        if(request.getUseraddressRequest() != null ){
+            if (request.getUseraddressRequest().getAddressline1() != null)
+                address.setAddressline1(request.getUseraddressRequest().getAddressline1());
+            if (request.getUseraddressRequest().getAddressline2() != null)
+                address.setAddressline2(request.getUseraddressRequest().getAddressline2());
+            if (request.getUseraddressRequest().getCountryName() != null) {
+                Root root = this.countriesServices.countrybyname(request.getUseraddressRequest().getCountryName());
+                if(root != null)
+                    address.setCountry(root);
+            }
+            if (request.getUseraddressRequest().getPostcode() != null)
+                address.setPostcode(request.getUseraddressRequest().getPostcode());
+            if (request.getUseraddressRequest().getCityName() != null) {
+                State state = this.countriesServices.Statebyname(request.getUseraddressRequest().getCityName());
+                address.setCity(state);
+            }
+            if (request.getUseraddressRequest().getStreetname() != null)
+                address.setStreetname(request.getUseraddressRequest().getStreetname());
+        }
 
-        if (request.getUseraddressRequest().getAddressline1() != null)
+        /*if (request.getUseraddressRequest().getAddressline1() != null)
             address.setAddressline1(request.getUseraddressRequest().getAddressline1());
         if (request.getUseraddressRequest().getAddressline2() != null)
             address.setAddressline2(request.getUseraddressRequest().getAddressline2());
@@ -245,7 +264,7 @@ public class SupplierController extends BaseController {
             address.setCity(state);
         }
         if (request.getUseraddressRequest().getStreetname() != null)
-            address.setStreetname(request.getUseraddressRequest().getStreetname());
+            address.setStreetname(request.getUseraddressRequest().getStreetname());*/
         address.setUser(user);
         Address addressresult = this.addressServices.save(address);
         /*user.getAddresses().add(address);
