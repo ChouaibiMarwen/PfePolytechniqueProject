@@ -8,6 +8,7 @@ import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
+import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
@@ -154,6 +155,13 @@ public class SubSupplierController extends BaseController {
             information.setMaritalstatus(MaritalStatus.valueOf(request.getInformationRequest().getMaritalstatus()));
         // Set user details
         PersonalInformation resultinformation = this.personalInformationService.save(information);
+        Supplier supplier = new Supplier();
+        supplier.setSuppliernumber(request.getSuppliernumber());
+        supplier.setName(request.getCompanyName());
+        supplier.setIdtype(request.getIdType());
+        supplier.setIdnumber(request.getIdnumber());
+        Supplier resultsupplier = this.supplierServices.save(supplier);
+        user.setSupplier(resultsupplier);
         user.setUsername(username);
         if(currentuser.getRole().getRole() == RoleEnum.ROLE_SUPPLIER )
             user.setManager(currentuser);
@@ -170,12 +178,6 @@ public class SubSupplierController extends BaseController {
         user.setPassword(request.getPassword());
         user.setPersonalinformation(resultinformation);
 
-      /*  if (!this.filesStorageService.checkformat(file))
-            return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
-        File_model resource_media = filesStorageService.save_file_local(file, "profile");
-        if (resource_media == null)
-            return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
-        user.setProfileimage(resource_media);*/
         // Save the user
         users result = userService.saveSubSupplier(user);
         //save new action

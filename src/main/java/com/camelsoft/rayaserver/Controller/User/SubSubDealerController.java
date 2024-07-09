@@ -7,6 +7,7 @@ import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
+import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.auth.CustomerSingUpRequest;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
@@ -131,6 +132,13 @@ public class SubSubDealerController extends BaseController {
             information.setMaritalstatus(MaritalStatus.valueOf(request.getInformationRequest().getMaritalstatus()));
         // Set user details
         PersonalInformation resultinformation = this.personalInformationService.save(information);
+        Supplier supplier = new Supplier();
+        supplier.setSuppliernumber(request.getSuppliernumber());
+        supplier.setName(request.getCompanyName());
+        supplier.setIdtype(request.getIdType());
+        supplier.setIdnumber(request.getIdnumber());
+        Supplier resultsupplier = this.supplierServices.save(supplier);
+        user.setSupplier(resultsupplier);
         user.setUsername(username);
         if(currentuser.getRole().getRole() ==   RoleEnum.ROLE_SUB_DEALER)
             user.setManager(currentuser);
