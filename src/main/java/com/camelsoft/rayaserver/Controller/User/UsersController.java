@@ -145,7 +145,7 @@ public class UsersController extends BaseController {
 
     @PatchMapping(value = {"/update_user_personal_information/{userId}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
-    public ResponseEntity<PersonalInformation> updateUserPersonalInfo(@PathVariable Long userId , @ModelAttribute PersonalInformationRequest request) throws IOException {
+    public ResponseEntity<PersonalInformation> updateUserPersonalInfo(@PathVariable Long userId , @RequestBody PersonalInformationRequest request) throws IOException {
         users user = this.userService.findById(userId);
         if(user == null ){
             return new ResponseEntity("User is not founded", HttpStatus.BAD_REQUEST);
