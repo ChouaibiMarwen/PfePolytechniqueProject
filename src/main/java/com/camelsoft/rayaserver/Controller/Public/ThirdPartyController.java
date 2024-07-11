@@ -1,15 +1,16 @@
 package com.camelsoft.rayaserver.Controller.Public;
 
+import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Request.thirdPart.ThirdPartRequst;
+import com.camelsoft.rayaserver.Services.Project.InvoiceService;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/third_part")
@@ -21,6 +22,9 @@ public class ThirdPartyController {
     private static final String PO_INVOICE_PAYMENT_SERVICE_URI = "https://devsoa.almajdouie.com/soa-infra/resources/RAYA/PoInvPmtListService/PoInvPmtServiceEp/InvoicePayment";
     private static final String USERNAME = "rayarosom";
     private static final String PASSWORD = "Digital@intg1";
+    @Autowired
+    private InvoiceService invoiceService;
+
 
     private final RestTemplate restTemplate;
 
@@ -97,5 +101,19 @@ public class ThirdPartyController {
         return response;
 
     }
+   @PostMapping(value = {"/patch_invoice"})
+    public ResponseEntity<String> patch_invoice() {
+
+       List<Invoice> list = this.invoiceService.findAll();
+       for(Invoice i : list){
+           i.setRole(i.getCreatedby().getRole().getRole());
+           this.invoiceService.Update(i);
+       }
+
+       return  new ResponseEntity("donee" ,HttpStatus.OK );
+
+    }
+
+
 }
 
