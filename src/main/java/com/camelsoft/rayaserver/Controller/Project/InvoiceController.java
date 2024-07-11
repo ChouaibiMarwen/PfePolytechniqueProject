@@ -90,6 +90,10 @@ public class InvoiceController extends BaseController {
             // if the current user is admin , he get all invoices list
             invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role, invoicenumber, poid, suppliername, null);
         }
+
+
+
+
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,

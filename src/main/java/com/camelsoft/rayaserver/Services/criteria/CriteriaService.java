@@ -335,11 +335,13 @@ public class CriteriaService {
 
     public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, List<RoleEnum> role, Integer invoicenumber, Long poid, String suppliername, users assignedto) {
         try {
+            logger.error("cri");
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Invoice> criteriaQuery = criteriaBuilder.createQuery(Invoice.class);
             Root<Invoice> invoiceRoot = criteriaQuery.from(Invoice.class);
 
             List<Predicate> predicates = new ArrayList<>();
+            logger.error("searching by role" );
             List<Invoice> invoicesList = invoicerepository.findAllByCreatedby_Role_RoleIn(role);
             logger.error("invcoice size: " + invoicesList.size() );
             predicates.add(invoiceRoot.in(invoicesList));
