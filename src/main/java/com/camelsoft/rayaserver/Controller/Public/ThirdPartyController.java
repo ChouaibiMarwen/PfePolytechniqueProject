@@ -101,19 +101,6 @@ public class ThirdPartyController {
         return response;
 
     }
-   @PostMapping(value = {"/patch_invoice"})
-    public ResponseEntity<String> patch_invoice() {
-
-       List<Invoice> list = this.invoiceService.findAll();
-       for(Invoice i : list){
-           i.setRole(i.getCreatedby().getRole().getRole());
-           this.invoiceService.Update(i);
-       }
-
-       return  new ResponseEntity("donee" ,HttpStatus.OK );
-
-    }
-
 
 }
 
