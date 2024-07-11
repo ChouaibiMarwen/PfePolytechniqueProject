@@ -271,7 +271,7 @@ public class MediaController extends BaseController {
             if (deliverynotedocument == null) {
                 return new ResponseEntity("can't upload delivery note document", HttpStatus.BAD_REQUEST);
             }
-            invoice.setEstimarafile(deliverynotedocument);
+            invoice.setDeliverynotedocument(deliverynotedocument);
         }
         Invoice result = this.service.Update(invoice);
 

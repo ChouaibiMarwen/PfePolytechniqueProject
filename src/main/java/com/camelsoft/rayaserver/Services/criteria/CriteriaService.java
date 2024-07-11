@@ -330,35 +330,26 @@ public class CriteriaService {
 
     public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, List<RoleEnum> role, Integer invoicenumber, Long poid, String suppliername, users assignedto) {
         try {
-            // Prepare criteria builder and query
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Invoice> criteriaQuery = criteriaBuilder.createQuery(Invoice.class);
             Root<Invoice> invoiceRoot = criteriaQuery.from(Invoice.class);
 
-            // Prepare list to hold predicates
             List<Predicate> predicates = new ArrayList<>();
-
-            // Combine createdby and relatedto invoices
-            List<Invoice> invoicesList = new ArrayList<>();
-            invoicesList.addAll(invoicerepository.findAllByCreatedby_Role_RoleIn(role));
+            List<Invoice> invoicesList = invoicerepository.findAllByCreatedby_Role_RoleIn(role);
             predicates.add(invoiceRoot.in(invoicesList));
 
-            // Apply status filter if present
             if (status != null) {
                 predicates.add(criteriaBuilder.equal(invoiceRoot.get("status"), status));
             }
 
-            // Apply invoicenumber filter if present
             if (invoicenumber != null) {
                 predicates.add(criteriaBuilder.equal(invoiceRoot.get("invoicenumber"), invoicenumber));
             }
 
-            // Apply suppliername filter if present
             if (suppliername != null && !suppliername.isEmpty()) {
                 predicates.add(criteriaBuilder.like(invoiceRoot.get("suppliername"), "%" + suppliername + "%"));
             }
 
-            // Apply poid filter if present
             if (poid != null) {
                 Join<Invoice, PurshaseOrder> purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("id"), poid));
@@ -369,24 +360,24 @@ public class CriteriaService {
                 predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("subadminassignedto"), assignedto));
             }
 
-
-            // Apply predicates to query
             criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
-
-            // Order by timestamp descending
             criteriaQuery.orderBy(criteriaBuilder.desc(invoiceRoot.get("timestamp")));
 
-            // Create query and set pagination
             TypedQuery<Invoice> typedQuery = em.createQuery(criteriaQuery);
-            int totalRecords = typedQuery.getResultList().size();
+
+            // Count total records efficiently
+            CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+            countQuery.select(criteriaBuilder.count(countQuery.from(Invoice.class)));
+            countQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+            int totalRecords = em.createQuery(countQuery).getSingleResult().intValue();
+
             typedQuery.setFirstResult(page * size);
             typedQuery.setMaxResults(size);
 
-            // Create pageable instance
             Pageable pageable = PageRequest.of(page, size);
+            List<Invoice> resultList = typedQuery.getResultList();
 
-            // Return paginated result
-            return new PageImpl<>(typedQuery.getResultList(), pageable, totalRecords);
+            return new PageImpl<>(resultList, pageable, totalRecords);
         } catch (NoResultException ex) {
             throw new NotFoundException("No data found.");
         }
