@@ -17,6 +17,9 @@ import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
 import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
+import com.camelsoft.rayaserver.Tools.Util.FirstTimeInitializer;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -40,8 +43,10 @@ public class CriteriaService {
     private RoleRepository roleRepository;
     @Autowired
     private InvoiceRepository invoicerepository;
+    private final Log logger = LogFactory.getLog(CriteriaService.class);
 
     public CriteriaService(EntityManager em) {
+
         this.em = em;
         this.criteriaBuilder = em.getCriteriaBuilder();
     }
@@ -336,6 +341,7 @@ public class CriteriaService {
 
             List<Predicate> predicates = new ArrayList<>();
             List<Invoice> invoicesList = invoicerepository.findAllByCreatedby_Role_RoleIn(role);
+            logger.error("invcoice size: " + invoicesList.size() );
             predicates.add(invoiceRoot.in(invoicesList));
 
             if (status != null) {
@@ -353,11 +359,13 @@ public class CriteriaService {
             if (poid != null) {
                 Join<Invoice, PurshaseOrder> purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("id"), poid));
+                logger.error("join purshaseorder done");
             }
 
             if (assignedto != null) {
                 Join<Invoice, PurshaseOrder> purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("subadminassignedto"), assignedto));
+                logger.error("join subadminassignedto done");
             }
 
             criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
@@ -376,6 +384,7 @@ public class CriteriaService {
 
             Pageable pageable = PageRequest.of(page, size);
             List<Invoice> resultList = typedQuery.getResultList();
+            logger.error("invcoice resultList size: " + resultList.size() );
 
             return new PageImpl<>(resultList, pageable, totalRecords);
         } catch (NoResultException ex) {
