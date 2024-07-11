@@ -90,15 +90,15 @@ public class Invoice implements Serializable {
     @Column(name = "related")
     private InvoiceRelated related = InvoiceRelated.NONE;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id_createdby", nullable = false)
     private users createdby;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id_relatedto", nullable = false)
     private users relatedto;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id_confirmedby")
     private users confirmedBy;
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -107,7 +107,7 @@ public class Invoice implements Serializable {
     @JoinColumn(name = "purchaseorder_id", referencedColumnName = "id")
     private PurshaseOrder purshaseorder;
     @JsonIgnore
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private Set<Payment> payments = new HashSet<>();
     @Transient
     private Long poid;
@@ -122,10 +122,10 @@ public class Invoice implements Serializable {
     @ManyToMany(mappedBy = "invoices")
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
-    @OneToOne(fetch = FetchType.EAGER,cascade =CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY,cascade =CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "estimara_file_media")
     private MediaModel estimarafile;
-    @OneToOne(fetch = FetchType.EAGER,cascade =CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY,cascade =CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "notedocument_file_media")
     private MediaModel deliverynotedocument;
 
