@@ -342,7 +342,7 @@ public class CriteriaService {
 
             List<Predicate> predicates = new ArrayList<>();
             logger.error("searching by role" );
-            List<Invoice> invoicesList = invoicerepository.findAllByCreatedby_Role_RoleIn(role);
+            List<Invoice> invoicesList = invoicerepository.findByRoleIn(role);
             logger.error("invcoice size: " + invoicesList.size() );
             predicates.add(invoiceRoot.in(invoicesList));
 

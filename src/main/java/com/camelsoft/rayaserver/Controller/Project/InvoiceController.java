@@ -188,7 +188,6 @@ public class InvoiceController extends BaseController {
         Vehicles vehicles = this.vehiclesService.FindByVIN(request.getVehiclevin());
         if (vehicles == null)
             return new ResponseEntity(request.getVehiclevin() + "this vehicle VIN  not found", HttpStatus.NOT_ACCEPTABLE);
-        users createdby = UserServices.findByUserName(getCurrentUser().getUsername());
         users relatedto = UserServices.findById(request.getRelatedtouserid());
 
         if (request.getInvoicenumber() == null || this.service.ExistByInvoiceNumber(request.getInvoicenumber())) {
@@ -295,9 +294,9 @@ public class InvoiceController extends BaseController {
             invoice.setProducts(products);
 
         }
-        if (createdby != null) {
-            invoice.setCreatedby(createdby);
-
+        if (user != null) {
+            invoice.setCreatedby(user);
+            invoice.setRole(user.getRole().getRole());
         }
         if (request.getRelated() != null) {
             invoice.setRelated(request.getRelated());
@@ -321,6 +320,8 @@ public class InvoiceController extends BaseController {
         } else if (vehicles.getVehiclespricefinancing() != null) {
             invoice.setVehicleprice(vehicles.getVehiclespricefinancing().getTotalamount());
         }
+
+
 
         Invoice result = this.service.Save(invoice);
         if(result.getCreatedby().getSupplierclassification() != null ){
@@ -481,6 +482,7 @@ public class InvoiceController extends BaseController {
         }
         if (createdby != null) {
             invoice.setCreatedby(createdby);
+            invoice.setRole(createdby.getRole().getRole());
 
         }
         if (request.getRelated() != null) {

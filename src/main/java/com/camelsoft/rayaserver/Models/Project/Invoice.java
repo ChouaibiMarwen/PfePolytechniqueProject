@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Models.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -127,6 +128,9 @@ public class Invoice implements Serializable {
     @OneToOne(fetch = FetchType.EAGER,cascade =CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "notedocument_file_media")
     private MediaModel deliverynotedocument;
+
+    @Column(name = "role_created_by")
+    private RoleEnum role = RoleEnum.ROLE_SUPPLIER;
 
 
 
@@ -551,5 +555,13 @@ public class Invoice implements Serializable {
 
     public void setDeliverynotedocument(MediaModel deliverynotedocument) {
         this.deliverynotedocument = deliverynotedocument;
+    }
+
+    public RoleEnum getRole() {
+        return role;
+    }
+
+    public void setRole(RoleEnum role) {
+        this.role = role;
     }
 }

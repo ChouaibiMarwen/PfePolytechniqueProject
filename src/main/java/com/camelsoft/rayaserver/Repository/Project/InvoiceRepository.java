@@ -33,6 +33,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     List<Invoice> findByStatus(InvoiceStatus status);
     List<Invoice> findAllByCreatedby(users user);
     List<Invoice> findAllByCreatedby_Role_RoleIn(List<RoleEnum> role);
+    List<Invoice> findByRoleIn(List<RoleEnum> role);
     List<Invoice> findAllByRelatedto(users user);
     List<Invoice> findByDuedateAndArchiveIsFalse(Date duedate);
 
