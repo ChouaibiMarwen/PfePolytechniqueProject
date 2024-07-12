@@ -361,35 +361,42 @@ public class CriteriaService {
             Root<Invoice> invoiceRoot = criteriaQuery.from(Invoice.class);
             List<Predicate> predicates = new ArrayList<>();
 
+            // Log input parameters for debugging
+            logger.error("findAllByStatusAndRole called with parameters: page={}, size={}, status={}, role={}, invoicenumber={}, poid={}, suppliername={}, assignedto={}"+
+                    page+ size+ status+ role+ invoicenumber+ poid+ suppliername+ assignedto);
+
             // Join with PurshaseOrder if necessary
-            Join<Invoice, PurshaseOrder> purchaseOrderJoin = null;
-            if (poid != null || assignedto != null) {
-                purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
-            }
+            Join<Invoice, PurshaseOrder> purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
 
             // Apply filters
             if (role != null && !role.isEmpty()) {
                 predicates.add(invoiceRoot.get("role").in(role));
+                logger.error("Added role predicate: {}"+ role);
             }
 
             if (status != null) {
                 predicates.add(criteriaBuilder.equal(invoiceRoot.get("status"), status));
+                logger.error("Added status predicate: {}"+ status);
             }
 
             if (invoicenumber != null) {
                 predicates.add(criteriaBuilder.equal(invoiceRoot.get("invoicenumber"), invoicenumber));
+                logger.error("Added invoicenumber predicate: {}"+ invoicenumber);
             }
 
             if (suppliername != null && !suppliername.isEmpty()) {
                 predicates.add(criteriaBuilder.like(invoiceRoot.get("suppliername"), "%" + suppliername + "%"));
+                logger.error("Added suppliername predicate: {}"+ suppliername);
             }
 
             if (poid != null) {
                 predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("id"), poid));
+                logger.error("Added poid predicate: {}"+ poid);
             }
 
             if (assignedto != null) {
                 predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("subadminassignedto"), assignedto));
+                logger.error("Added assignedto predicate: {}"+ assignedto);
             }
 
             criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
@@ -401,30 +408,26 @@ public class CriteriaService {
             CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
             Root<Invoice> countRoot = countQuery.from(Invoice.class);
             countQuery.select(criteriaBuilder.count(countRoot));
-            if (poid != null || assignedto != null) {
-                Join<Invoice, PurshaseOrder> countPurchaseOrderJoin = countRoot.join("purshaseorder", JoinType.LEFT);
-                List<Predicate> countPredicates = new ArrayList<>(predicates);
-                if (poid != null) {
-                    countPredicates.add(criteriaBuilder.equal(countPurchaseOrderJoin.get("id"), poid));
-                }
-                if (assignedto != null) {
-                    countPredicates.add(criteriaBuilder.equal(countPurchaseOrderJoin.get("subadminassignedto"), assignedto));
-                }
-                countQuery.where(criteriaBuilder.and(countPredicates.toArray(new Predicate[0])));
-            } else {
-                countQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
-            }
+            Join<Invoice, PurshaseOrder> countPurchaseOrderJoin = countRoot.join("purshaseorder", JoinType.LEFT);
+            List<Predicate> countPredicates = new ArrayList<>(predicates);
+            countQuery.where(criteriaBuilder.and(countPredicates.toArray(new Predicate[0])));
             int totalRecords = em.createQuery(countQuery).getSingleResult().intValue();
+
 
             typedQuery.setFirstResult(page * size);
             typedQuery.setMaxResults(size);
 
             Pageable pageable = PageRequest.of(page, size);
             List<Invoice> resultList = typedQuery.getResultList();
+            logger.error("Result list size: {}" +  resultList.size());
 
             return new PageImpl<>(resultList, pageable, totalRecords);
         } catch (NoResultException ex) {
+            logger.error("No data found.", ex);
             throw new NotFoundException("No data found.");
+        } catch (Exception ex) {
+            logger.error("Error occurred in findAllByStatusAndRole", ex);
+            throw ex;
         }
     }
 
