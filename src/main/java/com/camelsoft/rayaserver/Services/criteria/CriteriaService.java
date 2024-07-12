@@ -359,11 +359,18 @@ public class CriteriaService {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Invoice> criteriaQuery = criteriaBuilder.createQuery(Invoice.class);
             Root<Invoice> invoiceRoot = criteriaQuery.from(Invoice.class);
-
             List<Predicate> predicates = new ArrayList<>();
 
-            List<Invoice> invoicesList = invoicerepository.findByRoleIn(role);
-            predicates.add(invoiceRoot.in(invoicesList));
+            // Join with PurshaseOrder if necessary
+            Join<Invoice, PurshaseOrder> purchaseOrderJoin = null;
+            if (poid != null || assignedto != null) {
+                purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
+            }
+
+            // Apply filters
+            if (role != null && !role.isEmpty()) {
+                predicates.add(invoiceRoot.get("role").in(role));
+            }
 
             if (status != null) {
                 predicates.add(criteriaBuilder.equal(invoiceRoot.get("status"), status));
@@ -378,12 +385,10 @@ public class CriteriaService {
             }
 
             if (poid != null) {
-                Join<Invoice, PurshaseOrder> purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("id"), poid));
             }
 
             if (assignedto != null) {
-                Join<Invoice, PurshaseOrder> purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("subadminassignedto"), assignedto));
             }
 
@@ -396,7 +401,19 @@ public class CriteriaService {
             CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
             Root<Invoice> countRoot = countQuery.from(Invoice.class);
             countQuery.select(criteriaBuilder.count(countRoot));
-            countQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+            if (poid != null || assignedto != null) {
+                Join<Invoice, PurshaseOrder> countPurchaseOrderJoin = countRoot.join("purshaseorder", JoinType.LEFT);
+                List<Predicate> countPredicates = new ArrayList<>(predicates);
+                if (poid != null) {
+                    countPredicates.add(criteriaBuilder.equal(countPurchaseOrderJoin.get("id"), poid));
+                }
+                if (assignedto != null) {
+                    countPredicates.add(criteriaBuilder.equal(countPurchaseOrderJoin.get("subadminassignedto"), assignedto));
+                }
+                countQuery.where(criteriaBuilder.and(countPredicates.toArray(new Predicate[0])));
+            } else {
+                countQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+            }
             int totalRecords = em.createQuery(countQuery).getSingleResult().intValue();
 
             typedQuery.setFirstResult(page * size);
