@@ -363,7 +363,7 @@ public class CriteriaService {
 
             // Log input parameters for debugging
             logger.error("findAllByStatusAndRole called with parameters: page={}, size={}, status={}, role={}, invoicenumber={}, poid={}, suppliername={}, assignedto={}"+
-                    page+ size+ status+ role+ invoicenumber+ poid+ suppliername+ assignedto);
+                    page+ size+ status+ role+ invoicenumber+ poid+ suppliername+ assignedto.getName());
 
             // Join with PurshaseOrder if necessary
             Join<Invoice, PurshaseOrder> purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
