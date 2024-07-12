@@ -137,6 +137,11 @@ public class InvoiceService {
 
     }
 
+    public List<Invoice> findBypoassignedto(users user){
+        return this.repository.findByPurshaseorder_Subadminassignedto(user);
+    }
+
+
 
     public List<Invoice> findAllByDueDateAndArchiveIsFalse(Date duedate) {
         try {

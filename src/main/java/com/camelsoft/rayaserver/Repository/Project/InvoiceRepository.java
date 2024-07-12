@@ -32,6 +32,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     Integer countByTimestampBetweenAndStatusAndCreatedbyOrRelatedto(Date startDate, Date endDate,InvoiceStatus status, users createdby, users releatedto);
     List<Invoice> findByStatus(InvoiceStatus status);
     List<Invoice> findAllByCreatedby(users user);
+    List<Invoice> findByPurshaseorder_Subadminassignedto(users user);
     List<Invoice> findAllByCreatedby_Role_RoleIn(List<RoleEnum> role);
     List<Invoice> findByRoleIn(List<RoleEnum> role);
     List<Invoice> findAllByRelatedto(users user);
