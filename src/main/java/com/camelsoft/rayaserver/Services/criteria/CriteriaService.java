@@ -415,6 +415,7 @@ public class CriteriaService {
         } catch (NoResultException ex) {
             throw new NotFoundException("No data found.");
         }
+
     }
 
     public List<users> UsersSearchCreatiriaRolesListNotPaginated(Boolean active, Boolean deleted, String search, List<String> roles) {
