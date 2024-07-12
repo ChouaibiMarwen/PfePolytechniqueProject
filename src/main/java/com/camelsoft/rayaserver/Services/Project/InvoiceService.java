@@ -138,7 +138,10 @@ public class InvoiceService {
     }
 
     public List<Invoice> findBypoassignedto(users user){
-        return this.repository.findByPurshaseorder_Subadminassignedto(user);
+        List<Invoice> list =  this.repository.findAll().stream()
+                .filter(invoice -> invoice.getPurshaseorder() != null && user.equals(invoice.getPurshaseorder().getSubadminassignedto()))
+                .collect(Collectors.toList());
+        return list;
     }
 
 
