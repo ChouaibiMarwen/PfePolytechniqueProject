@@ -89,7 +89,6 @@ public class Vehicles implements Serializable {
         this.timestamp = new Date();
     }
 
-
     public Vehicles(String carmodel, String color, String carvin, Double enginesize, FuelType fueltype, BodyStyle bodystyle, Set<String> exteriorfeatures, Set<String> interiorfeatures, String description, Integer stock, Supplier supplier) {
         this.carmodel = carmodel;
         this.color = color;
