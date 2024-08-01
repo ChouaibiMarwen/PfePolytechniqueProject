@@ -17,6 +17,8 @@ public class RequestOfEvents {
     private Set<RoleEnum> assignedto = new HashSet<>();
     private Set<Long> categoriesId = new HashSet<>();
 
+
+
     public RequestOfEvents() {
     }
 }
