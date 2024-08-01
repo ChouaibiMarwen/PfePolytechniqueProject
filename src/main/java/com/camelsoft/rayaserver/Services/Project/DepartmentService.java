@@ -21,7 +21,6 @@ public class DepartmentService {
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
-
     }
 
     public Department Update(Department model) {
