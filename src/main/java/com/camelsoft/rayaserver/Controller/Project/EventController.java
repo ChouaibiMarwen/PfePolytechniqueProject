@@ -261,6 +261,7 @@ public class EventController extends BaseController {
                 request.getTitle(),
                 request.getDescription(),
                 request.getEventDate(),
+                request.getEnddate(),
                 resourceMedia,
                 request.getAssignedto(),
                 request.getStatus()
@@ -412,6 +413,9 @@ public class EventController extends BaseController {
         }
         if (request.getEventDate() != null) {
             event.setEventDate(request.getEventDate());
+        }
+        if (request.getEnddate() != null) {
+            event.setEnddate(request.getEnddate());
         }
         if (request.getDescription() != null) {
             event.setDescription(request.getDescription());

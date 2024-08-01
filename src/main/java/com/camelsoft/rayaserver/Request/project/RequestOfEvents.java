@@ -12,6 +12,7 @@ public class RequestOfEvents {
     private String title;
     private String description;
     private Date eventDate;
+    private Date enddate;
     private EventStatus status;
     private Set<RoleEnum> assignedto = new HashSet<>();
     private Set<Long> categoriesId = new HashSet<>();

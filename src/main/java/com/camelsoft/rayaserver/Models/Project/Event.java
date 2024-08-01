@@ -34,6 +34,9 @@ public class Event implements Serializable {
     @Column(name = "event_date")
     private Date eventDate;
 
+    @Column(name = "end_date")
+    private Date enddate;
+
     @Column(name = "status")
     private EventStatus status = EventStatus.DRAFT;
 
@@ -68,10 +71,11 @@ public class Event implements Serializable {
     public int hashCode() {
         return 33; // Replace with any prime number
     }
-    public Event(String title, String description, Date eventDate, MediaModel attachment, Set<RoleEnum> assignedto, EventStatus status) {
+    public Event(String title, String description, Date eventDate, Date enddate,MediaModel attachment, Set<RoleEnum> assignedto, EventStatus status) {
         this.title = title;
         this.description = description;
         this.eventDate = eventDate;
+        this.enddate = enddate;
         this.attachment = attachment;
         this.timestamp = new Date();
         this.assignedto = assignedto;
@@ -175,5 +179,13 @@ public class Event implements Serializable {
 
     public void setUsersevents(Set<users> usersevents) {
         this.usersevents = usersevents;
+    }
+
+    public Date getEnddate() {
+        return enddate;
+    }
+
+    public void setEnddate(Date enddate) {
+        this.enddate = enddate;
     }
 }
