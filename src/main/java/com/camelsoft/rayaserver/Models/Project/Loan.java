@@ -15,7 +15,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "Loan_Request")
-public class Loan implements Serializable {
+public class  Loan implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "loan_id")
@@ -151,6 +151,11 @@ public class Loan implements Serializable {
     @OneToOne
     @JoinColumn(name = "processedby")
     private users processedby;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
+    private Vehicles vehicle;
+
     @Column(name = "timestamp")
     private Date timestamp;
     @JsonIgnore
@@ -639,5 +644,13 @@ public class Loan implements Serializable {
 
     public void setProcessedby(users processedby) {
         this.processedby = processedby;
+    }
+
+    public Vehicles getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicles vehicle) {
+        this.vehicle = vehicle;
     }
 }

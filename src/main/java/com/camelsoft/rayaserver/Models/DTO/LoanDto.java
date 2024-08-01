@@ -25,6 +25,7 @@ public class LoanDto {
     private String rejectraison;
     private Long idprocessedby;
     private String nameprocessedby;
+    private Long vehicleid;
 
 
     public static LoanDto mapLoanToDto(Loan loan) {
@@ -48,6 +49,8 @@ public class LoanDto {
             dto.setIdprocessedby(loan.getProcessedby().getId());
             dto.setNameprocessedby(loan.getProcessedby().getName());
         }
+        if(loan.getVehicle() != null)
+            dto.setVehicleid(loan.getVehicle().getId());
 
         return dto;
     }

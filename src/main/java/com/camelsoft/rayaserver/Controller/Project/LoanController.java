@@ -7,6 +7,7 @@ import com.camelsoft.rayaserver.Models.DTO.LoanDto;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
+import com.camelsoft.rayaserver.Models.Project.Vehicles;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.LoanRequest;
@@ -14,6 +15,7 @@ import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.LoansResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.LoanServices;
+import com.camelsoft.rayaserver.Services.Project.VehiclesService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
@@ -47,6 +49,8 @@ public class LoanController extends BaseController {
     private LoanServices Services;
     @Autowired
     private UserService UserServices;
+    @Autowired
+    private VehiclesService vehiclesService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
 
@@ -164,6 +168,12 @@ public class LoanController extends BaseController {
                 request.getCurrency()
         );
         loan.setStatus(LoanStatus.WAITING);
+        if(request.getVehicleid() != null) {
+            Vehicles vehicle = this.vehiclesService.FindById(request.getVehicleid());
+            if (vehicle == null)
+                return new ResponseEntity("vehicle not found by this id: " + request.getVehicleid(), HttpStatus.NOT_FOUND);
+            loan.setVehicle(vehicle);
+        }
         // Saving the loan object
         Loan result = this.Services.Save(loan);
         LoanDto resultdto = new LoanDto().mapLoanToDto(result);

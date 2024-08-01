@@ -79,6 +79,10 @@ public class Vehicles implements Serializable {
     @OneToMany(mappedBy = "vehicles", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<PurshaseOrder> purchaseOrder = new HashSet<>();
+
+    @OneToOne(mappedBy = "vehicles")
+    @JsonIgnore
+    private Loan loan;
     @Column(name = "timestamp")
     private Date timestamp;
     public Vehicles() {
@@ -341,5 +345,13 @@ public class Vehicles implements Serializable {
 
     public void setTransmissiontype(TransmissionTypeEnum transmissiontype) {
         this.transmissiontype = transmissiontype;
+    }
+
+    public Loan getLoan() {
+        return loan;
+    }
+
+    public void setLoan(Loan loan) {
+        this.loan = loan;
     }
 }

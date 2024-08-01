@@ -16,4 +16,5 @@ public class LoanRequest {
     private Double loanamount;
     private String currency;
     private LoanType loantype;
+    private Long vehicleid;
 }
