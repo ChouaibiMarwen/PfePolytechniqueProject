@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanType;
+import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.LoanDto;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
@@ -172,6 +173,8 @@ public class LoanController extends BaseController {
             Vehicles vehicle = this.vehiclesService.FindById(request.getVehicleid());
             if (vehicle == null)
                 return new ResponseEntity("vehicle not found by this id: " + request.getVehicleid(), HttpStatus.NOT_FOUND);
+            if(vehicle.getAvailiability() != AvailiabilityEnum.INSTOCK)
+                return new ResponseEntity("vehicle not available", HttpStatus.NOT_FOUND);
             loan.setVehicle(vehicle);
         }
         // Saving the loan object

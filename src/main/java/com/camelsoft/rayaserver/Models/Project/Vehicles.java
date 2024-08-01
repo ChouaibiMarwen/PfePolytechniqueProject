@@ -80,7 +80,7 @@ public class Vehicles implements Serializable {
     @JsonIgnore
     private Set<PurshaseOrder> purchaseOrder = new HashSet<>();
 
-    @OneToOne(mappedBy = "vehicles")
+    @OneToOne(mappedBy = "vehicle")
     @JsonIgnore
     private Loan loan;
     @Column(name = "timestamp")

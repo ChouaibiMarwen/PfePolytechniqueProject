@@ -28,6 +28,10 @@ public interface VehiclesRepository extends JpaRepository<Vehicles,Long> {
             + "WHERE v.supplier = :supplier AND v.stock > 0 AND v.archive = false")
     Page<Vehicles> findVehiclesBySupplierAndStockGreaterThanAndArchiveFalse(Pageable pageable, Supplier supplier);
 
+    @Query("SELECT v FROM Vehicles v "
+            + "WHERE v.supplier = :supplier AND v.stock > 0 AND v.archive = false")
+    List<Vehicles> findVehiclesBySupplierAndStockGreaterThanAndArchiveFalse(Supplier supplier);
+
     boolean existsByCarvinAndArchiveIsFalse(String carvin);
 
 

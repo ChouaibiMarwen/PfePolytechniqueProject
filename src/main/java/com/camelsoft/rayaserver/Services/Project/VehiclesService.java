@@ -143,6 +143,15 @@ public List<Vehicles> FindAllSupplier( Supplier supplier) {
 
     }
 
+    public List<Vehicles> findAllSupplierAndAvailableStock(Supplier supplier) {
+        try {
+            return this.repository.findVehiclesBySupplierAndStockGreaterThanAndArchiveFalse(supplier);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+    }
+
 
     public List<Vehicles> findAll() {
         try {

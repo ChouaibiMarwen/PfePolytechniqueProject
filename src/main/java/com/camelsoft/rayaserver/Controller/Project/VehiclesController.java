@@ -332,6 +332,23 @@ public class VehiclesController extends BaseController {
     }
 
 
+    @GetMapping(value = {"/my_available_vehicles_list "})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get vehicles list with available stock for supplier", notes = "get vehicles list with available stock for supplier")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully update"),
+            @ApiResponse(code = 400, message = "Bad request, check the data"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not a supplier")
+    })
+    public ResponseEntity<List<Vehicles>> my_available_vehecles_list() throws IOException {
+         users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        Supplier supplier = user.getSupplier();
+        if (supplier == null)
+            return new ResponseEntity("supplier not found in the system", HttpStatus.NOT_FOUND);
+        List<Vehicles> result = this.Services.findAllSupplierAndAvailableStock(supplier);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @PostMapping(value = {"/add_vehicle_price_financing/{id_vehicle}"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "add vehicles for supplier", notes = "Endpoint to add vehicles")
