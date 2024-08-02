@@ -1057,7 +1057,6 @@ public class InvoiceController extends BaseController {
         );
         this.userActionService.Save(action);
         return new ResponseEntity<>(result, HttpStatus.OK);
-
     }
 
     @PatchMapping(value = {"/paid_invoice/{idInvoice}"})
