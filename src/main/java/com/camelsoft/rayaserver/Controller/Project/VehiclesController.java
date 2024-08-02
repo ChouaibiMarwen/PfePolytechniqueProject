@@ -332,7 +332,7 @@ public class VehiclesController extends BaseController {
     }
 
 
-    @GetMapping(value = {"/my_available_vehicles_list "})
+    @GetMapping(value = {"/my_available_vehicles_list"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get vehicles list with available stock for supplier", notes = "get vehicles list with available stock for supplier")
     @ApiResponses(value = {

@@ -131,7 +131,8 @@ public class Invoice implements Serializable {
 
     @Column(name = "role_created_by")
     private RoleEnum role = RoleEnum.ROLE_SUPPLIER;
-
+    @Column(columnDefinition = "TEXT",name = "rejection_reason")
+    private String rejectionreason;
 
 
     public Invoice() {
@@ -563,5 +564,13 @@ public class Invoice implements Serializable {
 
     public void setRole(RoleEnum role) {
         this.role = role;
+    }
+
+    public String getRejectionreason() {
+        return rejectionreason;
+    }
+
+    public void setRejectionreason(String rejectionreason) {
+        this.rejectionreason = rejectionreason;
     }
 }

@@ -1033,7 +1033,7 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 302, message = "the invoice number is already in use"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<Invoice> reject_invoice(@PathVariable Long idInvoice) throws IOException {
+    public ResponseEntity<Invoice> reject_invoice(@PathVariable Long idInvoice, @PathVariable(required = false) String reason) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_ACCEPTABLE);
@@ -1046,6 +1046,8 @@ public class InvoiceController extends BaseController {
         if (invoice.getConfirmedBy() != null && !invoice.getConfirmedBy().equals(user))
             return new ResponseEntity("The invoice is already confirmed by " + invoice.getConfirmedBy().getPersonalinformation().getFirstnameen() + " " + invoice.getConfirmedBy().getPersonalinformation().getLastnameen(), HttpStatus.NOT_ACCEPTABLE);
         invoice.setStatus(InvoiceStatus.REJECTED);
+        if(reason != null)
+            invoice.setRejectionreason(reason);
         invoice.setConfirmedBy(user);
         Invoice result = this.service.Update(invoice);
         //save new action
