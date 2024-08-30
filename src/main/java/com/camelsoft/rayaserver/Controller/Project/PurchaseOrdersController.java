@@ -304,10 +304,12 @@ public class PurchaseOrdersController  extends BaseController {
     })
     public ResponseEntity<DynamicResponse> all_purchase_orders_for_admin(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idvehecle,  @RequestParam(required = false) Long idSupplier) throws IOException {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        users user ;
-        Supplier supplier = supplierServices.findbyid(idSupplier);
-        if(supplier == null)
-            return new ResponseEntity("can't get supplier by this id" + idSupplier, HttpStatus.NOT_ACCEPTABLE);
+        Supplier supplier = null;
+        if(idSupplier != null){
+             supplier = supplierServices.findbyid(idSupplier);
+            if(supplier == null)
+                return new ResponseEntity("can't found supplier by this id" + idSupplier, HttpStatus.NOT_ACCEPTABLE);
+        }
 
        /* if(idSupplier != null){
             user = this.userService.findById(idSupplier);
