@@ -18,9 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -47,7 +45,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
@@ -372,7 +369,12 @@ public class PurshaseOrderService {
 
 
             if (idVehicle != null) {
-                predicates.add(cb.equal(root.get("vehicles").get("id"), idVehicle));
+                Join<PurshaseOrder, Vehicles> vehicleJoin = root.join("vehicles");
+                Predicate vehicleIdPredicate = cb.equal(vehicleJoin.get("id"), idVehicle);
+                Predicate vehicleCarvinPredicate = cb.equal(vehicleJoin.get("carvin"), idVehicle.toString()); // Assuming `idVehicle` can also be a `carvin` value
+
+                // Add predicate to check if either ID or carvin matches
+                predicates.add(cb.or(vehicleIdPredicate, vehicleCarvinPredicate));
             }
 
             if (status != null) {
