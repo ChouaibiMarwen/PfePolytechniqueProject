@@ -353,7 +353,7 @@ public class PurshaseOrderService {
     }
 
 
-    public DynamicResponse findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(int page, int size, Long idVehicle, PurshaseOrderStatus status, Date date, Supplier supplier , users subadmin) {
+    public DynamicResponse findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(int page, int size, Long idVehicles, PurshaseOrderStatus status, Date date, Supplier supplier , users subadmin) {
         try {
             Pageable pageable = PageRequest.of(page, size);
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -368,10 +368,10 @@ public class PurshaseOrderService {
             }
 
 
-            if (idVehicle != null) {
+            if (idVehicles != null) {
                 Join<PurshaseOrder, Vehicles> vehicleJoin = root.join("vehicles");
-                Predicate vehicleIdPredicate = cb.equal(vehicleJoin.get("id"), idVehicle);
-                Predicate vehicleCarvinPredicate = cb.equal(vehicleJoin.get("carvin"), idVehicle.toString()); // Assuming `idVehicle` can also be a `carvin` value
+                Predicate vehicleIdPredicate = cb.equal(vehicleJoin.get("id"), idVehicles);
+                Predicate vehicleCarvinPredicate = cb.equal(vehicleJoin.get("carvin"), idVehicles.toString()); // Assuming `idVehicle` can also be a `carvin` value
 
                 // Add predicate to check if either ID or carvin matches
                 predicates.add(cb.or(vehicleIdPredicate, vehicleCarvinPredicate));
