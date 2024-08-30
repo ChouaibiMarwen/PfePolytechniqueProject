@@ -186,7 +186,6 @@ public class SubAdminController extends BaseController {
                 return new ResponseEntity("classification not found with id: " + request.getIdclassification(), HttpStatus.NOT_FOUND);
             user.setSubadminClassification(classification);
         }
-
         // Save the user
         users result = userService.saveSubAdmin(user);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());

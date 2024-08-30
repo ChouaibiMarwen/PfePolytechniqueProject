@@ -1022,7 +1022,6 @@ public class InvoiceController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
-
     @PatchMapping(value = {"/reject_invoice/{idInvoice}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "confirm invoice for admin", notes = "Endpoint to reject invoice for admin")

@@ -188,7 +188,7 @@ public class NotificationServices {
 
         }
         if(notificationadmin!=null){
-            List<users> admins = this.userService.findAllAdmin();
+            List<users> admins = this.userService.zfindAllAdmin();
             for (users admin:admins) {
                 notificationadmin.setReciver(admin);
                 Notification resultadminnotification =  this.save(notificationadmin);

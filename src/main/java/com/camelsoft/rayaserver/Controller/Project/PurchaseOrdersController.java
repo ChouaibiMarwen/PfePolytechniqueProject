@@ -305,22 +305,26 @@ public class PurchaseOrdersController  extends BaseController {
     public ResponseEntity<DynamicResponse> all_purchase_orders_for_admin(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idvehecle,  @RequestParam(required = false) Long idSupplier) throws IOException {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         users user ;
-        if(idSupplier != null){
+        Supplier supplier = supplierServices.findbyid(idSupplier);
+        if(supplier == null)
+            return new ResponseEntity("can't get supplier by this id" + idSupplier, HttpStatus.NOT_FOUND);
+
+       /* if(idSupplier != null){
             user = this.userService.findById(idSupplier);
             if(user == null)
                 return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
-            Supplier supplier = user.getSupplier();
+             supplier = user.getSupplier();
             if(supplier == null)
                 return new ResponseEntity("can't get the current supplier", HttpStatus.NOT_FOUND);
             idSupplier = supplier.getId();
-        }
+        }*/
         DynamicResponse result;
         if(currentuser.getRole().getRole() ==   RoleEnum.ROLE_SUB_ADMIN){
             // get the po list that assigned to that subadmin
-            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier, currentuser);
+            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, supplier, currentuser);
         }else{
             // this user is admin , so get all list of po
-            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, idSupplier, null);
+            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecle ,status , creationdate, supplier, null);
         }
 
         //save new action

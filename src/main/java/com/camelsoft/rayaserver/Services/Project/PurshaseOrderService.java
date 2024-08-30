@@ -355,6 +355,57 @@ public class PurshaseOrderService {
         }
     }
 
+
+    public DynamicResponse findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(int page, int size, Long idVehicle, PurshaseOrderStatus status, Date date, Supplier supplier , users subadmin) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<PurshaseOrder> cq = cb.createQuery(PurshaseOrder.class);
+            Root<PurshaseOrder> root = cq.from(PurshaseOrder.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.isFalse(root.get("archive")));
+
+            if (supplier != null) {
+                predicates.add(cb.equal(root.get("supplier"), supplier));
+            }
+
+
+            if (idVehicle != null) {
+                predicates.add(cb.equal(root.get("vehicles").get("id"), idVehicle));
+            }
+
+            if (status != null) {
+                predicates.add(cb.equal(root.get("status"), status));
+            }
+
+            if (date != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("timestamp"), date));
+            }
+
+            if (subadmin != null) {
+                predicates.add(cb.equal(root.get("subadminassignedto"), subadmin));
+            }
+
+            cq.where(predicates.toArray(new Predicate[0]));
+            cq.orderBy(cb.desc(root.get("timestamp")));
+
+            // Use EntityGraph to optimize fetching related entities
+            EntityGraph<?> entityGraph = entityManager.getEntityGraph("PurshaseOrder.withDetails");
+            TypedQuery<PurshaseOrder> query = entityManager.createQuery(cq);
+            query.setHint("javax.persistence.loadgraph", entityGraph);
+            query.setFirstResult((int) pageable.getOffset());
+            query.setMaxResults(pageable.getPageSize());
+
+            List<PurshaseOrder> resultList = query.getResultList();
+            long total = getTotalCountPO(predicates);
+
+            return new DynamicResponse(resultList, pageable.getPageNumber(), total, (int) Math.ceil((double) total / size));
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+    }
+
     private long getTotalCountPO(List<Predicate> predicates) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);

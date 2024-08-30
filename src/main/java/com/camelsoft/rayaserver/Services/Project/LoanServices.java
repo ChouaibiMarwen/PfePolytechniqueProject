@@ -142,7 +142,6 @@ public class LoanServices {
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
-
     }
 
 
