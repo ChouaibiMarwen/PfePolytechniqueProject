@@ -307,7 +307,7 @@ public class PurchaseOrdersController  extends BaseController {
         users user ;
         Supplier supplier = supplierServices.findbyid(idSupplier);
         if(supplier == null)
-            return new ResponseEntity("can't get supplier by this id" + idSupplier, HttpStatus.NOT_FOUND);
+            return new ResponseEntity("can't get supplier by this id" + idSupplier, HttpStatus.NOT_ACCEPTABLE);
 
        /* if(idSupplier != null){
             user = this.userService.findById(idSupplier);
