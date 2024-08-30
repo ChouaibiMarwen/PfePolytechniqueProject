@@ -310,16 +310,6 @@ public class PurchaseOrdersController  extends BaseController {
             if(supplier == null)
                 return new ResponseEntity("can't found supplier by this id" + idSupplier, HttpStatus.NOT_ACCEPTABLE);
         }
-
-       /* if(idSupplier != null){
-            user = this.userService.findById(idSupplier);
-            if(user == null)
-                return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
-             supplier = user.getSupplier();
-            if(supplier == null)
-                return new ResponseEntity("can't get the current supplier", HttpStatus.NOT_FOUND);
-            idSupplier = supplier.getId();
-        }*/
         DynamicResponse result;
         if(currentuser.getRole().getRole() ==   RoleEnum.ROLE_SUB_ADMIN){
             // get the po list that assigned to that subadmin

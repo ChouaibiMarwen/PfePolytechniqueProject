@@ -58,11 +58,8 @@ public class SupplierServices {
     }
 
     public Supplier findbyid(Long id) {
-        try {
-            return this.repository.findById(id).get();
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(String.format("No file found with id [%s] in our data base", id));
-        }
+
+        return this.repository.findById(id).get();
     }
  public Supplier findBySuppliernumber(Long suppliernumber) {
         try {
