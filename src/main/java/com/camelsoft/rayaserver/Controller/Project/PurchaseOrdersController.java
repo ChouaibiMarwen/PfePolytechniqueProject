@@ -302,7 +302,7 @@ public class PurchaseOrdersController  extends BaseController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_purchase_orders_for_admin(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idvehecles,  @RequestParam(required = false) Long idSupplier) throws IOException {
+    public ResponseEntity<DynamicResponse> all_purchase_orders_for_admin(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size , @RequestParam(required = false) PurshaseOrderStatus status, @RequestParam(required = false) Date creationdate ,  @RequestParam(required = false) Long idVehicles,  @RequestParam(required = false) Long idSupplier) throws IOException {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         Supplier supplier = null;
         if(idSupplier != null){
@@ -313,10 +313,10 @@ public class PurchaseOrdersController  extends BaseController {
         DynamicResponse result;
         if(currentuser.getRole().getRole() ==   RoleEnum.ROLE_SUB_ADMIN){
             // get the po list that assigned to that subadmin
-            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecles ,status , creationdate, supplier, currentuser);
+            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idVehicles ,status , creationdate, supplier, currentuser);
         }else{
             // this user is admin , so get all list of po
-            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idvehecles ,status , creationdate, supplier, null);
+            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idVehicles ,status , creationdate, supplier, null);
         }
 
         //save new action
