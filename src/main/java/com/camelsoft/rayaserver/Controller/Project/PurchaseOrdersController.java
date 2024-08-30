@@ -313,10 +313,10 @@ public class PurchaseOrdersController  extends BaseController {
         DynamicResponse result;
         if(currentuser.getRole().getRole() ==   RoleEnum.ROLE_SUB_ADMIN){
             // get the po list that assigned to that subadmin
-            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idVehicles ,status , creationdate, supplier, currentuser);
+            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplierforadmin(page, size ,idVehicles ,status , creationdate, supplier, currentuser);
         }else{
             // this user is admin , so get all list of po
-            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplier(page, size ,idVehicles ,status , creationdate, supplier, null);
+            result = this.purshaseOrderService.findAllPurchaseOrderPgByVehicleAndDateAndPurchaseOrderStatusAndSupplierforadmin(page, size ,idVehicles ,status , creationdate, supplier, null);
         }
 
         //save new action
