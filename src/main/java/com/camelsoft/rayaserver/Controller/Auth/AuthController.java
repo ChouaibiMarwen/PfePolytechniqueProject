@@ -196,29 +196,31 @@ public class AuthController extends BaseController {
 
         return sb.toString();
     }
-
     @PostMapping(value = {"/reset_password_first_step"})
     public ResponseEntity reset_password_first_step(@RequestParam("email") String email) throws IOException, MessagingException {
-        if (!this.userService.existbyemail(email.toLowerCase()))
+        if (!this.userService.existbyemail(email))
             return new ResponseEntity("user not found", HttpStatus.NOT_FOUND);
-        users user = userService.findbyemail(email.toLowerCase());
-        String token = UserService.generateRandomNumberString(4);
+        users user = userService.findbyemail(email);
+        String token = PasswordResetTokenServices.generateRandomResetCode(4);
         PasswordResetToken resetToken = this.resetTokenServices.findbyuser(user);
         if (resetToken != null) {
             this.resetTokenServices.remove_code(resetToken.getUser());
         }
         resetToken = this.resetTokenServices.createPasswordResetTokenForUser(user, token);
-
-
+        this.mailSenderServices.sendEmailResetPassword(resetToken.getToken(), user, resetToken.getExpiryDate());
+        //sendEmailWithAttachment();
+        System.out.println("Done");
         return new ResponseEntity("code send it to email , the code wille be expired in : " + resetToken.getExpiryDate(), HttpStatus.OK);
     }
 
 
+
+
     @PostMapping(value = {"/validate_reset_code_second_step"})
     public ResponseEntity<String> validate_reset_code_second_step(@RequestParam("email") String email, @RequestParam("reset_code") String code) throws IOException {
-        if (!this.userService.existbyemail(email.toLowerCase()))
+        if (!this.userService.existbyemail(email))
             return new ResponseEntity("user not found", HttpStatus.NOT_FOUND);
-        users user = userService.findbyemail(email.toLowerCase());
+        users user = userService.findbyemail(email);
         PasswordResetToken resetToken = this.resetTokenServices.findbyuser(user);
         if (resetToken == null) {
             return new ResponseEntity("this code is not found", HttpStatus.NOT_FOUND);
@@ -262,9 +264,9 @@ public class AuthController extends BaseController {
 
     @PostMapping(value = {"/change_password_final_step"})
     public ResponseEntity change_password_final_step(@RequestParam("email") String email, @RequestParam("reset_code") String code, @RequestParam("password") String new_password) throws IOException {
-        if (!this.userService.existbyemail(email.toLowerCase()))
+        if (!this.userService.existbyemail(email))
             return new ResponseEntity("user not found", HttpStatus.NOT_FOUND);
-        users user = userService.findbyemail(email.toLowerCase());
+        users user = userService.findbyemail(email);
         PasswordResetToken resetToken = this.resetTokenServices.findbyuser(user);
         if (resetToken == null) {
             return new ResponseEntity("this code is not found", HttpStatus.NOT_FOUND);
@@ -275,7 +277,6 @@ public class AuthController extends BaseController {
             this.resetTokenServices.remove_code(resetToken.getUser());
             return new ResponseEntity("password updated successfully !!", HttpStatus.OK);
         }
-
         if (result.equals("expired"))
             return new ResponseEntity("this code is expired", HttpStatus.NOT_ACCEPTABLE);
         if (result.equals("invalidToken"))
