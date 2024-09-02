@@ -747,9 +747,9 @@ public class UserService extends BaseController implements UserDetailsService {
         billingAddress.setFirstname(billingAddressRequest.getFirstname());
         billingAddress.setLastname(billingAddressRequest.getLastname());
         billingAddress.setEmail(billingAddressRequest.getEmail());
-        billingAddress.setCountry(billingAddressRequest.getCountry());
+        /*billingAddress.setCountry(billingAddressRequest.getCountry());*/
         billingAddress.setZipcode(billingAddressRequest.getZipcode());
-        billingAddress.setState(billingAddressRequest.getState());
+        /*billingAddress.setState(billingAddressRequest.getState());*/
         billingAddress.setPhonenumber(billingAddressRequest.getPhonenumber());
         billingAddress.setBillingaddress(billingAddressRequest.getBillingaddress());
         billingAddress.setCity(billingAddressRequest.getCity());

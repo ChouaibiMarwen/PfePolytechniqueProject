@@ -465,18 +465,12 @@ public class UsersController extends BaseController {
         if (request.getBillingaddress() == null || request.getBillingaddress().isEmpty()) {
             nullFields.add("billingaddress");
         }
-        /*if (request.getCountry() == null || request.getCountry().isEmpty()) {
-            nullFields.add("country");
-        }*/
         if (request.getZipcode() == null || request.getZipcode().isEmpty()) {
             nullFields.add("zipcode");
         }
         if (request.getCity() == null || request.getCity().isEmpty()) {
             nullFields.add("city");
         }
-        /*if (request.getState() == null || request.getState().isEmpty()) {
-            nullFields.add("state");
-        }*/
         if (request.getPhonenumber() == null || request.getPhonenumber().isEmpty()) {
             nullFields.add("phonenumber");
         }
