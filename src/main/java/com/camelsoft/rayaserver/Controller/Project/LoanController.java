@@ -63,7 +63,7 @@ public class LoanController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_loans_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) LoanStatus status,  @RequestParam(required = false) Date creationdate) throws IOException {
+    public ResponseEntity<DynamicResponse> all_loans_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) List<LoanStatus> status,  @RequestParam(required = false) Date creationdate) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);

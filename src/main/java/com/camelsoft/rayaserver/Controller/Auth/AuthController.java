@@ -13,6 +13,7 @@ import com.camelsoft.rayaserver.Response.Auth.OnUserLogoutSuccessEvent;
 import com.camelsoft.rayaserver.Response.Tools.ApiResponse;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
+import com.camelsoft.rayaserver.Services.auth.MailSenderServices;
 import com.camelsoft.rayaserver.Services.auth.PasswordResetTokenServices;
 import com.camelsoft.rayaserver.Services.auth.RefreshTokenService;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
@@ -68,6 +69,9 @@ public class AuthController extends BaseController {
 
     @Autowired
     private UserDeviceService deviceService;
+
+    @Autowired
+    private MailSenderServices mailSenderServices;
 
 
 
@@ -127,7 +131,6 @@ public class AuthController extends BaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @PostMapping(value = {"/add_device_token"})
     public ResponseEntity<JwtResponse> add_device_token(@RequestBody(required = false) SignInRequest signInRequest) throws JSONException {
 
@@ -165,9 +168,6 @@ public class AuthController extends BaseController {
                         "Refresh token is not in database!"));
     }
 
-
-
-
     @PostMapping(value = {"/resend_code"})
     public ResponseEntity<users> resend_code(@RequestParam String email) throws IOException, InterruptedException, MessagingException {
         users user = userService.findbyemail(email.toLowerCase());
@@ -196,6 +196,7 @@ public class AuthController extends BaseController {
 
         return sb.toString();
     }
+
     @PostMapping(value = {"/reset_password_first_step"})
     public ResponseEntity reset_password_first_step(@RequestParam("email") String email) throws IOException, MessagingException {
         if (!this.userService.existbyemail(email.toLowerCase()))
@@ -282,5 +283,23 @@ public class AuthController extends BaseController {
         return new ResponseEntity("this code is wrong", HttpStatus.NOT_ACCEPTABLE);
     }
 
+
+
+  /*  @PostMapping(value = {"/send_password-via-email"})
+    public ResponseEntity send_passwordviaemail(@RequestParam("email") String email) throws IOException, MessagingException {
+        if (!this.userService.existbyemail(email.toLowerCase()))
+            return new ResponseEntity("no user found with this email: "+ email, HttpStatus.NOT_FOUND);
+        users user = userService.findbyemail(email.toLowerCase());
+        String token = UserService.generateRandomNumberString(8);
+        PasswordResetToken resetToken = this.resetTokenServices.findbyuser(user);
+        if (resetToken != null) {
+            this.resetTokenServices.remove_code(resetToken.getUser());
+        }
+        resetToken = this.resetTokenServices.createPasswordResetTokenForUser(user, token);
+        this.mailSenderServices.emailnewpassword(user.getName(), email, );
+
+
+        return new ResponseEntity("code send it to email , the code wille be expired in : " + resetToken.getExpiryDate(), HttpStatus.OK);
+    }*/
 
 }

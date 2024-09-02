@@ -70,7 +70,7 @@ public class LoanServices {
 
     public List<Loan> findAll() {
         try {
-            return this.repository.findAll();
+            return this.repository.findByArchiveIsFalseOrderByTimestampDesc();
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
@@ -116,11 +116,11 @@ public class LoanServices {
 
     }
 
-    public DynamicResponse FindAllByStateAndDatenNewerThen(int page, int size, LoanStatus status , Date date) {
+    public DynamicResponse FindAllByStateAndDatenNewerThen(int page, int size,  List<LoanStatus> statuses , Date date) {
         try {
             PageRequest pg = PageRequest.of(page, size);
             List<Loan> list;
-            if (status == null &&  date == null){
+          /*  if (status == null &&  date == null){
                list = findAll();
             }
             else if(status != null &&  date == null){
@@ -129,6 +129,15 @@ public class LoanServices {
                 list = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(date);
             } else{
                 list = this.repository.findAllByStatusAndArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(status, date);
+            }*/
+            if ((statuses == null || statuses.isEmpty()) && date == null) {
+                list = findAll();
+            } else if (statuses != null && !statuses.isEmpty() && date == null) {
+                list = this.repository.findAllByStatusInAndArchiveIsFalse(statuses);
+            } else if ((statuses == null || statuses.isEmpty()) && date != null) {
+                list = this.repository.findAllByArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(date);
+            } else {
+                list = this.repository.findAllByStatusInAndArchiveIsFalseAndTimestampGreaterThanEqualOrderByTimestampDesc(statuses, date);
             }
 
             List<LoanDto> dtoList = list.stream().map(LoanDto::mapLoanToDto).collect(Collectors.toList());
