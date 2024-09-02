@@ -97,6 +97,7 @@ public class LoanController extends BaseController {
         response.setTotalloans(this.Services.totalNotArchiveLoans());
 
 
+
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.LOAN_MANAGEMENT,
