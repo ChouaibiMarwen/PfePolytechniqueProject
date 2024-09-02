@@ -105,7 +105,7 @@ public class LoanController extends BaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = {"/my_total_loans"})
+    @GetMapping(value = {"/my_total_loans_amount"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')  or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get total and amount loans for supplier", notes = "Endpoint to get total and amount loans")
     @ApiResponses(value = {

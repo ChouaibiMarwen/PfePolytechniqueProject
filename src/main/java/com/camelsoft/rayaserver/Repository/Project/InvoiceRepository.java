@@ -69,6 +69,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     boolean existsByThirdpartypoid(String poid);
 
     List<Invoice> findAllByCreatedbyOrRelatedtoAndStatusAndArchiveIsFalse(users createdBy, users relatedTo, InvoiceStatus status);
+
+    Double countAllByCreatedbyOrRelatedtoAndArchiveIsFalse(users createdBy, users relatedTo);
     List<Invoice> findByPurshaseorder_SubadminassignedtoAndArchiveIsFalseOrderByTimestampDesc(users user);
     List<Invoice> findByArchiveIsFalseOrderByTimestampDesc();
 }

@@ -8,6 +8,7 @@ import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.Project.Product;
+import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
 import com.camelsoft.rayaserver.Repository.Project.InvoiceRepository;
@@ -584,6 +585,10 @@ public class InvoiceService {
 
         // Return the resulting date
         return calendar.getTime();
+    }
+
+    public Double totalNotArchiveInvoicesBySupplier(users user){
+        return this.repository.countAllByCreatedbyOrRelatedtoAndArchiveIsFalse(user, user);
     }
 
 

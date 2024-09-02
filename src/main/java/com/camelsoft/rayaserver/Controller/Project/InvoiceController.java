@@ -13,6 +13,7 @@ import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.*;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.InvoiceReport;
+import com.camelsoft.rayaserver.Response.Project.LoansResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Project.*;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
@@ -65,6 +66,8 @@ public class InvoiceController extends BaseController {
     private VehiclesService vehiclesService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
+    @Autowired
+    private InvoiceService invoiceService;
 
     @GetMapping(value = {"/all_invoice_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
@@ -1111,5 +1114,28 @@ public class InvoiceController extends BaseController {
     }
 
 
+    @GetMapping(value = {"/my_total_transaction_amount"})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')  or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get total and amount transactions for supplier", notes = "Endpoint to get total and amount transactions")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<Double> total_loans_supplier() throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        if(user.getSupplier() == null)
+            return new ResponseEntity("you are not a supplier", HttpStatus.FORBIDDEN);
+        Double allloanscount = invoiceService.totalNotArchiveInvoicesBySupplier(user);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.LOAN_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(allloanscount, HttpStatus.OK);
+    }
 
 }
