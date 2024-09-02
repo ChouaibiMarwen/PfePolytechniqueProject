@@ -7,7 +7,7 @@ public class BankInformationRequest {
     private String accountHolderName ;
     private String  IBAN ;
     private String acountNumber;
-    private MultipartFile ibanattachment;
+
 
     public BankInformationRequest() {   }
 
@@ -44,11 +44,4 @@ public class BankInformationRequest {
         this.acountNumber = acountNumber;
     }
 
-    public MultipartFile getIbanattachment() {
-        return ibanattachment;
-    }
-
-    public void setIbanattachment(MultipartFile ibanattachment) {
-        this.ibanattachment = ibanattachment;
-    }
 }

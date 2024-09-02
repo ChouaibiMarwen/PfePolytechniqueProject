@@ -52,6 +52,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -764,19 +765,19 @@ public class UserService extends BaseController implements UserDetailsService {
 
 
     }
-    public BankInformation addBankAccounToUser(users user, BankInformationRequest bankInformationRequest) {
+    public BankInformation addBankAccounToUser(users user, BankInformationRequest bankInformationRequest, MultipartFile ibanattachment) {
         BankInformation bankInformation = new BankInformation();
         bankInformation.setBankname(bankInformationRequest.getBank_name());
         bankInformation.setAccountname(bankInformationRequest.getAccountHolderName());
         bankInformation.setIban(bankInformationRequest.getIBAN());
         bankInformation.setRip(bankInformationRequest.getAcountNumber());
         MediaModel resourceMedia = null;
-        if (bankInformationRequest.getIbanattachment() != null && !bankInformationRequest.getIbanattachment().isEmpty()) {
-            String extension = bankInformationRequest.getIbanattachment().getContentType().substring(bankInformationRequest.getIbanattachment().getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+        if (ibanattachment != null && !ibanattachment.isEmpty()) {
+            String extension = ibanattachment.getContentType().substring(ibanattachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
             /*if (!image_accepte_type.contains(extension)) {
                 return ResponseEntity.badRequest().body(null);
             }*/
-            resourceMedia = filesStorageService.save_file_local(bankInformationRequest.getIbanattachment(), "Ibans");
+            resourceMedia = filesStorageService.save_file_local(ibanattachment, "Ibans");
             if (resourceMedia == null) {
                 return null;
             }

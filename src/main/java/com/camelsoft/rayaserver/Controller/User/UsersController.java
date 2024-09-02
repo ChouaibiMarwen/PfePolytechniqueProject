@@ -55,6 +55,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
@@ -589,7 +590,7 @@ public class UsersController extends BaseController {
             @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
             @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
-    public ResponseEntity<users> addUserBankAccount(@PathVariable Long id, @RequestBody BankInformationRequest request) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<users> addUserBankAccount(@PathVariable Long id, @RequestBody BankInformationRequest request ,  @RequestParam(value = "file", required = false) MultipartFile ibanattachment ) throws IOException, InterruptedException, MessagingException {
 
         List<String> nullFields = new ArrayList<>();
 
@@ -601,10 +602,6 @@ public class UsersController extends BaseController {
         }
         if (request.getAcountNumber() == null || request.getAcountNumber().isEmpty()) {
             nullFields.add("acountNumber");
-        }
-
-        if(request.getIbanattachment() != null && !request.getIbanattachment().isEmpty()){
-
         }
 
         // Check if any required field is null or empty
@@ -623,7 +620,7 @@ public class UsersController extends BaseController {
         if (user == null) {
             return new ResponseEntity("Can't find user by that id", HttpStatus.BAD_REQUEST);
         }
-        BankInformation b = this.userService.addBankAccounToUser(user, request);
+        BankInformation b = this.userService.addBankAccounToUser(user, request, ibanattachment);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         //save new action
         UserAction action = new UserAction(
