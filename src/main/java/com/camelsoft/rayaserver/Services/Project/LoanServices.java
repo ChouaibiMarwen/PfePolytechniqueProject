@@ -239,7 +239,12 @@ public class LoanServices {
     }
 
     public Double totalNotArchiveLoansForSupplier(Supplier supplier){
-        return this.repository.countAllBySupplierAndArchiveIsFalse(supplier);
+        Double result = 0.0;
+        List<Loan> list = this.repository.findAllBySupplierAndArchiveIsFalse(supplier);
+        for(Loan loan : list){
+            result += loan.getLoanamount();
+        }
+        return result;
     }
 
 
