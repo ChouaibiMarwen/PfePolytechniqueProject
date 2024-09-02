@@ -47,6 +47,8 @@ public class users implements Serializable {
     private String name;
     @Column(name = "phone_number")
     private String phonenumber;
+    @Column(name = "vat_number")
+    private String vatnumber;
     @Column(name = "provider")
     private Provider provider = Provider.local;
     @Column(name = "suspend_reason")
@@ -575,4 +577,11 @@ public class users implements Serializable {
         this.namesubadminclassification = namesubadminclassification;
     }
 
+    public String getVatnumber() {
+        return vatnumber;
+    }
+
+    public void setVatnumber(String vatnumber) {
+        this.vatnumber = vatnumber;
+    }
 }

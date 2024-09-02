@@ -110,6 +110,8 @@ public class SubDealerController extends BaseController {
             return new ResponseEntity("last-name-en", HttpStatus.BAD_REQUEST);
         if (request.getInformationRequest().getLastnamear() == null)
             return new ResponseEntity("last-name-ar", HttpStatus.BAD_REQUEST);
+        if (request.getVatnumber() == null)
+            return new ResponseEntity("vat number is required", HttpStatus.BAD_REQUEST);
 
         String phonenumber = request.getPhonenumber().replaceAll("[\\s()]", "");
         if (userService.existbyphonenumber(phonenumber))
@@ -168,6 +170,7 @@ public class SubDealerController extends BaseController {
         user.setEmail(request.getEmail().toLowerCase());
         user.setPhonenumber(request.getPhonenumber().toLowerCase());
         user.setPassword(request.getPassword());
+        user.setVatnumber(request.getVatnumber());
         user.setPersonalinformation(resultinformation);
         user.setSupplier(resultsupplier);
         List<Privilege> privilegeList = this.privilegeService.findAll();

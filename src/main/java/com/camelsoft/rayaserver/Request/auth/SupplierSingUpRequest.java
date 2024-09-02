@@ -12,6 +12,7 @@ public class SupplierSingUpRequest {
     private String phonenumber;
     private Long suppliernumber;
     private String companyName;
+    private String vatnumber;
     private String idnumber;
     private IdTypeEnum idType;
     private PersonalInformationRequest informationRequest;
