@@ -4,9 +4,10 @@ spring:
     activate:
       on-profile: production
   datasource:
-    url: jdbc:postgresql://node21801-suppliers.paas5.v2.sa:11003/raya?createDatabaseIfNotExist=true&sslmode=require
-    username: webadmin
-    password: XILntg88398
+    url: jdbc:postgresql://172.30.130.183:5432/raya?createDatabaseIfNotExist=true&sslmode=require
+    username: camelsoft
+    password: camelsoft
+    driver-class-name: org.postgresql.Driver
 logging:
   level:
     org:
