@@ -586,7 +586,6 @@ public class InvoiceService {
         // Return the resulting date
         return calendar.getTime();
     }
-
     public Double totalNotArchiveInvoicesBySupplier(users user){
         Double result = 0.0;
         List<Invoice> list = this.repository.findAllByCreatedbyOrRelatedtoAndArchiveIsFalse(user, user);
