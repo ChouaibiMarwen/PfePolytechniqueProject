@@ -21,6 +21,7 @@ import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.juli.logging.Log;
@@ -33,10 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -65,7 +63,10 @@ public class LoanController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_loans_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) List<LoanStatus> status,  @RequestParam(required = false) Date creationdate) throws IOException {
+    public ResponseEntity<DynamicResponse> all_loans_admin(@RequestParam(required = false, defaultValue = "0") int page,
+                                                           @RequestParam(required = false, defaultValue = "5") int size,
+                                                           @ApiParam(value = "List of loan statuses", allowableValues = "WAITING, IN_PROGRESS, REJECTED, APPROVED, DONE") @RequestParam(required = false) List<LoanStatus> status,
+            @RequestParam(required = false) Date creationdate) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
