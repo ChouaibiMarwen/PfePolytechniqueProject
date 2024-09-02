@@ -77,7 +77,6 @@ public class LoanController extends BaseController {
         this.userActionService.Save(action);
         return new ResponseEntity<>(this.Services.FindAllByStateAndDatenNewerThen(page, size, status, creationdate), HttpStatus.OK);
     }
-
     @GetMapping(value = {"/total_loans_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get total and amount loans for admin", notes = "Endpoint to get total and amount loans")
