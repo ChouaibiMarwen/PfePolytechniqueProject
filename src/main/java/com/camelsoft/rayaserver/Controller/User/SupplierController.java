@@ -199,8 +199,8 @@ public class SupplierController extends BaseController {
                 billingAddress.setBillingaddress(request.getBillingaddressRequest().getAddressline1());
             if (request.getBillingaddressRequest().getAddressline2() != null)
                 billingAddress.setBillingaddress02(request.getBillingaddressRequest().getAddressline2());
-            if (request.getBillingaddressRequest().getCountryName() != null)
-                billingAddress.setCountry(request.getBillingaddressRequest().getCountryName());
+           /* if (request.getBillingaddressRequest().getCountryName() != null)
+                billingAddress.setCountry(request.getBillingaddressRequest().getCountryName());*/
             if (request.getBillingaddressRequest().getPostcode() != null)
                 billingAddress.setZipcode(request.getBillingaddressRequest().getPostcode());
             if (request.getBillingaddressRequest().getCityName() != null)
