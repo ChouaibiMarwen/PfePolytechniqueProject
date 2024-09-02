@@ -12,4 +12,5 @@ public class AdsRequest {
     private String url;
     private String description;
     private List<MultipartFile> attachments = new ArrayList<>();
+    private Boolean addtoslider;
 }

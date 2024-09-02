@@ -6,6 +6,7 @@ import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.*;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Project.Department;
 import com.camelsoft.rayaserver.Models.Project.RoleDepartment;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
@@ -601,6 +602,11 @@ public class UsersController extends BaseController {
         if (request.getAcountNumber() == null || request.getAcountNumber().isEmpty()) {
             nullFields.add("acountNumber");
         }
+
+        if(request.getIbanattachment() != null && !request.getIbanattachment().isEmpty()){
+
+        }
+
         // Check if any required field is null or empty
         if (!nullFields.isEmpty()) {
             String errorMessage;

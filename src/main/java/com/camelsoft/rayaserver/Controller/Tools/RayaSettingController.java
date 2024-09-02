@@ -35,21 +35,18 @@ public class RayaSettingController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<RayaSettings> UpdateRayaSettings(@ModelAttribute RayaSetiingRequest request) throws IOException {
-
         RayaSettings settings = this.service.FindFirst();
         if(settings == null)
             settings = new RayaSettings(true,true);
-
-
         if(request.getAllowresetpassword() != null){
             settings.setAllowresetpassword(request.getAllowresetpassword());
         }
-
         if(request.getAllowsignup() != null){
             settings.setAllowsignup(request.getAllowsignup());
-
         }
-
+        if(request.getAllowbannersslider() != null){
+            settings.setAllowBannerslider(request.getAllowbannersslider());
+        }
         RayaSettings result =  this.service.Update(settings);
         return new ResponseEntity<>(result, HttpStatus.OK);
 

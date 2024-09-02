@@ -6,4 +6,5 @@ import lombok.Data;
 public class RayaSetiingRequest {
     private Boolean allowresetpassword;
     private Boolean allowsignup;
+    private Boolean allowbannersslider;
 }

@@ -24,6 +24,7 @@ public interface LoanRepository extends JpaRepository<Loan,Long> {
     boolean existsByIdAndSupplier(Long id , Supplier supplier);
     Page<Loan> findAllByStatusAndSupplierAndArchiveIsFalse(Pageable page, LoanStatus status,Supplier supplier);
     List<Loan> findAllByStatusAndSupplierAndArchiveIsFalse(LoanStatus status,Supplier supplier);
+    Double countAllBySupplierAndArchiveIsFalse(Supplier supplier);
     Page<Loan> findAllBySupplierAndArchiveIsFalse(Pageable page, Supplier supplier);
     List<Loan> findAllBySupplierAndArchiveIsFalse(Supplier supplier);
     long countByStatus(LoanStatus status);

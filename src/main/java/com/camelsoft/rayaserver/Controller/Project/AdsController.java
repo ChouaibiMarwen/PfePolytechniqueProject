@@ -61,6 +61,7 @@ public class AdsController extends BaseController {
             return new ResponseEntity("Pub url can't be null or empty", HttpStatus.BAD_REQUEST);
         Ads ads = new Ads();
         ads.setUrl(request.getUrl());
+        ads.setAddtoslider(request.getAddtoslider());
 
         //save attachmen't files and set it to the new ads
         if (this.filesStorageService.checkformatArrayList(request.getAttachments())) {
@@ -109,6 +110,8 @@ public class AdsController extends BaseController {
             return new ResponseEntity("no ads founded with this is: " + idAds, HttpStatus.NOT_FOUND);
         if(request.getUrl() != null && !request.getUrl().isEmpty())
             ads.setUrl(request.getUrl());
+        if(request.getAddtoslider() != null)
+            ads.setAddtoslider(request.getAddtoslider());
         if(request.getDescription() != null && !request.getDescription().isEmpty())
             ads.setDescription(request.getDescription());
         if(request.getAttachments() != null && !request.getAttachments().isEmpty()){

@@ -5,6 +5,7 @@ import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
 import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
@@ -23,6 +24,7 @@ import com.camelsoft.rayaserver.Request.User.SignInRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Auth.JwtResponse;
 import com.camelsoft.rayaserver.Services.Country.CountriesServices;
+import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Tools.AddressServices;
 import com.camelsoft.rayaserver.Services.Tools.BankAccountService;
 import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
@@ -38,6 +40,7 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -86,6 +89,9 @@ public class UserService extends BaseController implements UserDetailsService {
     private CountriesServices  countriesServices;
     @Autowired
     private AddressServices addressServices;
+
+    @Autowired
+    private FilesStorageServiceImpl filesStorageService;
 
     public users saveUser(users user) {
         try {
@@ -764,6 +770,18 @@ public class UserService extends BaseController implements UserDetailsService {
         bankInformation.setAccountname(bankInformationRequest.getAccountHolderName());
         bankInformation.setIban(bankInformationRequest.getIBAN());
         bankInformation.setRip(bankInformationRequest.getAcountNumber());
+        MediaModel resourceMedia = null;
+        if (bankInformationRequest.getIbanattachment() != null && !bankInformationRequest.getIbanattachment().isEmpty()) {
+            String extension = bankInformationRequest.getIbanattachment().getContentType().substring(bankInformationRequest.getIbanattachment().getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+            /*if (!image_accepte_type.contains(extension)) {
+                return ResponseEntity.badRequest().body(null);
+            }*/
+            resourceMedia = filesStorageService.save_file_local(bankInformationRequest.getIbanattachment(), "Ibans");
+            if (resourceMedia == null) {
+                return null;
+            }
+            bankInformation.setIbanattachment(resourceMedia);
+        }
         bankInformation.setUser(user);
         return this.bankAccountService.saveBankInformation(bankInformation);
 

@@ -1,10 +1,13 @@
 package com.camelsoft.rayaserver.Request.Tools;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class BankInformationRequest {
     private String bank_name ;
     private String accountHolderName ;
     private String  IBAN ;
     private String acountNumber;
+    private MultipartFile ibanattachment;
 
     public BankInformationRequest() {   }
 
@@ -39,5 +42,13 @@ public class BankInformationRequest {
 
     public void setAcountNumber(String acountNumber) {
         this.acountNumber = acountNumber;
+    }
+
+    public MultipartFile getIbanattachment() {
+        return ibanattachment;
+    }
+
+    public void setIbanattachment(MultipartFile ibanattachment) {
+        this.ibanattachment = ibanattachment;
     }
 }

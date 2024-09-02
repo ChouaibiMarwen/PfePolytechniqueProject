@@ -158,6 +158,7 @@ public class LoanServices {
         return this.repository.countAllByArchiveIsFalse();
     }
 
+
     public Double totalLoansAmounts(){
         Double sum = 0.0;
         List<Loan> list = this.repository.findByArchiveIsFalse();
@@ -236,5 +237,10 @@ public class LoanServices {
         return sum != null ? sum : 0.0;
 
     }
+
+    public Double totalNotArchiveLoansForSupplier(Supplier supplier){
+        return this.repository.countAllBySupplierAndArchiveIsFalse(supplier);
+    }
+
 
 }

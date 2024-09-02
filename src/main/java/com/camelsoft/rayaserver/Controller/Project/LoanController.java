@@ -54,6 +54,8 @@ public class LoanController extends BaseController {
     private VehiclesService vehiclesService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
+    @Autowired
+    private LoanServices loanServices;
 
     @GetMapping(value = {"/all_loans_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
@@ -102,6 +104,33 @@ public class LoanController extends BaseController {
         this.userActionService.Save(action);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping(value = {"/my_total_loans"})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')  or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get total and amount loans for supplier", notes = "Endpoint to get total and amount loans")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<Double> total_loans_supplier() throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        if(user.getSupplier() == null)
+            return new ResponseEntity("you are not a supplier", HttpStatus.FORBIDDEN);
+        LoansResponse response = new LoansResponse();
+        Double allloanscount = loanServices.totalNotArchiveLoansForSupplier(user.getSupplier());
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.LOAN_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(allloanscount, HttpStatus.OK);
+    }
+
+
     @GetMapping(value = {"/all_loans_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all loan by status for supplier", notes = "Endpoint to get loan request for supplier")

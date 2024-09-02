@@ -26,6 +26,8 @@ public class Ads  implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "list_ads_media")
     private Set<MediaModel> attachments = new HashSet<>();
+    @Column(name = "add_to_slider")
+    private Boolean addtoslider = true;
     @Column(name = "timestmp")
     private Date timestmp = new Date();
 
@@ -70,5 +72,13 @@ public class Ads  implements Serializable {
 
     public void setTimestmp(Date timestmp) {
         this.timestmp = timestmp;
+    }
+
+    public Boolean getAddtoslider() {
+        return addtoslider;
+    }
+
+    public void setAddtoslider(Boolean addtoslider) {
+        this.addtoslider = addtoslider;
     }
 }
