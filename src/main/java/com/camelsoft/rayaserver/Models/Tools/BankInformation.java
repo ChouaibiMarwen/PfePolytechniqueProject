@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Models.Tools;
 
+import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -40,6 +41,9 @@ public class BankInformation implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "user_id_owner_bank")
     private users user;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "iban_attachment")
+    private MediaModel ibanattachment;
     @Column(name = "timestmp")
     private Date timestmp = new Date();
 
