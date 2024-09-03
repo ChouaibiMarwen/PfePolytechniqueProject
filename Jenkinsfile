@@ -16,11 +16,13 @@ pipeline {
                 checkout scm
             }
         }
-    stage('Clean and Package') {
-        steps {
-            sh "echo 'Cloud2025' | sudo -S mvn clean package"
+        stage('Clean and Package') {
+            steps {
+                script {
+                    sh "sudo mvn clean package"
+                }
+            }
         }
-    }
         stage('Reload Daemon') {
             steps {
                 sh "echo 'Cloud2025' | sudo -S systemctl daemon-reload"
