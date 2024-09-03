@@ -213,9 +213,6 @@ public class AuthController extends BaseController {
         return new ResponseEntity("code send it to email , the code wille be expired in : " + resetToken.getExpiryDate(), HttpStatus.OK);
     }
 
-
-
-
     @PostMapping(value = {"/validate_reset_code_second_step"})
     public ResponseEntity<String> validate_reset_code_second_step(@RequestParam("email") String email, @RequestParam("reset_code") String code) throws IOException {
         if (!this.userService.existbyemail(email))
