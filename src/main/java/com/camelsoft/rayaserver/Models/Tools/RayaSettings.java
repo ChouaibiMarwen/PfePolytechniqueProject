@@ -14,8 +14,6 @@ public class RayaSettings implements Serializable {
     private Long id;
     @Column(name = "allow_signup", nullable = false)
     private Boolean allowsignup = true;
-    @Column(name = "allow_banner_slider", nullable = false)
-    private Boolean allowBannerslider = false;
     @Column(name = "allow_reset_password", nullable = false)
     private Boolean allowresetpassword = true;
     @Column(name = "timestamp")
@@ -60,13 +58,5 @@ public class RayaSettings implements Serializable {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public Boolean getAllowBannerslider() {
-        return allowBannerslider;
-    }
-
-    public void setAllowBannerslider(Boolean allowBannerslider) {
-        this.allowBannerslider = allowBannerslider;
     }
 }

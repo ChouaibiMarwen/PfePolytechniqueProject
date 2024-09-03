@@ -44,9 +44,6 @@ public class RayaSettingController {
         if(request.getAllowsignup() != null){
             settings.setAllowsignup(request.getAllowsignup());
         }
-        if(request.getAllowbannersslider() != null){
-            settings.setAllowBannerslider(request.getAllowbannersslider());
-        }
         RayaSettings result =  this.service.Update(settings);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
