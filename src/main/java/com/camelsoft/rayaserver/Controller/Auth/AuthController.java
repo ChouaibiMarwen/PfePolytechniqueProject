@@ -231,7 +231,6 @@ public class AuthController extends BaseController {
             return new ResponseEntity("this code is not valid", HttpStatus.NOT_ACCEPTABLE);
         return new ResponseEntity("this code is wrong", HttpStatus.NOT_ACCEPTABLE);
     }
-
     @PutMapping(value = {"/logout"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN')")
     public ResponseEntity<ApiResponse> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
