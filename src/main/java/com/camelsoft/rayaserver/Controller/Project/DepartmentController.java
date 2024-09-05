@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -185,6 +186,12 @@ public class DepartmentController extends BaseController {
     })
     public ResponseEntity<List<Department>> all_departments_list() throws IOException {
         List<Department> result = this.departmentService.findAllNotArchived();
+        for (Department department : result) {
+            Set<RoleDepartment> filteredRoles = department.getRoles().stream()
+                    .filter(role -> !role.getArchive())
+                    .collect(Collectors.toSet());
+            department.setRoles(filteredRoles);
+        }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
