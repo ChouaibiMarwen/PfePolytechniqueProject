@@ -135,7 +135,6 @@ public class DepartmentController extends BaseController {
         this.userActionService.Save(action);
         Department result = this.departmentService.Update(dep);
         return new ResponseEntity<>(result, HttpStatus.OK);
-
     }
 
 
