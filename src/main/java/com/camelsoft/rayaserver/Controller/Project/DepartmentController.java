@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -98,41 +99,55 @@ public class DepartmentController extends BaseController {
 
     @PatchMapping(value = {"/update_department/{idDepartment}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
-    @ApiOperation(value = "update a department from the admin", notes = "Endpoint to update a department")
+    @ApiOperation(value = "Update a department from the admin", notes = "Endpoint to update a department")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated the department"),
             @ApiResponse(code = 400, message = "Bad request, check params type "),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Department> updatDepartment(@PathVariable Long idDepartment, @RequestParam(required = false) String name, @RequestParam(required = false)List<String> rolesDepartmentname) throws IOException {
+    public ResponseEntity<Department> updatDepartment(
+            @PathVariable Long idDepartment,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) List<String> rolesDepartmentname) throws IOException {
+
         users user = userService.findByUserName(getCurrentUser().getUsername());
         if (user == null)
-            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
-        Department dep =  this.departmentService.FindById(idDepartment);
-        if(dep == null)
-            return new ResponseEntity("department is not founded  by this id : " + idDepartment , HttpStatus.NOT_FOUND);
+            return new ResponseEntity("This user not found", HttpStatus.NOT_FOUND);
 
-        if(name != null && name.length() > 0)
+        Department dep = this.departmentService.FindById(idDepartment);
+        if (dep == null)
+            return new ResponseEntity("Department not found by this ID: " + idDepartment, HttpStatus.NOT_FOUND);
+
+        // Update department name if provided
+        if (name != null && name.length() > 0)
             dep.setName(name);
-        if(rolesDepartmentname != null && !rolesDepartmentname.isEmpty()){
-            for(RoleDepartment r : dep.getRoles()){
-                dep.getRoles().remove(r);
-                r.setArchive(true);
-                roleDepartmentService.Save(r);
+
+        // Update roles if provided
+        if (rolesDepartmentname != null && !rolesDepartmentname.isEmpty()) {
+            // Collect roles to archive in a separate list to avoid ConcurrentModificationException
+            List<RoleDepartment> rolesToArchive = new ArrayList<>(dep.getRoles());
+
+            // Archive old roles
+            for (RoleDepartment role : rolesToArchive) {
+                dep.getRoles().remove(role);
+                role.setArchive(true);
+                roleDepartmentService.Save(role);
             }
-            for (String r : rolesDepartmentname) {
-                RoleDepartment roledep = new RoleDepartment();
-                roledep.setDepartment(dep);
-                roledep.setRolename(r);
-                this.roleDepartmentService.Save(roledep);
+
+            // Add new roles
+            for (String roleName : rolesDepartmentname) {
+                RoleDepartment newRoleDep = new RoleDepartment();
+                newRoleDep.setDepartment(dep);
+                newRoleDep.setRolename(roleName);
+                this.roleDepartmentService.Save(newRoleDep);
             }
         }
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.DEPARTMENT_MANAGEMENT,
-                user
-        );
+
+        // Save new action
+        UserAction action = new UserAction(UserActionsEnum.DEPARTMENT_MANAGEMENT, user);
         this.userActionService.Save(action);
+
+        // Update department and return the result
         Department result = this.departmentService.Update(dep);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
