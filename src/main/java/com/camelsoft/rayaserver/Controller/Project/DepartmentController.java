@@ -21,12 +21,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
-import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @CrossOrigin
@@ -98,63 +94,45 @@ public class DepartmentController extends BaseController {
         Department result = this.departmentService.FindById(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
     @PatchMapping(value = {"/update_department/{idDepartment}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
-    @ApiOperation(value = "Update a department from the admin", notes = "Endpoint to update a department")
+    @ApiOperation(value = "update a department from the admin", notes = "Endpoint to update a department")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated the department"),
-            @ApiResponse(code = 400, message = "Bad request, check params type"),
+            @ApiResponse(code = 400, message = "Bad request, check params type "),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    @Transactional
-    public ResponseEntity<Department> updateDepartment(
-            @PathVariable Long idDepartment,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) List<String> rolesDepartmentname) throws IOException {
-
-        // Retrieve the current user
+    public ResponseEntity<Department> updatDepartment(@PathVariable Long idDepartment, @RequestParam(required = false) String name, @RequestParam(required = false)List<String> rolesDepartmentname) throws IOException {
         users user = userService.findByUserName(getCurrentUser().getUsername());
         if (user == null)
-            return new ResponseEntity("This user not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        Department dep =  this.departmentService.FindById(idDepartment);
+        if(dep == null)
+            return new ResponseEntity("department is not founded  by this id : " + idDepartment , HttpStatus.NOT_FOUND);
 
-        // Find the department
-        Department dep = this.departmentService.FindById(idDepartment);
-        if (dep == null)
-            return new ResponseEntity("Department not found by this ID: " + idDepartment, HttpStatus.NOT_FOUND);
-
-        // Update department name if provided
-        if (name != null && !name.isEmpty())
+        if(name != null && name.length() > 0)
             dep.setName(name);
 
-        // Handle roles
-        if (rolesDepartmentname != null) {
-            // Archive existing roles
-            List<RoleDepartment> existingRoles = new ArrayList<>(dep.getRoles());
-            for (RoleDepartment r : existingRoles) {
-                r.setArchive(true);
-                roleDepartmentService.Save(r);
-            }
-
-            // Clear existing roles
+        if(rolesDepartmentname != null && !rolesDepartmentname.isEmpty()){
             dep.getRoles().clear();
-
-            // Add new roles
-            for (String roleName : rolesDepartmentname) {
-                RoleDepartment newRoleDep = new RoleDepartment();
-                newRoleDep.setDepartment(dep);
-                newRoleDep.setRolename(roleName);
-                this.roleDepartmentService.Save(newRoleDep);
-                dep.getRoles().add(newRoleDep);
+            for (String r : rolesDepartmentname) {
+                RoleDepartment roledep = new RoleDepartment();
+                roledep.setDepartment(dep);
+                roledep.setRolename(r);
+                this.roleDepartmentService.Save(roledep);
             }
         }
-
-        // Save new action for the user
-        UserAction action = new UserAction(UserActionsEnum.DEPARTMENT_MANAGEMENT, user);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.DEPARTMENT_MANAGEMENT,
+                user
+        );
         this.userActionService.Save(action);
-
-        // Update department and return the result
         Department result = this.departmentService.Update(dep);
         return new ResponseEntity<>(result, HttpStatus.OK);
+
     }
 
 
