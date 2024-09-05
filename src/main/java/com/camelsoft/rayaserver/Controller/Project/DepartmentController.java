@@ -117,6 +117,13 @@ public class DepartmentController extends BaseController {
 
         if(rolesDepartmentname != null && !rolesDepartmentname.isEmpty()){
             dep.getRoles().clear();
+            for(RoleDepartment r : dep.getRoles()){
+                dep.getRoles().remove(r);
+                r.setArchive(true);
+                roleDepartmentService.Save(r);
+            }
+        }
+        if(rolesDepartmentname != null && !rolesDepartmentname.isEmpty()) {
             for (String r : rolesDepartmentname) {
                 RoleDepartment roledep = new RoleDepartment();
                 roledep.setDepartment(dep);
