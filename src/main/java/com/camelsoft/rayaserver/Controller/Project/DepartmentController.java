@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @CrossOrigin
@@ -115,30 +117,31 @@ public class DepartmentController extends BaseController {
         if(name != null && name.length() > 0)
             dep.setName(name);
 
+
         if(rolesDepartmentname != null && !rolesDepartmentname.isEmpty()){
+            // Clear existing roles
+            Set<RoleDepartment> existingRoles = new HashSet<>(dep.getRoles());
+            for (RoleDepartment role : existingRoles) {
+                role.setArchive(true);
+                roleDepartmentService.Update(role);
+            }
             dep.getRoles().clear();
-            for(RoleDepartment r : dep.getRoles()){
-                dep.getRoles().remove(r);
-                r.setArchive(true);
-                roleDepartmentService.Save(r);
+
+            // Create and add new roles
+            for (String roleName : rolesDepartmentname) {
+                RoleDepartment newRole = new RoleDepartment();
+                newRole.setRolename(roleName);
+                newRole.setDepartment(dep);
+                dep.getRoles().add(roleDepartmentService.Save(newRole));
             }
         }
-        if(rolesDepartmentname != null && !rolesDepartmentname.isEmpty()) {
-            for (String r : rolesDepartmentname) {
-                RoleDepartment roledep = new RoleDepartment();
-                roledep.setDepartment(dep);
-                roledep.setRolename(r);
-                this.roleDepartmentService.Save(roledep);
-            }
-        }
-        Department result = this.departmentService.Update(dep);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.DEPARTMENT_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
-
+        Department result = this.departmentService.Update(dep);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
