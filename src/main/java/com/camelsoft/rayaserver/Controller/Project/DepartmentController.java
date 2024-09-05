@@ -105,7 +105,7 @@ public class DepartmentController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, check params type"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Department> updatDepartment(
+    public ResponseEntity<Department> updateDepartment(
             @PathVariable Long idDepartment,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) List<String> rolesDepartmentname) throws IOException {
@@ -122,22 +122,22 @@ public class DepartmentController extends BaseController {
         if (name != null && name.length() > 0)
             dep.setName(name);
 
-        // Update roles if provided
-        if (rolesDepartmentname != null && !rolesDepartmentname.isEmpty()) {
-            // Remove all existing roles from the department
-            List<RoleDepartment> currentRoles = new ArrayList<>(dep.getRoles());
-            for (RoleDepartment r : currentRoles) {
-                dep.getRoles().remove(r);
-                r.setArchive(true); // Archive the role
-                roleDepartmentService.Save(r); // Save the archived role
+        // Clear existing roles
+        if (rolesDepartmentname != null) {
+            // Archive existing roles
+            for (RoleDepartment r : dep.getRoles()) {
+                r.setArchive(true);
+                roleDepartmentService.Save(r);
             }
+            dep.getRoles().clear();
 
-            // Add new roles from the request
+            // Add new roles
             for (String roleName : rolesDepartmentname) {
                 RoleDepartment newRoleDep = new RoleDepartment();
                 newRoleDep.setDepartment(dep);
                 newRoleDep.setRolename(roleName);
                 this.roleDepartmentService.Save(newRoleDep);
+                dep.getRoles().add(newRoleDep);
             }
         }
 
@@ -149,6 +149,7 @@ public class DepartmentController extends BaseController {
         Department result = this.departmentService.Update(dep);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
 
 
