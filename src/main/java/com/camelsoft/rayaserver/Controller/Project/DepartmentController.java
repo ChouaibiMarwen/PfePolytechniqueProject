@@ -98,7 +98,6 @@ public class DepartmentController extends BaseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
     @PatchMapping(value = {"/update_department/{idDepartment}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "Update a department from the admin", notes = "Endpoint to update a department")
@@ -107,15 +106,18 @@ public class DepartmentController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, check params type"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
+    @Transactional
     public ResponseEntity<Department> updateDepartment(
             @PathVariable Long idDepartment,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) List<String> rolesDepartmentname) throws IOException {
 
+        // Retrieve the current user
         users user = userService.findByUserName(getCurrentUser().getUsername());
         if (user == null)
             return new ResponseEntity("This user not found", HttpStatus.NOT_FOUND);
 
+        // Find the department
         Department dep = this.departmentService.FindById(idDepartment);
         if (dep == null)
             return new ResponseEntity("Department not found by this ID: " + idDepartment, HttpStatus.NOT_FOUND);
@@ -133,21 +135,17 @@ public class DepartmentController extends BaseController {
                 roleDepartmentService.Save(r);
             }
 
-            // Clear existing roles after archiving
+            // Clear existing roles
             dep.getRoles().clear();
 
             // Add new roles
-            Set<RoleDepartment> newRoles = new HashSet<>();
             for (String roleName : rolesDepartmentname) {
                 RoleDepartment newRoleDep = new RoleDepartment();
                 newRoleDep.setDepartment(dep);
                 newRoleDep.setRolename(roleName);
                 this.roleDepartmentService.Save(newRoleDep);
-                newRoles.add(newRoleDep);
+                dep.getRoles().add(newRoleDep);
             }
-
-            // Update department roles
-            dep.setRoles(newRoles);
         }
 
         // Save new action for the user
@@ -158,10 +156,6 @@ public class DepartmentController extends BaseController {
         Department result = this.departmentService.Update(dep);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
-
-
-
 
     @PatchMapping(value = {"/delete_department/{idDepartment}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
