@@ -102,7 +102,7 @@ public class DepartmentController extends BaseController {
     @ApiOperation(value = "Update a department from the admin", notes = "Endpoint to update a department")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated the department"),
-            @ApiResponse(code = 400, message = "Bad request, check params type "),
+            @ApiResponse(code = 400, message = "Bad request, check params type"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
     public ResponseEntity<Department> updatDepartment(
@@ -124,17 +124,15 @@ public class DepartmentController extends BaseController {
 
         // Update roles if provided
         if (rolesDepartmentname != null && !rolesDepartmentname.isEmpty()) {
-            // Collect roles to archive in a separate list to avoid ConcurrentModificationException
-            List<RoleDepartment> rolesToArchive = new ArrayList<>(dep.getRoles());
-
-            // Archive old roles
-            for (RoleDepartment role : rolesToArchive) {
-                dep.getRoles().remove(role);
-                role.setArchive(true);
-                roleDepartmentService.Save(role);
+            // Remove all existing roles from the department
+            List<RoleDepartment> currentRoles = new ArrayList<>(dep.getRoles());
+            for (RoleDepartment r : currentRoles) {
+                dep.getRoles().remove(r);
+                r.setArchive(true); // Archive the role
+                roleDepartmentService.Save(r); // Save the archived role
             }
 
-            // Add new roles
+            // Add new roles from the request
             for (String roleName : rolesDepartmentname) {
                 RoleDepartment newRoleDep = new RoleDepartment();
                 newRoleDep.setDepartment(dep);
@@ -143,7 +141,7 @@ public class DepartmentController extends BaseController {
             }
         }
 
-        // Save new action
+        // Save new action for the user
         UserAction action = new UserAction(UserActionsEnum.DEPARTMENT_MANAGEMENT, user);
         this.userActionService.Save(action);
 
@@ -151,6 +149,7 @@ public class DepartmentController extends BaseController {
         Department result = this.departmentService.Update(dep);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
 
     @PatchMapping(value = {"/delete_department/{idDepartment}"})
