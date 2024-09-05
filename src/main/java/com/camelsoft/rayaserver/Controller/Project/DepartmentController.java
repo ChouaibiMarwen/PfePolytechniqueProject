@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -156,6 +157,7 @@ public class DepartmentController extends BaseController {
         Department result = this.departmentService.Update(dep);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
     @PatchMapping(value = {"/delete_department/{idDepartment}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
