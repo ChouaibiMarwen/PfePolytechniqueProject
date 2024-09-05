@@ -124,13 +124,14 @@ public class DepartmentController extends BaseController {
                 this.roleDepartmentService.Save(roledep);
             }
         }
+        Department result = this.departmentService.Update(dep);
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.DEPARTMENT_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
-        Department result = this.departmentService.Update(dep);
+
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
