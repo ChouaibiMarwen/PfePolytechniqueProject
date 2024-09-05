@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @CrossOrigin
@@ -119,26 +121,33 @@ public class DepartmentController extends BaseController {
             return new ResponseEntity("Department not found by this ID: " + idDepartment, HttpStatus.NOT_FOUND);
 
         // Update department name if provided
-        if (name != null && name.length() > 0)
+        if (name != null && !name.isEmpty())
             dep.setName(name);
 
-        // Clear existing roles
+        // Handle roles
         if (rolesDepartmentname != null) {
             // Archive existing roles
-            for (RoleDepartment r : dep.getRoles()) {
+            List<RoleDepartment> existingRoles = new ArrayList<>(dep.getRoles());
+            for (RoleDepartment r : existingRoles) {
                 r.setArchive(true);
                 roleDepartmentService.Save(r);
             }
+
+            // Clear existing roles after archiving
             dep.getRoles().clear();
 
             // Add new roles
+            Set<RoleDepartment> newRoles = new HashSet<>();
             for (String roleName : rolesDepartmentname) {
                 RoleDepartment newRoleDep = new RoleDepartment();
                 newRoleDep.setDepartment(dep);
                 newRoleDep.setRolename(roleName);
                 this.roleDepartmentService.Save(newRoleDep);
-                dep.getRoles().add(newRoleDep);
+                newRoles.add(newRoleDep);
             }
+
+            // Update department roles
+            dep.setRoles(newRoles);
         }
 
         // Save new action for the user
@@ -149,6 +158,7 @@ public class DepartmentController extends BaseController {
         Department result = this.departmentService.Update(dep);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
 
 
