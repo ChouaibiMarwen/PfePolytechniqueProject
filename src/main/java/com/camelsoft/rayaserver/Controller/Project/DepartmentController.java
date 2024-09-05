@@ -98,7 +98,6 @@ public class DepartmentController extends BaseController {
         Department result = this.departmentService.FindById(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
     @PatchMapping(value = {"/update_department/{idDepartment}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "Update a department from the admin", notes = "Endpoint to update a department")
