@@ -375,7 +375,7 @@ public class EventController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Event> updateevnt( @PathVariable Long idEvent,  @ModelAttribute RequestOfEvents request,@RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
+    public ResponseEntity<Event> updateevnt( @PathVariable Long idEvent,  @RequestBody RequestOfEvents request,@RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentuser == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
