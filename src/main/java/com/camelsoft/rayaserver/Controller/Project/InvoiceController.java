@@ -1138,4 +1138,29 @@ public class InvoiceController extends BaseController {
         return new ResponseEntity<>(allloanscount, HttpStatus.OK);
     }
 
+
+    @GetMapping(value = {"/my_total_invoices_amount"})
+    @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER')  or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @ApiOperation(value = "get total invoices for supplier", notes = "Endpoint to get total invoices amount")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully get"),
+            @ApiResponse(code = 400, message = "Bad request, check the status , page or size"),
+            @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
+    })
+    public ResponseEntity<Double> my_total_invoices_amount() throws IOException {
+        users user = UserServices.findByUserName(getCurrentUser().getUsername());
+        if (user == null)
+            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        if(user.getSupplier() == null)
+            return new ResponseEntity("you are not a supplier", HttpStatus.FORBIDDEN);
+        Double allinvoicesamount = invoiceService.totalNotArchiveInvoicesBySupplier(user);
+        //save new action
+        UserAction action = new UserAction(
+                UserActionsEnum.LOAN_MANAGEMENT,
+                user
+        );
+        this.userActionService.Save(action);
+        return new ResponseEntity<>(allinvoicesamount, HttpStatus.OK);
+    }
+
 }
