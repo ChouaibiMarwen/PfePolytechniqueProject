@@ -862,7 +862,7 @@ public class UsersController extends BaseController {
 
 
     @DeleteMapping(value = {"/{user_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<users> daleteUserAddTimeStamp(@PathVariable Long user_id) {
         users me = userService.findByUserName(getCurrentUser().getUsername());
         users user = this.userService.findById(user_id);
