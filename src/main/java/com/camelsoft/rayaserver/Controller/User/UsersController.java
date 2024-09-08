@@ -458,25 +458,25 @@ public class UsersController extends BaseController {
     public ResponseEntity<users> addUserBillingAddress(@PathVariable Long id, @RequestBody BillingAddressRequest request) throws IOException, InterruptedException, MessagingException {
         List<String> nullFields = new ArrayList<>();
 
-        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+        if (request.getEmail() == null) {
             nullFields.add("email");
         }
-        if (request.getFirstname() == null || request.getFirstname().isEmpty()) {
+        if (request.getFirstname() == null) {
             nullFields.add("firstname");
         }
-        if (request.getLastname() == null || request.getLastname().isEmpty()) {
+        if (request.getLastname() == null) {
             nullFields.add("lastname");
         }
-        if (request.getBillingaddress() == null || request.getBillingaddress().isEmpty()) {
+        if (request.getBillingaddress() == null) {
             nullFields.add("billingaddress");
         }
-        if (request.getZipcode() == null || request.getZipcode().isEmpty()) {
+        if (request.getZipcode() == null) {
             nullFields.add("zipcode");
         }
-        if (request.getCity() == null || request.getCity().isEmpty()) {
+        if (request.getCity() == null) {
             nullFields.add("city");
         }
-        if (request.getPhonenumber() == null || request.getPhonenumber().isEmpty()) {
+        if (request.getPhonenumber() == null) {
             nullFields.add("phonenumber");
         }
         // Check if any field is null
@@ -597,13 +597,13 @@ public class UsersController extends BaseController {
 
         List<String> nullFields = new ArrayList<>();
 
-        if (request.getBank_name() == null || request.getBank_name().isEmpty()) {
+        if (request.getBank_name() == null ) {
             nullFields.add("bank_name");
         }
-        if (request.getAccountHolderName() == null || request.getAccountHolderName().isEmpty()) {
+        if (request.getAccountHolderName() == null ) {
             nullFields.add("accountHolderName");
         }
-        if (request.getAcountNumber() == null || request.getAcountNumber().isEmpty()) {
+        if (request.getAcountNumber() == null ) {
             nullFields.add("acountNumber");
         }
 
