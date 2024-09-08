@@ -67,10 +67,7 @@ public class Event implements Serializable {
     public Event() {
         this.timestamp = new Date();
     }
-    @Override
-    public int hashCode() {
-        return 33; // Replace with any prime number
-    }
+
     public Event(String title, String description, Date eventDate, Date enddate,MediaModel attachment, Set<RoleEnum> assignedto, EventStatus status) {
         this.title = title;
         this.description = description;

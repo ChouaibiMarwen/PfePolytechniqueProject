@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: production
+    active: test
   security:
     oauth2:
       client:

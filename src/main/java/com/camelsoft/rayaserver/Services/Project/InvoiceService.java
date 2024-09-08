@@ -588,12 +588,14 @@ public class InvoiceService {
     }
     public Double totalNotArchiveInvoicesBySupplier(users user){
         Double result = 0.0;
-        List<Invoice> list = this.repository.findAllByCreatedbyOrRelatedtoAndArchiveIsFalse(user, user);
+        List<Invoice> list = this.repository.findAllByCreatedbyOrRelatedtoAndArchiveIsFalseAndStatusNot(user, user, InvoiceStatus.REJECTED);
         for(Invoice invoice : list){
             result += invoice.getTotal();
         }
         return result;
     }
+
+
 
 
 }

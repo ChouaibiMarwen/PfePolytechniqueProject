@@ -19,10 +19,10 @@ public class Department implements Serializable {
     private Long id;
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = false)
     private Set<RoleDepartment> roles= new HashSet<>();
     @JsonIgnore
-    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = false)
     private List<users> users = new ArrayList<>();
     @Column(name = "archive")
     private Boolean archive = false;

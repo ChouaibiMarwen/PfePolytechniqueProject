@@ -72,6 +72,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
 
     Double countAllByCreatedbyOrRelatedtoAndArchiveIsFalse(users createdBy, users relatedTo);
     List<Invoice> findAllByCreatedbyOrRelatedtoAndArchiveIsFalse(users createdBy, users relatedTo);
+    List<Invoice> findAllByCreatedbyOrRelatedtoAndArchiveIsFalseAndStatusNot(users createdBy, users relatedTo, InvoiceStatus status);
     List<Invoice> findByPurshaseorder_SubadminassignedtoAndArchiveIsFalseOrderByTimestampDesc(users user);
     List<Invoice> findByArchiveIsFalseOrderByTimestampDesc();
 }

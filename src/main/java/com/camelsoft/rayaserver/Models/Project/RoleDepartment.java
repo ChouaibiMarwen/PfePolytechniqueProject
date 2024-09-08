@@ -26,7 +26,7 @@ public class RoleDepartment implements Serializable {
     private Department department;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "roledepartment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "roledepartment", fetch = FetchType.LAZY,cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = false)
     private List<users> users = new ArrayList<>();
     @Column(name = "archive")
     private Boolean archive = false;

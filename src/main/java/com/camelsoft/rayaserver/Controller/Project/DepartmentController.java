@@ -22,7 +22,10 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -114,17 +117,23 @@ public class DepartmentController extends BaseController {
 
         if(name != null && name.length() > 0)
             dep.setName(name);
+
+
         if(rolesDepartmentname != null && !rolesDepartmentname.isEmpty()){
-            for(RoleDepartment r : dep.getRoles()){
-                dep.getRoles().remove(r);
-                r.setArchive(true);
-                roleDepartmentService.Save(r);
+            // Clear existing roles
+            Set<RoleDepartment> existingRoles = new HashSet<>(dep.getRoles());
+            for (RoleDepartment role : existingRoles) {
+                role.setArchive(true);
+                roleDepartmentService.Update(role);
             }
-            for (String r : rolesDepartmentname) {
-                RoleDepartment roledep = new RoleDepartment();
-                roledep.setDepartment(dep);
-                roledep.setRolename(r);
-                this.roleDepartmentService.Save(roledep);
+            dep.getRoles().clear();
+
+            // Create and add new roles
+            for (String roleName : rolesDepartmentname) {
+                RoleDepartment newRole = new RoleDepartment();
+                newRole.setRolename(roleName);
+                newRole.setDepartment(dep);
+                dep.getRoles().add(roleDepartmentService.Save(newRole));
             }
         }
         //save new action
@@ -177,6 +186,12 @@ public class DepartmentController extends BaseController {
     })
     public ResponseEntity<List<Department>> all_departments_list() throws IOException {
         List<Department> result = this.departmentService.findAllNotArchived();
+        for (Department department : result) {
+            Set<RoleDepartment> filteredRoles = department.getRoles().stream()
+                    .filter(role -> !role.getArchive())
+                    .collect(Collectors.toSet());
+            department.setRoles(filteredRoles);
+        }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
