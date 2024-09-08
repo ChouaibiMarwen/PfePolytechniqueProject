@@ -1,5 +1,6 @@
 package com.camelsoft.rayaserver.Controller.User;
 
+import com.camelsoft.rayaserver.Controller.Auth.AuthController;
 import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
@@ -26,6 +27,8 @@ import com.camelsoft.rayaserver.Services.auth.PasswordResetTokenServices;
 import com.camelsoft.rayaserver.Services.auth.PrivilegeService;
 import com.camelsoft.rayaserver.Services.criteria.CriteriaService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -44,6 +47,8 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping(value = "/api/v1/sub_admin")
 public class SubAdminController extends BaseController {
+    private final Log logger = LogFactory.getLog(SubAdminController.class);
+
     @Autowired
     private UserActionService userActionService;
     @Autowired
@@ -157,8 +162,17 @@ public class SubAdminController extends BaseController {
             information.setGrandfathernamear(request.getInformationRequest().getGrandfathernamear());
         if (request.getInformationRequest().getNumberofdependents() != null)
             information.setNumberofdependents(request.getInformationRequest().getNumberofdependents());
-        if (request.getInformationRequest().getGender() != null)
-            information.setGender(Gender.valueOf(request.getInformationRequest().getGender()));
+        if (request.getInformationRequest().getGender() != null) {
+            try {
+                Gender gender = Gender.valueOf(request.getInformationRequest().getGender().toUpperCase());
+                information.setGender(gender);
+            } catch (IllegalArgumentException e) {
+                // Handle invalid gender value if necessary
+                // For example, you could log the error or set a default value
+                logger.error(e.getMessage()+" | "+request.getInformationRequest().getGender());
+            }
+        }
+
         if (request.getInformationRequest().getWorksector() != null)
             information.setWorksector(WorkSector.valueOf(request.getInformationRequest().getWorksector()));
         if (request.getInformationRequest().getMaritalstatus() != null)
