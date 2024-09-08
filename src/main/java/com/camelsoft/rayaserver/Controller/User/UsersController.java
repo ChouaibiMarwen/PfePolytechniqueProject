@@ -590,7 +590,7 @@ public class UsersController extends BaseController {
             @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
             @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
-    public ResponseEntity<users> addUserBankAccount(@PathVariable Long id, @ModelAttribute BankInformationRequest request ,  @RequestParam(value = "file", required = false) MultipartFile ibanattachment ) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<users> addUserBankAccount(@PathVariable Long id, @RequestBody BankInformationRequest request ,  @RequestParam(value = "file", required = false) MultipartFile ibanattachment ) throws IOException, InterruptedException, MessagingException {
 
         List<String> nullFields = new ArrayList<>();
 
