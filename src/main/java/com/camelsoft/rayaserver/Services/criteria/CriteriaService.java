@@ -461,6 +461,7 @@ public class CriteriaService {
         Root<Vehicles> root = query.from(Vehicles.class);
 
         List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(root.get("archive"), false));
 
         if (supplier != null) {
             predicates.add(builder.equal(root.get("supplier"), supplier));
