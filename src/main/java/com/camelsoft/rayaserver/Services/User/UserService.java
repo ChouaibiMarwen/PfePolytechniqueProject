@@ -777,7 +777,7 @@ public boolean existebysuppliernumber(Long suppliernumber) {
         BankInformation bankInformation = new BankInformation();
         bankInformation.setBankname(bankInformationRequest.getBank_name());
         bankInformation.setAccountname(bankInformationRequest.getAccountHolderName());
-        bankInformation.setIban(bankInformationRequest.getIBAN());
+        bankInformation.setIban(bankInformationRequest.getIban());
         bankInformation.setRip(bankInformationRequest.getAcountNumber());
         MediaModel resourceMedia = null;
         if (ibanattachment != null && !ibanattachment.isEmpty()) {
