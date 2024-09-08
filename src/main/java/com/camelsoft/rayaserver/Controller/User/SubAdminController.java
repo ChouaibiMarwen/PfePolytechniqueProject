@@ -175,9 +175,17 @@ public class SubAdminController extends BaseController {
 
         if (request.getInformationRequest().getWorksector() != null)
             information.setWorksector(WorkSector.valueOf(request.getInformationRequest().getWorksector()));
-        if (request.getInformationRequest().getMaritalstatus() != null)
-            information.setMaritalstatus(MaritalStatus.valueOf(request.getInformationRequest().getMaritalstatus()));
-        // Set user details
+        if (request.getInformationRequest().getMaritalstatus() != null) {
+            try {
+                MaritalStatus statusmat = MaritalStatus.valueOf(request.getInformationRequest().getMaritalstatus().toUpperCase());
+                information.setMaritalstatus(statusmat);
+            } catch (IllegalArgumentException e) {
+                // Handle invalid gender value if necessary
+                // For example, you could log the error or set a default value
+                logger.error(e.getMessage()+" | "+request.getInformationRequest().getMaritalstatus());
+            }
+        }
+           // Set user details
         PersonalInformation resultinformation = this.personalInformationService.save(information);
         user.setUsername(username);
         user.setEmail(request.getEmail().toLowerCase());
