@@ -493,14 +493,13 @@ public class CriteriaService {
         typedQuery.setMaxResults(pageable.getPageSize());
 
         List<Vehicles> resultList = typedQuery.getResultList();
-        long total = getTotalCountVehicles(predicates);
+        long total = getTotalCountVehicles(predicates, builder, root);
 
         return new DynamicResponse(resultList, pageable.getPageNumber(), total, (int) Math.ceil((double) total / size));
     }
-    private long getTotalCountVehicles(List<Predicate> predicates) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+    private long getTotalCountVehicles(List<Predicate> predicates, CriteriaBuilder cb, Root<Vehicles> root) {
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-        Root<PurshaseOrder> countRoot = countQuery.from(PurshaseOrder.class);
+        Root<Vehicles> countRoot = countQuery.from(Vehicles.class);
         countQuery.select(cb.count(countRoot)).where(predicates.toArray(new Predicate[0]));
         return em.createQuery(countQuery).getSingleResult();
     }
