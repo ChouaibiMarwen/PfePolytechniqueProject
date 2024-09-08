@@ -684,6 +684,14 @@ public class UserService extends BaseController implements UserDetailsService {
         }
 
     }
+public boolean existebysuppliernumber(Long suppliernumber) {
+        try {
+            return userRepository.existsBySupplier_Suppliernumber(suppliernumber);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(String.format("No data found"));
+        }
+
+    }
 
     public boolean existbyid(Long id) {
         try {

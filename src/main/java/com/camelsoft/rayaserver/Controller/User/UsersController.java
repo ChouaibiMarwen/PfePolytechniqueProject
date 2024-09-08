@@ -647,7 +647,7 @@ public class UsersController extends BaseController {
     })
     public ResponseEntity<BankInformation> updateUserBankAccount(@PathVariable Long userId, @PathVariable Long bankInfoId, @RequestBody BankInformationRequest request) throws IOException, InterruptedException, MessagingException {
         // Check if at least one field is provided in the request
-        if (request.getBank_name() == null && request.getAccountHolderName() == null && request.getAcountNumber() == null && request.getIBAN() == null) {
+        if (request.getBank_name() == null && request.getAccountHolderName() == null && request.getAcountNumber() == null && request.getIban() == null) {
             String errorMessage = "At least one attribute should be provided for bank account update";
             return new ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST);
         }
