@@ -215,10 +215,13 @@ public class UsersController extends BaseController {
         PersonalInformation information = user.getPersonalinformation();
         if (request.getPhonenumber() != null) {
             String phonenumber = request.getPhonenumber().replaceAll("[\\s()]", "");
-            if(userService.existbyphonenumber(phonenumber))
+            if(!Objects.equals(user.getPhonenumber(), request.getPhonenumber()) && userService.existbyphonenumber(phonenumber))
                 return new ResponseEntity("phone-number", HttpStatus.CONFLICT);
-            information.setPhonenumber(phonenumber);
-            user.setPhonenumber(phonenumber);
+            if(!Objects.equals(user.getPhonenumber(), request.getPhonenumber())){
+                information.setPhonenumber(phonenumber);
+                user.setPhonenumber(phonenumber);
+            }
+
         }
 
         if (request.getInformationRequest() != null) {
