@@ -432,7 +432,6 @@ public class UsersController extends BaseController {
         return new ResponseEntity<>(shortuser, HttpStatus.OK);
     }
 
-
     @PatchMapping(value = {"/verified/{id}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "update user verified to the opposit", notes = "Endpoint to update user's verified attribute")
