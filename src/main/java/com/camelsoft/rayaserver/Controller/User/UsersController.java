@@ -225,7 +225,6 @@ public class UsersController extends BaseController {
         }
         if(request.getVatNumber() != null)
             user.setVatnumber(request.getVatNumber());
-
         if (request.getInformationRequest() != null) {
             if (request.getInformationRequest().getFirstnameen() != null)
                 information.setFirstnameen(request.getInformationRequest().getFirstnameen());
