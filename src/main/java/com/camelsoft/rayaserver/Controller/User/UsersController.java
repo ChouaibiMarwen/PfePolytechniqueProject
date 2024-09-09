@@ -215,10 +215,13 @@ public class UsersController extends BaseController {
         PersonalInformation information = user.getPersonalinformation();
         if (request.getPhonenumber() != null) {
             String phonenumber = request.getPhonenumber().replaceAll("[\\s()]", "");
-            if(userService.existbyphonenumber(phonenumber))
+            if(!Objects.equals(user.getPhonenumber(), request.getPhonenumber()) && userService.existbyphonenumber(phonenumber))
                 return new ResponseEntity("phone-number", HttpStatus.CONFLICT);
-            information.setPhonenumber(phonenumber);
-            user.setPhonenumber(phonenumber);
+            if(!Objects.equals(user.getPhonenumber(), request.getPhonenumber())){
+                information.setPhonenumber(phonenumber);
+                user.setPhonenumber(phonenumber);
+            }
+
         }
         if(request.getVatNumber() != null)
             user.setVatnumber(request.getVatNumber());
@@ -457,25 +460,25 @@ public class UsersController extends BaseController {
     public ResponseEntity<users> addUserBillingAddress(@PathVariable Long id, @RequestBody BillingAddressRequest request) throws IOException, InterruptedException, MessagingException {
         List<String> nullFields = new ArrayList<>();
 
-        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+        if (request.getEmail() == null) {
             nullFields.add("email");
         }
-        if (request.getFirstname() == null || request.getFirstname().isEmpty()) {
+        if (request.getFirstname() == null) {
             nullFields.add("firstname");
         }
-        if (request.getLastname() == null || request.getLastname().isEmpty()) {
+        if (request.getLastname() == null) {
             nullFields.add("lastname");
         }
-        if (request.getBillingaddress() == null || request.getBillingaddress().isEmpty()) {
+        if (request.getBillingaddress() == null) {
             nullFields.add("billingaddress");
         }
-        if (request.getZipcode() == null || request.getZipcode().isEmpty()) {
+        if (request.getZipcode() == null) {
             nullFields.add("zipcode");
         }
-        if (request.getCity() == null || request.getCity().isEmpty()) {
+        if (request.getCity() == null) {
             nullFields.add("city");
         }
-        if (request.getPhonenumber() == null || request.getPhonenumber().isEmpty()) {
+        if (request.getPhonenumber() == null) {
             nullFields.add("phonenumber");
         }
         // Check if any field is null
@@ -592,17 +595,17 @@ public class UsersController extends BaseController {
             @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
             @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
     })
-    public ResponseEntity<users> addUserBankAccount(@PathVariable Long id, @ModelAttribute BankInformationRequest request ,  @RequestParam(value = "file", required = false) MultipartFile ibanattachment ) throws IOException, InterruptedException, MessagingException {
+    public ResponseEntity<users> addUserBankAccount(@PathVariable Long id, @RequestBody BankInformationRequest request ,  @RequestParam(value = "file", required = false) MultipartFile ibanattachment ) throws IOException, InterruptedException, MessagingException {
 
         List<String> nullFields = new ArrayList<>();
 
-        if (request.getBank_name() == null || request.getBank_name().isEmpty()) {
+        if (request.getBank_name() == null ) {
             nullFields.add("bank_name");
         }
-        if (request.getAccountHolderName() == null || request.getAccountHolderName().isEmpty()) {
+        if (request.getAccountHolderName() == null ) {
             nullFields.add("accountHolderName");
         }
-        if (request.getAcountNumber() == null || request.getAcountNumber().isEmpty()) {
+        if (request.getAcountNumber() == null ) {
             nullFields.add("acountNumber");
         }
 
@@ -649,7 +652,7 @@ public class UsersController extends BaseController {
     })
     public ResponseEntity<BankInformation> updateUserBankAccount(@PathVariable Long userId, @PathVariable Long bankInfoId, @RequestBody BankInformationRequest request) throws IOException, InterruptedException, MessagingException {
         // Check if at least one field is provided in the request
-        if (request.getBank_name() == null && request.getAccountHolderName() == null && request.getAcountNumber() == null && request.getIBAN() == null) {
+        if (request.getBank_name() == null && request.getAccountHolderName() == null && request.getAcountNumber() == null && request.getIban() == null) {
             String errorMessage = "At least one attribute should be provided for bank account update";
             return new ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST);
         }
@@ -864,7 +867,7 @@ public class UsersController extends BaseController {
 
 
     @DeleteMapping(value = {"/{user_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<users> daleteUserAddTimeStamp(@PathVariable Long user_id) {
         users me = userService.findByUserName(getCurrentUser().getUsername());
         users user = this.userService.findById(user_id);

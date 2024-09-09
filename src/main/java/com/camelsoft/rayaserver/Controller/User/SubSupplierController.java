@@ -110,7 +110,9 @@ public class SubSupplierController extends BaseController {
         if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
             return new ResponseEntity("email not valid", HttpStatus.NOT_ACCEPTABLE);
         String phonenumber = request.getPhonenumber().replaceAll("[\\s()]", "");
-        if (userService.existbyphonenumber(phonenumber))
+        if (userService.existebysuppliernumber(request.getSuppliernumber()))
+            return new ResponseEntity("supplier-number is already exist", HttpStatus.CONFLICT);
+       if (userService.existbyphonenumber(phonenumber))
             return new ResponseEntity("phone-number is already exist", HttpStatus.CONFLICT);
         if (userService.existbyemail(request.getEmail().toLowerCase()))
             return new ResponseEntity("email is already exist", HttpStatus.CONFLICT);

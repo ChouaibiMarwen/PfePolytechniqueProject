@@ -684,6 +684,14 @@ public class UserService extends BaseController implements UserDetailsService {
         }
 
     }
+public boolean existebysuppliernumber(Long suppliernumber) {
+        try {
+            return userRepository.existsBySupplier_Suppliernumber(suppliernumber);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(String.format("No data found"));
+        }
+
+    }
 
     public boolean existbyid(Long id) {
         try {
@@ -769,7 +777,7 @@ public class UserService extends BaseController implements UserDetailsService {
         BankInformation bankInformation = new BankInformation();
         bankInformation.setBankname(bankInformationRequest.getBank_name());
         bankInformation.setAccountname(bankInformationRequest.getAccountHolderName());
-        bankInformation.setIban(bankInformationRequest.getIBAN());
+        bankInformation.setIban(bankInformationRequest.getIban());
         bankInformation.setRip(bankInformationRequest.getAcountNumber());
         MediaModel resourceMedia = null;
         if (ibanattachment != null && !ibanattachment.isEmpty()) {
