@@ -16,8 +16,6 @@ public class UpdatePersonalInfoRequest {
     private PersonalInformationRequest informationRequest;
     private String vatNumber;
 
-
-
     public UpdatePersonalInfoRequest() {
     }
 }
