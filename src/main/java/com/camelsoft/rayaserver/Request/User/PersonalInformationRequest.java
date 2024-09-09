@@ -26,6 +26,7 @@ public class PersonalInformationRequest {
     private String phonenumber;
     private String worksector;
     private String maritalstatus;
+    private String vatNumber;
 }
 
 

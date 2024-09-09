@@ -14,6 +14,8 @@ public class UpdatePersonalInfoRequest {
     private String idnumber;
     private IdTypeEnum idType;
     private PersonalInformationRequest informationRequest;
+    private String vatNumber;
+
 
 
     public UpdatePersonalInfoRequest() {

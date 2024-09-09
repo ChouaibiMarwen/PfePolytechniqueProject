@@ -54,6 +54,9 @@ public class BankAccountService {
         if (request.getAcountNumber() != null) {
             bankInformation.setRip(request.getAcountNumber());
         }
+        if(request.getIBAN() != null) {
+            bankInformation.setIban(request.getIBAN());
+        }
         return  saveBankInformation(bankInformation);
     }
 
