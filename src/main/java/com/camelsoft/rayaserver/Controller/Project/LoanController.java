@@ -330,6 +330,23 @@ public class LoanController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
+        users usersupplier = loan.getSupplier().getUser();
+        Notification notificationuser = new Notification(
+                user,
+                usersupplier,
+                Action.EVENT,
+                "Loan APPROVED",
+                "Your loan request for vehicle with vin number: " + loan.getCarvin()+ " is approved:",
+                result.getId()
+        );
+        try {
+            this.notificationServices.sendnotification(notificationuser,notificationuser);
+
+        }  catch (FirebaseMessagingException e) {
+            e.getMessage();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return new ResponseEntity<>(resultdto, HttpStatus.OK);
 
 
