@@ -3,9 +3,11 @@ package com.camelsoft.rayaserver.Controller.Project;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanStatus;
 import com.camelsoft.rayaserver.Enum.Project.Loan.LoanType;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
+import com.camelsoft.rayaserver.Enum.Tools.Action;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.LoanDto;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
+import com.camelsoft.rayaserver.Models.Notification.Notification;
 import com.camelsoft.rayaserver.Models.Project.Loan;
 import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
@@ -15,11 +17,13 @@ import com.camelsoft.rayaserver.Request.project.LoanRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.LoansResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
+import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.Project.LoanServices;
 import com.camelsoft.rayaserver.Services.Project.VehiclesService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -54,6 +58,8 @@ public class LoanController extends BaseController {
     private FilesStorageServiceImpl filesStorageService;
     @Autowired
     private LoanServices loanServices;
+    @Autowired
+    private NotificationServices notificationServices;
 
     @GetMapping(value = {"/all_loans_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
@@ -217,6 +223,22 @@ public class LoanController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
+        Notification notificationuser = new Notification(
+                user,
+                user,
+                Action.EVENT,
+                "NEW_Loan",
+                "new Loan request is added by: " + user.getName(),
+                result.getId()
+        );
+        try {
+            this.notificationServices.sendnotification(notificationuser,notificationuser);
+
+        }  catch (FirebaseMessagingException e) {
+            e.getMessage();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return new ResponseEntity<>(resultdto, HttpStatus.OK);
     }
 

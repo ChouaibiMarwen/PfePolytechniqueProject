@@ -221,7 +221,6 @@ public class UsersController extends BaseController {
                 information.setPhonenumber(phonenumber);
                 user.setPhonenumber(phonenumber);
             }
-
         }
         if(request.getVatNumber() != null)
             user.setVatnumber(request.getVatNumber());
