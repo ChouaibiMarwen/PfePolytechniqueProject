@@ -44,7 +44,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     private File_Repository repository;
     private static final List<String> image_accepte_type = Arrays.asList("jpeg", "jpg", "png", "gif", "bmp", "tiff", "tif", "ico", "webp", "svg", "heic", "raw");
     private final MinioClient minioClient;
-    private final String bucketName = "rayabucket";
+    private final String bucketName = "rayafinancing.v2";
     private static final List<String> image_accepted_types = Arrays.asList(
             "JPEG", "jpeg", "svg", "png", "SVG", "PNG", "JPG", "jpg", "pdf", "mp4",
             "avi", "mpg", "mpeg", "mov", "mkv", "flv", "wmv", "webm", "3gp", "ogv"
