@@ -11,7 +11,7 @@ spring:
             redirectUri: '{baseUrl}/oauth2/callback/{registrationId}'
             scope:
               - email
-              - profile
+              - profilef
           facebook:
             clientId: not_defined_yet
             clientSecret: not_defined_yet
@@ -119,3 +119,9 @@ apple:
       - http://localhost:4200/signin/oauth2/redirect
       - https://localhost:8000/signin/oauth2/redirect
       - https://server.rayafinancing.com/oauth2/authorize/google
+minio:
+  url: https://console.os.ruh.cloudsigma.com
+  access-key: 6i9zdonPoHdwKEc4TsUq
+  secret-key: m54vaBrJ5WiOZCrQ39n26qaUV5XlLs84AEYnFN8Y
+  bucket-name: rayabucket
+  secure: true
