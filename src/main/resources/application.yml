@@ -120,7 +120,8 @@ apple:
       - https://localhost:8000/signin/oauth2/redirect
       - https://server.rayafinancing.com/oauth2/authorize/google
 minio:
-  url: http://127.0.0.1:9000
+  #url: https://console.os.ruh.cloudsigma.com
+  url: https://console.os.ruh.cloudsigma.com/api/v1/buckets/rayafinancing.v2
   access-key: 6i9zdonPoHdwKEc4TsUq
   secret-key: m54vaBrJ5WiOZCrQ39n26qaUV5XlLs84AEYnFN8Y
   bucket-name: rayafinancing.v2
