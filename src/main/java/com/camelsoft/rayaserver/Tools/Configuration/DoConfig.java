@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class DoConfig {
-
     @Value("${minio.url}")
     private String minioUrl;
 
@@ -18,12 +17,28 @@ public class DoConfig {
     @Value("${minio.secret-key}")
     private String secretKey;
 
+    @Value("${minio.bucket-name}")
+    private String bucketName;
+
+    @Value("${minio.secure}")
+    private boolean secure;
+
     @Bean
     public MinioClient minioClient() {
         return MinioClient.builder()
                 .endpoint(minioUrl)
                 .credentials(accessKey, secretKey)
                 .build();
+    }
+
+    @Bean
+    public String bucketName() {
+        return bucketName;
+    }
+
+    @Bean
+    public boolean isSecure() {
+        return secure;
     }
 
 }
