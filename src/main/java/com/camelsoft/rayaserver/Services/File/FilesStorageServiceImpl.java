@@ -67,8 +67,6 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
 
-
-
     public FilesStorageServiceImpl(MinioClient minioClient) {
         this.minioClient = minioClient;
     }
@@ -78,18 +76,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     public Boolean checkformatArrayList(List<MultipartFile> files){
-        for (MultipartFile f : files) {
-            if( f == null ||  f.isEmpty())
-            {
-                return false;
-            }
-            String extension = f.getContentType().substring(f.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
-            if (!image_accepte_type.contains(extension)) {
-                return false;
-            }
-        }
-
-        return true;
+        return files.stream().allMatch(this::checkformat);
     }
 
     public Boolean checkformatList(Set<MultipartFile> files){
@@ -127,7 +114,11 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     @Override
     public MediaModel save_file_local(MultipartFile file, String directory) {
         try {
-            String fileName = ((new Date()).getTime() + file.getOriginalFilename()).replaceAll("\\s+", "");
+            if (!checkformat(file)) {
+                throw new RuntimeException("Invalid file format");
+            }
+
+            String fileName = System.currentTimeMillis() + file.getOriginalFilename().replaceAll("\\s+", "");
             String objectKey = directory.replaceAll("\\s+", "") + "/" + fileName;
 
             minioClient.putObject(
@@ -149,14 +140,11 @@ public class FilesStorageServiceImpl implements FilesStorageService {
             return repository.save(fileResult);
         } catch (MinioException e) {
             throw new RuntimeException("Error occurred while uploading the file: " + e.getMessage(), e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidKeyException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeyException | IOException e) {
             throw new RuntimeException("Error occurred while handling the file input stream: " + e.getMessage(), e);
         }
     }
+
 
     @Override
     public Set<MediaModel> save_all_local(List<MultipartFile> files, String directory) {
