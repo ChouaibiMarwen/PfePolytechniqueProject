@@ -73,16 +73,42 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         this.minioClient = minioClient;
     }
 
-    public Boolean checkFormat(MultipartFile file) {
+    public Boolean checkformat(MultipartFile file) {
         return file != null && !file.isEmpty() && image_accepte_type.contains(file.getContentType().split("/")[1].toLowerCase(Locale.ROOT));
     }
 
-    public Boolean checkFormatList(Set<MultipartFile> files) {
-        return files.stream().allMatch(this::checkFormat);
+    public Boolean checkformatArrayList(List<MultipartFile> files){
+        for (MultipartFile f : files) {
+            if( f == null ||  f.isEmpty())
+            {
+                return false;
+            }
+            String extension = f.getContentType().substring(f.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+            if (!image_accepte_type.contains(extension)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public Boolean checkformatList(Set<MultipartFile> files){
+        for (MultipartFile f : files) {
+            if( f == null ||  f.isEmpty())
+            {
+                return false;
+            }
+            String extension = f.getContentType().substring(f.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
+            if (!image_accepte_type.contains(extension)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public Boolean checkFormatArrayList(List<MultipartFile> files) {
-        return files.stream().allMatch(this::checkFormat);
+        return files.stream().allMatch(this::checkformat);
     }
     @Override
     public void delete_file_by_path_from_cdn(String filename, Long imageid) {
@@ -247,6 +273,14 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         }
     }
 
+    public MediaModel findbyid(Long media_id){
+        if (this.repository.existsById(media_id))
+        {
+            return  this.repository.findById(media_id).get();
+
+        }
+        return null;
+    }
 
 
 
