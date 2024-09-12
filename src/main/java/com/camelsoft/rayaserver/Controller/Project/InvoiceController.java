@@ -4,6 +4,7 @@ import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
+import com.camelsoft.rayaserver.Enum.Tools.Action;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
@@ -15,6 +16,7 @@ import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Project.InvoiceReport;
 import com.camelsoft.rayaserver.Response.Project.LoansResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
+import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.Project.*;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
@@ -68,6 +70,8 @@ public class InvoiceController extends BaseController {
     private FilesStorageServiceImpl filesStorageService;
     @Autowired
     private InvoiceService invoiceService;
+    @Autowired
+    private NotificationServices notificationServices;
 
     @GetMapping(value = {"/all_invoice_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
@@ -78,25 +82,19 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 406, message = "NOT ACCEPTABLE, you need to select related"),
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
-    public ResponseEntity<DynamicResponse> all_invoice_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam List<RoleEnum> role ,  @RequestParam(required = false) Integer invoicenumber,  @RequestParam(required = false) Long poid,  @RequestParam(required = false) String suppliername) throws IOException {
-
+    public ResponseEntity<DynamicResponse> all_invoice_admin(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam(required = false) InvoiceStatus status, @RequestParam List<RoleEnum> role ,  @RequestParam(required = false) Integer invoicenumber,  @RequestParam(required = false) Long poid, @RequestParam(required = false) Long suppliernumber , @RequestParam(required = false) String suppliername) throws IOException {
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
         Page<Invoice> invoice;
         if(user.getRole().getRole() == RoleEnum.ROLE_SUB_ADMIN){
             //sub_admin get list of invoices of suppliers with the same classification
             if(user.getSubadminClassification()!= null)
-                invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role, invoicenumber, poid, suppliername, user);
+                invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role, invoicenumber, poid, suppliername, suppliernumber ,user);
             else
                 return  new ResponseEntity("this sub-admin have not any classification yet", HttpStatus.NOT_ACCEPTABLE);
-
-
         }else{
             // if the current user is admin , he get all invoices list
-            invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role, invoicenumber, poid, suppliername, null);
+            invoice = this.criteriaService.findAllByStatusAndRole(page, size, status, role, invoicenumber, poid, suppliername, suppliernumber, null);
         }
-
-
-
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
@@ -107,9 +105,6 @@ public class InvoiceController extends BaseController {
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
-
-
-
     @GetMapping(value = {"/all_my_invoices_sub_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "get all iall_my_invoices_sub_admin for sub admin", notes = "Endpoint to get invoices")
@@ -120,28 +115,16 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<List<Invoice>> all_my_invoices_sub_admin() throws IOException {
-
         users user = UserServices.findByUserName(getCurrentUser().getUsername());
-
         List<Invoice> res =  this.service.findBypoassignedto(user);
-
-
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
                 user
         );
         this.userActionService.Save(action);
-
-
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
-
-
-
-
-
-
     @GetMapping(value = {"/all_invoice_list_admin"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all invoices list for admin", notes = "Endpoint to get all invoices list")
@@ -174,8 +157,6 @@ public class InvoiceController extends BaseController {
 
         return new ResponseEntity<>(invoiceslist, HttpStatus.OK);
     }
-
-
     @GetMapping(value = {"/all_invoice_supplier"})
     @PreAuthorize("hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all invoice by status for supplier", notes = "Endpoint to get vehicles")
@@ -200,7 +181,6 @@ public class InvoiceController extends BaseController {
 
         // return new ResponseEntity<>(this.service.FindAllPg(page, size, related), HttpStatus.OK);
         return new ResponseEntity<>(res, HttpStatus.OK);
-
 
     }
 
@@ -563,6 +543,7 @@ public class InvoiceController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
+        this.notificationServices.createandSendNotification(createdby, createdby, Action.INVOICE , "New Invoice", "New invoice added by: " + createdby.getName(), result.getId(), true,true );
         return new ResponseEntity<>(result1, HttpStatus.OK);
 
 
@@ -1022,6 +1003,9 @@ public class InvoiceController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
+        users createdby = invoice.getCreatedby();
+        this.notificationServices.createandSendNotification(createdby, createdby, Action.INVOICE , "Invoice Confirm", "Invoice with id : " + invoice.getId().toString() + "is confirmed", invoice.getId(),true,true );
+
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
@@ -1058,6 +1042,8 @@ public class InvoiceController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
+        users createdby = invoice.getCreatedby();
+        this.notificationServices.createandSendNotification(createdby, createdby, Action.INVOICE , "Invoice Reject", "Invoice with id : " + invoice.getId().toString() + "is rejected", invoice.getId(),true,true );
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -1110,6 +1096,9 @@ public class InvoiceController extends BaseController {
                 user
         );
         this.userActionService.Save(action);
+        users createdby = invoice.getCreatedby();
+        this.notificationServices.createandSendNotification(createdby, createdby, Action.INVOICE , "Invoice Paid", "Invoice with id : " + invoice.getId().toString() + "is paid", invoice.getId(),true,true );
+
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

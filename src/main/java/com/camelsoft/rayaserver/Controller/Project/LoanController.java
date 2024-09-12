@@ -226,7 +226,7 @@ public class LoanController extends BaseController {
         Notification notificationuser = new Notification(
                 user,
                 user,
-                Action.EVENT,
+                Action.LOAN,
                 "NEW_Loan",
                 "new Loan request is added by: " + user.getName(),
                 result.getId()
@@ -334,7 +334,7 @@ public class LoanController extends BaseController {
         Notification notificationuser = new Notification(
                 user,
                 usersupplier,
-                Action.EVENT,
+                Action.LOAN,
                 "Loan APPROVED",
                 "Your loan request is approved:",
                 result.getId()
@@ -383,7 +383,7 @@ public class LoanController extends BaseController {
         Notification notificationuser = new Notification(
                 user,
                 usersupplier,
-                Action.EVENT,
+                Action.LOAN,
                 "Loan REJECT",
                 "Your loan request is rejected:",
                 result.getId()

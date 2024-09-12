@@ -107,4 +107,13 @@ public interface UserRepository extends JpaRepository<users, Long> {
 
 
     Page<users> findAllByNameContains(Pageable page, String name);
+
+    Page<users> findAllByRoleAndNameContainingIgnoreCaseAndDeletedOrderByTimestmpDesc(Pageable pageable, Role role, String name, Boolean deleted);
+
+    Page<users> findAllByRoleAndNameContainingIgnoreCaseAndDeletedAndVerifiedOrderByTimestmpDesc(Pageable pageable, Role role, String name, Boolean deleted, Boolean verified);
+
+    Page<users> findAllByRoleAndActiveAndNameContainingIgnoreCaseAndDeletedOrderByTimestmpDesc(Pageable pageable, Role role, Boolean active, String name, Boolean deleted);
+
+    Page<users> findAllByRoleAndActiveAndNameContainingIgnoreCaseAndDeletedAndVerifiedOrderByTimestmpDesc(Pageable pageable, Role role, Boolean active, String name, Boolean deleted, Boolean verified);
+
 }

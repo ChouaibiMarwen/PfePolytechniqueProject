@@ -89,6 +89,8 @@ public class PurshaseOrder implements Serializable {
     private Long invoiceid;
     @Transient
     private Boolean haveinvoice = false;
+    @Transient
+    private Long suppliernumber;
     @OneToOne(mappedBy = "purshaseorder")
     @JsonIgnore
     private Invoice invoice;
@@ -117,6 +119,7 @@ public class PurshaseOrder implements Serializable {
             } else {
                 this.poCountBySupplier = 0;
             }
+            this.suppliernumber = this.supplier.getSuppliernumber();
         }
         if (invoice != null) {
             this.invoiceid = invoice.getId();

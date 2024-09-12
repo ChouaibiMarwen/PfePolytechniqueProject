@@ -288,4 +288,29 @@ public class NotificationServices {
         }
 
     }
+
+
+    public void createandSendNotification(users sender , users receiver, Action action , String subject, String content, Long actionId, Boolean sendtoadmin, Boolean sendtouser) {
+        Notification notificationuser = new Notification(
+                sender,
+                receiver,
+                action,
+                subject,
+                content,
+                actionId
+        );
+        try {
+            if(sendtoadmin && sendtouser)
+                this.sendnotification(notificationuser,notificationuser);
+            else if (sendtouser)
+                this.sendnotification(notificationuser,null);
+            else if (sendtoadmin)
+                this.sendnotification(null,notificationuser);
+
+        }  catch (FirebaseMessagingException e) {
+            e.getMessage();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

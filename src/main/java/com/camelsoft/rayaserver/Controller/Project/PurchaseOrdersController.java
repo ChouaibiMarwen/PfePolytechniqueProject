@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.PurshaseOrder.PurshaseOrderStatus;
 import com.camelsoft.rayaserver.Enum.Project.Vehicles.AvailiabilityEnum;
+import com.camelsoft.rayaserver.Enum.Tools.Action;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Enum.User.UserActionsEnum;
 import com.camelsoft.rayaserver.Models.DTO.PurchaseOrderDto;
@@ -14,6 +15,7 @@ import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.project.PurshaseOrderRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
+import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.Project.PurshaseOrderService;
 import com.camelsoft.rayaserver.Services.Project.VehiclesService;
 import com.camelsoft.rayaserver.Services.User.SupplierServices;
@@ -50,6 +52,8 @@ public class PurchaseOrdersController  extends BaseController {
     private UserService userService;
     @Autowired
     private SupplierServices supplierServices;
+    @Autowired
+    private NotificationServices notificationServices;
 
 
     @PostMapping(value = "/add")
@@ -138,6 +142,8 @@ public class PurchaseOrdersController  extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
+        this.notificationServices.createandSendNotification(currentuser, user, Action.PURCHASE , "New Purchase Order", "New purchase order added", po.getId(),true,false );
+
 
         return  new ResponseEntity<>(purchaseOrderDto, HttpStatus.OK);
     }
@@ -450,13 +456,13 @@ public class PurchaseOrdersController  extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<PurchaseOrderDto> send_purchase_order(@PathVariable Long purchaseOrderId) throws IOException {
+        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         PurshaseOrder purchaseOrder =  this.purshaseOrderService.FindById(purchaseOrderId);
         if(purchaseOrder == null)
             return new ResponseEntity("purchase order is not founded ", HttpStatus.NOT_FOUND);
         purchaseOrder.setStatus(PurshaseOrderStatus.CONFIRMED);
         PurshaseOrder purshaseOrder1 = this.purshaseOrderService.Update(purchaseOrder);
         PurchaseOrderDto po = PurchaseOrderDto.PurchaseOrderToDto(purshaseOrder1);
-        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentuser == null)
             return new ResponseEntity("can't get the current user", HttpStatus.NOT_FOUND);
         //save new action
@@ -465,6 +471,8 @@ public class PurchaseOrdersController  extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
+        users supplierreceiver = purshaseOrder1.getSupplier().getUser();
+        this.notificationServices.createandSendNotification(currentuser, supplierreceiver, Action.PURCHASE , "New Purchase Order", "New purchase order added", po.getId(),false,true );
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 
@@ -520,6 +528,8 @@ public class PurchaseOrdersController  extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
+        users admin = this.userService.findFirstAdmin();
+        this.notificationServices.createandSendNotification(purshaseOrder1.getSupplier().getUser(), admin, Action.PURCHASE , "Purchase Order Accepted By Supplier", "purchase order with id: "+ purshaseOrder1.getId().toString() + "is accepted", purshaseOrder1.getId(),true,false );
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 
@@ -549,6 +559,8 @@ public class PurchaseOrdersController  extends BaseController {
                 currentuser
         );
         this.userActionService.Save(action);
+        users admin = this.userService.findFirstAdmin();
+        this.notificationServices.createandSendNotification(purshaseOrder1.getSupplier().getUser(), admin, Action.PURCHASE , "Purchase Order Rejected", "purchase order with id: "+ purshaseOrder1.getId().toString() + "is rejected", purshaseOrder1.getId(),true,false );
         return new ResponseEntity<>(po, HttpStatus.OK);
     }
 

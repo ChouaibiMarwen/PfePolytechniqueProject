@@ -119,6 +119,8 @@ public class Invoice implements Serializable {
     private Double total = 0.0;
     @Transient
     private Long confirmedById;
+    @Transient
+    private Long suppliernumber;
     @ManyToMany(mappedBy = "invoices")
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
@@ -128,12 +130,10 @@ public class Invoice implements Serializable {
     @OneToOne(fetch = FetchType.LAZY,cascade =CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "notedocument_file_media")
     private MediaModel deliverynotedocument;
-
     @Column(name = "role_created_by")
     private RoleEnum role = RoleEnum.ROLE_SUPPLIER;
     @Column(columnDefinition = "TEXT",name = "rejection_reason")
     private String rejectionreason;
-
 
     public Invoice() {
         this.timestamp = new Date();
@@ -172,8 +172,11 @@ public class Invoice implements Serializable {
     @PostLoad
     private void afterload() {
         this.total=0d;
-        if (this.purshaseorder != null)
+        if (this.purshaseorder != null){
             this.poid = this.purshaseorder.getId();
+            this.suppliernumber = this.purshaseorder.getSuppliernumber();
+        }
+
         if (payments != null) {
             for (Payment p : payments) {
                 this.amountpaid += p.getAmount();
@@ -572,5 +575,13 @@ public class Invoice implements Serializable {
 
     public void setRejectionreason(String rejectionreason) {
         this.rejectionreason = rejectionreason;
+    }
+
+    public Long getSuppliernumber() {
+        return suppliernumber;
+    }
+
+    public void setSuppliernumber(Long suppliernumber) {
+        this.suppliernumber = suppliernumber;
     }
 }

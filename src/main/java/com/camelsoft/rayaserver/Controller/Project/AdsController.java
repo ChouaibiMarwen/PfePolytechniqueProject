@@ -90,8 +90,6 @@ public class AdsController extends BaseController {
         return new ResponseEntity<>(ads, HttpStatus.OK);
 
     }
-
-
     @PatchMapping(value = {"/update_pub/{idAds}"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
     @ApiOperation(value = "Update a new ads from the admin", notes = "Endpoint to update a new ads for admin")
@@ -126,7 +124,6 @@ public class AdsController extends BaseController {
                 return new ResponseEntity("not accepted file type", HttpStatus.BAD_REQUEST);
             }
         }
-
         ads = this.adsService.update(ads);
         UserAction action = new UserAction(
                 UserActionsEnum.ADS_MANAGEMENT,
@@ -136,8 +133,6 @@ public class AdsController extends BaseController {
         return new ResponseEntity<>(ads, HttpStatus.OK);
 
     }
-
-
     @GetMapping(value = {"/get_all_ads"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     @ApiOperation(value = "get all ads list from the admin", notes = "Endpoint to get all ads list for admin")

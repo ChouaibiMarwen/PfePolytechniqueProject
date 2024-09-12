@@ -9,6 +9,7 @@ import com.camelsoft.rayaserver.Models.Project.Event;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.PurshaseOrder;
 import com.camelsoft.rayaserver.Models.Project.Vehicles;
+import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.UsersCategory;
@@ -180,7 +181,7 @@ public class CriteriaService {
         }
     }
 
-    public PageImpl<users> UsersSearchCreatiriaRolesListSubsupplier(int page, int size, Boolean active, String name, RoleEnum role, Boolean verified, users manager, Boolean deleted) {
+   /* public PageImpl<users> UsersSearchCreatiriaRolesListSubsupplier(int page, int size, Boolean active, String name, RoleEnum role, Boolean verified, users manager, Boolean deleted) {
         try {
             Role userRoles = roleRepository.findByRole(role);
 
@@ -222,6 +223,67 @@ public class CriteriaService {
         } catch (NoResultException ex) {
             throw new NotFoundException("No data found.");
         }
+    }*/
+
+    public PageImpl<users> UsersSearchCreatiriaRolesListSubsupplier(int page, int size, Boolean active, String name, RoleEnum role, Boolean verified, users manager, Boolean deleted) {
+        try {
+            Role userRoles = roleRepository.findByRole(role);
+
+            CriteriaQuery<users> Q = criteriaBuilder.createQuery(users.class);
+            Root<users> user = Q.from(users.class);
+            Q.distinct(true);
+
+            // Join with PersonalInformation to access name fields
+            Join<users, PersonalInformation> personalInformationJoin = user.join("personalinformation", JoinType.LEFT);
+
+            Predicate finalPredicate = user.get("role").in(userRoles);
+
+            // Search by name
+            if (name != null && !name.isEmpty()) {
+                Predicate namePredicate = criteriaBuilder.like(
+                        criteriaBuilder.concat(
+                                criteriaBuilder.concat(
+                                        personalInformationJoin.get("firstnameen"), " "
+                                ),
+                                personalInformationJoin.get("lastnameen")
+                        ),
+                        "%" + name.toLowerCase() + "%"
+                );
+                finalPredicate = criteriaBuilder.and(namePredicate, finalPredicate);
+            }
+
+            if (active != null) {
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("active"), active));
+            }
+
+            if (verified != null) {
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("verified"), verified));
+            }
+
+            if (manager != null) {
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(user.get("manager"), manager));
+            }
+
+            if (deleted != null) {
+                finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.or(
+                        criteriaBuilder.equal(user.get("deleted"), deleted),
+                        criteriaBuilder.isNull(user.get("deleted"))
+                ));
+            }
+
+            Q.where(finalPredicate);
+            Q.orderBy(criteriaBuilder.desc(user.get("timestmp")));
+            TypedQuery<users> typedQuery = em.createQuery(Q);
+
+            int usersCount = typedQuery.getResultList().size();
+            typedQuery.setFirstResult(page * size);
+            typedQuery.setMaxResults(size);
+            Pageable pageable = PageRequest.of(page, size);
+
+            return new PageImpl<>(typedQuery.getResultList(), pageable, usersCount);
+        } catch (NoResultException ex) {
+            throw new NotFoundException("No data found.");
+        }
     }
 
 
@@ -246,9 +308,9 @@ public class CriteriaService {
                 predicates.add(criteriaBuilder.equal(invoiceRoot.get("status"), status));
             }
             if (thirdparty != null) {
-                if(thirdparty){
+                if (thirdparty) {
                     predicates.add(criteriaBuilder.isNotNull(invoiceRoot.get("thirdpartypoid")));
-                }else{
+                } else {
                     predicates.add(criteriaBuilder.isNull(invoiceRoot.get("thirdpartypoid")));
                 }
             }
@@ -354,7 +416,7 @@ public class CriteriaService {
     }
 */
 
-    public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, List<RoleEnum> role, Integer invoicenumber, Long poid, String suppliername, users assignedto) {
+    public PageImpl<Invoice> findAllByStatusAndRole(int page, int size, InvoiceStatus status, List<RoleEnum> role, Integer invoicenumber, Long poid, String suppliername, Long suppliernumber, users assignedto) {
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Invoice> criteriaQuery = criteriaBuilder.createQuery(Invoice.class);
@@ -363,6 +425,8 @@ public class CriteriaService {
 
             // Join with PurshaseOrder to access its fields
             Join<Invoice, PurshaseOrder> purchaseOrderJoin = invoiceRoot.join("purshaseorder", JoinType.LEFT);
+            // Join with Supplier to access suppliernumber
+            Join<PurshaseOrder, Supplier> supplierJoin = purchaseOrderJoin.join("supplier", JoinType.LEFT);
 
             // Apply filters
             if (role != null && !role.isEmpty()) {
@@ -378,7 +442,7 @@ public class CriteriaService {
             }
 
             if (suppliername != null && !suppliername.isEmpty()) {
-                predicates.add(criteriaBuilder.like(invoiceRoot.get("suppliername"), "%" + suppliername + "%"));
+                predicates.add(criteriaBuilder.like(invoiceRoot.get("suppliername"), "%" + suppliername.toLowerCase() + "%"));
             }
 
             if (poid != null) {
@@ -387,6 +451,11 @@ public class CriteriaService {
 
             if (assignedto != null) {
                 predicates.add(criteriaBuilder.equal(purchaseOrderJoin.get("subadminassignedto"), assignedto));
+            }
+
+            // Filter by suppliernumber from the Supplier entity
+            if (suppliernumber != null) {
+                predicates.add(criteriaBuilder.equal(supplierJoin.get("suppliernumber"), suppliernumber));
             }
 
             criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
@@ -401,6 +470,7 @@ public class CriteriaService {
 
             // Reapply the same joins and predicates for the count query
             Join<Invoice, PurshaseOrder> countPurchaseOrderJoin = countRoot.join("purshaseorder", JoinType.LEFT);
+            Join<PurshaseOrder, Supplier> countSupplierJoin = countPurchaseOrderJoin.join("supplier", JoinType.LEFT);
             List<Predicate> countPredicates = new ArrayList<>(predicates);
             countQuery.where(criteriaBuilder.and(countPredicates.toArray(new Predicate[0])));
             Long totalRecords = em.createQuery(countQuery).getSingleResult();
@@ -415,7 +485,6 @@ public class CriteriaService {
         } catch (NoResultException ex) {
             throw new NotFoundException("No data found.");
         }
-
     }
 
     public List<users> UsersSearchCreatiriaRolesListNotPaginated(Boolean active, Boolean deleted, String search, List<String> roles) {
@@ -498,6 +567,7 @@ public class CriteriaService {
 
         return new DynamicResponse(resultList, pageable.getPageNumber(), total, (int) Math.ceil((double) total / size));
     }
+
     private long getTotalCountVehicles(List<Predicate> predicates, CriteriaBuilder cb, Root<Vehicles> root) {
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Vehicles> countRoot = countQuery.from(Vehicles.class);
