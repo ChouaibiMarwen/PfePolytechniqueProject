@@ -322,15 +322,19 @@ public class CriteriaService {
 
             // Search by name
             if (name != null && !name.isEmpty()) {
-                Predicate namePredicate = criteriaBuilder.like(
-                        criteriaBuilder.concat(
+                String searchString = "%" + name.toLowerCase() + "%";
+
+                Predicate namePredicate = criteriaBuilder.or(
+                        criteriaBuilder.like(criteriaBuilder.lower(personalInformationJoin.get("firstnameen")), searchString),
+                        criteriaBuilder.like(criteriaBuilder.lower(personalInformationJoin.get("lastnameen")), searchString),
+                        criteriaBuilder.like(criteriaBuilder.lower(
                                 criteriaBuilder.concat(
-                                        personalInformationJoin.get("firstnameen"), " "
-                                ),
-                                personalInformationJoin.get("lastnameen")
-                        ),
-                        "%" + name.toLowerCase() + "%"
+                                        criteriaBuilder.concat(personalInformationJoin.get("firstnameen"), " "),
+                                        personalInformationJoin.get("lastnameen")
+                                )
+                        ), searchString)
                 );
+
                 finalPredicate = criteriaBuilder.and(namePredicate, finalPredicate);
             }
 
