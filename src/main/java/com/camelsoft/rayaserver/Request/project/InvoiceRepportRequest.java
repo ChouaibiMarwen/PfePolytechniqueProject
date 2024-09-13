@@ -9,4 +9,6 @@ import java.util.*;
 @Data
 public class InvoiceRepportRequest {
     private Date date;
+    private Date enddate;
+    private Long supplierid;
 }
