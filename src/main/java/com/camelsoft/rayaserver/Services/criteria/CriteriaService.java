@@ -34,6 +34,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Repository
@@ -224,6 +225,85 @@ public class CriteriaService {
             throw new NotFoundException("No data found.");
         }
     }*/
+
+    public DynamicResponse filterAllUser(int page, int size, Boolean active, String name, RoleEnum role, Boolean verified) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Role userRole = roleRepository.findByRole(role);
+
+            // Initialize criteria builder and query
+            CriteriaQuery<users> query = criteriaBuilder.createQuery(users.class);
+            Root<users> user = query.from(users.class);
+            Join<users, PersonalInformation> personalInformationJoin = user.join("personalInformation"); // Assuming you have a PersonalInformation join
+
+            // Create a list of predicates
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Filter by role
+            predicates.add(criteriaBuilder.equal(user.get("role"), userRole));
+
+            // Filter by deleted (always false)
+            predicates.add(criteriaBuilder.isFalse(user.get("deleted")));
+
+            // Optional filters
+            if (active != null) {
+                predicates.add(criteriaBuilder.equal(user.get("active"), active));
+            }
+
+            if (verified != null) {
+                predicates.add(criteriaBuilder.equal(user.get("verified"), verified));
+            }
+
+            // Search by name (partial match on both first name and last name)
+            if (name != null && !name.isEmpty()) {
+                String searchString = "%" + name.toLowerCase() + "%";
+
+                // Case-insensitive match on first name, last name, and concatenated names
+                Predicate namePredicate = criteriaBuilder.or(
+                        criteriaBuilder.like(criteriaBuilder.lower(personalInformationJoin.get("firstnameen")), searchString),
+                        criteriaBuilder.like(criteriaBuilder.lower(personalInformationJoin.get("lastnameen")), searchString),
+                        criteriaBuilder.like(criteriaBuilder.lower(
+                                criteriaBuilder.concat(
+                                        criteriaBuilder.concat(personalInformationJoin.get("firstnameen"), " "),
+                                        personalInformationJoin.get("lastnameen")
+                                )
+                        ), searchString)
+                );
+
+                // Combine the name predicate with the rest of the predicates
+                predicates.add(namePredicate);
+            }
+
+            // Add predicates to the query
+            query.where(predicates.toArray(new Predicate[0]));
+
+            // Order by timestamp descending
+            query.orderBy(criteriaBuilder.desc(user.get("timestmp")));
+
+            // Execute the query
+            TypedQuery<users> typedQuery = em.createQuery(query);
+            typedQuery.setFirstResult(page * size);
+            typedQuery.setMaxResults(size);
+
+            // Fetch the result
+            List<users> userList = typedQuery.getResultList();
+
+            // Count total elements
+            CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+            Root<users> countRoot = countQuery.from(users.class);
+            countQuery.select(criteriaBuilder.count(countRoot)).where(predicates.toArray(new Predicate[0]));
+            Long totalElements = em.createQuery(countQuery).getSingleResult();
+
+            // Calculate total pages
+            int totalPages = (int) Math.ceil((double) totalElements / size);
+
+            return new DynamicResponse(userList, page, totalElements, totalPages);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException("No data found");
+        }
+    }
+
+
 
     public PageImpl<users> UsersSearchCreatiriaRolesListSubsupplier(int page, int size, Boolean active, String name, RoleEnum role, Boolean verified, users manager, Boolean deleted) {
         try {
@@ -442,7 +522,10 @@ public class CriteriaService {
             }
 
             if (suppliername != null && !suppliername.isEmpty()) {
-                predicates.add(criteriaBuilder.like(invoiceRoot.get("suppliername"), "%" + suppliername.toLowerCase() + "%"));
+                predicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(invoiceRoot.get("suppliername")),
+                        "%" + suppliername.toLowerCase() + "%"
+                ));
             }
 
             if (poid != null) {

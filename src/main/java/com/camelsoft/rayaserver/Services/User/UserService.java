@@ -491,34 +491,6 @@ public class UserService extends BaseController implements UserDetailsService {
     }
 
 
-   /* public DynamicResponse filterAllUser(int page, int size, Boolean active, String name,RoleEnum role, Boolean verified) {
-        try {
-            Role userRole = roleRepository.findByRole(role);
-            Page<users> user = null;
-            if (name == null && active == null && verified == null)
-                user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, true, false);
-                *//*user = this.userRepository.findByRoleAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, false);*//*
-            else if (name == null && active == null && verified != null)
-                user = this.userRepository.findByRoleAndActiveAndDeletedAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, true, false, verified);
-               *//* user = this.userRepository.findByRoleAndDeletedAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, false, verified);*//*
-            else if (name != null && active == null && verified == null)
-                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%", false, "%DELETED%");
-            else if (name != null && active == null && verified != null)
-                user = this.userRepository.findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, "%" + name + "%", false, "%DELETED%", verified);
-            else if (name == null && active != null && verified == null)
-                user = this.userRepository.findByRoleAndActiveAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, false);
-            else if (name == null && active != null && verified != null)
-                user = this.userRepository.findByRoleAndActiveAndDeletedAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, false, verified);
-            else if (name != null && active != null && verified == null)
-                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, "%" + name + "%", false);
-            else if (name != null && active != null && verified != null)
-                user = this.userRepository.findAllByRoleAndActiveAndEmailLikeIgnoreCaseAndDeletedAndVerifiedOrderByTimestmpDesc(PageRequest.of(page, size), userRole, active, "%" + name + "%", false, verified);
-            return new DynamicResponse(user.getContent(), user.getNumber(), user.getTotalElements(), user.getTotalPages());
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(String.format("No data found"));
-        }
-
-    }*/
    public DynamicResponse filterAllUser(int page, int size, Boolean active, String name, RoleEnum role, Boolean verified) {
        try {
            Role userRole = roleRepository.findByRole(role);

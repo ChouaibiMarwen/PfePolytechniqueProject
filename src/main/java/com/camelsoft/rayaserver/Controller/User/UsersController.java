@@ -39,6 +39,7 @@ import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.*;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
+import com.camelsoft.rayaserver.Services.criteria.CriteriaService;
 import com.camelsoft.rayaserver.Tools.Exception.ResourceNotFoundException;
 import com.camelsoft.rayaserver.Tools.Exception.UserLogoutException;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
@@ -107,6 +108,8 @@ public class UsersController extends BaseController {
     private RoleDepartmentService roleDepartmentService;
     @Autowired
     private SupplierServices supplierService;
+    @Autowired
+    private CriteriaService criteriaService;
 
     @GetMapping(value = {"/current_user"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
@@ -383,7 +386,7 @@ public class UsersController extends BaseController {
         boolean exist = this.roleService.existsByRole(RoleEnum.valueOf(role));
         if (!exist)
             throw new ResourceNotFoundException("ROLE " + role + " Is Not Found");
-        return new ResponseEntity<>(this.userService.filterAllUser(page, size, active, name, RoleEnum.valueOf(role), verified), HttpStatus.OK);
+        return new ResponseEntity<>(this.criteriaService.filterAllUser(page, size, active, name, RoleEnum.valueOf(role), verified), HttpStatus.OK);
     }
 
 
