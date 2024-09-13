@@ -135,6 +135,11 @@ public class Invoice implements Serializable {
     @Column(columnDefinition = "TEXT",name = "rejection_reason")
     private String rejectionreason;
 
+    @Transient
+    private String supplierVatnumber ;
+    @Transient
+    private RoleEnum rolecratedby ;
+
     public Invoice() {
         this.timestamp = new Date();
     }
@@ -197,6 +202,10 @@ public class Invoice implements Serializable {
             this.confirmedById = this.confirmedBy.getId();
         }else{
             this.confirmedById = null;
+        }
+        if(createdby != null){
+            this.supplierVatnumber = this.createdby.getVatnumber();
+            this.rolecratedby = this.createdby.getRole().getRole();
         }
     }
 
@@ -583,5 +592,21 @@ public class Invoice implements Serializable {
 
     public void setSuppliernumber(Long suppliernumber) {
         this.suppliernumber = suppliernumber;
+    }
+
+    public String getSupplierVatnumber() {
+        return supplierVatnumber;
+    }
+
+    public void setSupplierVatnumber(String supplierVatnumber) {
+        this.supplierVatnumber = supplierVatnumber;
+    }
+
+    public RoleEnum getRolecratedby() {
+        return rolecratedby;
+    }
+
+    public void setRolecratedby(RoleEnum rolecratedby) {
+        this.rolecratedby = rolecratedby;
     }
 }
