@@ -234,7 +234,7 @@ public class CriteriaService {
             // Initialize criteria builder and query
             CriteriaQuery<users> query = criteriaBuilder.createQuery(users.class);
             Root<users> user = query.from(users.class);
-            Join<users, PersonalInformation> personalInformationJoin = user.join("personalInformation"); // Assuming you have a PersonalInformation join
+            Join<users, PersonalInformation> personalInformationJoin = user.join("personalinformation"); // Assuming you have a PersonalInformation join
 
             // Create a list of predicates
             List<Predicate> predicates = new ArrayList<>();
