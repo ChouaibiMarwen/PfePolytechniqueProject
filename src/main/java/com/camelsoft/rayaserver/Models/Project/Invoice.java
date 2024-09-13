@@ -130,6 +130,9 @@ public class Invoice implements Serializable {
     @OneToOne(fetch = FetchType.LAZY,cascade =CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "notedocument_file_media")
     private MediaModel deliverynotedocument;
+    @OneToOne(fetch = FetchType.LAZY,cascade =CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "supplierinvoice")
+    private MediaModel supplierinvoice;
     @Column(name = "role_created_by")
     private RoleEnum role = RoleEnum.ROLE_SUPPLIER;
     @Column(columnDefinition = "TEXT",name = "rejection_reason")
@@ -608,5 +611,13 @@ public class Invoice implements Serializable {
 
     public void setRolecratedby(RoleEnum rolecratedby) {
         this.rolecratedby = rolecratedby;
+    }
+
+    public MediaModel getSupplierinvoice() {
+        return supplierinvoice;
+    }
+
+    public void setSupplierinvoice(MediaModel supplierinvoice) {
+        this.supplierinvoice = supplierinvoice;
     }
 }

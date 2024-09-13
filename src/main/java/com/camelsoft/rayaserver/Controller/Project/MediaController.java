@@ -237,6 +237,14 @@ public class MediaController extends BaseController {
             }
             invoice.setDeliverynotedocument(deliverynotedocument);
         }
+
+        if (request.getSupplierInvoice() != null && !request.getSupplierInvoice().isEmpty()) {
+            MediaModel supplierinvoice = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
+            if (supplierinvoice == null) {
+                return new ResponseEntity("can't upload supplierinvoice", HttpStatus.BAD_REQUEST);
+            }
+            invoice.setSupplierinvoice(supplierinvoice);
+        }
         Invoice result = this.service.Update(invoice);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -272,6 +280,14 @@ public class MediaController extends BaseController {
                 return new ResponseEntity("can't upload delivery note document", HttpStatus.BAD_REQUEST);
             }
             invoice.setDeliverynotedocument(deliverynotedocument);
+        }
+
+        if (request.getSupplierInvoice() != null && !request.getSupplierInvoice().isEmpty()) {
+            MediaModel supplierinvoice = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
+            if (supplierinvoice == null) {
+                return new ResponseEntity("can't upload supplierinvoice", HttpStatus.BAD_REQUEST);
+            }
+            invoice.setSupplierinvoice(supplierinvoice);
         }
         Invoice result = this.service.Update(invoice);
 

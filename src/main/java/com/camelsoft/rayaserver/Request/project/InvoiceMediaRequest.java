@@ -7,4 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class InvoiceMediaRequest {
     private MultipartFile estimarafile;
     private MultipartFile deliverynotedocument;
+    private MultipartFile supplierInvoice;
 }
