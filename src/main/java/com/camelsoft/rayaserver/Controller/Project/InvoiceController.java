@@ -355,7 +355,6 @@ public class InvoiceController extends BaseController {
         this.userActionService.Save(action);
         return new ResponseEntity<>(result1, HttpStatus.OK);
 
-
     }
 
     @PostMapping(value = {"/add_invoice/{poid}"})
