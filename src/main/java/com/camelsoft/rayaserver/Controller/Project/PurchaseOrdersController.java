@@ -104,7 +104,8 @@ public class PurchaseOrdersController  extends BaseController {
         purshaseOrder.setCity(request.getCity());
         purshaseOrder.setState(request.getState());
         purshaseOrder.setCodePostal(request.getCodePostal());
-        purshaseOrder.setCountry(request.getCountry());
+        if(request.getCountry() != null)
+            purshaseOrder.setCountry(request.getCountry());
         purshaseOrder.setDescription(request.getDescription());
         purshaseOrder.setCreatedby(currentuser);
         if(!request.getAttachments().isEmpty()){
