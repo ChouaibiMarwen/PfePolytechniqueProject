@@ -258,7 +258,7 @@ public class CriteriaService {
             if (name != null && !name.isEmpty()) {
                 String searchString = "%" + name.toLowerCase() + "%";
 
-                // Case-insensitive match on first name, last name, and concatenated names
+                // Ensure field names match exactly with your entity
                 Predicate namePredicate = criteriaBuilder.or(
                         criteriaBuilder.like(criteriaBuilder.lower(personalInformationJoin.get("firstnameen")), searchString),
                         criteriaBuilder.like(criteriaBuilder.lower(personalInformationJoin.get("lastnameen")), searchString),
@@ -270,7 +270,6 @@ public class CriteriaService {
                         ), searchString)
                 );
 
-                // Combine the name predicate with the rest of the predicates
                 predicates.add(namePredicate);
             }
 
@@ -291,6 +290,7 @@ public class CriteriaService {
             // Count total elements
             CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
             Root<users> countRoot = countQuery.from(users.class);
+            Join<users, PersonalInformation> countPersonalInformationJoin = countRoot.join("personalinformation", JoinType.LEFT);
             countQuery.select(criteriaBuilder.count(countRoot)).where(predicates.toArray(new Predicate[0]));
             Long totalElements = em.createQuery(countQuery).getSingleResult();
 
@@ -302,6 +302,7 @@ public class CriteriaService {
             throw new NotFoundException("No data found");
         }
     }
+
 
 
 
