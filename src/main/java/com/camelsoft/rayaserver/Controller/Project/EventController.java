@@ -21,6 +21,7 @@ import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.criteria.CriteriaService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
 import com.google.firebase.messaging.FirebaseMessagingException;
+import io.minio.errors.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -32,6 +33,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @RestController
@@ -375,7 +378,7 @@ public class EventController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, the file not saved or the type is mismatch"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<Event> updateevnt( @PathVariable Long idEvent,  @RequestBody RequestOfEvents request,@RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException {
+    public ResponseEntity<Event> updateevnt( @PathVariable Long idEvent,  @RequestBody RequestOfEvents request,@RequestParam(value = "file", required = false) MultipartFile attachment) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         if (currentuser == null)
             return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
@@ -390,7 +393,7 @@ public class EventController extends BaseController {
 
             if(event.getAttachment() != null){
                 MediaModel model = this.filesStorageService.findbyid(event.getAttachment().getId());
-                this.filesStorageService.delete_file_by_path_from_cdn(model.getUrl(), event.getAttachment().getId());
+                this.filesStorageService.delete_file_by_path_from_cdn(event.getAttachment().getId());
             }
 
             String extension = attachment.getContentType().substring(attachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);

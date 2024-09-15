@@ -10,9 +10,14 @@ import com.amazonaws.services.s3.model.*;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Repository.File.File_Repository;
 import com.camelsoft.rayaserver.Repository.File.FilesStorageService;
+import com.camelsoft.rayaserver.Response.Tools.FileUploadResponse;
+import io.minio.*;
+import io.minio.errors.*;
+import io.minio.http.Method;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -28,7 +33,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,23 +44,21 @@ import java.util.regex.Pattern;
 public class FilesStorageServiceImpl implements FilesStorageService {
     @Autowired
     private File_Repository repository;
+    @Value("${spring.minio.url}")
+    private String minioendpoint;
+    @Value("${spring.minio.secret-key}")
+    private String secretkey;
+    @Value("${spring.minio.bucket}")
+    private String bucket;
+    @Value("${spring.minio.access-key}")
+    private String accesskey;
     private static final List<String> image_accepte_type = Arrays.asList("jpeg", "jpg", "png", "gif", "bmp", "tiff", "tif", "ico", "webp", "svg", "heic", "raw");
-    private final AmazonS3 space;
-    private final String bucketName = "bucketName";
     private static final List<String> image_accepted_types = Arrays.asList(
             "JPEG", "jpeg", "svg", "png", "SVG", "PNG", "JPG", "jpg", "pdf", "mp4",
             "avi", "mpg", "mpeg", "mov", "mkv", "flv", "wmv", "webm", "3gp", "ogv"
     );
     private final Log logger = LogFactory.getLog(FilesStorageServiceImpl.class);
 
-    public FilesStorageServiceImpl() {
-        AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(new BasicAWSCredentials("AccessKey", "SecretKey"));
-        this.space = AmazonS3ClientBuilder
-                .standard()
-                .withCredentials(awsCredentialsProvider)
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("serviceendpoint", "signingRegion"))
-                .build();
-    }
 
     public Boolean checkformat(MultipartFile file){
         if(file == null || file.isEmpty())
@@ -93,77 +99,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
         return true;
     }
-    @Override
-    public MediaModel save_file(MultipartFile file, String folderName) throws IOException {
 
-        // Create a new PutObjectRequest object.
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.getSize());
-        metadata.setContentType(file.getContentType());
-        // Check if the folder exists, and create it if it doesn'
-        String fileName = ((new Date()).getTime() + file.getOriginalFilename()).replaceAll("\\s+", "");
-
-        String objectKey = folderName.replaceAll("\\s+", "") + "/" + folderName.replaceAll("\\s+", "") + "/" + fileName;
-
-        PutObjectRequest putObjectRequest = new PutObjectRequest(
-                bucketName,
-                objectKey,
-                file.getInputStream(),
-                metadata);
-
-        // Set the object's ACL to public read
-        AccessControlList acl = new AccessControlList();
-        acl.grantPermission(GroupGrantee.AllUsers, Permission.Read); // Public-read permission
-
-        putObjectRequest.setAccessControlList(acl);
-        // Upload the object to DigitalOcean Spaces.
-        space.putObject(putObjectRequest);
-
-        String fileNameresult = extractFileName(objectKey, file.getOriginalFilename());
-        MediaModel fileresult = new MediaModel(
-                fileNameresult,
-                objectKey,
-                file.getContentType(),
-                file.getSize()
-        );
-        return this.repository.save(fileresult);
-    }
-
-
-
-    public MediaModel save_file001(MultipartFile file, String folderName) throws IOException {
-
-        // Create a new PutObjectRequest object.
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.getSize());
-        metadata.setContentType(file.getContentType());
-        // Check if the folder exists, and create it if it doesn'
-        String fileName = ((new Date()).getTime() + file.getOriginalFilename()).replaceAll("\\s+", "");
-
-        String objectKey = folderName.replaceAll("\\s+", "") + "/" + folderName.replaceAll("\\s+", "") + "/" + fileName;
-
-        PutObjectRequest putObjectRequest = new PutObjectRequest(
-                bucketName,
-                objectKey,
-                file.getInputStream(),
-                metadata);
-
-        // Set the object's ACL to public read
-        AccessControlList acl = new AccessControlList();
-        acl.grantPermission(GroupGrantee.AllUsers, Permission.Read); // Public-read permission
-
-        putObjectRequest.setAccessControlList(acl);
-        // Upload the object to DigitalOcean Spaces.
-        space.putObject(putObjectRequest);
-
-        String fileNameresult = extractFileName(objectKey, file.getOriginalFilename());
-        return  new MediaModel(
-                fileNameresult,
-                objectKey,
-                file.getContentType(),
-                file.getSize()
-        );
-    }
 
     private String extractFileName(String imageUrl, String nonull) {
         // Define a regular expression pattern to match the filename between the last '/' and the file extension
@@ -183,49 +119,10 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
 
     @Override
-    public MediaModel save_fileBMP(MultipartFile file, String directory, String name, String extention) {
+    public MediaModel save_file(MultipartFile file, String directory) {
         try {
-            Path root = Paths.get("WebContent/" + directory);
-            if (!Files.exists(root))
-                Files.createDirectories(root);
-
-            String namesaved = ((name.substring(0, name.lastIndexOf(".")) + (new Date()).getTime()).replaceAll("\\s+", "") + ".bmp");
-            Path filepath = root.resolve(namesaved);
-            Resource resourcepast = new UrlResource(filepath.toUri());
-
-            if (resourcepast.exists() || resourcepast.isReadable())
-                FileSystemUtils.deleteRecursively(filepath.toFile());
-
-            BufferedImage originalImage = ImageIO.read(file.getInputStream());
-
-            BufferedImage bmpImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-            bmpImage.getGraphics().drawImage(originalImage, 0, 0, null);
-
-            // Create a ByteArrayOutputStream to hold the BMP image data
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            // Write the BMP image data to the ByteArrayOutputStream
-            ImageIO.write(bmpImage, "bmp", baos);
-            // Write the BMP image data to the file.
-            try (FileOutputStream fos = new FileOutputStream(filepath.toFile())) {
-                fos.write(baos.toByteArray());
-            }
-
-            Path file_info = root.resolve(namesaved);
-            Resource resource = new UrlResource(file_info.toUri());
-
-            if (resource.exists() || resource.isReadable()) {
-                MediaModel fileresult = new MediaModel(
-                        name,
-                        resource.getURI().getPath(),
-                        "image/bmp", // Set content type to BMP
-                        baos.size() // Size of the BMP image
-                );
-
-                return this.repository.save(fileresult);
-            } else {
-                throw new RuntimeException("Could not read the file!");
-            }
+            MediaModel fileresult = this.upload_file_to_minio(file,directory);
+            return fileresult;
         } catch (Exception e) {
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
         }
@@ -240,12 +137,35 @@ public class FilesStorageServiceImpl implements FilesStorageService {
             this.repository.deleteById(imageid);
 
     }
-
+    private String[] extractBucketAndObjectKey(String url) {
+        // Assuming the URL format is something like http://localhost:9000/bucket-name/object-key
+        String[] parts = url.split("/", 4);
+        if (parts.length < 4) {
+            throw new IllegalArgumentException("Invalid URL format");
+        }
+        return new String[]{parts[2], parts[3]};
+    }
     @Override
-    public void delete_file_by_path_from_cdn(String path, Long imageid) {
+    public void delete_file_by_path_from_cdn(Long imageid) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         if (this.repository.existsById(imageid))
         {
-            space.deleteObject(bucketName, path);
+            MediaModel file = this.repository.findById(imageid).get();
+            String[] bucketAndObject = extractBucketAndObjectKey(file.getUrl());
+            String bucketName = bucketAndObject[0];
+            String objectKey = bucketAndObject[1];
+
+            // Create MinIO client
+            MinioClient minioClient = MinioClient.builder()
+                    .endpoint(minioendpoint)
+                    .credentials(accesskey, secretkey)
+                    .build();
+
+            // Delete the object from MinIO
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectKey)
+                            .build());
             this.repository.deleteById(imageid);
 
         }
@@ -262,10 +182,11 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     @Override
-    public void delete_all_file_by_path(Set<MediaModel> images) {
+    public void delete_all_file_by_path(Set<MediaModel> images) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         for (MediaModel fileModel: images) {
             if (fileModel.getUrl()!=null)
-            space.deleteObject(bucketName, fileModel.getUrl());
+           //impliment delete all minio
+                this.delete_file_by_path_from_cdn(fileModel.getId());
             if (this.repository.existsById(fileModel.getId()))
                 this.repository.deleteById(fileModel.getId());
         }
@@ -278,35 +199,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
             Set<MediaModel> images = new HashSet<>();
             for (MultipartFile file : files){
                 // Create a new PutObjectRequest object.
-                ObjectMetadata metadata = new ObjectMetadata();
-                metadata.setContentLength(file.getSize());
-                metadata.setContentType(file.getContentType());
-                // Check if the folder exists, and create it if it doesn'
-                String fileName = ((new Date()).getTime() + file.getOriginalFilename()).replaceAll("\\s+", "");
-
-                String objectKey = folderName.replaceAll("\\s+", "") + "/" + folderName.replaceAll("\\s+", "") + "/" + fileName;
-
-                PutObjectRequest putObjectRequest = new PutObjectRequest(
-                        bucketName,
-                        objectKey,
-                        file.getInputStream(),
-                        metadata);
-
-                // Set the object's ACL to public read
-                AccessControlList acl = new AccessControlList();
-                acl.grantPermission(GroupGrantee.AllUsers, Permission.Read); // Public-read permission
-
-                putObjectRequest.setAccessControlList(acl);
-                // Upload the object to DigitalOcean Spaces.
-                space.putObject(putObjectRequest);
-
-                String fileNameresult = extractFileName(objectKey, file.getOriginalFilename());
-                MediaModel fileresult = new MediaModel(
-                        fileNameresult,
-                        objectKey,
-                        file.getContentType(),
-                        file.getSize()
-                );
+                MediaModel fileresult = this.upload_file_to_minio(file,folderName);
                 images.add(fileresult);
             }
             return images;
@@ -344,7 +237,8 @@ public class FilesStorageServiceImpl implements FilesStorageService {
                         name,
                         resource.getURI().getPath(),
                         file.getContentType(),
-                        file.getSize()
+                        file.getSize(),
+                        resource.getURI().getPath()
                 );
 
                 return this.repository.save(fileresult);
@@ -401,6 +295,77 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         }
 
     }
+
+
     /******************************************************************************************/
+    private MediaModel upload_file_to_minio(MultipartFile file, String folderPath){
+        FileUploadResponse response = new FileUploadResponse();
+
+        try {
+            // Create a minioClient with the MinIO server playground, its access key and secret key.
+            String name = ((new Date()).getTime() + file.getOriginalFilename()).replaceAll("\\s+", "");
+
+            MinioClient minioClient =
+                    MinioClient.builder()
+                            .endpoint(minioendpoint)
+                            .credentials(accesskey, secretkey)
+                            .build();
+
+            // Make 'asiatrip' bucket if not exist.
+            boolean found =
+                    minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
+            if (!found) {
+                // Make a new bucket called 'asiatrip'.
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
+            } else {
+                System.out.println("Bucket "+bucket+" already exists.");
+            }
+
+            // Upload '/home/user/Photos/asiaphotos.zip' as object name 'asiaphotos-2015.zip' to bucket
+            // 'asiatrip'.
+            // Upload the file to the bucket.
+            String objectName = folderPath + "/" + file.getOriginalFilename().replace(" ","");
+
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucket)
+                            .object(objectName) // Use the filename as the object name
+                            .stream(file.getInputStream(), file.getSize(), -1)
+                            .build());
+            System.out.println(
+                    "'/home/user/Photos/asiaphotos.zip' is successfully uploaded as "
+                            + "object '"+file.getOriginalFilename()+"' to bucket "+bucket+" .");
+            // Generate the public URL for the uploaded file
+            String presignedUrl = minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucket)
+                            .object(objectName)
+                            .expiry(7, TimeUnit.DAYS) // Link valid for 7 days
+                            .build());
+            // Construct the URI for the file
+            String uri = String.format("%s/%s/%s", minioendpoint, bucket, objectName);
+
+            System.out.println("File URL: " + presignedUrl);
+            System.out.println("File URI: " + uri);
+            response.setUri(uri);
+            response.setPresignedUrl(presignedUrl);
+            MediaModel fileresult = new MediaModel(
+                    file.getOriginalFilename().replace(" ",""),
+                    uri,
+                    file.getContentType(),
+                    file.getSize(),
+                    presignedUrl
+            );
+
+            MediaModel result = this.repository.save(fileresult);
+            return result;
+        } catch (Exception e) {
+            System.out.println("Error occurred: " + e);
+            System.out.println("HTTP trace: " + e.getMessage());
+            response.setError_message(e.getMessage());
+            return null;
+        }
+    }
 
 }

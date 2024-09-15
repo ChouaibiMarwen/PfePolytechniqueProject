@@ -38,10 +38,12 @@ spring:
   flyway:
     schemas: migrations
     locations: classpath:migration
+    enabled: false
   servlet:
     multipart:
       enabled: true
       max-file-size: 10000MB
+      file-size-threshold: 2KB
       max-request-size: 10000MB
   jackson:
     serialization:

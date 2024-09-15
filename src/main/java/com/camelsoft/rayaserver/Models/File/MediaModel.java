@@ -21,6 +21,8 @@ public class MediaModel implements Serializable {
     private String description;
     @Column(name = "file_url")
     private String url;
+    @Column(name = "complete_url")
+    private String completeurl;
     @Column(name = "file_type")
     private String type;
 
@@ -39,11 +41,12 @@ public class MediaModel implements Serializable {
         this.timestmp= new Date();
     }
 
-    public MediaModel(String name, String url, String type, long size) {
+    public MediaModel(String name, String url, String type, long size, String completeurl) {
         this.name = name;
         this.url = url;
         this.type = type;
         this.size = size;
+        this.completeurl = completeurl;
         this.timestmp= new Date();
     }
     @PreRemove
@@ -52,6 +55,13 @@ public class MediaModel implements Serializable {
 
     }
 
+    public String getCompleteurl() {
+        return completeurl;
+    }
+
+    public void setCompleteurl(String completeurl) {
+        this.completeurl = completeurl;
+    }
 
     public Integer getRange() {
         return range;

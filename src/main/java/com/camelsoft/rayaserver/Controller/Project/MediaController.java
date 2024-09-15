@@ -15,6 +15,7 @@ import com.camelsoft.rayaserver.Services.Project.VehiclesService;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
+import io.minio.errors.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 
 @RestController
@@ -59,12 +62,12 @@ public class MediaController extends BaseController {
             @ApiResponse(code = 404, message = "Not found, check the media id"),
             @ApiResponse(code = 403, message = "Forbidden, you are not a supplier ,admin or user")
     })
-    public ResponseEntity<String> remove_media(@PathVariable Long id_file) throws IOException {
+    public ResponseEntity<String> remove_media(@PathVariable Long id_file) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         //users user = UserServices.findByUserName(getCurrentUser().getUsername());
         MediaModel model = this.filesStorageService.findbyid(id_file);
         if (model == null)
             return new ResponseEntity<>("media " + id_file + " not found in the system", HttpStatus.NOT_FOUND);
-        this.filesStorageService.delete_file_by_path_from_cdn(model.getUrl(), id_file);
+        this.filesStorageService.delete_file_by_path_from_cdn( id_file);
 
         return new ResponseEntity<>("Media deleted successfully", HttpStatus.OK);
     }

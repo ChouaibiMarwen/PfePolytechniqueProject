@@ -7,10 +7,12 @@ import com.camelsoft.rayaserver.Response.Country.CountryResponse;
 import com.camelsoft.rayaserver.Response.Country.CountryResult;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Services.Country.CountriesServices;
+import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.List;
 public class CountryController {
     @Autowired
     private CountriesServices countriesServices;
+
     @GetMapping(value = {"/all"})
     public ResponseEntity<DynamicResponse> all_Country(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) throws IOException {
         DynamicResponse result = this.countriesServices.get_all_countries(page,size);
