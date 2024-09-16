@@ -18,6 +18,7 @@ import com.camelsoft.rayaserver.Response.Project.LoansResponse;
 import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.Project.*;
+import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.User.UserActionService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.criteria.CriteriaService;
@@ -56,6 +57,8 @@ public class InvoiceController extends BaseController {
     private ProductService productservice;
     @Autowired
     private UserService UserServices;
+    @Autowired
+    private SupplierServices supplierServices;
     @Autowired
     private CriteriaService criteriaService;
     @Autowired
@@ -865,7 +868,7 @@ public class InvoiceController extends BaseController {
         System.out.println(date);
         report.setDate(date);
         if(request.getSupplierid() != null ){
-            Supplier supplier = user.getSupplier();
+            Supplier supplier = this.supplierServices.findbyid(request.getSupplierid());
             if (supplier == null)
                 return new ResponseEntity("this user is not supplier", HttpStatus.NOT_FOUND);
             // report.setInvoicepermonth(this.service.countInvoicePerMonthAndUser(date, user));
