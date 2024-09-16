@@ -554,9 +554,11 @@ public class InvoiceService {
 
         public Double  totalVehiclesPandingPaymentByUser(users user, InvoiceStatus status){
         return this.repository.findAllByCreatedbyOrRelatedtoAndStatusAndArchiveIsFalse(user,user,status)
-                .stream().map(Invoice::getProducts)
+                /*.stream().map(Invoice::getProducts)
                 .flatMap(Set::stream)
                 .mapToDouble(Product::getQuantity)
+                .sum();*/
+                .stream().mapToDouble(Invoice::getVehicleprice)
                 .sum();
         }
 
