@@ -194,7 +194,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     @Override
-    public Set<MediaModel> save_all(Set<MultipartFile> files, String folderName) {
+    public Set<MediaModel> save_all(List<MultipartFile> files, String folderName) {
         try {
             Set<MediaModel> images = new HashSet<>();
             for (MultipartFile file : files){
@@ -295,7 +295,6 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         }
 
     }
-
 
     /******************************************************************************************/
     private MediaModel upload_file_to_minio(MultipartFile file, String folderPath){

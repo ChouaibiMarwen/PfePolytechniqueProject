@@ -82,7 +82,7 @@ public class RequestController  extends BaseController {
            /* if (!image_accepte_type.contains(extension)) {
                 return ResponseEntity.badRequest().body(null);
             }*/
-            resourceMedia =  filesStorageService.save_file_local(attachment, "requests");
+            resourceMedia =  filesStorageService.save_file(attachment, "requests");
             if (resourceMedia == null) {
                 return ResponseEntity.badRequest().body(null);
             }
@@ -127,7 +127,7 @@ public class RequestController  extends BaseController {
             if (!image_accepte_type.contains(extension)) {
                 return ResponseEntity.badRequest().body(null);
             }
-            resourceMedia =  filesStorageService.save_file_local(attachment, "requests");
+            resourceMedia =  filesStorageService.save_file(attachment, "requests");
             if (resourceMedia == null) {
                 return ResponseEntity.badRequest().body(null);
             }

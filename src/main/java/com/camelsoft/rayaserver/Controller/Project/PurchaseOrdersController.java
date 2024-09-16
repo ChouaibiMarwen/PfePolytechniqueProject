@@ -112,7 +112,7 @@ public class PurchaseOrdersController  extends BaseController {
             Set<MediaModel> attachmentsList = new HashSet<>();
             if (this.filesStorageService.checkformatList(request.getAttachments())) {
                 List<MultipartFile> list = new ArrayList<>(request.getAttachments());
-                attachmentsList = filesStorageService.save_all_local(list, "purshase_order");
+                attachmentsList = filesStorageService.save_all(list, "purshase_order");
                 if (attachmentsList == null || attachmentsList.isEmpty()) {
                     return new ResponseEntity("can't upload front view image", HttpStatus.BAD_REQUEST);
                 }

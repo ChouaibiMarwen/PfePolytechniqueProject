@@ -188,7 +188,7 @@ public class LoanController extends BaseController {
             if (!image_accepte_type.contains(extension)) {
                 return ResponseEntity.badRequest().body(null);
             }
-            resourceMedia = filesStorageService.save_file_local(attachment, "Loans");
+            resourceMedia = filesStorageService.save_file(attachment, "Loans");
             if (resourceMedia == null) {
                 return ResponseEntity.badRequest().body(null);
             }

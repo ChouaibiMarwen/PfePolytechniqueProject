@@ -12,7 +12,7 @@ import java.util.Set;
 
 public interface FilesStorageService {
     public MediaModel save_file(MultipartFile file, String directory) throws IOException;
-    public Set<MediaModel> save_all(Set<MultipartFile> file, String directory);
+    public Set<MediaModel> save_all(List<MultipartFile> file, String directory);
     public void delete_file_by_paths(Long imageid);
     public void delete_file_by_path_from_cdn(Long imageid) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException;
     public void delete_all_file_by_path(Set<MediaModel> images) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException;

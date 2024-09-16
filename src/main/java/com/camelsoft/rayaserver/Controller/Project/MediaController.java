@@ -89,7 +89,7 @@ public class MediaController extends BaseController {
         }
         if (!this.filesStorageService.checkformat(file))
             return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
-        MediaModel resource_media = filesStorageService.save_file_local(file, "profile");
+        MediaModel resource_media = filesStorageService.save_file(file, "profile");
         if (resource_media == null)
             return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
         user.setProfileimage(resource_media);
@@ -124,7 +124,7 @@ public class MediaController extends BaseController {
         }
         if (!this.filesStorageService.checkformat(file))
             return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
-        MediaModel resource_media = filesStorageService.save_file_local(file, "profile");
+        MediaModel resource_media = filesStorageService.save_file(file, "profile");
         if (resource_media == null)
             return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
         user.setProfileimage(resource_media);
@@ -226,7 +226,7 @@ public class MediaController extends BaseController {
 
 
         if (request.getEstimarafile() != null && !request.getEstimarafile().isEmpty()) {
-            MediaModel estimarafile = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
+            MediaModel estimarafile = filesStorageService.save_file(request.getEstimarafile(), "invoice");
             if (estimarafile == null) {
                 return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
             }
@@ -234,7 +234,7 @@ public class MediaController extends BaseController {
         }
 
         if (request.getDeliverynotedocument() != null && !request.getDeliverynotedocument().isEmpty()) {
-            MediaModel deliverynotedocument = filesStorageService.save_file_local(request.getDeliverynotedocument(), "invoice");
+            MediaModel deliverynotedocument = filesStorageService.save_file(request.getDeliverynotedocument(), "invoice");
             if (deliverynotedocument == null) {
                 return new ResponseEntity("can't upload delivery note document", HttpStatus.BAD_REQUEST);
             }
@@ -242,7 +242,7 @@ public class MediaController extends BaseController {
         }
 
         if (request.getSupplierInvoice() != null && !request.getSupplierInvoice().isEmpty()) {
-            MediaModel supplierinvoice = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
+            MediaModel supplierinvoice = filesStorageService.save_file(request.getEstimarafile(), "invoice");
             if (supplierinvoice == null) {
                 return new ResponseEntity("can't upload supplierinvoice", HttpStatus.BAD_REQUEST);
             }
@@ -270,7 +270,7 @@ public class MediaController extends BaseController {
 
 
         if (request.getEstimarafile() != null && !request.getEstimarafile().isEmpty()) {
-            MediaModel estimarafile = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
+            MediaModel estimarafile = filesStorageService.save_file(request.getEstimarafile(), "invoice");
             if (estimarafile == null) {
                 return new ResponseEntity("can't upload estimarafile", HttpStatus.BAD_REQUEST);
             }
@@ -278,7 +278,7 @@ public class MediaController extends BaseController {
         }
 
         if (request.getDeliverynotedocument() != null && !request.getDeliverynotedocument().isEmpty()) {
-            MediaModel deliverynotedocument = filesStorageService.save_file_local(request.getDeliverynotedocument(), "invoice");
+            MediaModel deliverynotedocument = filesStorageService.save_file(request.getDeliverynotedocument(), "invoice");
             if (deliverynotedocument == null) {
                 return new ResponseEntity("can't upload delivery note document", HttpStatus.BAD_REQUEST);
             }
@@ -286,7 +286,7 @@ public class MediaController extends BaseController {
         }
 
         if (request.getSupplierInvoice() != null && !request.getSupplierInvoice().isEmpty()) {
-            MediaModel supplierinvoice = filesStorageService.save_file_local(request.getEstimarafile(), "invoice");
+            MediaModel supplierinvoice = filesStorageService.save_file(request.getEstimarafile(), "invoice");
             if (supplierinvoice == null) {
                 return new ResponseEntity("can't upload supplierinvoice", HttpStatus.BAD_REQUEST);
             }

@@ -789,7 +789,7 @@ public boolean existebysuppliernumber(Long suppliernumber) {
             /*if (!image_accepte_type.contains(extension)) {
                 return ResponseEntity.badRequest().body(null);
             }*/
-            resourceMedia = filesStorageService.save_file_local(ibanattachment, "Ibans");
+            resourceMedia = filesStorageService.save_file(ibanattachment, "Ibans");
             if (resourceMedia == null) {
                 return null;
             }

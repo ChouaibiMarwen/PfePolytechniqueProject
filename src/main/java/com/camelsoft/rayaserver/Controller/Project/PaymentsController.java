@@ -89,7 +89,7 @@ public class PaymentsController extends BaseController {
         if (files != null) {
             List<MediaModel> filesw = new ArrayList<>();
             for (MultipartFile file : files) {
-                MediaModel resource_media = filesStorageService.save_file_local(file, "payments");
+                MediaModel resource_media = filesStorageService.save_file(file, "payments");
                 result.getAttachments().add(resource_media);
                 filesw.add(resource_media);
                 this.service.Update(result);

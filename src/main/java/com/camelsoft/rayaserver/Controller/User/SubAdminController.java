@@ -196,7 +196,7 @@ public class SubAdminController extends BaseController {
         if(file != null){
             if (!this.filesStorageService.checkformat(file))
                 return new ResponseEntity("this type is not acceptable : ", HttpStatus.NOT_ACCEPTABLE);
-            MediaModel resource_media = filesStorageService.save_file_local(file, "profile");
+            MediaModel resource_media = filesStorageService.save_file(file, "profile");
             if (resource_media == null)
                 return new ResponseEntity("error saving file", HttpStatus.NOT_IMPLEMENTED);
             user.setProfileimage(resource_media);

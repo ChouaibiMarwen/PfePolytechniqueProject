@@ -255,7 +255,7 @@ public class EventController extends BaseController {
             if (!image_accepte_type.contains(extension)) {
                 return ResponseEntity.badRequest().body(null);
             }
-            resourceMedia = filesStorageService.save_file_local(attachment, "events");
+            resourceMedia = filesStorageService.save_file(attachment, "events");
             if (resourceMedia == null) {
                 return ResponseEntity.badRequest().body(null);
             }
@@ -400,7 +400,7 @@ public class EventController extends BaseController {
             if (!image_accepte_type.contains(extension)) {
                 return ResponseEntity.badRequest().body(null);
             }
-            resourceMedia = filesStorageService.save_file_local(attachment, "events");
+            resourceMedia = filesStorageService.save_file(attachment, "events");
             if (resourceMedia == null) {
                 return ResponseEntity.badRequest().body(null);
             }
