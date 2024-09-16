@@ -24,11 +24,11 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
-		<dependency>
+		<!--<dependency>
 			<groupId>io.minio</groupId>
 			<artifactId>minio</artifactId>
 			<version>8.5.12</version>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>net.jodah</groupId>
@@ -214,11 +214,11 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.11.0</version>
 		</dependency>
-		<!--<dependency>
+		<dependency>
 			<groupId>io.minio</groupId>
 			<artifactId>minio</artifactId>
 			<version>8.2.1</version>
-		</dependency>-->
+		</dependency>
 
 	</dependencies>
 
