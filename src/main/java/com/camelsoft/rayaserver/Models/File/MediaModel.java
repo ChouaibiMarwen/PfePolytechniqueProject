@@ -21,7 +21,7 @@ public class MediaModel implements Serializable {
     private String description;
     @Column(name = "file_url")
     private String url;
-    @Column(name = "complete_url")
+    @Column(name = "complete_url" , columnDefinition = "TEXT")
     private String completeurl;
     @Column(name = "file_type")
     private String type;
