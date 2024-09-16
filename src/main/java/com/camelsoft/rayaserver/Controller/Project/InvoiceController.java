@@ -858,9 +858,8 @@ public class InvoiceController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden, you are not the admin")
     })
     public ResponseEntity<InvoiceReport> invoice_report_admin(@ModelAttribute InvoiceRepportRequest request) throws IOException {
-        users user = UserServices.findByUserName(getCurrentUser().getUsername());
-        if (user == null)
-            return new ResponseEntity("this user not found", HttpStatus.NOT_FOUND);
+        users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
+        users user = UserServices.findById(request.getSupplierid());
         InvoiceReport report = new InvoiceReport();
         Date date = request.getDate();
         if (date == null)
@@ -868,9 +867,6 @@ public class InvoiceController extends BaseController {
         System.out.println(date);
         report.setDate(date);
         if(request.getSupplierid() != null ){
-          /*  Supplier supplier = this.supplierServices.findbyid(request.getSupplierid());
-            if (supplier == null)
-                return new ResponseEntity("this user is not supplier", HttpStatus.NOT_FOUND);*/
             Supplier supplier = user.getSupplier();
             if (supplier == null)
                 return new ResponseEntity("this user is not supplier", HttpStatus.NOT_FOUND);
@@ -896,7 +892,7 @@ public class InvoiceController extends BaseController {
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.INVOICE_MANAGEMENT,
-                user
+                currentuser
         );
         this.userActionService.Save(action);
         return new ResponseEntity<>(report, HttpStatus.OK);
