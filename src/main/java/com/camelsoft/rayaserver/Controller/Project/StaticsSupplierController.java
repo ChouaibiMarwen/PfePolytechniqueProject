@@ -60,7 +60,7 @@ public class StaticsSupplierController extends BaseController {
             return new ResponseEntity("supplier not found" , HttpStatus.NOT_ACCEPTABLE);
        SupplierMainStatistic response = new SupplierMainStatistic();
         response.setTotalcars(this.vehiclesService.FindAllSupplier(user.getSupplier()).size());
-        response.setSoldcars(this.invoiceService.totalVehiclesPandingPaymentByUser(user, InvoiceStatus.PAID).intValue());//need to see
+        response.setSoldcars(this.invoiceService.totalsoldcarsforsupplier(user, InvoiceStatus.PAID).intValue());//need to see
         response.setLoandone(this.loanServices.countLoneDoneBySupplier(supplier));
         response.setSalesrevenue(this.invoiceService.totalRevenuByUser(user));
         response.setPendingpayment(this.invoiceService.totalVehiclesPandingPaymentByUser(user, InvoiceStatus.UNPAID));//need to see

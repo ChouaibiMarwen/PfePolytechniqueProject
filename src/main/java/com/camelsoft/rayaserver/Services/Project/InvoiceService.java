@@ -561,6 +561,12 @@ public class InvoiceService {
         }
 
 
+    public Integer  totalsoldcarsforsupplier(users user, InvoiceStatus status){
+        return this.repository.countAllByCreatedbyOrRelatedtoAndStatusAndArchiveIsFalse(user,user,status);
+
+    }
+
+
     public Double totalRevenuByUser(users user){
         return this.repository.findAllByCreatedbyOrRelatedtoAndStatusAndArchiveIsFalse(user,user,InvoiceStatus.PAID)
                /* .stream().map(Invoice::getProducts)
