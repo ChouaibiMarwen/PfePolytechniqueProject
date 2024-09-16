@@ -1,13 +1,13 @@
 # Test-specific configuration properties
 spring:
+  config:
+    activate:
+      on-profile: test
   minio:
     url: https://os.ruh.cloudsigma.com
     bucket: rayafinancing.v2
     access-key: 1cUDYC4RTXUW00zgrtqV
     secret-key: SNNY7WTETW3YCJFOJVu4aNhW7HxzXARV0WELQlQW
-  config:
-    activate:
-      on-profile: test
   datasource:
     url: jdbc:postgresql://127.0.0.1:5432/raya?createDatabaseIfNotExist=true
     username: camelsoft
