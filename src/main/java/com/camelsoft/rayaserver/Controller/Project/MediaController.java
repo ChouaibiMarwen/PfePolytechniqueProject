@@ -95,7 +95,7 @@ public class MediaController extends BaseController {
         user.setProfileimage(resource_media);
         users result = userService.UpdateUser(user);
         if (oldimage != null)
-            this.filesStorageService.delete_file_by_path_local(oldimage.getUrl(), oldimage.getId());
+            this.filesStorageService.delete_file_by_paths(oldimage.getId());
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.PROFILE_MANAGEMENT,
@@ -130,7 +130,7 @@ public class MediaController extends BaseController {
         user.setProfileimage(resource_media);
         users result = userService.UpdateUser(user);
         if (oldimage != null)
-            this.filesStorageService.delete_file_by_path_local(oldimage.getUrl(), oldimage.getId());
+            this.filesStorageService.delete_file_by_paths(oldimage.getId());
         //save new action
         UserAction action = new UserAction(
                 UserActionsEnum.PROFILE_MANAGEMENT,
@@ -199,7 +199,7 @@ public class MediaController extends BaseController {
                 return new ResponseEntity<>("No media with that ID belongs to the specified vehicle", HttpStatus.NOT_FOUND);
             }
             this.vehiclesMediaService.Update(media);
-            this.filesStorageService.delete_file_by_path_local(model.getUrl(), id_photo);
+            this.filesStorageService.delete_file_by_paths(id_photo);
 
             return new ResponseEntity<>("Media deleted successfully", HttpStatus.OK);
         } catch (Exception e) {

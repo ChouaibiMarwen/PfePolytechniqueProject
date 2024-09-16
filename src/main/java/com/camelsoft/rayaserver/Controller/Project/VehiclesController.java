@@ -571,7 +571,7 @@ public class VehiclesController extends BaseController {
                 MediaModel media = vehiclesmedia.getFrontviewimage();
                 if(media!=null) {
                     vehiclesmedia.setFrontviewimage(null);
-                    this.filesStorageService.delete_file_by_path_local(media.getUrl(), media.getId());
+                    this.filesStorageService.delete_file_by_paths(media.getId());
                 }
                 vehiclesmedia.setFrontviewimage(frontviewimage);
                 this.vehiclesMediaService.Update(vehiclesmedia);
