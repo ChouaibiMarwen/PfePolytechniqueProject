@@ -859,7 +859,6 @@ public class InvoiceController extends BaseController {
     })
     public ResponseEntity<InvoiceReport> invoice_report_admin(@ModelAttribute InvoiceRepportRequest request) throws IOException {
         users currentuser = UserServices.findByUserName(getCurrentUser().getUsername());
-        users user = UserServices.findById(request.getSupplierid());
         InvoiceReport report = new InvoiceReport();
         Date date = request.getDate();
         if (date == null)
@@ -867,6 +866,7 @@ public class InvoiceController extends BaseController {
         System.out.println(date);
         report.setDate(date);
         if(request.getSupplierid() != null ){
+            users user = UserServices.findById(request.getSupplierid());
             Supplier supplier = user.getSupplier();
             if (supplier == null)
                 return new ResponseEntity("this user is not supplier", HttpStatus.NOT_FOUND);
