@@ -66,7 +66,7 @@ public class AdsController extends BaseController {
         //save attachmen't files and set it to the new ads
         if (this.filesStorageService.checkformatArrayList(request.getAttachments())) {
             Set<MediaModel> adsAttchments = new HashSet<>();
-            adsAttchments = filesStorageService.save_all(request.getAttachments(), "vehicles");
+            adsAttchments = filesStorageService.save_all(request.getAttachments(), "ads");
             if (adsAttchments == null || adsAttchments.isEmpty()) {
                 return new ResponseEntity("can't upload the attachment file", HttpStatus.BAD_REQUEST);
             }
@@ -115,7 +115,7 @@ public class AdsController extends BaseController {
         if(request.getAttachments() != null && !request.getAttachments().isEmpty()){
             if (this.filesStorageService.checkformatArrayList(request.getAttachments())) {
                 Set<MediaModel> adsAttchments = new HashSet<>();
-                adsAttchments = filesStorageService.save_all(request.getAttachments(), "vehicles");
+                adsAttchments = filesStorageService.save_all(request.getAttachments(), "ads");
                 if (adsAttchments == null || adsAttchments.isEmpty()) {
                     return new ResponseEntity("can't upload the attachment file", HttpStatus.BAD_REQUEST);
                 }
