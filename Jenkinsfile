@@ -25,22 +25,22 @@ pipeline {
         }
         stage('Reload Daemon') {
             steps {
-                sh "echo 'Cloud2025' | sudo -S systemctl daemon-reload"
+                sh "echo 'dwkaH5t7aM49' | sudo -S systemctl daemon-reload"
             }
         }
         stage('Start Daemon') {
             steps {
-                sh "echo 'Cloud2025' | sudo -S systemctl start server"
+                sh "echo 'dwkaH5t7aM49' | sudo -S systemctl start rayaserver"
             }
         }
         stage('Enable Daemon') {
             steps {
-                sh "echo 'Cloud2025' | sudo -S systemctl enable server"
+                sh "echo 'dwkaH5t7aM49' | sudo -S systemctl enable rayaserver"
             }
         }
         stage('Restart Daemon') {
             steps {
-                sh "echo 'Cloud2025' | sudo -S systemctl restart server"
+                sh "echo 'dwkaH5t7aM49' | sudo -S systemctl restart rayaserver"
             }
         }
     }
