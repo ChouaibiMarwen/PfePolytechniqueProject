@@ -868,7 +868,10 @@ public class InvoiceController extends BaseController {
         System.out.println(date);
         report.setDate(date);
         if(request.getSupplierid() != null ){
-            Supplier supplier = this.supplierServices.findbyid(request.getSupplierid());
+          /*  Supplier supplier = this.supplierServices.findbyid(request.getSupplierid());
+            if (supplier == null)
+                return new ResponseEntity("this user is not supplier", HttpStatus.NOT_FOUND);*/
+            Supplier supplier = user.getSupplier();
             if (supplier == null)
                 return new ResponseEntity("this user is not supplier", HttpStatus.NOT_FOUND);
             // report.setInvoicepermonth(this.service.countInvoicePerMonthAndUser(date, user));

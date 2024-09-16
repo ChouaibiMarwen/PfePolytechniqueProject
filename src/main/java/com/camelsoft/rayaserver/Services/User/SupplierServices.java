@@ -21,10 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,8 +55,8 @@ public class SupplierServices {
     }
 
     public Supplier findbyid(Long id) {
-
-        return this.repository.findById(id).get();
+        Optional<Supplier> supplierOpt = this.repository.findById(id);
+        return supplierOpt.orElse(null);
     }
  public Supplier findBySuppliernumber(Long suppliernumber) {
         try {
