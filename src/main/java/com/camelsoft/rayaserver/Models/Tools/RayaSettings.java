@@ -16,6 +16,8 @@ public class RayaSettings implements Serializable {
     private Boolean allowsignup = true;
     @Column(name = "allow_reset_password", nullable = false)
     private Boolean allowresetpassword = true;
+    @Column(name = "rayataxvalue")
+    private Double rayataxvalue;
     @Column(name = "timestamp")
     private Date timestamp=new Date();
 
@@ -58,5 +60,13 @@ public class RayaSettings implements Serializable {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Double getRayataxvalue() {
+        return rayataxvalue;
+    }
+
+    public void setRayataxvalue(Double rayataxvalue) {
+        this.rayataxvalue = rayataxvalue;
     }
 }

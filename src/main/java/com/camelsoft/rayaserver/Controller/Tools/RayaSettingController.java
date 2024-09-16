@@ -44,6 +44,9 @@ public class RayaSettingController {
         if(request.getAllowsignup() != null){
             settings.setAllowsignup(request.getAllowsignup());
         }
+        if(request.getRayataxvalue() != null){
+            settings.setRayataxvalue(request.getRayataxvalue());
+        }
         RayaSettings result =  this.service.Update(settings);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
