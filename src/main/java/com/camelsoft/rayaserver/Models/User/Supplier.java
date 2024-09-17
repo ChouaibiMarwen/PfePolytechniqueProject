@@ -78,6 +78,9 @@ public class Supplier implements Serializable {
     private Integer availableVehiclesCountBySupplier = 0;
 
     @Transient
+    private String  vatnumber;
+
+    @Transient
     private String classificationname;
 
     @Transient
@@ -98,6 +101,8 @@ public class Supplier implements Serializable {
                 classificationId = user.getSupplierclassification().getId();
                 classificationname = user.getSupplierclassification().getName();
             }
+            if(user.getVatnumber() != null)
+                this.vatnumber = user.getVatnumber();
         }
         if (this.vehicles != null) {
 
@@ -268,5 +273,13 @@ public class Supplier implements Serializable {
 
     public void setClassificationId(Long classificationId) {
         this.classificationId = classificationId;
+    }
+
+    public String getVatnumber() {
+        return vatnumber;
+    }
+
+    public void setVatnumber(String vatnumber) {
+        this.vatnumber = vatnumber;
     }
 }
