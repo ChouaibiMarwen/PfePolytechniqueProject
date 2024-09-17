@@ -288,8 +288,7 @@ public class NotificationServices {
         }
 
     }
-
-
+    
     public void createandSendNotification(users sender , users receiver, Action action , String subject, String content, Long actionId, Boolean sendtoadmin, Boolean sendtouser) {
         Notification notificationuser = new Notification(
                 sender,

@@ -61,6 +61,10 @@ public class Invoice implements Serializable {
     private String vehiclecolor;
     @Column(name = "vehiclevin")
     private String vehiclevin;
+    @Column(name = "vehiclediscountpercentage")
+    private Double vehiclediscountpercentage = 0D;
+    @Column(name = "vehiclediscountamount")
+    private Double vehiclediscountamount = 0D;
     @Column(name = "vehiclemodel")
     private String vehiclemodel;
     @Column(name = "vehiclemark")
@@ -209,6 +213,15 @@ public class Invoice implements Serializable {
         if(createdby != null){
             this.supplierVatnumber = this.createdby.getVatnumber();
             this.rolecratedby = this.createdby.getRole().getRole();
+        }
+        if(purshaseorder != null){
+            if(purshaseorder.getVehicles() != null){
+                if(purshaseorder.getVehicles().getVehiclespricefinancing() != null){
+                    this.vehiclediscountamount = purshaseorder.getVehicles().getVehiclespricefinancing().getDiscountamount();
+                    this.vehiclediscountpercentage = purshaseorder.getVehicles().getVehiclespricefinancing().getDiscountpercentage();
+                }
+
+            }
         }
     }
 
@@ -619,5 +632,21 @@ public class Invoice implements Serializable {
 
     public void setSupplierinvoice(MediaModel supplierinvoice) {
         this.supplierinvoice = supplierinvoice;
+    }
+
+    public Double getVehiclediscountpercentage() {
+        return vehiclediscountpercentage;
+    }
+
+    public void setVehiclediscountpercentage(Double vehiclediscountpercentage) {
+        this.vehiclediscountpercentage = vehiclediscountpercentage;
+    }
+
+    public Double getVehiclediscountamount() {
+        return vehiclediscountamount;
+    }
+
+    public void setVehiclediscountamount(Double vehiclediscountamount) {
+        this.vehiclediscountamount = vehiclediscountamount;
     }
 }
