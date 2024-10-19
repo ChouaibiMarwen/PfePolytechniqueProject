@@ -4,7 +4,6 @@ import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceRelated;
 import com.camelsoft.rayaserver.Enum.Project.Invoice.InvoiceStatus;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
-import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -77,13 +76,6 @@ public class Invoice implements Serializable {
     private String vehicleenginesize;
     @Column(name = "vehicleprice")
     private Double vehicleprice = 0.0;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "invoice_products",
-            joinColumns =
-            @JoinColumn(name = "invoice_id", referencedColumnName = "id"),
-            inverseJoinColumns =
-            @JoinColumn(name = "product_id", referencedColumnName = "id"))
-    private Set<Product> products = new HashSet<>();
     @JsonIgnore
     @Column(name = "archive")
     private Boolean archive = false;
@@ -105,11 +97,7 @@ public class Invoice implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id_confirmedby")
     private users confirmedBy;
-    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<RefundInvoice> refunds = new HashSet<>();
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "purchaseorder_id", referencedColumnName = "id")
-    private PurshaseOrder purshaseorder;
+
     @JsonIgnore
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private Set<Payment> payments = new HashSet<>();
@@ -125,20 +113,8 @@ public class Invoice implements Serializable {
     private Long confirmedById;
     @Transient
     private Long suppliernumber;
-    @ManyToMany(mappedBy = "invoices")
-    @JsonIgnore
-    private Set<Request> requests = new HashSet<>();
-    @OneToOne(fetch = FetchType.LAZY,cascade =CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "estimara_file_media")
-    private MediaModel estimarafile;
-    @OneToOne(fetch = FetchType.LAZY,cascade =CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "notedocument_file_media")
-    private MediaModel deliverynotedocument;
-    @OneToOne(fetch = FetchType.LAZY,cascade =CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "supplierinvoice")
-    private MediaModel supplierinvoice;
-    @Column(name = "role_created_by")
-    private RoleEnum role = RoleEnum.ROLE_SUPPLIER;
+
+
     @Column(columnDefinition = "TEXT",name = "rejection_reason")
     private String rejectionreason;
 
@@ -151,7 +127,7 @@ public class Invoice implements Serializable {
         this.timestamp = new Date();
     }
 
-    public Invoice(Integer invoicenumber, Date invoicedate, Date duedate, String currency, String suppliername, String supplierzipcode, String supplierstreetadress, String supplierphonenumber, String bankname, String bankzipcode, String bankstreetadress, String bankphonenumber, String vehicleregistration, String vehiclecolor, String vehiclevin, String vehiclemodel, String vehiclemark, String vehiclemileage, String vehiclemotexpiry, String vehicleenginesize, Set<Product> products, users createdby, InvoiceRelated related, users relatedto, String bankiban, String bankrib) {
+    public Invoice(Integer invoicenumber, Date invoicedate, Date duedate, String currency, String suppliername, String supplierzipcode, String supplierstreetadress, String supplierphonenumber, String bankname, String bankzipcode, String bankstreetadress, String bankphonenumber, String vehicleregistration, String vehiclecolor, String vehiclevin, String vehiclemodel, String vehiclemark, String vehiclemileage, String vehiclemotexpiry, String vehicleenginesize, users createdby, InvoiceRelated related, users relatedto, String bankiban, String bankrib) {
         this.invoicenumber = invoicenumber;
         this.invoicedate = invoicedate;
         this.duedate = duedate;
@@ -172,7 +148,6 @@ public class Invoice implements Serializable {
         this.vehiclemileage = vehiclemileage;
         this.vehiclemotexpiry = vehiclemotexpiry;
         this.vehicleenginesize = vehicleenginesize;
-        this.products = products;
         this.createdby = createdby;
         this.relatedto = relatedto;
         this.related = related;
@@ -184,22 +159,14 @@ public class Invoice implements Serializable {
     @PostLoad
     private void afterload() {
         this.total=0d;
-        if (this.purshaseorder != null){
-            this.poid = this.purshaseorder.getId();
-            this.suppliernumber = this.purshaseorder.getSuppliernumber();
-        }
+
 
         if (payments != null) {
             for (Payment p : payments) {
                 this.amountpaid += p.getAmount();
             }
         }
-        if (products != null) {
-            for (Product p : products) {
-                this.total += p.getSubtotal();
-            }
 
-        }
         if(vehicleprice!=null)
             this.total+= vehicleprice;
         if(this.amountpaid!=null && this.total!=null && this.total>=this.amountpaid)
@@ -210,68 +177,6 @@ public class Invoice implements Serializable {
         }else{
             this.confirmedById = null;
         }
-        if(createdby != null){
-            this.supplierVatnumber = this.createdby.getVatnumber();
-            this.rolecratedby = this.createdby.getRole().getRole();
-        }
-        if(purshaseorder != null){
-            if(purshaseorder.getVehicles() != null){
-                if(purshaseorder.getVehicles().getVehiclespricefinancing() != null){
-                    this.vehiclediscountamount = purshaseorder.getVehicles().getVehiclespricefinancing().getDiscountamount();
-                    this.vehiclediscountpercentage = purshaseorder.getVehicles().getVehiclespricefinancing().getDiscountpercentage();
-                }
-
-            }
-        }
-    }
-
-
-    public Long getConfirmedById() {
-        return confirmedById;
-    }
-
-    public void setConfirmedById(Long confirmedById) {
-        this.confirmedById = confirmedById;
-    }
-
-    public users getConfirmedBy() {
-        return confirmedBy;
-    }
-
-    public void setConfirmedBy(users confirmedBy) {
-        this.confirmedBy = confirmedBy;
-    }
-
-    public InvoiceRelated getRelated() {
-        return related;
-    }
-
-    public void setRelated(InvoiceRelated related) {
-        this.related = related;
-    }
-
-    public users getCreatedby() {
-        return createdby;
-    }
-
-    public void setCreatedby(users createdby) {
-        this.createdby = createdby;
-    }
-
-    public users getRelatedto() {
-        return relatedto;
-    }
-
-    public void setRelatedto(users relatedto) {
-        this.relatedto = relatedto;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
     }
 
     public Long getId() {
@@ -362,6 +267,14 @@ public class Invoice implements Serializable {
         this.bankname = bankname;
     }
 
+    public String getThirdpartypoid() {
+        return thirdpartypoid;
+    }
+
+    public void setThirdpartypoid(String thirdpartypoid) {
+        this.thirdpartypoid = thirdpartypoid;
+    }
+
     public String getBankzipcode() {
         return bankzipcode;
     }
@@ -386,6 +299,22 @@ public class Invoice implements Serializable {
         this.bankphonenumber = bankphonenumber;
     }
 
+    public String getBankiban() {
+        return bankiban;
+    }
+
+    public void setBankiban(String bankiban) {
+        this.bankiban = bankiban;
+    }
+
+    public String getBankrib() {
+        return bankrib;
+    }
+
+    public void setBankrib(String bankrib) {
+        this.bankrib = bankrib;
+    }
+
     public String getVehicleregistration() {
         return vehicleregistration;
     }
@@ -408,6 +337,22 @@ public class Invoice implements Serializable {
 
     public void setVehiclevin(String vehiclevin) {
         this.vehiclevin = vehiclevin;
+    }
+
+    public Double getVehiclediscountpercentage() {
+        return vehiclediscountpercentage;
+    }
+
+    public void setVehiclediscountpercentage(Double vehiclediscountpercentage) {
+        this.vehiclediscountpercentage = vehiclediscountpercentage;
+    }
+
+    public Double getVehiclediscountamount() {
+        return vehiclediscountamount;
+    }
+
+    public void setVehiclediscountamount(Double vehiclediscountamount) {
+        this.vehiclediscountamount = vehiclediscountamount;
     }
 
     public String getVehiclemodel() {
@@ -450,12 +395,12 @@ public class Invoice implements Serializable {
         this.vehicleenginesize = vehicleenginesize;
     }
 
-    public Set<Product> getProducts() {
-        return products;
+    public Double getVehicleprice() {
+        return vehicleprice;
     }
 
-    public void setProducts(Set<Product> products) {
-        this.products = products;
+    public void setVehicleprice(Double vehicleprice) {
+        this.vehicleprice = vehicleprice;
     }
 
     public Boolean getArchive() {
@@ -474,52 +419,44 @@ public class Invoice implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public Set<RefundInvoice> getRefunds() {
-        return refunds;
+    public String getRemark() {
+        return remark;
     }
 
-    public void setRefunds(Set<RefundInvoice> refunds) {
-        this.refunds = refunds;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
-    public Set<Request> getRequests() {
-        return requests;
+    public InvoiceRelated getRelated() {
+        return related;
     }
 
-    public void setRequests(Set<Request> requests) {
-        this.requests = requests;
+    public void setRelated(InvoiceRelated related) {
+        this.related = related;
     }
 
-    public String getBankiban() {
-        return bankiban;
+    public users getCreatedby() {
+        return createdby;
     }
 
-    public void setBankiban(String bankiban) {
-        this.bankiban = bankiban;
+    public void setCreatedby(users createdby) {
+        this.createdby = createdby;
     }
 
-    public String getBankrib() {
-        return bankrib;
+    public users getRelatedto() {
+        return relatedto;
     }
 
-    public void setBankrib(String bankrib) {
-        this.bankrib = bankrib;
+    public void setRelatedto(users relatedto) {
+        this.relatedto = relatedto;
     }
 
-    public PurshaseOrder getPurshaseorder() {
-        return purshaseorder;
+    public users getConfirmedBy() {
+        return confirmedBy;
     }
 
-    public void setPurshaseorder(PurshaseOrder purshaseorder) {
-        this.purshaseorder = purshaseorder;
-    }
-
-    public Long getPoid() {
-        return poid;
-    }
-
-    public void setPoid(Long poid) {
-        this.poid = poid;
+    public void setConfirmedBy(users confirmedBy) {
+        this.confirmedBy = confirmedBy;
     }
 
     public Set<Payment> getPayments() {
@@ -528,6 +465,14 @@ public class Invoice implements Serializable {
 
     public void setPayments(Set<Payment> payments) {
         this.payments = payments;
+    }
+
+    public Long getPoid() {
+        return poid;
+    }
+
+    public void setPoid(Long poid) {
+        this.poid = poid;
     }
 
     public Double getAmountpaid() {
@@ -554,52 +499,12 @@ public class Invoice implements Serializable {
         this.total = total;
     }
 
-    public Double getVehicleprice() {
-        return vehicleprice;
+    public Long getConfirmedById() {
+        return confirmedById;
     }
 
-    public void setVehicleprice(Double vehicleprice) {
-        this.vehicleprice = vehicleprice;
-    }
-
-    public String getThirdpartypoid() {
-        return thirdpartypoid;
-    }
-
-    public void setThirdpartypoid(String thirdpartypoid) {
-        this.thirdpartypoid = thirdpartypoid;
-    }
-
-    public MediaModel getEstimarafile() {
-        return estimarafile;
-    }
-
-    public void setEstimarafile(MediaModel estimarafile) {
-        this.estimarafile = estimarafile;
-    }
-
-    public MediaModel getDeliverynotedocument() {
-        return deliverynotedocument;
-    }
-
-    public void setDeliverynotedocument(MediaModel deliverynotedocument) {
-        this.deliverynotedocument = deliverynotedocument;
-    }
-
-    public RoleEnum getRole() {
-        return role;
-    }
-
-    public void setRole(RoleEnum role) {
-        this.role = role;
-    }
-
-    public String getRejectionreason() {
-        return rejectionreason;
-    }
-
-    public void setRejectionreason(String rejectionreason) {
-        this.rejectionreason = rejectionreason;
+    public void setConfirmedById(Long confirmedById) {
+        this.confirmedById = confirmedById;
     }
 
     public Long getSuppliernumber() {
@@ -608,6 +513,14 @@ public class Invoice implements Serializable {
 
     public void setSuppliernumber(Long suppliernumber) {
         this.suppliernumber = suppliernumber;
+    }
+
+    public String getRejectionreason() {
+        return rejectionreason;
+    }
+
+    public void setRejectionreason(String rejectionreason) {
+        this.rejectionreason = rejectionreason;
     }
 
     public String getSupplierVatnumber() {
@@ -624,29 +537,5 @@ public class Invoice implements Serializable {
 
     public void setRolecratedby(RoleEnum rolecratedby) {
         this.rolecratedby = rolecratedby;
-    }
-
-    public MediaModel getSupplierinvoice() {
-        return supplierinvoice;
-    }
-
-    public void setSupplierinvoice(MediaModel supplierinvoice) {
-        this.supplierinvoice = supplierinvoice;
-    }
-
-    public Double getVehiclediscountpercentage() {
-        return vehiclediscountpercentage;
-    }
-
-    public void setVehiclediscountpercentage(Double vehiclediscountpercentage) {
-        this.vehiclediscountpercentage = vehiclediscountpercentage;
-    }
-
-    public Double getVehiclediscountamount() {
-        return vehiclediscountamount;
-    }
-
-    public void setVehiclediscountamount(Double vehiclediscountamount) {
-        this.vehiclediscountamount = vehiclediscountamount;
     }
 }

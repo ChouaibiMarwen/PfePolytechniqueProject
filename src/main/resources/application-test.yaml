@@ -3,15 +3,10 @@ spring:
   config:
     activate:
       on-profile: test
-  minio:
-    url: https://os.ruh.cloudsigma.com
-    bucket: rayafinancing.v2
-    access-key: 1cUDYC4RTXUW00zgrtqV
-    secret-key: SNNY7WTETW3YCJFOJVu4aNhW7HxzXARV0WELQlQW
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/raya?createDatabaseIfNotExist=true
-    username: camelsoft
-    password: camelsoft
+    url: jdbc:postgresql://127.0.0.1:5432/pfe?createDatabaseIfNotExist=true
+    username: postgres
+    password: admin
     driver-class-name: org.postgresql.Driver
 logging:
   level:

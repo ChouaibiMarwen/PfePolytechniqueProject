@@ -3,19 +3,3 @@ spring:
   config:
     activate:
       on-profile: production
-  minio:
-    url: https://os.ruh.cloudsigma.com
-    bucket: rayafinancing.v2
-    access-key: 1cUDYC4RTXUW00zgrtqV
-    secret-key: SNNY7WTETW3YCJFOJVu4aNhW7HxzXARV0WELQlQW
-  datasource:
-    url: jdbc:postgresql://172.30.130.183:5432/raya?createDatabaseIfNotExist=true&sslmode=require
-    username: camelsoft
-    password: camelsoft
-    driver-class-name: org.postgresql.Driver
-logging:
-  level:
-    org:
-      hibernate: ERROR
-  file:
-    name: /var/lib/jenkins/workspace/server/src/main/resources/${spring.application.name}.log

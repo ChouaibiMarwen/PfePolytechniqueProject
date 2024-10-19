@@ -10,7 +10,6 @@ import com.camelsoft.rayaserver.Request.chat.ChatMessageRequest;
 import com.camelsoft.rayaserver.Response.Notification.AdminNotificationResponse;
 import com.camelsoft.rayaserver.Services.Chat.ChatMessageService;
 import com.camelsoft.rayaserver.Services.Chat.ChatRoomService;
-import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Notification.AdminNotificationServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Util.BaseController;
@@ -44,8 +43,7 @@ public class ChatController  extends BaseController {
     private UserService userService;
     @Autowired private AdminNotificationServices adminNotificationServices;
 
-    @Autowired
-    private FilesStorageServiceImpl filesStorageService;
+
 
     @MessageMapping("/chat")
     public ChatMessage processMessage(@Payload ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) throws InterruptedException {
@@ -163,23 +161,6 @@ public class ChatController  extends BaseController {
         return ResponseEntity
                 .ok(chatMessageService.findById(id));
     }
-
-
-    @PostMapping("/add_files")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    public ResponseEntity<List<MediaModel>> add_files(@RequestParam(value = "files") List<MultipartFile> files) throws IOException {
-        users user = this.userService.findByUserName(getCurrentUser().getUsername());
-        List<MediaModel> filesw = new ArrayList<>();
-        for (MultipartFile file:files) {
-            MediaModel resource_media = filesStorageService.save_file(file,  "messages");
-            user.getAttachmentchat().add(resource_media);
-            filesw.add(resource_media);
-            this.userService.UpdateUser(user);
-
-        }
-        return ResponseEntity.ok(filesw);
-    }
-
 
 
 }

@@ -1,18 +1,14 @@
 package com.camelsoft.rayaserver.Tools.Util;
 
 
-import com.camelsoft.rayaserver.Enum.User.IdTypeEnum;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Privilege;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
-import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Services.Country.CountriesServices;
-import com.camelsoft.rayaserver.Services.File.FileServices;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.RoleService;
-import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.auth.PrivilegeService;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import org.apache.juli.logging.Log;
@@ -33,13 +29,10 @@ public class FirstTimeInitializer implements CommandLineRunner {
     private RoleService roleService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private FileServices fileServices;
+
     @Autowired
     private CountriesServices countriesServices;
 
-    @Autowired
-    private SupplierServices supplierServices;
     @Autowired
     private PrivilegeService privilegeService;
 
@@ -63,7 +56,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
 
         Roleinit();
         initPriveleges();
-        countriesServices.ParseCountry();
+        //countriesServices.ParseCountry();
         initUser();
 
 
@@ -88,7 +81,7 @@ public class FirstTimeInitializer implements CommandLineRunner {
         if (!privilegeService.existsByName("USER_WRITE"))
             privilegeService.save(new Privilege("USER_WRITE"));
 
-        if (!privilegeService.existsByName("SUPPLIER_READ"))
+       /* if (!privilegeService.existsByName("SUPPLIER_READ"))
             privilegeService.save(new Privilege("SUPPLIER_READ"));
 
         if (!privilegeService.existsByName("SUPPLIER_WRITE"))
@@ -192,11 +185,11 @@ public class FirstTimeInitializer implements CommandLineRunner {
             privilegeService.save(new Privilege("SUPPLIERS_CLASSIFICATION_WRTIE"));
 
         if (!privilegeService.existsByName("ADS_WRITE"))
-            privilegeService.save(new Privilege("ADS_WRITE"));
+            privilegeService.save(new Privilege("ADS_WRITE"));*/
 
 
-        if (this.userService.existbyemail("admin@camel-soft.com")) {
-            users user = userService.findbyemail("admin@camel-soft.com");
+        if (this.userService.existbyemail("admin@gmail.com")) {
+            users user = userService.findbyemail("admin@gmail.com");
             List<Privilege> privilegeList = this.privilegeService.findAll();
             Set<Privilege> privileges = user.getPrivileges();
             for (Privilege privilege : privilegeList) {
@@ -209,178 +202,28 @@ public class FirstTimeInitializer implements CommandLineRunner {
 
         }
 
-        if (this.userService.existbyemail("contact@camel-soft.com")) {
-            users user = userService.findbyemail("contact@camel-soft.com");
-            List<Privilege> privilegeList = this.privilegeService.findAll();
-            Set<Privilege> privileges = user.getPrivileges();
-            for (Privilege privilege : privilegeList) {
-                if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
-                    logger.error(privilege.getId());
-                    user.getPrivileges().add(privilege);
-                }
-            }
-            userService.UpdateUser(user);
 
-        }
-
-        if (this.userService.existbyemail("mohmaed@google.com")) {
-            users user = userService.findbyemail("mohmaed@google.com");
-            List<Privilege> privilegeList = this.privilegeService.findAll();
-            Set<Privilege> privileges = user.getPrivileges();
-            for (Privilege privilege : privilegeList) {
-                if(adminPrivileges.contains(privilege.getName()))
-                    continue;
-                if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
-                    logger.error(privilege.getId());
-                    user.getPrivileges().add(privilege);
-                }
-            }
-            userService.UpdateUser(user);
-
-        }  if (this.userService.existbyemail("almajdouie@yahoo.fr")) {
-            users user = userService.findbyemail("almajdouie@yahoo.fr");
-            List<Privilege> privilegeList = this.privilegeService.findAll();
-            Set<Privilege> privileges = user.getPrivileges();
-            for (Privilege privilege : privilegeList) {
-                if(adminPrivileges.contains(privilege.getName()))
-                    continue;
-                if (!this.privilegeService.existsByIdAndUser(privilege.getId(), user)) {
-                    logger.error(privilege.getId());
-                    user.getPrivileges().add(privilege);
-                }
-            }
-            userService.UpdateUser(user);
-
-        }
     }
 
 
     void initUser() {
 
-        if (!userService.existbyemail("admin@camel-soft.com")) {
+        if (!userService.existbyemail("admin@gmail.com")) {
 
             logger.info("No users found creating some users ...");
             PersonalInformation personalInformation = new PersonalInformation();
-            personalInformation.setFirstnameen("CAMELSOFT");
-            personalInformation.setFirstnamear("كامل سوفت");
-            personalInformation.setLastnameen("ADMIN");
-            personalInformation.setLastnamear("مشرف");
+            personalInformation.setFirstnameen("The");
+            personalInformation.setLastnameen("Admin");
             PersonalInformation information = this.personalInformationService.save(personalInformation);
             users users = new users(
-                    "CAMELSOFTADMIN",
-                    "admin@camel-soft.com",
+                    "TheAdmin",
+                    "admin@gmail.com",
                     "aze",
                     "+21612345678",
                     information
             );
              userService.saveAdmin(users);
 
-        }
-
-        if (!this.userService.existbyemail("contact@camel-soft.com")) {
-            logger.info("No users found creating some users ...");
-            PersonalInformation personalInformation = new PersonalInformation();
-            personalInformation.setFirstnameen("CAMELSOFT");
-            personalInformation.setFirstnamear("كامل سوفت");
-            personalInformation.setLastnameen("SUPPLIER");
-            personalInformation.setLastnamear("المورد");
-            PersonalInformation information = this.personalInformationService.save(personalInformation);
-            users users = new users(
-                    "CAMELSOFTSUPPLIER",
-                    "contact@camel-soft.com",
-                    "aze",
-                    "+21699999999",
-                    information
-            );
-
-            userService.saveSupplier(users);
-        }
-        if (!this.userService.existbyemail("mohmaed@google.com")&& this.supplierServices.findBySuppliernumber(Long.valueOf(104077))==null) {
-            logger.info("No users found creating some users ...");
-            PersonalInformation personalInformation = new PersonalInformation();
-            personalInformation.setFirstnameen("mohmaed");
-            personalInformation.setFirstnamear("محمد");
-            personalInformation.setLastnameen("SUPPLIER");
-            personalInformation.setLastnamear("المورد");
-            PersonalInformation information = this.personalInformationService.save(personalInformation);
-            users users = new users(
-                    "RAYASUPPLIER01",
-                    "mohmaed@google.com",
-                    "aze",
-                    "+21699999991",
-                    information
-            );
-
-            Supplier supplier = new Supplier();
-            supplier.setSuppliernumber(Long.valueOf(104077));
-            supplier.setIdnumber("104077L");
-            supplier.setIdtype(IdTypeEnum.ID_CARD);
-           // Supplier resultsupplier = this.supplierServices.save(supplier);
-            users.setSupplier(supplier);
-            userService.saveSupplier(users);
-        }
-
-     if (!this.userService.existbyemail("almajdouie@yahoo.fr") && this.supplierServices.findBySuppliernumber(Long.valueOf(104385))==null) {
-            logger.info("No users found creating some users ...");
-            PersonalInformation personalInformation = new PersonalInformation();
-            personalInformation.setFirstnameen("almajdouie");
-            personalInformation.setFirstnamear("المجدوعي");
-            personalInformation.setLastnameen("SUPPLIER");
-            personalInformation.setLastnamear("المورد");
-            PersonalInformation information = this.personalInformationService.save(personalInformation);
-            users users = new users(
-                    "RAYASUPPLIER02",
-                    "almajdouie@yahoo.fr",
-                    "aze",
-                    "+21699999992",
-                    information
-            );
-
-            Supplier supplier = new Supplier();
-            supplier.setSuppliernumber(Long.valueOf(104385));
-            supplier.setIdnumber("104385L");
-            supplier.setIdtype(IdTypeEnum.ID_CARD);
-            //Supplier resultsupplier = this.supplierServices.save(supplier);
-            users.setSupplier(supplier);
-            userService.saveSupplier(users);
-        }
-
-        if (!this.userService.existbyemail("info@camel-soft.com")) {
-            logger.info("No users found creating some users ...");
-            PersonalInformation personalInformation = new PersonalInformation();
-            personalInformation.setFirstnameen("CAMELSOFT");
-            personalInformation.setFirstnamear("كامل سوفت");
-            personalInformation.setLastnameen("USER");
-            personalInformation.setLastnamear("مستخدم");
-            PersonalInformation information = this.personalInformationService.save(personalInformation);
-            users users = new users(
-                    "CAMELSOFTUSER",
-                    "info@camel-soft.com",
-                    "aze",
-                    "+21688888888",
-                    information
-            );
-
-            userService.saveUser(users);
-        }
-
-        if (!this.userService.existbyemail("sub_dealer@camel-soft.com")) {
-            logger.info("No users found creating some users ...");
-            PersonalInformation personalInformation = new PersonalInformation();
-            personalInformation.setFirstnameen("CAMELSOFTDEALER");
-            personalInformation.setFirstnamear("التاجر");
-            personalInformation.setLastnameen("SUB_DEALER");
-            personalInformation.setLastnamear("تاجر");
-            PersonalInformation information = this.personalInformationService.save(personalInformation);
-            users users = new users(
-                    "CAMELSOFTDEALER",
-                    "sub_dealer@camel-soft.com",
-                    "aze",
-                    "+21690000009",
-                    information
-            );
-
-            userService.saveSubDealer(users);
         }
 
     }

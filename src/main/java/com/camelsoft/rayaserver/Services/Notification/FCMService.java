@@ -22,9 +22,11 @@ public class FCMService {
 
     private FirebaseMessaging firebaseMessaging;
 
+/*
     public FCMService(FirebaseMessaging firebaseMessaging) {
         this.firebaseMessaging = firebaseMessaging;
     }
+*/
 
 
     public String sendNotification(Note note, String token) throws FirebaseMessagingException {

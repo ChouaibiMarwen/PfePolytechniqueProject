@@ -23,27 +23,6 @@ public class MailSenderServices {
     @Autowired
     private JavaMailSender mailSender;
 
-    /*@Autowired
-    private SimpleMailMessage preConfiguredMessage;
-*/
-
-
-  /*  public boolean sendEmailCheck(String subject, String to, users user,String passwd) {
-        try {
-
-            SimpleMailMessage msg = new SimpleMailMessage(preConfiguredMessage);
-            msg.setTo(to);
-            msg.setSubject(subject);
-            msg.setText("Hi "+user.getName()+"\n" +
-                    "You recently requested a code to verify you email .Your Password is: " +passwd + ". \n"
-                    +"\n" + "Thanks,\n Rest For you Team"
-            );
-            mailSender.send(msg);
-            return true;
-        } catch (Exception ex) {
-            return false; // Email does not exist
-        }
-    }*/
 
     public void sendEmailResetPassword(String content, users to, Date date) throws MessagingException {
         MimeMessage msg = mailSender.createMimeMessage();

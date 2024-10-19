@@ -22,23 +22,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:4200",
-                        "http://localhost:4201",
-                        "https://raya-supplier.camel-soft.com",
-                        "https://raya-admin.camel-soft.com",
-                        "https://admin.camel-soft.com",
-                        "https://client.camel-soft.com",
-                        "https://agent.camel-soft.com",
-                        "https://server.camel-soft.com",
-                        "https://server-raya.camel-soft.com",
-                        "https://profile.rayafinancing.com",
-                        "https://development.rayafinancing.com",
-                        "https://appleid.apple.com",
-                        "https://admin.rayafinancing.com",
-                        "http://localhost:4201",
-                        "https://dashboard.rayafinancing.com",
-                        "https://server.rayafinancing.com",
-                        "https://www.rayafinancing.com",
-                        "https://rayafinancing.com")
+                        "http://localhost:4201")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*");
     }

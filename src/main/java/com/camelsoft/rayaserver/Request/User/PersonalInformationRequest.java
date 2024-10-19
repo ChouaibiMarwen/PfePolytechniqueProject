@@ -1,7 +1,5 @@
 package com.camelsoft.rayaserver.Request.User;
 
-import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
-import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import lombok.Data;
 
@@ -25,7 +23,6 @@ public class PersonalInformationRequest {
     private String gender;
     private String phonenumber;
     private String worksector;
-    private String maritalstatus;
     private String vatNumber;
 }
 

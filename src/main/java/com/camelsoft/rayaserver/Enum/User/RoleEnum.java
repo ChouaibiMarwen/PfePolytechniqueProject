@@ -1,13 +1,7 @@
 package com.camelsoft.rayaserver.Enum.User;
 
 public enum RoleEnum {
-    ROLE_USER,
+    ROLE_TECHNICIEN,
     ROLE_ADMIN,
-    ROLE_AGENT,
-    ROLE_SUB_ADMIN,
-    ROLE_SUPPLIER,
-    ROLE_SUB_SUPPLIER,
-    ROLE_SUB_DEALER,
-    ROLE_SUB_SUB_DEALER,
-
+    ROLE_USER,
 }

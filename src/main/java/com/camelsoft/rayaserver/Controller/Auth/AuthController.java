@@ -3,7 +3,6 @@ package com.camelsoft.rayaserver.Controller.Auth;
 import com.camelsoft.rayaserver.Models.Auth.PasswordResetToken;
 import com.camelsoft.rayaserver.Models.Auth.RefreshToken;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
-import com.camelsoft.rayaserver.Models.User.Supplier;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.User.LogOutRequest;
 import com.camelsoft.rayaserver.Request.User.SignInRequest;
@@ -11,7 +10,6 @@ import com.camelsoft.rayaserver.Request.auth.TokenRefreshRequest;
 import com.camelsoft.rayaserver.Response.Auth.JwtResponse;
 import com.camelsoft.rayaserver.Response.Auth.OnUserLogoutSuccessEvent;
 import com.camelsoft.rayaserver.Response.Tools.ApiResponse;
-import com.camelsoft.rayaserver.Services.User.SupplierServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Services.auth.MailSenderServices;
 import com.camelsoft.rayaserver.Services.auth.PasswordResetTokenServices;
@@ -53,8 +51,6 @@ public class AuthController extends BaseController {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
     @Autowired
-    private SupplierServices supplierServices;
-    @Autowired
     private UserDeviceService userDeviceService;
     @Autowired
     private RefreshTokenService refreshTokenService;
@@ -82,11 +78,6 @@ public class AuthController extends BaseController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_ADMIN') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
     public ResponseEntity<users> current_user() throws IOException {
         users users = userService.findByUserName(getCurrentUser().getUsername());
-    /*    if(users.getSupplier() != null){
-            users.getSupplier().setUserId(users.getId());
-            users.getSupplier().setName(users.getPersonalinformation().getFirstnameen() + " " + users.getPersonalinformation().getLastnameen());
-
-        }*/
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
@@ -279,24 +270,4 @@ public class AuthController extends BaseController {
             return new ResponseEntity("this code is not valid", HttpStatus.NOT_ACCEPTABLE);
         return new ResponseEntity("this code is wrong", HttpStatus.NOT_ACCEPTABLE);
     }
-
-
-
-  /*  @PostMapping(value = {"/send_password-via-email"})
-    public ResponseEntity send_passwordviaemail(@RequestParam("email") String email) throws IOException, MessagingException {
-        if (!this.userService.existbyemail(email.toLowerCase()))
-            return new ResponseEntity("no user found with this email: "+ email, HttpStatus.NOT_FOUND);
-        users user = userService.findbyemail(email.toLowerCase());
-        String token = UserService.generateRandomNumberString(8);
-        PasswordResetToken resetToken = this.resetTokenServices.findbyuser(user);
-        if (resetToken != null) {
-            this.resetTokenServices.remove_code(resetToken.getUser());
-        }
-        resetToken = this.resetTokenServices.createPasswordResetTokenForUser(user, token);
-        this.mailSenderServices.emailnewpassword(user.getName(), email, );
-
-
-        return new ResponseEntity("code send it to email , the code wille be expired in : " + resetToken.getExpiryDate(), HttpStatus.OK);
-    }*/
-
 }

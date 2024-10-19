@@ -12,11 +12,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import java.io.IOException;
 
-@Configuration
+/*@Configuration*/
 public class FireBaseConfInitialiser {
     Logger logger = LoggerFactory.getLogger(FireBaseConfInitialiser.class);
 
-    @Bean
+ /*   @Bean
     FirebaseMessaging firebaseMessaging() throws IOException {
         GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource("firebase-service-account.json").getInputStream());
@@ -26,5 +26,5 @@ public class FireBaseConfInitialiser {
         FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "Raven");
         logger.info("Firebase application has been initialized");
         return FirebaseMessaging.getInstance(app);
-    }
+    }*/
 }

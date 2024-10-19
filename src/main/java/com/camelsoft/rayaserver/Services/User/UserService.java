@@ -4,12 +4,9 @@ package com.camelsoft.rayaserver.Services.User;
 import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
-import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
 import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
-import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
-import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Models.country.Root;
 import com.camelsoft.rayaserver.Models.country.State;
@@ -19,15 +16,12 @@ import com.camelsoft.rayaserver.Repository.Tools.PersonalInformationRepository;
 import com.camelsoft.rayaserver.Repository.User.UserRepository;
 import com.camelsoft.rayaserver.Request.Tools.AddressRequest;
 import com.camelsoft.rayaserver.Request.Tools.BankInformationRequest;
-import com.camelsoft.rayaserver.Request.Tools.BillingAddressRequest;
 import com.camelsoft.rayaserver.Request.User.SignInRequest;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Auth.JwtResponse;
 import com.camelsoft.rayaserver.Services.Country.CountriesServices;
-import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Tools.AddressServices;
 import com.camelsoft.rayaserver.Services.Tools.BankAccountService;
-import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.auth.RefreshTokenService;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -40,7 +34,6 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -52,7 +45,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -81,8 +73,6 @@ public class UserService extends BaseController implements UserDetailsService {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private BillingAddressService billingAddressService;
-    @Autowired
     private BankAccountService bankAccountService;
     @Autowired
     private CityRepository cityRepository;
@@ -90,9 +80,6 @@ public class UserService extends BaseController implements UserDetailsService {
     private CountriesServices  countriesServices;
     @Autowired
     private AddressServices addressServices;
-
-    @Autowired
-    private FilesStorageServiceImpl filesStorageService;
 
     public users saveUser(users user) {
         try {
@@ -105,21 +92,12 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
-    public users saveAgent(users user) {
-        try {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_AGENT);
-            user.setRole(userRole);
-            return userRepository.save(user);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("not found data");
-        }
-    }
 
-    public users saveSupplier(users user) {
+
+    public users saveTechnicien(users user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
+            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_TECHNICIEN);
             user.setRole(userRole);
             return userRepository.save(user);
         } catch (NoSuchElementException ex) {
@@ -147,53 +125,7 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
-    public users saveSubAdmin(users users) {
-        try {
-            users.setPassword(passwordEncoder.encode(users.getPassword()));
-            users.setActive(true);
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_ADMIN);
-            users.setRole(userRole);
-            return userRepository.save(users);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("not found data");
-        }
-    }
 
-    public users saveSubSupplier(users users) {
-        try {
-            users.setPassword(passwordEncoder.encode(users.getPassword()));
-            users.setActive(true);
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_SUPPLIER);
-            users.setRole(userRole);
-            return userRepository.save(users);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("not found data");
-        }
-    }
-
-    public users saveSubDealer(users users) {
-        try {
-            users.setPassword(passwordEncoder.encode(users.getPassword()));
-            users.setActive(true);
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_DEALER);
-            users.setRole(userRole);
-            return userRepository.save(users);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("not found data");
-        }
-    }
-
-    public users saveSubSubDealer(users users) {
-        try {
-            users.setPassword(passwordEncoder.encode(users.getPassword()));
-            users.setActive(true);
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_SUB_DEALER);
-            users.setRole(userRole);
-            return userRepository.save(users);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("not found data");
-        }
-    }
 
     public users UpdateUser(users users) {
         try {
@@ -228,16 +160,6 @@ public class UserService extends BaseController implements UserDetailsService {
         // Convert StringBuilder to a String
         return sb.toString();
     }
-
-
-  /*  public String generateRandomPassword() {
-        StringBuilder password = new StringBuilder(PASSWORD_LENGTH);
-        for (int i = 0; i < PASSWORD_LENGTH; i++) {
-            int index = random.nextInt(CHARACTERS.length());
-            password.append(CHARACTERS.charAt(index));
-        }
-        return password.toString();
-    }*/
 
     @Override
     @Transactional
@@ -356,23 +278,7 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
-    public Long totalSupplier() {
-        try {
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
-            return this.userRepository.countAllByRole(userRole);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("hourbor id not found data");
-        }
-    }
 
-    public Long totalSubAdmin() {
-        try {
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_ADMIN);
-            return this.userRepository.countAllByRole(userRole);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("hourbor id not found data");
-        }
-    }
 
     public Long totalUsersByState(Boolean state) {
         try {
@@ -383,14 +289,6 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
-    public Long totalSuppliers(Boolean active) {
-        try {
-            Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
-            return this.userRepository.countAllByRoleAndActive(userRole, active);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("hourbor id not found data");
-        }
-    }
 
 
     public List<users> allUsers(Boolean active) {
@@ -442,44 +340,6 @@ public class UserService extends BaseController implements UserDetailsService {
             throw new RuntimeException("Error retrieving users by roles: " + roleEnums, ex);
         }
     }
-
-    public List<users> getSuppliersByRolesAndWithoutClassification() {
-        try {
-            List<RoleEnum> roleEnums = Arrays.asList(RoleEnum.ROLE_SUPPLIER, RoleEnum.ROLE_SUB_DEALER);
-            List<Role> roles = roleEnums.stream()
-                    .map(roleRepository::findByRole)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-
-            if (roles.isEmpty()) {
-                return Collections.emptyList();
-            }
-
-            return userRepository.findByRoleInAndSupplierclassificationIsNullAndDeletedIsFalse(roles);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-
-    public List<users> getSubAdminByRolesAndWithoutClassification() {
-        try {
-            List<RoleEnum> roleEnums = Arrays.asList(RoleEnum.ROLE_SUB_ADMIN);
-            List<Role> roles = roleEnums.stream()
-                    .map(roleRepository::findByRole)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-
-            if (roles.isEmpty()) {
-                return Collections.emptyList();
-            }
-
-            return userRepository.findByRoleInAndSubadminClassificationIsNullAndDeletedIsFalse(roles);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
 
     public users findbyemail(String email) {
         try {
@@ -605,18 +465,7 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
-    public users saveUserotp(users user, RoleEnum role) {
 
-        user.setActive(true);
-        Role userRole = null;
-        if (role == null || role.equals(RoleEnum.ROLE_USER))
-            userRole = roleRepository.findByRole(RoleEnum.ROLE_USER);
-        else
-            userRole = roleRepository.findByRole(RoleEnum.ROLE_SUPPLIER);
-
-        user.setRole(userRole);
-        return userRepository.save(user);
-    }
 
 
     public JwtResponse authprocessUsernameAndPassword(SignInRequest signInRequest) throws JSONException {
@@ -688,14 +537,6 @@ public class UserService extends BaseController implements UserDetailsService {
         }
 
     }
-public boolean existebysuppliernumber(Long suppliernumber) {
-        try {
-            return userRepository.existsBySupplier_Suppliernumber(suppliernumber);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException(String.format("No data found"));
-        }
-
-    }
 
     public boolean existbyid(Long id) {
         try {
@@ -716,20 +557,6 @@ public boolean existebysuppliernumber(Long suppliernumber) {
             throw new NotFoundException(String.format("No data found"));
         }
     }
-
-
-    /*public users findById(Long id) {
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("Invalid user ID provided");
-        }
-
-        Optional<users> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            return optionalUser.get();
-        } else {
-            throw new NotFoundException("User with ID " + id + " not found");
-        }
-    }*/
 
     public void updatepassword(users user, String password) {
         user.setPassword(passwordEncoder.encode(password));
@@ -761,40 +588,14 @@ public boolean existebysuppliernumber(Long suppliernumber) {
     }
 
 
-    public users addBillingAddres(users user, BillingAddressRequest billingAddressRequest) {
-        BillingAddress billingAddress = new BillingAddress();
-        billingAddress.setFirstname(billingAddressRequest.getFirstname());
-        billingAddress.setLastname(billingAddressRequest.getLastname());
-        billingAddress.setEmail(billingAddressRequest.getEmail());
-        /*billingAddress.setCountry(billingAddressRequest.getCountry());*/
-        billingAddress.setZipcode(billingAddressRequest.getZipcode());
-        /*billingAddress.setState(billingAddressRequest.getState());*/
-        billingAddress.setPhonenumber(billingAddressRequest.getPhonenumber());
-        billingAddress.setBillingaddress(billingAddressRequest.getBillingaddress());
-        billingAddress.setCity(billingAddressRequest.getCity());
-        user.setBillingAddress(this.billingAddressService.saveBiLLAddress(billingAddress));
-        return userRepository.save(user);
 
-
-    }
-    public BankInformation addBankAccounToUser(users user, BankInformationRequest bankInformationRequest, MultipartFile ibanattachment) {
+    public BankInformation addBankAccounToUser(users user, BankInformationRequest bankInformationRequest) {
         BankInformation bankInformation = new BankInformation();
         bankInformation.setBankname(bankInformationRequest.getBank_name());
         bankInformation.setAccountname(bankInformationRequest.getAccountHolderName());
         bankInformation.setIban(bankInformationRequest.getIban());
         bankInformation.setRip(bankInformationRequest.getAcountNumber());
         MediaModel resourceMedia = null;
-        if (ibanattachment != null && !ibanattachment.isEmpty()) {
-            String extension = ibanattachment.getContentType().substring(ibanattachment.getContentType().indexOf("/") + 1).toLowerCase(Locale.ROOT);
-            /*if (!image_accepte_type.contains(extension)) {
-                return ResponseEntity.badRequest().body(null);
-            }*/
-            resourceMedia = filesStorageService.save_file(ibanattachment, "Ibans");
-            if (resourceMedia == null) {
-                return null;
-            }
-            bankInformation.setIbanattachment(resourceMedia);
-        }
         bankInformation.setUser(user);
         return this.bankAccountService.saveBankInformation(bankInformation);
 
@@ -831,26 +632,5 @@ public boolean existebysuppliernumber(Long suppliernumber) {
         user.setUsername(user.getUsername()+date);
          return UpdateUser(user);
     }
-
-
-    public List<users> findAllSubAdminsWithClassification(SuppliersClassification classification){
-        Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_ADMIN);
-        return this.userRepository.findByRoleAndSubadminClassificationAndActiveIsTrueAndDeletedIsFalse( userRole,classification);
-    }
-
-
-    public List<users> findAllSubAdminsWithClassificationorWithoutClassification(SuppliersClassification classification){
-        Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_ADMIN);
-        return this.userRepository.findbyroleandclassififcztiornullclassification( userRole,classification);
-    }
-
-    public Integer countAllSubAdminsWithClassification(SuppliersClassification classification){
-        Role userRole = roleRepository.findByRole(RoleEnum.ROLE_SUB_ADMIN);
-        return this.userRepository.countByRoleAndSubadminClassificationAndActiveIsTrue( userRole,classification);
-
-    }
-
-
-
 
 }

@@ -9,7 +9,6 @@ import com.camelsoft.rayaserver.Models.File.MediaModel;
 import com.camelsoft.rayaserver.Models.Notification.Notification;
 import com.camelsoft.rayaserver.Repository.Chat.ChatMessageRepository;
 import com.camelsoft.rayaserver.Response.Chat.ChatMessageResponse;
-import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 import com.camelsoft.rayaserver.Services.Notification.NotificationServices;
 import com.camelsoft.rayaserver.Services.User.UserService;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
@@ -41,22 +40,12 @@ public class ChatMessageService {
     private EntityManager entityManager;
     @Autowired
     private UserService userService;
-   @Autowired
-    private FilesStorageServiceImpl filesStorageService;
+
     private final Log logger = LogFactory.getLog(ChatController.class);
 
     @Transactional
     public ChatMessage save(ChatMessage chatMessage) throws InterruptedException {
         chatMessage.setStatus(MessageStatus.RECEIVED);
-
-        List<MediaModel> attachedFiles = new ArrayList<>();
-        for (MediaModel fileId : chatMessage.getAttachments()) {
-            // Pre-load File_model objects from repository (replace with your logic)
-            MediaModel attachedFile = this.filesStorageService.findbyid(fileId.getId());
-            attachedFiles.add(attachedFile);
-        }
-        chatMessage.setAttachments(attachedFiles);
-
         ChatMessage result = repository.save(chatMessage);
 
         Notification notificationuser = new Notification(

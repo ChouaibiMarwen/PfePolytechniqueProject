@@ -95,35 +95,3 @@ auth:
   jwtRefreshExpirationMs: 86400000
   secret: camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200camelsoft3200
   header: Authorization
-apple:
-  clientId: com.camelsoft.rayaauth
-  authorization-grant-type: authorization_code
-  redirectUri: https://server.rayafinancing.com/oauth2/redirect
-  scope: openid,name,email
-  authorizationUri: https://appleid.apple.com/auth/authorize?response_mode=form_post
-  token-uri: https://appleid.apple.com/auth/token
-  jwkSetUri: https://appleid.apple.com/auth/keys
-  auth:
-    tokenSecret: not_defined_yet
-    tokenExpirationMsec: 864000000
-  oauth2:
-    # We're not using cookies because they won't work well in mobile clients.
-    authorizedRedirectUris:
-      - https://rayafinancing.com/oauth2/redirect
-      - https://rayafinancing.com/signin/oauth2/redirect
-      - https://server.rayafinancing.com/api/v1/oauth2/redirect
-      - https://server.rayafinancing.com/oauth2/callback/google
-      - https://localhost:8000/oauth2/callback/google
-      - http://localhost:4200/oauth2/redirect
-      - https://server.rayafinancing.com
-      - https://www.rayafinancing.com/oauth2/callback/google
-      - https://www.rayafinancing.com/signin/oauth2/redirect
-      - http://localhost:4200/signin/oauth2/redirect
-      - https://localhost:8000/signin/oauth2/redirect
-      - https://server.rayafinancing.com/oauth2/authorize/google
-minio:
-  url: https://console.os.ruh.cloudsigma.com
-  access-key: 6i9zdonPoHdwKEc4TsUq
-  secret-key: m54vaBrJ5WiOZCrQ39n26qaUV5XlLs84AEYnFN8Y
-  bucket-name: rayafinancing.v2
-  secure: true

@@ -1,10 +1,6 @@
 package com.camelsoft.rayaserver.Tools.Util;
 
 
-
-
-
-
 import com.camelsoft.rayaserver.Enum.Tools.Provider;
 import com.camelsoft.rayaserver.Models.Ooath.FacebookOAuth2UserInfo;
 import com.camelsoft.rayaserver.Models.Ooath.GoogleOAuth2UserInfo;
@@ -14,7 +10,6 @@ import com.camelsoft.rayaserver.Tools.Exception.OAuth2AuthenticationProcessingEx
 import java.util.Map;
 
 public class OAuth2UserInfoFactory {
-
     public static OAuth2UserInfo getOAuth2UserInfo(String registrationId, Map<String, Object> attributes) {
         if(registrationId.equalsIgnoreCase(Provider.google.toString())) {
             return new GoogleOAuth2UserInfo(attributes);

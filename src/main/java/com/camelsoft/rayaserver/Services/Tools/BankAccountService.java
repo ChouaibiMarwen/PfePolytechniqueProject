@@ -1,7 +1,6 @@
 package com.camelsoft.rayaserver.Services.Tools;
 
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
-import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Tools.BankAccountRepository;
 import com.camelsoft.rayaserver.Request.Tools.BankInformationRequest;

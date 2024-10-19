@@ -52,11 +52,11 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "RAYA FINANCING REST API", //title
-                "RAYA FINANCING public rest API.", //description
+                "PFE Project REST API", //title
+                "PFE Project public rest API.", //description
                 "Version 1.0", //version
                 "Terms of service", //terms of service URL
-                new Contact("CAMELSOFT LLC", "www.camel-soft.com", "contact@camel-soft.com"),
+                new Contact("Polytechnique Sousse", "www.polytechnique.com", "contact@polytechnicien.com"),
                 "License of API", "www.camel-soft.com", Collections.emptyList()); // contact info
     }
 }

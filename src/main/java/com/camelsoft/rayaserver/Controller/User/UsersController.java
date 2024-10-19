@@ -1,21 +1,13 @@
 package com.camelsoft.rayaserver.Controller.User;
 
 
-import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
-import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
+
 import com.camelsoft.rayaserver.Enum.User.*;
 import com.camelsoft.rayaserver.Models.Auth.UserDevice;
 import com.camelsoft.rayaserver.Models.DTO.UserShortDto;
-import com.camelsoft.rayaserver.Models.File.MediaModel;
-import com.camelsoft.rayaserver.Models.Project.Department;
-import com.camelsoft.rayaserver.Models.Project.RoleDepartment;
-import com.camelsoft.rayaserver.Models.Project.UserAction;
 import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.Tools.BankInformation;
-import com.camelsoft.rayaserver.Models.Tools.BillingAddress;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
-import com.camelsoft.rayaserver.Models.User.Supplier;
-import com.camelsoft.rayaserver.Models.User.SuppliersClassification;
 import com.camelsoft.rayaserver.Models.User.UserSession;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Request.Tools.AddressRequest;
@@ -28,14 +20,9 @@ import com.camelsoft.rayaserver.Request.User.UpdatePersonalInfoRequest;
 import com.camelsoft.rayaserver.Response.Auth.OnUserLogoutSuccessEvent;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Response.Tools.ApiResponse;
-import com.camelsoft.rayaserver.Services.File.FilesStorageServiceImpl;
 
-import com.camelsoft.rayaserver.Services.Project.DepartmentService;
-import com.camelsoft.rayaserver.Services.Project.RoleDepartmentService;
-import com.camelsoft.rayaserver.Services.Project.SupplierClassificationService;
 import com.camelsoft.rayaserver.Services.Tools.AddressServices;
 import com.camelsoft.rayaserver.Services.Tools.BankAccountService;
-import com.camelsoft.rayaserver.Services.Tools.BillingAddressService;
 import com.camelsoft.rayaserver.Services.Tools.PersonalInformationService;
 import com.camelsoft.rayaserver.Services.User.*;
 import com.camelsoft.rayaserver.Services.auth.UserDeviceService;
@@ -71,10 +58,6 @@ public class UsersController extends BaseController {
     private final Log logger = LogFactory.getLog(UsersController.class);
     private static List<String> image_accepte_type = Arrays.asList("PNG", "png", "jpeg", "JPEG", "JPG", "jpg");
 
-    @Autowired
-    private UserActionService userActionService;
-    @Autowired
-    private FilesStorageServiceImpl filesStorageService;
 
     @Autowired
     private UserService userService;
@@ -93,26 +76,17 @@ public class UsersController extends BaseController {
     private PersonalInformationService personalInformationService;
     @Autowired
     private RoleService roleService;
-    @Autowired
-    private BillingAddressService billingAddressService;
+
     @Autowired
     private BankAccountService bankAccountService;
     @Autowired
     private AddressServices addressServices;
 
     @Autowired
-    private SupplierClassificationService classificationService;
-    @Autowired
-    private DepartmentService departmentService;
-    @Autowired
-    private RoleDepartmentService roleDepartmentService;
-    @Autowired
-    private SupplierServices supplierService;
-    @Autowired
     private CriteriaService criteriaService;
 
     @GetMapping(value = {"/current_user"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<users> GetCurrentUser() throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -120,7 +94,7 @@ public class UsersController extends BaseController {
 
 
     @PatchMapping(value = {"/update_current_user_personal_information"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PersonalInformation> update_personal_information(@ModelAttribute PersonalInformationRequest request) throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
         PersonalInformation personalInformation = new PersonalInformation();
@@ -148,68 +122,16 @@ public class UsersController extends BaseController {
         if (request.getNumberofdependents() != null)
             personalInformation.setNumberofdependents(request.getNumberofdependents());
         if (request.getGender() != null) personalInformation.setGender(Gender.valueOf(request.getGender()));
-        if (request.getWorksector() != null)
-            personalInformation.setWorksector(WorkSector.valueOf(request.getWorksector()));
-        if (request.getMaritalstatus() != null)
-            personalInformation.setMaritalstatus(MaritalStatus.valueOf(request.getMaritalstatus()));
+
         PersonalInformation result = this.personalInformationService.update(personalInformation);
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.PROFILE_MANAGEMENT,
-                user
-        );
-        this.userActionService.Save(action);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
-    /*@PatchMapping(value = {"/update_user_personal_information/{userId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
-    public ResponseEntity<PersonalInformation> updateUserPersonalInfo(@PathVariable Long userId , @RequestBody PersonalInformationRequest request) throws IOException {
-        users user = this.userService.findById(userId);
-        if(user == null ){
-            return new ResponseEntity("User is not founded", HttpStatus.BAD_REQUEST);
-        }
-        PersonalInformation personalInformation = new PersonalInformation();
-        if(user.getPersonalinformation()!=null) {
-            personalInformation = user.getPersonalinformation();
-        }else{
-            personalInformation = this.personalInformationService.save(personalInformation);
-            user.setPersonalinformation(personalInformation);
-            this.userService.UpdateUser(user);
-        }
-        if (request.getFirstnameen() != null) personalInformation.setFirstnameen(request.getFirstnameen());
-        if (request.getLastnameen() != null) personalInformation.setLastnameen(request.getLastnameen());
-        if (request.getFirstnamear() != null) personalInformation.setFirstnamear(request.getFirstnamear());
-        if (request.getLastnamear() != null) personalInformation.setLastnamear(request.getLastnamear());
-        if (request.getBirthDate() != null) personalInformation.setBirthDate(request.getBirthDate());
-        if (request.getSecondnamear() != null) personalInformation.setSecondnamear(request.getSecondnamear());
-        if (request.getThirdnamear() != null) personalInformation.setThirdnamear(request.getThirdnamear());
-        if (request.getPhonenumber() != null) personalInformation.setPhonenumber(request.getPhonenumber());
-        if (request.getGrandfathernamear() != null) personalInformation.setGrandfathernamear(request.getGrandfathernamear());
-        if (request.getSecondnameen() != null) personalInformation.setSecondnameen(request.getSecondnameen());
-        if (request.getThirdnameen() != null) personalInformation.setThirdnameen(request.getThirdnameen());
-        if (request.getGrandfathernameen() != null) personalInformation.setGrandfathernameen(request.getGrandfathernameen());
-        if (request.getNumberofdependents() != null) personalInformation.setNumberofdependents(request.getNumberofdependents());
-        if (request.getGender() != null) personalInformation.setGender(Gender.valueOf(request.getGender()));
-        if (request.getWorksector() != null) personalInformation.setWorksector(WorkSector.valueOf(request.getWorksector()));
-        if (request.getMaritalstatus() != null) personalInformation.setMaritalstatus(MaritalStatus.valueOf(request.getMaritalstatus()));
-        PersonalInformation result = this.personalInformationService.update(personalInformation);
-        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.PROFILE_MANAGEMENT,
-                currentuser
-        );
-        this.userActionService.Save(action);
-
-
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }*/
 
     @PatchMapping(value = {"/update_user_personal_information/{userId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PersonalInformation> updateUserPersonalInfo(@PathVariable Long userId, @RequestBody UpdatePersonalInfoRequest request) throws IOException {
         users user = this.userService.findById(userId);
         if (user == null) {
@@ -225,8 +147,7 @@ public class UsersController extends BaseController {
                 user.setPhonenumber(phonenumber);
             }
         }
-        if(request.getVatNumber() != null)
-            user.setVatnumber(request.getVatNumber());
+
         if (request.getInformationRequest() != null) {
             if (request.getInformationRequest().getFirstnameen() != null)
                 information.setFirstnameen(request.getInformationRequest().getFirstnameen());
@@ -250,79 +171,21 @@ public class UsersController extends BaseController {
                 information.setNumberofdependents(request.getInformationRequest().getNumberofdependents());
             if (request.getInformationRequest().getGender() != null)
                 information.setGender(Gender.valueOf(request.getInformationRequest().getGender()));
-            if (request.getInformationRequest().getWorksector() != null)
-                information.setWorksector(WorkSector.valueOf(request.getInformationRequest().getWorksector()));
-            if (request.getInformationRequest().getMaritalstatus() != null)
-                information.setMaritalstatus(MaritalStatus.valueOf(request.getInformationRequest().getMaritalstatus()));
 
         }
         PersonalInformation result = this.personalInformationService.update(information);
-
-        if (request.getSuppliernumber() != null || request.getCompanyName() != null || request.getIdnumber() != null || request.getIdType() != null || request.getIdclassification() != null) {
-            if (!(user.getRole().getRole() == RoleEnum.ROLE_SUPPLIER || user.getRole().getRole() == RoleEnum.ROLE_SUB_SUPPLIER || user.getRole().getRole() == RoleEnum.ROLE_SUB_DEALER || user.getRole().getRole() == RoleEnum.ROLE_SUB_SUB_DEALER))
-                return new ResponseEntity("this user is not a supplier", HttpStatus.BAD_REQUEST);
-            Supplier supplier = user.getSupplier();
-            if (request.getIdclassification() != null) {
-                SuppliersClassification classresult = user.getSupplierclassification();
-                if (classresult != null)
-                    classresult.getSuppliers().remove(user);
-                SuppliersClassification newclass = this.classificationService.FindById(request.getIdclassification());
-                if (newclass == null)
-                    return new ResponseEntity("no classififcation founded by that id ", HttpStatus.BAD_REQUEST);
-                newclass.getSuppliers().add(user);
-                user.setSupplierclassification(newclass);
-            }
-            if (request.getIdnumber() != null)
-                supplier.setIdnumber(request.getIdnumber());
-
-            if (request.getIdType() != null)
-                supplier.setIdtype(request.getIdType());
-
-            if (request.getCompanyName() != null) {
-                supplier.setName(request.getCompanyName());
-            }
-
-            if (request.getSuppliernumber() != null) {
-                Supplier supp = this.supplierService.findBySuppliernumber(request.getSuppliernumber());
-                if (supp != null)
-                    return new ResponseEntity("this supplier number is already exist : " + request.getSuppliernumber(), HttpStatus.BAD_REQUEST);
-                supplier.setSuppliernumber(request.getSuppliernumber());
-
-            }
-            this.supplierService.update(supplier);
-        }
-
-        if (request.getIddepartment() != null) {
-            Department department = this.departmentService.FindById(request.getIddepartment());
-            if (department == null)
-                return new ResponseEntity("department not founded using this is : " + request.getIddepartment(), HttpStatus.NOT_FOUND);
-            user.setDepartment(department);
-        }
-        if (request.getIdroledepartment() != null) {
-            RoleDepartment roledep = this.roleDepartmentService.FindById(request.getIdroledepartment());
-            if (roledep == null)
-                return new ResponseEntity("role department not founded using this is : " + request.getIdroledepartment(), HttpStatus.NOT_FOUND);
-            user.setRoledepartment(roledep);
-        }
         String name = result.getFirstnameen() + result.getLastnameen();
         String username = userService.GenerateUserName(name, userService.Count());
         user.setUsername(username);
         this.userService.UpdateUser(user);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.PROFILE_MANAGEMENT,
-                currentuser
-        );
-        this.userActionService.Save(action);
-
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
     @PutMapping("/logout")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
         users currentUser = userService.findByUserName(getCurrentUser().getUsername());
         String deviceId = logOutRequest.getDeviceInfo().getDeviceId();
@@ -352,7 +215,7 @@ public class UsersController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_password"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity update_password(@RequestParam("oldpassword") String oldpassword, @RequestParam("newpassword") String newpassword) throws IOException {
         users currentUser = userService.findByUserName(getCurrentUser().getUsername());
         final Authentication authentication = authenticationManager.authenticate(
@@ -367,7 +230,7 @@ public class UsersController extends BaseController {
 
 
     @GetMapping(value = {"/get_user/{userid}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<users> get_user_by_id(@PathVariable Long userid) throws IOException {
         if (!this.userService.existbyid(userid))
             return new ResponseEntity("user not exist", HttpStatus.NOT_FOUND);
@@ -376,37 +239,8 @@ public class UsersController extends BaseController {
     }
 
 
-    @GetMapping(value = {"/all"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
-    @ApiOperation(value = "get all users by role and status for admin", notes = "Endpoint to get users")
-    @ApiResponses(value = {
-            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
-    })
-    public ResponseEntity<DynamicResponse> all(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "5") int size, @RequestParam String role, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String name, @RequestParam(required = false) Boolean verified) throws IOException {
-        boolean exist = this.roleService.existsByRole(RoleEnum.valueOf(role));
-        if (!exist)
-            throw new ResourceNotFoundException("ROLE " + role + " Is Not Found");
-        return new ResponseEntity<>(this.criteriaService.filterAllUser(page, size, active, name, RoleEnum.valueOf(role), verified), HttpStatus.OK);
-    }
-
-
-    @GetMapping(value = {"/all_users_list_by_role"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
-    @ApiOperation(value = "get all users by role and status for admin", notes = "Endpoint to get users")
-    @ApiResponses(value = {
-            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
-    })
-    public ResponseEntity<List<UserShortDto>> all_users_list_by_role(@RequestParam RoleEnum role) throws IOException {
-        List<users> user = null;
-        user = this.userService.allusersByRole(role);
-        List<UserShortDto> shortuser = user.stream().map(UserShortDto::mapToUserShortDTO)
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(shortuser, HttpStatus.OK);
-    }
-
-
     @GetMapping(value = {"/users_list"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all users' short form for admin", notes = "Endpoint to get users")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
@@ -420,7 +254,7 @@ public class UsersController extends BaseController {
     }
 
     @GetMapping(value = {"/all_users_list_by_roles_list"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER') ")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all users by role and status for admin", notes = "Endpoint to get users")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
@@ -434,7 +268,7 @@ public class UsersController extends BaseController {
     }
 
     @PatchMapping(value = {"/verified/{id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "update user verified to the opposit", notes = "Endpoint to update user's verified attribute")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
@@ -448,146 +282,8 @@ public class UsersController extends BaseController {
     }
 
 
-    @PostMapping(value = {"/add_Billing_Address/{id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    @ApiOperation(value = "add Billing address", notes = "Endpoint to add billing address to a supplier")
-    @ApiResponses(value = {
-            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
-            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, check the data phone_number or email or first-name-ar or first-name-en or last-name-en or last-name-ar is null"),
-            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
-            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
-    })
-    public ResponseEntity<users> addUserBillingAddress(@PathVariable Long id, @RequestBody BillingAddressRequest request) throws IOException, InterruptedException, MessagingException {
-        List<String> nullFields = new ArrayList<>();
-
-        if (request.getEmail() == null) {
-            nullFields.add("email");
-        }
-        if (request.getFirstname() == null) {
-            nullFields.add("firstname");
-        }
-        if (request.getLastname() == null) {
-            nullFields.add("lastname");
-        }
-        if (request.getBillingaddress() == null) {
-            nullFields.add("billingaddress");
-        }
-        if (request.getZipcode() == null) {
-            nullFields.add("zipcode");
-        }
-        if (request.getCity() == null) {
-            nullFields.add("city");
-        }
-        if (request.getPhonenumber() == null) {
-            nullFields.add("phonenumber");
-        }
-        // Check if any field is null
-        if (!nullFields.isEmpty()) {
-            String errorMessage;
-            if (nullFields.size() == 1) {
-                errorMessage = "Bad request, the following field is null: " + nullFields.get(0);
-            } else {
-                errorMessage = "Bad request, the following fields are null: " + String.join(", ", nullFields);
-            }
-            return new ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST);
-        }
-
-        users user = this.userService.findById(id);
-        if (user == null) {
-            return new ResponseEntity("User not found", HttpStatus.NOT_FOUND);
-        }
-        users updatedUser = this.userService.addBillingAddres(user, request);
-        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.BILLING_ADDRESS_MANAGEMENT,
-                currentuser
-        );
-        this.userActionService.Save(action);
-
-        if (updatedUser != null) {
-            return ResponseEntity.ok(updatedUser);
-        } else {
-            return new ResponseEntity("Failed to add billing address", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-    @PatchMapping(value = {"/update_Billing_Address/{userId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    @ApiOperation(value = "Update Billing address", notes = "Endpoint to update billing address of a user")
-    @ApiResponses(value = {
-            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully updated"),
-            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, no attribute provided for update"),
-            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not an admin"),
-            @io.swagger.annotations.ApiResponse(code = 404, message = "billing address not found"),
-            @io.swagger.annotations.ApiResponse(code = 500, message = "Failed to update billing address")
-    })
-    public ResponseEntity<BillingAddress> updateUserBillingAddress(@PathVariable Long userId, @RequestBody BillingAddressRequest request) throws IOException, InterruptedException, MessagingException {
-        // Check if at least one attribute is provided for the update
-        if (request.getEmail() == null && request.getFirstname() == null && request.getLastname() == null &&
-                request.getBillingaddress() == null && request.getCountry() == null && request.getZipcode() == null &&
-                request.getCity() == null && request.getState() == null && request.getPhonenumber() == null) {
-            return new ResponseEntity("At least one attribute should be provided for update", HttpStatus.BAD_REQUEST);
-        }
-        users user = this.userService.findById(userId);
-        if (user == null) {
-            return new ResponseEntity("user is not found", HttpStatus.NOT_FOUND);
-        }
-        BillingAddress billingAddress = user.getBillingAddress();
-        if (user.getBillingAddress() != null) {
-            billingAddress = user.getBillingAddress();
-        } else {
-            billingAddress = this.billingAddressService.saveBiLLAddress(billingAddress);
-            user.setBillingAddress(billingAddress);
-            this.userService.UpdateUser(user);
-        }
-
-        billingAddress = this.billingAddressService.updateBillingAddress(billingAddress, request);
-        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.BILLING_ADDRESS_MANAGEMENT,
-                currentuser
-        );
-        this.userActionService.Save(action);
-        if (billingAddress != null) {
-            return ResponseEntity.ok(billingAddress);
-        } else {
-            return new ResponseEntity("Failed to update billing address", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-    @GetMapping(value = {"billing_Address/{billingId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
-    @ApiResponses(value = {
-            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully retrieved user details"),
-            @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
-            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, access denied. Requires admin role"),
-            @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable , the id is not valid")
-    })
-    public ResponseEntity<BillingAddress> getBillingAddress(@PathVariable Long billingId) throws IOException {
-        BillingAddress billingAddress = this.billingAddressService.findBillingAddressById(billingId);
-        users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.BILLING_ADDRESS_MANAGEMENT,
-                currentuser
-        );
-        this.userActionService.Save(action);
-        if (billingAddress != null) {
-            return ResponseEntity.ok(billingAddress);
-        } else {
-            return new ResponseEntity("Failed to fetch billing address", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-
-    }
-
-
     @PostMapping(value = {"/add_Bank_account/{id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')  or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "add Billing address", notes = "Endpoint to add billing address to a supplier")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
@@ -624,14 +320,9 @@ public class UsersController extends BaseController {
         if (user == null) {
             return new ResponseEntity("Can't find user by that id", HttpStatus.BAD_REQUEST);
         }
-        BankInformation b = this.userService.addBankAccounToUser(user, request, ibanattachment);
+        BankInformation b = this.userService.addBankAccounToUser(user, request);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.BANK_ACCOUNT_MANAGEMENT,
-                currentuser
-        );
-        this.userActionService.Save(action);
+
         if (b != null) {
             return ResponseEntity.ok(this.userService.findById(id));
         } else {
@@ -641,7 +332,7 @@ public class UsersController extends BaseController {
 
 
     @PatchMapping(value = {"/update_Bank_account/{userId}/{bankInfoId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Update Bank Account", notes = "Endpoint to update bank account of a user")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully updated"),
@@ -671,11 +362,6 @@ public class UsersController extends BaseController {
 
         bankInformation = this.bankAccountService.updateBankInfo(bankInformation, request);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.BANK_ACCOUNT_MANAGEMENT,
-                currentuser
-        );
         if (bankInformation != null) {
             return ResponseEntity.ok(bankInformation);
         } else {
@@ -685,7 +371,7 @@ public class UsersController extends BaseController {
 
 
     @GetMapping(value = {"bank_information/{bankInformationId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully retrieved user details"),
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
@@ -695,11 +381,7 @@ public class UsersController extends BaseController {
     public ResponseEntity<BankInformation> getBankInformation(@PathVariable Long bankInformationId) throws IOException {
         BankInformation bankInformation = this.bankAccountService.findById(bankInformationId);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.BANK_ACCOUNT_MANAGEMENT,
-                currentuser
-        );
+
         if (bankInformation != null) {
             return ResponseEntity.ok(bankInformation);
         } else {
@@ -710,7 +392,7 @@ public class UsersController extends BaseController {
     }
 
     @PostMapping(value = {"/add_Address/{id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "add user address ", notes = "Endpoint to add address to user")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
@@ -756,12 +438,6 @@ public class UsersController extends BaseController {
         users user = this.userService.findById(id);
         Address result = this.userService.addAddressToUser(user, request);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.PROFILE_MANAGEMENT,
-                currentuser
-        );
-        this.userActionService.Save(action);
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
@@ -771,7 +447,7 @@ public class UsersController extends BaseController {
 
 
     @PatchMapping(value = {"/update_Address/{userId}/{addressId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Update user address", notes = "Endpoint to update user address")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully updated"),
@@ -811,12 +487,7 @@ public class UsersController extends BaseController {
         // Update the address of the user
         Address result = this.addressServices.updateAddress(address, request);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.PROFILE_MANAGEMENT,
-                currentuser
-        );
-        this.userActionService.Save(action);
+
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
@@ -825,7 +496,7 @@ public class UsersController extends BaseController {
     }
 
     @PatchMapping(value = {"/activated/{id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "update user activation to the opposit", notes = "Endpoint to update user's activate attribute")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully add"),
@@ -840,7 +511,7 @@ public class UsersController extends BaseController {
 
 
     @GetMapping(value = {"address/{id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully retrieved user details"),
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
@@ -850,12 +521,7 @@ public class UsersController extends BaseController {
     public ResponseEntity<Address> getAddressUser(@PathVariable Long id) throws IOException {
         Address result = this.addressServices.findById(id);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.PROFILE_MANAGEMENT,
-                currentuser
-        );
-        this.userActionService.Save(action);
+
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
@@ -867,7 +533,7 @@ public class UsersController extends BaseController {
 
 
     @DeleteMapping(value = {"/{user_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN') or hasRole('SUPPLIER') or hasRole('SUB_SUPPLIER') or hasRole('SUB_DEALER') or hasRole('SUB_SUB_DEALER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<users> daleteUserAddTimeStamp(@PathVariable Long user_id) {
         users me = userService.findByUserName(getCurrentUser().getUsername());
         users user = this.userService.findById(user_id);
@@ -885,7 +551,7 @@ public class UsersController extends BaseController {
 
 
     @DeleteMapping(value = {"bank_information/{bankInformationId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully deleted Bank Information"),
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
@@ -896,18 +562,13 @@ public class UsersController extends BaseController {
         BankInformation bankInformation = this.bankAccountService.findById(bankInformationId);
         this.bankAccountService.deleteBankInformation(bankInformation);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
-        //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.BANK_ACCOUNT_MANAGEMENT,
-                currentuser
-        );
-        this.userActionService.Save(action);
+
         return new ResponseEntity<>("Bank Information deleted successfully", HttpStatus.OK);
     }
 
 
     @DeleteMapping(value = {"address/{addressId}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully deleted Bank Information"),
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request, invalid ID format or missing Id"),
@@ -918,11 +579,7 @@ public class UsersController extends BaseController {
         Address Address = this.addressServices.findById(addressId);
         users currentuser = userService.findByUserName(getCurrentUser().getUsername());
         //save new action
-        UserAction action = new UserAction(
-                UserActionsEnum.PROFILE_MANAGEMENT,
-                currentuser
-        );
-        this.userActionService.Save(action);
+
         this.addressServices.deleteAddress(Address);
         return new ResponseEntity<>("Address deleted successfully", HttpStatus.OK);
     }

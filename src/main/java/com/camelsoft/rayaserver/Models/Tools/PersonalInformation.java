@@ -1,7 +1,6 @@
 package com.camelsoft.rayaserver.Models.Tools;
 
-import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
-import com.camelsoft.rayaserver.Enum.Project.Loan.WorkSector;
+
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -52,10 +51,6 @@ public class PersonalInformation implements Serializable {
     private Integer numberofdependents;
     @Column(name = "gender")
     private Gender gender = Gender.NONE;
-    @Column(name = "worksector")
-    private WorkSector worksector=WorkSector.NONE;
-    @Column(name = "maritalstatus")
-    private MaritalStatus maritalstatus = MaritalStatus.NONE;
     @Column(name = "timestmp")
     private Date timestmp = new Date();
     @OneToOne(mappedBy = "personalinformation")

@@ -47,10 +47,6 @@ public class users implements Serializable {
     private String name;
     @Column(name = "phone_number")
     private String phonenumber;
-    @Column(name = "vat_number")
-    private String vatnumber;
-    @Column(name = "provider")
-    private Provider provider = Provider.local;
     @Column(name = "suspend_reason")
     private String suspendraison = "NO RAISON FOUND";
     @ManyToOne(fetch = FetchType.EAGER)
@@ -62,36 +58,25 @@ public class users implements Serializable {
     @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "personal_id", referencedColumnName = "personal_information_id")
     private PersonalInformation personalinformation;
-    @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "configuration_user_id", referencedColumnName = "configuration_id")
-    private UserConfiguration userconfiguration;
-
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "users_table_documents")
     private Set<MediaModel> documents = new HashSet<>();
+    @Column(name = "provider")
+    private Provider provider = Provider.local;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "users_table_attachmentchat_media")
     private Set<MediaModel> attachmentchat = new HashSet<>();
-    @OneToMany(mappedBy = "createdby", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Set<Invoice> invoicescreated = new HashSet<>();
-    @OneToMany(mappedBy = "confirmedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Set<Invoice> invoicesconfirmed = new HashSet<>();
+
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.EAGER)
     private Set<Address> addresses = new HashSet<>();
-    @OneToMany(mappedBy = "relatedto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Set<Invoice> invoicesrecived = new HashSet<>();
 
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "participants")
     @JsonIgnore
-    private Set<RequestCorrespondence> requestcorrespendencessended = new HashSet<>();
-    @OneToMany(mappedBy = "creatorrequest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Set<Request> requests = new HashSet<>();
+    private Set<Mission> missions = new HashSet<>();
+
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "manager_id")
@@ -100,9 +85,6 @@ public class users implements Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<BankInformation> bankinformations = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "billing_address_id")
-    private BillingAddress billingAddress;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_privileges",
             joinColumns =
@@ -110,25 +92,6 @@ public class users implements Serializable {
             inverseJoinColumns =
             @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
     private Set<Privilege> privileges = new HashSet<>();
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "supplier_id", referencedColumnName = "id")
-    private Supplier supplier;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<PurshaseOrder> purchaseOrders = new HashSet<>();
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "department_id")
-    private Department department;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "role_department_id")
-    private RoleDepartment roledepartment;
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserAction> actions = new HashSet<>();
-
     @Column(name = "active")
     private Boolean active = true;
     @Column(name = "verified")
@@ -139,44 +102,6 @@ public class users implements Serializable {
     private String lastotp;
     @Column(name = "timestmp")
     private Date timestmp = new Date();
-
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "categories_user",
-            joinColumns =
-            @JoinColumn(name = "usar_id", referencedColumnName = "user_id"),
-            inverseJoinColumns =
-            @JoinColumn(name = "category_id", referencedColumnName = "id"))
-    private Set<UsersCategory> categoriesforevents = new HashSet<>();
-
-    @JsonIgnore
-    @ManyToMany(mappedBy = "usersevents", fetch = FetchType.EAGER)
-    private Set<Event> events = new HashSet<>();
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "classification_id")
-    private SuppliersClassification supplierclassification;
-
-    @JsonIgnore
-    @OneToOne
-    @JoinColumn(name = "subadmin_classification_id")
-    private SuppliersClassification subadminClassification;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "subadminassignedto", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<PurshaseOrder> poassigned = new HashSet<>();
-
-    @Transient
-    private String supplierCompanyName;
-
-
-    @Transient
-    private Long idsubadminclassification;
-
-    @Transient
-    private String namesubadminclassification;
-
 
     public users() {
 
@@ -204,60 +129,7 @@ public class users implements Serializable {
         if (this.personalinformation != null) {
             this.name = this.personalinformation.getFirstnameen() + " " + this.personalinformation.getLastnameen();
         }
-        if(this.supplier != null) {
-            this.supplier.setName(this.name);
-            if(this.supplier.getName() != null) {
-                this.supplierCompanyName = this.supplier.getName();
-            }
-            if(this.supplierclassification != null) {
-                this.supplier.setClassificationname(this.supplierclassification.getName());
-            }
-        }else{
-            this.supplierCompanyName = "";
-        }
 
-        if(subadminClassification != null){
-            idsubadminclassification = subadminClassification.getId();
-            namesubadminclassification = subadminClassification.getName();
-
-        }
-        if(supplierclassification != null){
-            this.supplier.setClassificationname(supplierclassification.getName());
-            this.supplier.setClassificationId(supplierclassification.getId());
-        }
-    }
-
-    public void addAddress(Address address) {
-        this.addresses.add(address);
-    }
-
-    public Set<Invoice> getInvoicesconfirmed() {
-        return invoicesconfirmed;
-    }
-
-    public void setInvoicesconfirmed(Set<Invoice> invoicesconfirmed) {
-        this.invoicesconfirmed = invoicesconfirmed;
-    }
-
-    public String getSupplierCompanyName() {
-        return supplierCompanyName;
-    }
-
-    public void setSupplierCompanyName(String supplierCompanyName) {
-        this.supplierCompanyName = supplierCompanyName;
-    }
-
-    public UserConfiguration getUserconfiguration() {
-        return userconfiguration;
-    }
-
-    public void setUserconfiguration(UserConfiguration userconfiguration) {
-        this.userconfiguration = userconfiguration;
-    }
-
-    @Override
-    public int hashCode() {
-        return 31; // Replace with any prime number
     }
 
     public Long getId() {
@@ -268,27 +140,27 @@ public class users implements Serializable {
         this.id = id;
     }
 
-    public String getUsername() {
+    public @Length(min = 5, message = "*Your user name must have at least 5 characters") @NotEmpty(message = "*Please provide a user name") String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(@Length(min = 5, message = "*Your user name must have at least 5 characters") @NotEmpty(message = "*Please provide a user name") String username) {
         this.username = username;
     }
 
-    public String getEmail() {
+    public @Email(message = "*Please provide a valid Email") @NotEmpty(message = "*Please provide an email") String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(@Email(message = "*Please provide a valid Email") @NotEmpty(message = "*Please provide an email") String email) {
         this.email = email;
     }
 
-    public String getPassword() {
+    public @Length(min = 5, message = "*Your password must have at least 5 characters") @NotEmpty(message = "*Please provide your password") String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(@Length(min = 5, message = "*Your password must have at least 5 characters") @NotEmpty(message = "*Please provide your password") String password) {
         this.password = password;
     }
 
@@ -306,14 +178,6 @@ public class users implements Serializable {
 
     public void setPhonenumber(String phonenumber) {
         this.phonenumber = phonenumber;
-    }
-
-    public Provider getProvider() {
-        return provider;
-    }
-
-    public void setProvider(Provider provider) {
-        this.provider = provider;
     }
 
     public String getSuspendraison() {
@@ -348,14 +212,6 @@ public class users implements Serializable {
         this.personalinformation = personalinformation;
     }
 
-    public Set<UserAction> getActions() {
-        return actions;
-    }
-
-    public void setActions(Set<UserAction> actions) {
-        this.actions = actions;
-    }
-
     public Set<MediaModel> getDocuments() {
         return documents;
     }
@@ -364,12 +220,12 @@ public class users implements Serializable {
         this.documents = documents;
     }
 
-    public Set<Invoice> getInvoicescreated() {
-        return invoicescreated;
+    public Set<MediaModel> getAttachmentchat() {
+        return attachmentchat;
     }
 
-    public void setInvoicescreated(Set<Invoice> invoicescreated) {
-        this.invoicescreated = invoicescreated;
+    public void setAttachmentchat(Set<MediaModel> attachmentchat) {
+        this.attachmentchat = attachmentchat;
     }
 
     public Set<Address> getAddresses() {
@@ -380,44 +236,12 @@ public class users implements Serializable {
         this.addresses = addresses;
     }
 
-    public Set<Invoice> getInvoicesrecived() {
-        return invoicesrecived;
+    public users getManager() {
+        return manager;
     }
 
-    public void setInvoicesrecived(Set<Invoice> invoicesrecived) {
-        this.invoicesrecived = invoicesrecived;
-    }
-
-    public Set<RequestCorrespondence> getRequestcorrespendencessended() {
-        return requestcorrespendencessended;
-    }
-
-    public void setRequestcorrespendencessended(Set<RequestCorrespondence> requestcorrespendencessended) {
-        this.requestcorrespendencessended = requestcorrespendencessended;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    public RoleDepartment getRoledepartment() {
-        return roledepartment;
-    }
-
-    public void setRoledepartment(RoleDepartment roledepartment) {
-        this.roledepartment = roledepartment;
-    }
-
-    public Set<Request> getRequests() {
-        return requests;
-    }
-
-    public void setRequests(Set<Request> requests) {
-        this.requests = requests;
+    public void setManager(users manager) {
+        this.manager = manager;
     }
 
     public Set<BankInformation> getBankinformations() {
@@ -428,36 +252,12 @@ public class users implements Serializable {
         this.bankinformations = bankinformations;
     }
 
-    public BillingAddress getBillingAddress() {
-        return billingAddress;
-    }
-
-    public void setBillingAddress(BillingAddress billingAddress) {
-        this.billingAddress = billingAddress;
-    }
-
     public Set<Privilege> getPrivileges() {
         return privileges;
     }
 
     public void setPrivileges(Set<Privilege> privileges) {
         this.privileges = privileges;
-    }
-
-    public Supplier getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
-    }
-
-    public Set<PurshaseOrder> getPurchaseOrders() {
-        return purchaseOrders;
-    }
-
-    public void setPurchaseOrders(Set<PurshaseOrder> purchaseOrders) {
-        this.purchaseOrders = purchaseOrders;
     }
 
     public Boolean getActive() {
@@ -500,88 +300,29 @@ public class users implements Serializable {
         this.timestmp = timestmp;
     }
 
-    public Set<MediaModel> getAttachmentchat() {
-        return attachmentchat;
+    public Provider getProvider() {
+        return provider;
     }
 
-    public void setAttachmentchat(Set<MediaModel> attachmentchat) {
-        this.attachmentchat = attachmentchat;
+    public void setProvider(Provider provider) {
+        this.provider = provider;
     }
 
-    public users getManager() {
-        return manager;
+    public Set<Mission> getMissions() {
+        return missions;
     }
 
-    public void setManager(users manager) {
-        this.manager = manager;
+    public void setMissions(Set<Mission> missions) {
+        this.missions = missions;
     }
 
-    public Set<UsersCategory> getCategoriesforevents() {
-        return categoriesforevents;
+    public void addMission(Mission mission) {
+        this.missions.add(mission);
+        mission.getParticipants().add(this);
     }
 
-    public void setCategoriesforevents(Set<UsersCategory> categories) {
-        this.categoriesforevents = categories;
-    }
-
-    public Set<Event> getEvents() {
-        return events;
-    }
-
-    public void setEvents(Set<Event> events) {
-        this.events = events;
-    }
-
-    public SuppliersClassification getSupplierclassification() {
-        return supplierclassification;
-    }
-
-    public void setSupplierclassification(SuppliersClassification supplierclassification) {
-        this.supplierclassification = supplierclassification;
-    }
-
-    public Set<PurshaseOrder> getPoassigned() {
-        return poassigned;
-    }
-
-    public void setPoassigned(Set<PurshaseOrder> poassigned) {
-        this.poassigned = poassigned;
-    }
-
-    public void addUsersPrivilege(Privilege privilege) {
-        privileges.add(privilege);
-        privilege.getUser().add(this);
-    }
-
-    public SuppliersClassification getSubadminClassification() {
-        return subadminClassification;
-    }
-
-    public void setSubadminClassification(SuppliersClassification subadminClassification) {
-        this.subadminClassification = subadminClassification;
-    }
-
-    public Long getIdsubadminclassification() {
-        return idsubadminclassification;
-    }
-
-    public void setIdsubadminclassification(Long idsubadminclassification) {
-        this.idsubadminclassification = idsubadminclassification;
-    }
-
-    public String getNamesubadminclassification() {
-        return namesubadminclassification;
-    }
-
-    public void setNamesubadminclassification(String namesubadminclassification) {
-        this.namesubadminclassification = namesubadminclassification;
-    }
-
-    public String getVatnumber() {
-        return vatnumber;
-    }
-
-    public void setVatnumber(String vatnumber) {
-        this.vatnumber = vatnumber;
+    public void removeMission(Mission mission) {
+        this.missions.remove(mission);
+        mission.getParticipants().remove(this);
     }
 }

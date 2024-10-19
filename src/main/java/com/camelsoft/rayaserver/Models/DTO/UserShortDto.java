@@ -11,9 +11,7 @@ public class UserShortDto {
     private String name;
     private String pic;
     private String email;
-    private String subadminclassname;
-    private String supplierclassificationname;
-    private Long supplierclassificationid;
+
 
     public static UserShortDto mapToUserShortDTO(users user) {
         UserShortDto dto = new UserShortDto();
@@ -30,12 +28,7 @@ public class UserShortDto {
 
         dto.setPic(user.getProfileimage() != null ? user.getProfileimage().getUrl() : null);
         dto.setEmail(user.getEmail());
-        if(user.getRole().getRole() == RoleEnum.ROLE_SUB_ADMIN && user.getSubadminClassification() != null)
-            dto.setSubadminclassname(user.getSubadminClassification().getName());
-        if((user.getRole().getRole() == RoleEnum.ROLE_SUPPLIER || user.getRole().getRole() == RoleEnum.ROLE_SUB_DEALER)  && user.getSupplierclassification() != null){
-            dto.setSupplierclassificationname(user.getSupplierclassification().getName());
-            dto.setSupplierclassificationid(user.getSupplierclassification().getId());
-        }
+
 
         return dto;
     }

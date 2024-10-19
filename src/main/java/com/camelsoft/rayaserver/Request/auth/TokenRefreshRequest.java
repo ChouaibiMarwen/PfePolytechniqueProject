@@ -13,8 +13,8 @@ public class TokenRefreshRequest {
     private String deviceType;
     @NotBlank
     private String ip;
-   @NotBlank
-   private String tokendevice;
+    @NotBlank
+    private String tokendevice;
 
     public String getTokendevice() {
         return tokendevice;
@@ -64,3 +64,4 @@ public class TokenRefreshRequest {
         this.ip = ip;
     }
 }
+

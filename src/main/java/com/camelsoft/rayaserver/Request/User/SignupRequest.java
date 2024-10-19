@@ -1,6 +1,5 @@
 package com.camelsoft.rayaserver.Request.User;
 
-import com.camelsoft.rayaserver.Enum.Project.Loan.MaritalStatus;
 import com.camelsoft.rayaserver.Enum.User.Gender;
 import lombok.Data;
 
@@ -18,7 +17,6 @@ public class SignupRequest {
     private Gender gender;
     private String phonenumber;
     private Date birthDate;
-    private MaritalStatus maritalstatus = MaritalStatus.NONE;
     private Long[] ids;
 
 }
