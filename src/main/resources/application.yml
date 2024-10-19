@@ -49,7 +49,7 @@ spring:
     serialization:
       fail-on-empty-beans: false
   application:
-    name: rayaserver
+    name: pfeserver
   #  change profiles active to test or productions
   devtools:
     restart:

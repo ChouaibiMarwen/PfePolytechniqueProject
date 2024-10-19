@@ -16,15 +16,4 @@ import java.io.IOException;
 public class FireBaseConfInitialiser {
     Logger logger = LoggerFactory.getLogger(FireBaseConfInitialiser.class);
 
- /*   @Bean
-    FirebaseMessaging firebaseMessaging() throws IOException {
-        GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource("firebase-service-account.json").getInputStream());
-        FirebaseOptions firebaseOptions = FirebaseOptions.builder()
-                .setCredentials(googleCredentials)
-                .build();
-        FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "Raven");
-        logger.info("Firebase application has been initialized");
-        return FirebaseMessaging.getInstance(app);
-    }*/
 }
