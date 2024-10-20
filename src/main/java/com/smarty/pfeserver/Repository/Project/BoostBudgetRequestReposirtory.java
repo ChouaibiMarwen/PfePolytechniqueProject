@@ -1,5 +1,6 @@
 package com.smarty.pfeserver.Repository.Project;
 
+import com.smarty.pfeserver.Enum.TransactionEnum;
 import com.smarty.pfeserver.Models.Project.BoostBudgetRequest;
 import com.smarty.pfeserver.Models.User.users;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,5 @@ import java.util.List;
 public interface BoostBudgetRequestReposirtory extends JpaRepository<BoostBudgetRequest, Long> {
 
     List<BoostBudgetRequest> findAllByCreatedbyOrderByTimestampDesc(users user);
+    Integer countByStatus(TransactionEnum status);
 }

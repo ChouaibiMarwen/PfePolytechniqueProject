@@ -1,5 +1,6 @@
 package com.smarty.pfeserver.Services.Project;
 
+import com.smarty.pfeserver.Enum.TransactionEnum;
 import com.smarty.pfeserver.Models.Project.BoostBudgetRequest;
 import com.smarty.pfeserver.Models.User.users;
 import com.smarty.pfeserver.Repository.Project.BoostBudgetRequestReposirtory;
@@ -87,6 +88,10 @@ public class BoostBudgetRequestService {
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
+    }
+
+    public Integer CountByStatus(TransactionEnum status) {
+        return this.repository.countByStatus(status);
     }
 
 }

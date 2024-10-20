@@ -323,6 +323,10 @@ public class UserService extends BaseController implements UserDetailsService {
         }
     }
 
+    public Long countusersbyRole(RoleEnum roleEnums) {
+         Role role =  this.roleRepository.findByRole(roleEnums);
+        return this.userRepository.countAllByRole(role);
+    }
 
     public List<users> getUsersByRoles(List<RoleEnum> roleEnums) {
         try {

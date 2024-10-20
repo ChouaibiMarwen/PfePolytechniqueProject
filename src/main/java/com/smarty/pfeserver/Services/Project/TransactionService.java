@@ -1,9 +1,11 @@
 package com.smarty.pfeserver.Services.Project;
 
+import com.smarty.pfeserver.Enum.TransactionEnum;
 import com.smarty.pfeserver.Models.Project.Transaction;
 import com.smarty.pfeserver.Repository.Project.TransactionRepository;
 import com.smarty.pfeserver.Response.Project.DynamicResponse;
 import com.smarty.pfeserver.Tools.Exception.NotFoundException;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -82,6 +84,10 @@ public class TransactionService {
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(ex.getMessage());
         }
+    }
+
+    public Integer CountByStatus(TransactionEnum status) {
+        return this.repository.countByStatus(status);
     }
     
 }

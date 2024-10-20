@@ -1,5 +1,6 @@
 package com.smarty.pfeserver.Services.Project;
 
+import com.smarty.pfeserver.Enum.Project.MissionStatusEnum;
 import com.smarty.pfeserver.Enum.TransactionEnum;
 import com.smarty.pfeserver.Models.Project.Mission;
 import com.smarty.pfeserver.Models.Project.Transaction;
@@ -127,5 +128,20 @@ public class MissionService {
         else
             return true;
 
+    }
+
+
+    public Integer countallByStatus(MissionStatusEnum status){
+        return this.repository.countByStatus(status);
+    }
+
+    public Double totalmessionsBudgetcount() {
+        List<Mission> missions = this.findAll();
+
+        Double total = 0.0;
+        for(Mission tran : missions){
+            total += tran.getBudget();
+        }
+        return total;
     }
 }
