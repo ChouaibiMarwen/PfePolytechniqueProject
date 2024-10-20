@@ -200,6 +200,21 @@ public class BoostBudgetRequestController extends BaseController {
 
     }
 
+    @GetMapping(value = {"/get_request_by_id/{request_id}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN') ")
+    @ApiOperation(value = "get mission request by id for admin and teamlead", notes = "Endpoint to get mission request lit for admin and teamlead")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully add"),
+            @ApiResponse(code = 400, message = "Bad request, check required fields"),
+            @ApiResponse(code = 403, message = "Forbidden")
+    })
+    public ResponseEntity<BoostBudgetRequest> get_request_by_id(@PathVariable Long request_id) throws IOException {
+        users currentuser = this.userService.findByUserName(getCurrentUser().getUsername());
+        BoostBudgetRequest request = this.boostBudgetRequestService.FindById(request_id);
+        if (request == null)
+            return new ResponseEntity("request not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(request, HttpStatus.OK);
+    }
 
     @GetMapping(value = {"/get_all_my_requests_pg"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN') ")
