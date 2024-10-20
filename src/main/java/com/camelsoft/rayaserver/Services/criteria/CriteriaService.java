@@ -7,6 +7,7 @@ import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Auth.Role;
 import com.camelsoft.rayaserver.Models.Project.Invoice;
 import com.camelsoft.rayaserver.Models.Project.Mission;
+import com.camelsoft.rayaserver.Models.Project.Transaction;
 import com.camelsoft.rayaserver.Models.Tools.PersonalInformation;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.camelsoft.rayaserver.Repository.Auth.RoleRepository;
@@ -136,5 +137,53 @@ public class CriteriaService {
         return query.getResultList();
     }
 
+    public List<Transaction> getFilteredTransactions(String missionTitle, Long missionId, Long technicianId, Date startDate, Date endDate) {
+        // Step 1: Create a CriteriaQuery for Transaction
+        CriteriaQuery<Transaction> criteriaQuery = criteriaBuilder.createQuery(Transaction.class);
+        Root<Transaction> transactionRoot = criteriaQuery.from(Transaction.class);
+
+        // Step 2: Initialize a list to hold the filtering conditions (Predicates)
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Step 3: Joins and filtering logic
+
+        // Join Transaction with Mission
+        Join<Transaction, Mission> missionJoin = transactionRoot.join("mission", JoinType.INNER);
+
+        // Filter by mission title (if provided)
+        if (missionTitle != null && !missionTitle.isEmpty()) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(missionJoin.get("title")), "%" + missionTitle.toLowerCase() + "%"));
+        }
+
+        // Filter by mission ID (if provided)
+        if (missionId != null) {
+            predicates.add(criteriaBuilder.equal(missionJoin.get("id"), missionId));
+        }
+
+        // Filter by createdBy user (technician) ID (if provided)
+        if (technicianId != null) {
+            Join<Transaction, users> createdByJoin = transactionRoot.join("createdby", JoinType.INNER);
+            predicates.add(criteriaBuilder.equal(createdByJoin.get("id"), technicianId));
+        }
+
+        // Filter by start date (if provided)
+        if (startDate != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(transactionRoot.get("timestamp"), startDate));
+        }
+
+        // Filter by end date (if provided)
+        if (endDate != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(transactionRoot.get("timestamp"), endDate));
+        }
+
+        // Step 4: Apply the predicates (filtering conditions) to the query
+        criteriaQuery.where(predicates.toArray(new Predicate[0]));
+
+        // Step 5: Add ordering by timestamp in descending order
+        criteriaQuery.orderBy(criteriaBuilder.desc(transactionRoot.get("timestamp")));
+
+        // Step 6: Execute the query and return the results
+        return em.createQuery(criteriaQuery).getResultList();
+    }
 
 }

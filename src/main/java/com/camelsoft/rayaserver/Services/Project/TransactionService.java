@@ -1,10 +1,7 @@
 package com.camelsoft.rayaserver.Services.Project;
 
-import com.camelsoft.rayaserver.Enum.TransactionEnum;
-import com.camelsoft.rayaserver.Models.Project.Mission;
 import com.camelsoft.rayaserver.Models.Project.Transaction;
-import com.camelsoft.rayaserver.Models.User.users;
-import com.camelsoft.rayaserver.Repository.Project.MissionRepository;
+import com.camelsoft.rayaserver.Repository.Project.TransactionRepository;
 import com.camelsoft.rayaserver.Response.Project.DynamicResponse;
 import com.camelsoft.rayaserver.Tools.Exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,20 +9,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
-public class MissionService {
+public class TransactionService {
 
     @Autowired
-    private MissionRepository repository;
-    @Autowired
-    private TransactionService transactionService;
-    public Mission Save(Mission model) {
+    private TransactionRepository repository;
+    public Transaction Save(Transaction model) {
         try {
             return this.repository.save(model);
         } catch (NoSuchElementException ex) {
@@ -34,7 +26,7 @@ public class MissionService {
 
     }
 
-    public Mission Update(Mission model) {
+    public Transaction Update(Transaction model) {
         try {
             return this.repository.save(model);
         } catch (NoSuchElementException ex) {
@@ -44,7 +36,7 @@ public class MissionService {
     }
 
 
-    public Mission FindById(Long id) {
+    public Transaction FindById(Long id) {
         try {
             if (this.repository.findById(id).isPresent())
                 return this.repository.findById(id).get();
@@ -60,7 +52,7 @@ public class MissionService {
 
 
             PageRequest pg = PageRequest.of(page, size);
-            Page<Mission> pckge = this.repository.findAll(pg);
+            Page<Transaction> pckge = this.repository.findAll(pg);
             return new DynamicResponse(pckge.getContent(), pckge.getNumber(), pckge.getTotalElements(), pckge.getTotalPages());
 
         } catch (NoSuchElementException ex) {
@@ -68,7 +60,7 @@ public class MissionService {
         }
 
     }
-    public List<Mission> findAll() {
+    public List<Transaction> findAll() {
         try {
             return this.repository.findAll();
         } catch (NoSuchElementException ex) {
@@ -91,41 +83,5 @@ public class MissionService {
             throw new NotFoundException(ex.getMessage());
         }
     }
-
-    public boolean hasMissionInPeriod(Date startDate, Date endDate, users user) {
-        Set<Mission> missions = user.getMissions();
-        for (Mission mission : missions) {
-            if (isDateRangeOverlapping(startDate, endDate, mission.getStartdate(), mission.getEnddate())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isDateRangeOverlapping(Date start1, Date end1, Date start2, Date end2) {
-        return (start1.before(end2) || start1.equals(end2)) && (end1.after(start2) || end1.equals(start2));
-    }
-
-
-    public Double countNowTotalTransactionsMission(Mission mission) {
-        List<Transaction> missionTransactions = mission.getTransactions().stream()
-                .filter(t -> t.getStatus() == TransactionEnum.PENDING || t.getStatus() == TransactionEnum.APPROVED)
-                .collect(Collectors.toList());
-        Double total = 0.0;
-        for(Transaction tran : missionTransactions){
-            total += tran.getAmount();
-        }
-
-        return total;
-    }
-
-    public Boolean canAddNewTransactionToMission(Mission mission, Double amount){
-
-        Double totaltransactionsamount = this.countNowTotalTransactionsMission(mission);
-        if(totaltransactionsamount + amount > amount)
-            return false;
-        else
-            return true;
-
-    }
+    
 }

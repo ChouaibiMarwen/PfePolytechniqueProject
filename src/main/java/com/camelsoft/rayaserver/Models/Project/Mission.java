@@ -2,6 +2,7 @@ package com.camelsoft.rayaserver.Models.Project;
 
 
 import com.camelsoft.rayaserver.Enum.Project.MissionStatusEnum;
+import com.camelsoft.rayaserver.Models.Tools.Address;
 import com.camelsoft.rayaserver.Models.User.users;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -43,7 +44,8 @@ public class Mission {
             inverseJoinColumns =
             @JoinColumn(name = "users_id", referencedColumnName = "user_id"))
     private Set<users> participants = new HashSet<>();
-
+    @OneToMany(mappedBy = "mission", cascade = {CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.EAGER)
+    private Set<Transaction> transactions = new HashSet<>();
     @Column(name = "archive")
     private Boolean archive = false;
     @Column(name = "timestmp")
@@ -158,6 +160,11 @@ public class Mission {
         user.getMissions().remove(this);
     }
 
+    public Set<Transaction> getTransactions() {
+        return transactions;
+    }
 
-
+    public void setTransactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
+    }
 }

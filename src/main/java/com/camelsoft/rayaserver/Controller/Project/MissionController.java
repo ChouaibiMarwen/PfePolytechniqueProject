@@ -1,6 +1,7 @@
 package com.camelsoft.rayaserver.Controller.Project;
 
 import com.camelsoft.rayaserver.Enum.Project.MissionStatusEnum;
+import com.camelsoft.rayaserver.Enum.User.RoleEnum;
 import com.camelsoft.rayaserver.Models.Project.Location;
 import com.camelsoft.rayaserver.Models.Project.Mission;
 import com.camelsoft.rayaserver.Models.User.users;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "api/v1/mission")
@@ -270,8 +272,24 @@ public class MissionController extends BaseController {
 
     }
 
+    @GetMapping(value = {"/mission_by_id/{mission_id}"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN') ")
+    @ApiOperation(value = "get a mission sby id for admin and users", notes = "Endpoint to get a mission sby id for admin and users")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully add"),
+            @ApiResponse(code = 400, message = "Bad request, check required fields"),
+            @ApiResponse(code = 403, message = "Forbidden")
+    })
+    public ResponseEntity<Mission> mission_by_id( @PathVariable Long mission_id) throws IOException {
+        Mission mission = this.missionService.FindById(mission_id);
+        if (mission == null)
+            return new ResponseEntity("Mission not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(mission, HttpStatus.OK);
+
+    }
+
     @GetMapping(value = {"/all_my_missions_pg"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TECHNICIEN')")
     @ApiOperation(value = "get all missions for admin", notes = "Endpoint to get missions for admin")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -298,7 +316,7 @@ public class MissionController extends BaseController {
     }
 
     @GetMapping(value = {"/all_my_missions_list"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TECHNICIEN')")
     @ApiOperation(value = "get all missions for current user", notes = "Endpoint to get missions for current user")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),
@@ -318,5 +336,31 @@ public class MissionController extends BaseController {
         return new ResponseEntity<>(missions, HttpStatus.OK);
 
     }
+
+    @GetMapping(value = {"/all_dispo_technicians_by_periode_list"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN') ")
+    @ApiOperation(value = "get all dispo technicians into periode for admin and user", notes = "Endpoint to get all dispo technicians into periode for admin and user")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully add"),
+            @ApiResponse(code = 400, message = "Bad request, check required fields"),
+            @ApiResponse(code = 403, message = "Forbidden")
+    })
+    public ResponseEntity<List<users>> all_dispo_technicians_by_periode_list(@RequestParam Date startdate, @RequestParam Date enddate) throws IOException {
+        users currentuser = this.userService.findByUserName(getCurrentUser().getUsername());
+        List<users> result = new ArrayList<>();
+        List<users> list = this.userService.findAll();
+        List<users> userlist = list.stream()
+                .filter(u -> u.getRole().getRole() != RoleEnum.ROLE_ADMIN)
+                .collect(Collectors.toList());
+        for(users u : userlist){
+            if(!this.missionService.hasMissionInPeriod(startdate, enddate, u)){
+                result.add(u);
+            }
+        }
+        
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+    }
+    
 
 }
