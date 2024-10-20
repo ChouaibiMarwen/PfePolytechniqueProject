@@ -7,7 +7,8 @@
     </button>
     <!-- Brand -->
     <a class="navbar-brand pt-0" routerLinkActive="active" [routerLink]="['/dashboard']">
-      <img src="./assets/img/brand/red.png" class="navbar-brand-img" alt="...">
+      <img src="./assets/img/brand/tt.jpeg" class="navbar-brand-img" alt="...">
+      <span>Tunisie Telecom</span>
     </a>
     <!-- User -->
     <ul class="nav align-items-center d-md-none">
@@ -51,7 +52,7 @@
             <span>Support</span>
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#!" class="dropdown-item">
+          <a href="#!" class="dropdown-item" (click)="Logout()">
             <i class="ni ni-user-run"></i>
             <span>Logout</span>
           </a>
@@ -99,24 +100,24 @@
       <!-- Divider -->
       <hr class="my-3">
       <!-- Heading -->
-      <h6 class="navbar-heading text-muted">Documentation</h6>
-      <!-- Navigation -->
+<!--      <h6 class="navbar-heading text-muted">Documentation</h6>-->
+<!--      &lt;!&ndash; Navigation &ndash;&gt;-->
       <ul class="navbar-nav mb-md-3">
-        <li class="nav-item">
-          <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard-angular/documentation/tutorial">
-            <i class="ni ni-spaceship"></i> Getting started
+        <li class="nav-item" (click)="Logout()">
+          <a class="nav-link" href="#">
+            <i class="ni ni-button-power"></i> Logout
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard-angular/documentation/colors">
-            <i class="ni ni-palette"></i> Foundation
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard-angular/documentation/alerts">
-            <i class="ni ni-ui-04"></i> Components
-          </a>
-        </li>
+<!--        <li class="nav-item">-->
+<!--          <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard-angular/documentation/colors">-->
+<!--            <i class="ni ni-palette"></i> Foundation-->
+<!--          </a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--          <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard-angular/documentation/alerts">-->
+<!--            <i class="ni ni-ui-04"></i> Components-->
+<!--          </a>-->
+<!--        </li>-->
       </ul>
     </div>
   </div>

@@ -1,0 +1,55 @@
+<div class="header bg-gradient-info pb-8 pt-5 pt-md-8">
+  <!--<app-stat></app-stat>-->
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Form -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0" style="display: flex;justify-content: space-between;align-items: center">
+          <h3 class="mb-0">New Technician</h3>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-danger" role="alert" *ngIf="Error">
+            {{Error}}
+          </div>
+          <div class="alert alert-success" role="alert" *ngIf="Success">
+          {{Success}}
+          </div>
+          <div class="alert alert-warning" role="alert" *ngIf="Warning">
+            {{Warning}}
+          </div>
+          <form [formGroup]="technicianForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input id="email" type="email" class="form-control" formControlName="email" placeholder="Enter email" required>
+            </div>
+            <div formGroupName="informationRequest">
+              <div class="form-group">
+                <label for="firstnameen">First Name</label>
+                <input id="firstnameen" type="text" class="form-control" formControlName="firstnameen" placeholder="Enter first name"
+                       required>
+              </div>
+              <div class="form-group">
+                <label for="lastnameen">Last Name</label>
+                <input id="lastnameen" type="text" class="form-control" formControlName="lastnameen" placeholder="Enter last name"
+                       required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input id="password" type="password" class="form-control" formControlName="password" placeholder="Password" required>
+            </div>
+            <div class="form-group">
+              <label for="phonenumber">Phone Number</label>
+              <input id="phonenumber" type="tel" class="form-control" formControlName="phonenumber" placeholder="Enter phone number"
+                     required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

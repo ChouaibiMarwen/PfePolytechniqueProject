@@ -1,0 +1,74 @@
+<div class="header bg-gradient-info pb-8 pt-5 pt-md-8"></div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Form -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0" style="display: flex;justify-content: space-between;align-items: center">
+          <h3 class="mb-0">New Mission</h3>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-danger" role="alert" *ngIf="Error">
+            {{Error}}
+          </div>
+          <div class="alert alert-success" role="alert" *ngIf="Success">
+            {{Success}}
+          </div>
+          <div class="alert alert-warning" role="alert" *ngIf="Warning">
+            {{Warning}}
+          </div>
+          <form [formGroup]="missionForm" >
+            <div class="form-group">
+              <label for="title">Title</label>
+              <input id="title" type="text" class="form-control" formControlName="title" placeholder="Enter mission title" required>
+            </div>
+            <div class="form-group">
+              <label for="address">Address</label>
+              <input id="address" type="text" class="form-control" formControlName="address" placeholder="Enter address" required>
+            </div>
+            <div class="form-group">
+              <label for="budget">Budget</label>
+              <input id="budget" type="number" class="form-control" formControlName="budget" placeholder="Enter budget" required>
+            </div>
+            <div class="form-group">
+              <label for="startdate">Start Date</label>
+              <input id="startdate" type="date" class="form-control" formControlName="startdate" required>
+            </div>
+            <div class="form-group">
+              <label for="enddate">End Date</label>
+              <input id="enddate" type="date" class="form-control" formControlName="enddate" required>
+            </div>
+            <div class="form-group">
+              <label for="locationname">Location Name</label>
+              <input id="locationname" type="text" class="form-control" formControlName="locationname" placeholder="Enter location name" required>
+            </div>
+            <div class="form-group">
+              <label for="locationLatitude">Location Latitude</label>
+              <input id="locationLatitude" type="number" class="form-control" formControlName="locationLatitude" placeholder="Enter latitude" required>
+            </div>
+            <div class="form-group">
+              <label for="locationLongitude">Location Longitude</label>
+              <input id="locationLongitude" type="number" class="form-control" formControlName="locationLongitude" placeholder="Enter longitude" required>
+            </div>
+            <div class="form-group">
+              <label for="idTechniciens">Technicians</label>
+              <select id="idTechniciens" class="form-control" formControlName="idTechniciens" multiple (change)="onTechniciansChange()">
+                <option *ngFor="let technician of technicians" [value]="technician.id">{{ technician.name }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="idTeamLead">Team Lead</label>
+              <select id="idTeamLead" class="form-control" formControlName="idTeamLead" [disabled]="!selectedTechnicians.length" required>
+                <option selected value="null">Select a Leader</option>
+                <option *ngFor="let lead of filteredTeamLeads" [value]="lead.id">{{ lead.name }}</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" (click)="onSubmit()">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

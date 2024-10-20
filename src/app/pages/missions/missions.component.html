@@ -1,0 +1,133 @@
+<div class="header bg-gradient-info pb-8 pt-5 pt-md-8">
+<!--  <app-stat></app-stat>-->
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Table -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0" style="display: flex;justify-content: space-between;align-items: center">
+          <h3 class="mb-0">Missions</h3>
+          <button class="new" (click)="NewMission()">New Mission</button>
+        </div>
+        <div class="row" style="padding: 0.5rem 1rem;">
+          <div class="col-md-2">
+            <input type="text" class="form-control" placeholder="Team Lead ID" [(ngModel)]="idTeamLead" name="idTeamLead" />
+          </div>
+          <div class="col-md-2">
+            <input type="date" class="form-control" placeholder="Start Date" [(ngModel)]="startdate" name="startdate" />
+          </div>
+          <div class="col-md-2">
+            <input type="date" class="form-control" placeholder="End Date" [(ngModel)]="enddate" name="enddate" />
+          </div>
+          <div class="col-md-2">
+            <select class="form-control" [(ngModel)]="status" name="status">
+              <option [value]="null">Select Status</option>
+              <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <input type="text" class="form-control" placeholder="Title" [(ngModel)]="title" name="title" />
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-primary" (click)="getAllMissions(0)">Filter</button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Budget</th>
+              <th scope="col">Start Date</th>
+              <th scope="col">End Date</th>
+              <th scope="col">Status</th>
+              <th scope="col">Users</th>
+              <th scope="col">Location</th>
+              <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let mission of this.paginatedMissions.elements">
+              <td>
+                {{ mission.title }}
+              </td>
+              <td>
+                {{ mission.budget }}
+              </td>
+              <td>
+                {{ mission.startdate | date }}
+              </td>
+              <td>
+                {{ mission.enddate | date}}
+              </td>
+              <td>
+                  <span class="badge badge-dot mr-4">
+                    <i class="bg-warning"></i> {{ mission.status }}
+                  </span>
+              </td>
+              <td>
+                <div class="avatar-group">
+                  <ng-container  *ngFor="let user of mission.participants;let i = index" >
+                    <span class="avatar avatar-sm" [matTooltip]="user.name">
+                      <img alt="Image placeholder" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="rounded-circle" >
+                    </span>
+                  </ng-container>
+
+                </div>
+              </td>
+              <td>
+                {{mission.location.name}}
+<!--                <div class="d-flex align-items-center">-->
+<!--                  <span class="mr-2">60%</span>-->
+<!--                  <div>-->
+<!--                    <div class="progress">-->
+<!--                      <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
+              </td>
+              <td class="text-right">
+                <div ngbDropdown placement="bottom-right">
+                  <a class="btn btn-sm btn-icon-only text-light"  ngbDropdownToggle>
+                    <i class="fas fa-ellipsis-v"></i>
+                  </a>
+                  <div ngbDropdownMenu class=" dropdown-menu-right dropdown-menu-arrow">
+                    <span style="cursor: pointer" class="dropdown-item" (click)="openUpdateModal(mission.id, mission.participants)">Update Mission Participant</span>
+                    <span style="cursor: pointer" class="dropdown-item">Another action</span>
+                    <span style="cursor: pointer" class="dropdown-item">Something else here</span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer py-4">
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-end mb-0">
+              <li class="page-item" [class.disabled]="paginatedMissions.page === 0">
+                <a class="page-link" (click)="getAllMissions(paginatedMissions.page - 1)" tabindex="-1">
+                  <i class="fas fa-angle-left"></i>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+              <ng-container *ngFor="let page of [].constructor(paginatedMissions.pages); let i = index">
+                <li class="page-item" [class.active]="i === paginatedMissions.page">
+                  <a class="page-link" (click)="getAllMissions(i)">{{ i + 1 }}</a>
+                </li>
+              </ng-container>
+              <li class="page-item" [class.disabled]="paginatedMissions.page === paginatedMissions.pages - 1">
+                <a class="page-link" (click)="getAllMissions(paginatedMissions.page + 1)">
+                  <i class="fas fa-angle-right"></i>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
