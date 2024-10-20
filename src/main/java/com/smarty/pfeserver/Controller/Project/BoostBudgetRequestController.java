@@ -67,9 +67,12 @@ public class BoostBudgetRequestController extends BaseController {
             return new ResponseEntity("amount can't be null", HttpStatus.BAD_REQUEST);
         if (request.getIdMission() == null)
             return new ResponseEntity("idmission can't be null", HttpStatus.BAD_REQUEST);
+        if (request.getReason() == null)
+            return new ResponseEntity("reason of request can't be null", HttpStatus.BAD_REQUEST);
         BoostBudgetRequest demand = new BoostBudgetRequest();
         demand.setAmount(request.getAmount());
         demand.setMission(mission);
+        demand.setReason(request.getReason());
         mission.getRequestBoostBudgetRequest().add(demand);
         demand.setCreatedby(currentuser);
 

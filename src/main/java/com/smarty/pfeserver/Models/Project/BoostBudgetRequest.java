@@ -26,6 +26,8 @@ public class BoostBudgetRequest {
     private Mission mission;
     @Column(name = "amount")
     private Double amount;
+    @Column(name = "reason", columnDefinition = "TEXT")
+    private String reason;
     @Column(name = "rejectionreason", columnDefinition = "TEXT")
     private String rejectionreason;
     @Column(name = "status")
@@ -90,5 +92,13 @@ public class BoostBudgetRequest {
 
     public void setRejectionreason(String rejectionreaso) {
         this.rejectionreason = rejectionreaso;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }
