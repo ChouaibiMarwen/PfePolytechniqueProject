@@ -52,7 +52,7 @@ public class BoostBudgetRequestController extends BaseController {
             @ApiResponse(code = 400, message = "Bad request, check required fields"),
             @ApiResponse(code = 403, message = "Forbidden")
     })
-    public ResponseEntity<BoostBudgetRequest> add_request(@PathVariable Long mission_id, @RequestParam BudgetRequest request) throws IOException {
+    public ResponseEntity<BoostBudgetRequest> add_request(@PathVariable Long mission_id, @ModelAttribute BudgetRequest request) throws IOException {
         users currentuser = this.userService.findByUserName(getCurrentUser().getUsername());
 
         Mission mission = this.missionService.FindById(mission_id);
