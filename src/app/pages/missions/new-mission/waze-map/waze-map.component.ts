@@ -1,5 +1,6 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
+import * as url from "node:url";
 
 @Component({
   selector: 'app-waze-map',
@@ -16,26 +17,12 @@ export class WazeMapComponent  implements OnInit, OnChanges {
 
   constructor(private sanitizer: DomSanitizer) {}
 
-
-  private updateMapUrl() {
-    if (this.isValidCoordinates(this.lat, this.lon)) {
-      const url = `https://embed.waze.com/iframe`;
-      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    } else {
-      console.error('Invalid latitude or longitude');
-      // Handle invalid coordinates (e.g., show a default map or a message)
-    }
-  }
-
-  private isValidCoordinates(lat: number, lon: number): boolean {
-    return lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
+  ngOnChanges() {
+    const url = `https://embed.waze.com/iframe?zoom=${this.zoom}&lat=${this.lat}&lon=${this.lon}&pin=1`;
+    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   ngOnInit(): void {
-    this.updateMapUrl();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
   }
 
 }

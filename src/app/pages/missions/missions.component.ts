@@ -3,6 +3,7 @@ import {Router} from "@angular/router";
 import {UserService} from "../../services/user.service";
 import {MissionService} from "../../services/mission.service";
 import {Missions, PaginatedMissions} from "../../interfaces/missions";
+import {DataService} from "../../services/data.service";
 
 @Component({
   selector: 'app-missions',
@@ -16,13 +17,30 @@ export class MissionsComponent implements OnInit {
   enddate: any;
   status: any = null;
   title: any;
-  constructor(private router: Router,private User:UserService,private mission:MissionService) { }
+  statuses = ['CANCELLED', 'COMPLETED', 'IN_PROGRESS', 'OVERDUE', 'PENDING'];
+  constructor(private dataService: DataService,private router: Router,private User:UserService,private mission:MissionService) { }
   ngOnInit(): void {
     this.getAllMissions(0)
   }
 
 
 
+  getTitle(status: string): string {
+    switch (status) {
+      case 'CANCELLED':
+        return 'Make The Mission Canceled';
+      case 'COMPLETED':
+        return 'Make The Mission Complete';
+      case 'IN_PROGRESS':
+        return 'Make The Mission In Process';
+      case 'OVERDUE':
+        return 'Make The Mission Overdue';
+      case 'PENDING':
+        return 'Make The Mission Pending';
+      default:
+        return '';
+    }
+  }
 
   NewMission(){
     this.router.navigate(['/missions/add'])
@@ -43,53 +61,25 @@ export class MissionsComponent implements OnInit {
       this.paginatedMissions.page = res.currentPage
       this.paginatedMissions.pages = res.totalPages
       this.paginatedMissions.elements = res.result
-      console.log(this.paginatedMissions.elements)
     }).finally(() => {
     })
   }
 
 
-  selectedMission: any = {
-    id: null,
-    participants: []
-  };
 
-  openUpdateModal(missionId: number, participants: any[]) {
-    this.selectedMission.id = missionId;
-    this.selectedMission.participants = participants;
-
-    const modal = document.getElementById('updateParticipantsModal');
-    if (modal) {
-      modal.classList.add('show');
-      modal.style.display = 'block';
-      document.body.classList.add('modal-open');
-
-      // Create backdrop
-      const backdrop = document.createElement('div');
-      backdrop.className = 'modal-backdrop fade show';
-      document.body.appendChild(backdrop);
-
-      backdrop.onclick = () => this.closeModal(modal, backdrop);
-    }
+  update_status(id:any,status:any){
+    const formData = new FormData();
+    formData.append('status', status);
+    this.mission.UpdateMissionStatus(id,formData).then((res)=>{
+      this.getAllMissions(this.paginatedMissions.page);
+    })
   }
 
-  closeModal(modal: HTMLElement, backdrop: HTMLElement) {
-    modal.classList.remove('show');
-    modal.style.display = 'none';
-    document.body.classList.remove('modal-open');
-    document.body.removeChild(backdrop);
+  sendData(data:any,navigate:any) {
+    this.dataService.setData(data);
+    this.router.navigate([navigate])
   }
 
-  saveParticipants() {
-    // Logic to save the selected participants
-    console.log('Updated participants for mission:', this.selectedMission.id, this.selectedMission.participants);
 
-    // Close the modal after saving
-    const modal = document.getElementById('updateParticipantsModal') as HTMLElement;
-    const backdrop = document.querySelector('.modal-backdrop') as HTMLElement;
-    if (modal && backdrop) {
-      this.closeModal(modal, backdrop);
-    }
-  }
 
 }

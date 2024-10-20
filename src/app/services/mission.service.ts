@@ -11,7 +11,15 @@ export class MissionService {
   constructor(private http: HttpClient) { }
 
   New_Mission(data:any) {
-    return lastValueFrom(this.http.post<any>(environment.serverUrl + '/api/v1/mission/add_mission',data))
+    return lastValueFrom(this.http.post<any>(environment.serverUrl + `/api/v1/mission/add_mission`,data))
+  }
+
+  UpdateMissionStatus(mission_id:any,data:any) {
+    return lastValueFrom(this.http.patch<any>(environment.serverUrl + `/api/v1/mission/update_mission_status/${mission_id}`,data))
+  }
+
+  updateMissionParticipant(mission_id:any,data:any) {
+    return lastValueFrom(this.http.patch<any>(environment.serverUrl + `/api/v1/mission/update_mission_participants/${mission_id}`,data))
   }
 
   formatDate(date: Date): string {

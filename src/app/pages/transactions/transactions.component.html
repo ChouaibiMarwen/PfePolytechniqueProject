@@ -1,0 +1,122 @@
+<div class="header bg-gradient-info pb-8 pt-5 pt-md-8">
+  <!--  <app-stat></app-stat>-->
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Table -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0" style="display: flex;justify-content: space-between;align-items: center">
+          <h3 class="mb-0">Money Transactions</h3>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Reason of rejection</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Mission Title</th>
+              <th scope="col">CreatedBy</th>
+              <th scope="col">Status</th>
+              <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let budget of this.paginatedMissions.elements">
+              <td>
+                {{ budget.name }}
+              </td>
+              <td>
+                {{ budget.description }}
+              </td>
+              <td>
+                {{ budget.rejectionReason ? budget.rejectionReason : '-' }}
+              </td>
+              <td>
+                {{ budget.amount}}
+              </td>
+              <td>
+                {{ budget.missiontitle}}
+              </td>
+              <td>
+                {{ FindUserName(budget.createdbyid).name}}
+              </td>
+              <td>
+                <span class="badge badge-dot mr-4">
+                  <i class="bg-warning" *ngIf="budget.status === 'PENDING'"></i>
+                  <i class="bg-success" *ngIf="budget.status === 'APPROVED'"></i>
+                  <i class="bg-danger" *ngIf="budget.status === 'REJECTED'"></i>
+                  <i class="bg-dark" *ngIf="budget.status === 'CANCELLED'"></i>
+                  {{ budget.status }}
+                </span>
+              </td>
+              <td class="text-right">
+                  <i class="fa-solid fa-arrows-spin" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem"
+                   data-toggle="modal" data-target="#denyModal" title="Update Participant" (click)="setBudgetId(budget.id)"></i>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer py-4">
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-end mb-0">
+              <li class="page-item" [class.disabled]="paginatedMissions.page === 0">
+                <a class="page-link" (click)="getAllTransactions(paginatedMissions.page - 1)" tabindex="-1">
+                  <i class="fas fa-angle-left"></i>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+              <ng-container *ngFor="let page of [].constructor(paginatedMissions.pages); let i = index">
+                <li class="page-item" [class.active]="i === paginatedMissions.page">
+                  <a class="page-link" (click)="getAllTransactions(i)">{{ i + 1 }}</a>
+                </li>
+              </ng-container>
+              <li class="page-item" [class.disabled]="paginatedMissions.page === paginatedMissions.pages - 1">
+                <a class="page-link" (click)="getAllTransactions(paginatedMissions.page + 1)">
+                  <i class="fas fa-angle-right"></i>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Structure -->
+<!-- Modal Structure -->
+<div class="modal fade" id="denyModal" tabindex="-1" role="dialog" aria-labelledby="denyModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="denyModalLabel">Confirm Deny</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Select the new status for this transaction</p>
+        <div class="form-group">
+          <label for="statusSelect">Status</label>
+          <select class="form-control" id="statusSelect" [(ngModel)]="selectedStatus">
+            <option value="">Select Status</option>
+            <option value="APPROVED">APPROVED</option>
+            <option value="CANCELLED">CANCELLED</option>
+            <option value="PENDING">PENDING</option>
+            <option value="REJECTED">REJECTED</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="deny(budgetId, selectedStatus)">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+

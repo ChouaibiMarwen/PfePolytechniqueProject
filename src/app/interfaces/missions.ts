@@ -14,6 +14,16 @@ export interface Missions {
   title: string;
 }
 
+export interface Budget {
+  id: number;
+  mission:Missions
+  amount: number,
+  reason: string,
+  rejectionreason: string,
+  status: string,
+  timestamp: any
+}
+
 export interface Location {
   id: number;
   latitude: number;
@@ -59,4 +69,35 @@ export interface PaginatedMissions {
   pages : number;
   size:  number;
   nb_elements:  number;
+}
+
+export interface PaginatedBudgets {
+  elements: Budget[];
+  page: number;
+  pages : number;
+  size:  number;
+  nb_elements:  number;
+}
+
+export interface PaginatedTransaction {
+  elements: Transaction[];
+  page: number;
+  pages : number;
+  size:  number;
+  nb_elements:  number;
+}
+
+
+interface Transaction {
+  id: number;
+  status: any; // Adjust as needed
+  name: string;
+  description: string;
+  rejectionReason: string | null;
+  amount: number;
+  archive: boolean;
+  timestamp: number; // You might want to use Date if you prefer
+  missiontitle: string;
+  missionId: number;
+  createdbyid: number;
 }

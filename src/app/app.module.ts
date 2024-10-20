@@ -21,6 +21,10 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { NewMissionComponent } from './pages/missions/new-mission/new-mission.component';
 import { WazeMapComponent } from './pages/missions/new-mission/waze-map/waze-map.component';
 import {MatTooltipModule} from "@angular/material/tooltip";
+import { UpdateParticipantComponent } from './pages/missions/update-participant/update-participant.component';
+import { UpdateMissionComponent } from './pages/missions/update-mission/update-mission.component';
+import { BudgetsComponent } from './pages/budgets/budgets.component';
+import { TransactionsComponent } from './pages/transactions/transactions.component';
 
 
 
@@ -47,7 +51,11 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     MissionsComponent,
     AddTechnicienComponent,
     NewMissionComponent,
-    WazeMapComponent
+    WazeMapComponent,
+    UpdateParticipantComponent,
+    UpdateMissionComponent,
+    BudgetsComponent,
+    TransactionsComponent
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true},],
   bootstrap: [AppComponent],

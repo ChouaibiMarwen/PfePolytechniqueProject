@@ -59,8 +59,7 @@ export class NewMissionComponent implements OnInit {
   }
 
   onSubmit(): void {
-    console.log('Hello')
-    console.log(this.missionForm.value.idTechniciens)
+    console.log(this.missionForm.value.startdate)
     const startDate = new Date(this.missionForm.value.startdate);
     const endDate = new Date(this.missionForm.value.enddate);
     const formData = new FormData();
