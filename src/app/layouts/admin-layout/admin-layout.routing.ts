@@ -23,7 +23,7 @@ export const AdminLayoutRoutes: Routes = [
   {path: 'missions/update', component: UpdateMissionComponent},
   {path: 'missions/update/participant', component: UpdateParticipantComponent},
   {path: 'transaction', component: TransactionsComponent},
-  {path: 'Budget Requests', component: BudgetsComponent},
+  {path: 'Budget_Requests', component: BudgetsComponent},
   {path: 'icons', component: IconsComponent},
   {path: 'maps', component: MapsComponent}
 ];

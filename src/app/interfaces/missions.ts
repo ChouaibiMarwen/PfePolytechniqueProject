@@ -37,8 +37,8 @@ export interface Participant {
   username: string;
   email: string;
   name: string;
-  phoneNumber?: string; // Optional
-  personalInformation: PersonalInformation;
+  phonenumber?: string; // Optional
+  personalinformation: PersonalInformation;
   privileges: any[]; // Define specific types as needed
   profileImage?: string | null; // Optional
   provider: string;
@@ -51,10 +51,10 @@ export interface Participant {
 
 export interface PersonalInformation {
   id: number;
-  firstNameEn: string;
-  lastNameEn: string;
-  firstNameAr?: string | null; // Optional
-  lastNameAr?: string | null; // Optional
+  firstnameen: string;
+  lastnameen: string;
+  firstnamear?: string | null; // Optional
+  lastnamear?: string | null; // Optional
 }
 
 export interface Role {

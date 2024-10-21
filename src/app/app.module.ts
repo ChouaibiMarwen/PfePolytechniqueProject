@@ -26,6 +26,8 @@ import { UpdateMissionComponent } from './pages/missions/update-mission/update-m
 import { BudgetsComponent } from './pages/budgets/budgets.component';
 import { TransactionsComponent } from './pages/transactions/transactions.component';
 
+import {TechLayoutComponent} from "./layouts/tech-layout/tech-layout.component";
+
 
 
 
@@ -45,6 +47,7 @@ import { TransactionsComponent } from './pages/transactions/transactions.compone
     MatTooltipModule
   ],
   declarations: [
+    TechLayoutComponent,
     AppComponent,
     AdminLayoutComponent,
     AuthLayoutComponent,

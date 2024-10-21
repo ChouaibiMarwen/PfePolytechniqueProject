@@ -291,14 +291,43 @@ export const chartExample1 = {
           color: colors.gray[900],
           zeroLineColor: colors.gray[900],
           drawOnChartArea: false
-        },
-        ticks: {
-          callback: function(value) {
-            if (!(value % 10)) {
-              return '$' + value + 'k';
-            }
-          }
         }
+        // ticks: {
+        //   callback: function(value) {
+        //     if (!(value % 10)) {
+        //       return '$' + value + 'k';
+        //     }
+        //   }
+        // }
+      }]
+    }
+  },
+  data: {
+    labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    datasets: [{
+      label: 'Performance',
+      data: [0, 20, 10, 30, 15, 40, 20, 60, 60]
+    }]
+  }
+}
+
+
+export const chartExample3 = {
+  options: {
+    scales: {
+      yAxes: [{
+        gridLines: {
+          color: colors.gray[900],
+          zeroLineColor: colors.gray[900],
+          drawOnChartArea: false
+        }
+        // ticks: {
+        //   callback: function(value) {
+        //     if (!(value % 10)) {
+        //       return '$' + value + 'k';
+        //     }
+        //   }
+        // }
       }]
     }
   },

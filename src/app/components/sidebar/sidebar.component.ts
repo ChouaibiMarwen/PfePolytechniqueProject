@@ -15,8 +15,8 @@ export const ROUTES: RouteInfo[] = [
   {path: '/Technician', title: 'Technician Management', icon: 'ni-badge text-red', class: ''},
   {path: '/missions', title: 'Mission Management', icon: 'ni-briefcase-24 text-orange', class: ''},
   {path: '/transaction', title: 'Transaction Management', icon: 'ni-money-coins text-info', class: ''},
-  {path: '/Budget Requests', title: 'Budget Requests', icon: 'ni-single-02 text-yellow', class: ''},
-  {path: '/user-profile', title: 'User profile', icon: 'ni-bullet-list-67 text-pink', class: ''},
+  {path: '/Budget_Requests', title: 'Budget Requests', icon: 'ni-bullet-list-67 text-yellow', class: ''},
+  {path: '/user-profile', title: 'User profile', icon: 'ni-single-02  text-pink', class: ''},
   // { path: '/icons', title: 'Icons',  icon:'ni-planet text-blue', class: '' },
   // { path: '/maps', title: 'Maps',  icon:'ni-pin-3 text-orange', class: '' },
 

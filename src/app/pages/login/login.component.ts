@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         const today = new Date()
         const tomorrow = new Date(today)
         tomorrow.setDate(tomorrow.getDate() + 1)
-        if (res.roles === "ROLE_ADMIN" || res.roles === "ROLE_SUB_ADMIN") {
+        if (res.roles === "ROLE_ADMIN" || res.roles === "ROLE_TECHNICIEN") {
           this.cookieService.set('TOKEN_DASH_ADMIN_TT', res.token!, tomorrow, '/');
           this.cookieService.set('STATE_DASH_ADMIN_TT', 'true', tomorrow, '/');
           this.cookieService.set('ROLE_DASH_ADMIN_TT', res.roles!, tomorrow, '/');
@@ -80,7 +80,13 @@ export class LoginComponent implements OnInit, OnDestroy {
             // console.log('Allowed routes', routes);
             // this.resetAttempts()
             // if (routes.includes('/home')) {
+            if (res.role.role === 'ROLE_ADMIN') {
+              console.log("Here")
               this.router.navigate(['/dashboard']);
+            }else{
+              console.log("Here")
+              this.router.navigate(['/Calendar']);
+            }
               // this.setAction(1)
               // this.onUserIDChange(res.id.toString());
               // this.SentOTP('SMS_OTP');
@@ -94,6 +100,8 @@ export class LoginComponent implements OnInit, OnDestroy {
             //
             //   }
             // }
+            console.log(res)
+
           }).catch((error) => {
             // this.glovar.showMsg(this.userService.getTranslatedWord('Errors.CntLoadProfile') , this.userService.getTranslatedWord('Oops') , 'error_snack');
             this.login.reset();

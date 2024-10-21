@@ -16,15 +16,16 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {ComponentsModule} from "../../components/components.module";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule.forChild(AdminLayoutRoutes),
-    FormsModule,
-    HttpClientModule,
-    NgbModule,
-    ClipboardModule,
-    ComponentsModule
-  ],
+    imports: [
+        CommonModule,
+        RouterModule.forChild(AdminLayoutRoutes),
+        FormsModule,
+        HttpClientModule,
+        NgbModule,
+        ClipboardModule,
+        ComponentsModule,
+        ReactiveFormsModule
+    ],
   declarations: [
     DashboardComponent,
     UserProfileComponent,
