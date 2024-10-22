@@ -6,7 +6,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <!-- Brand -->
-    <a class="navbar-brand pt-0" routerLinkActive="active" [routerLink]="[CurrentUser.role.role === 'ROLE_ADMIN'?'/dashboard':'/Calendar']">
+    <a class="navbar-brand pt-0" routerLinkActive="active" [routerLink]="[CurrentUser?.role?.role === 'ROLE_ADMIN'?'/dashboard':'/Calendar']">
       <img src="https://cdn.prod.website-files.com/62a9b4f36a23c435c9b9f3cc/63321e635bdbc964bf196b29_63225e0669bba785c9e60352_smarty_logo.png" class="navbar-brand-img" alt="...">
     </a>
     <!-- User -->
@@ -52,7 +52,7 @@
       <div class="navbar-collapse-header d-md-none">
         <div class="row">
           <div class="col-6 collapse-brand">
-            <a  routerLinkActive="active" [routerLink]="[CurrentUser.role.role === 'ROLE_ADMIN'?'/dashboard':'/Calendar']">
+            <a  routerLinkActive="active" [routerLink]="[CurrentUser?.role?.role === 'ROLE_ADMIN'?'/dashboard':'/Calendar']">
               <img src="https://cdn.prod.website-files.com/62a9b4f36a23c435c9b9f3cc/63321e635bdbc964bf196b29_63225e0669bba785c9e60352_smarty_logo.png">
             </a>
           </div>

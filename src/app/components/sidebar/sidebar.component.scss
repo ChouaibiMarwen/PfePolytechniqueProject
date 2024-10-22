@@ -17,6 +17,9 @@
   content: '';
   position: absolute;
   right: -44px; /* Adjust to position the arrow */
+  @media screen and (max-width: 1200px) {
+    right: -45px;
+  }
   top: 50%;
   transform: translateY(-50%);
   border: 23px solid transparent; /* Triangle shape */

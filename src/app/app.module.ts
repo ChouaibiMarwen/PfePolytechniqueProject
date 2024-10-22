@@ -34,6 +34,7 @@ import { MyBudgetRequestsComponent } from './pages/my-budget-requests/my-budget-
 import { MyTransactionsComponent } from './pages/my-transactions/my-transactions.component';
 import { AddTransactionComponent } from './pages/mymissions/add-transaction/add-transaction.component';
 import { MissionsTransactionsComponent } from './pages/mymissions/missions-transactions/missions-transactions.component';
+import { ConfirmationModalComponent } from './pages/confirmation-modal/confirmation-modal.component';
 
 
 
@@ -71,7 +72,8 @@ import { MissionsTransactionsComponent } from './pages/mymissions/missions-trans
     MyBudgetRequestsComponent,
     MyTransactionsComponent,
     AddTransactionComponent,
-    MissionsTransactionsComponent
+    MissionsTransactionsComponent,
+    ConfirmationModalComponent
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true},],
   bootstrap: [AppComponent],

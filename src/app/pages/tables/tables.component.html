@@ -1,5 +1,5 @@
 <div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
-<!--<app-stat></app-stat>-->
+  <!--<app-stat></app-stat>-->
 </div>
 <!-- Page content -->
 <div class="container-fluid mt--7">
@@ -14,17 +14,24 @@
         <div class="table-responsive">
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
-              <tr>
-                <th scope="col">Picture</th>
-                <th scope="col">Email</th>
-              </tr>
+            <tr>
+              <th scope="col">Picture</th>
+              <th scope="col">Email</th>
+              <th scope="col">Phone Number</th>
+              <th scope="col">Active</th>
+              <th scope="col">Verified</th>
+              <th scope="col"></th>
+            </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let user of users">
+            <tr *ngFor="let user of users">
+              <ng-container *ngIf="user.role.role != 'ROLE_ADMIN'">
                 <th scope="row">
                   <div class="media align-items-center">
-                    <a href="javascript:void(0)" class="avatar rounded-circle mr-3" style="background: white!important;">
-                      <img alt="Image placeholder" src="https://cdn.prod.website-files.com/62a9b4f36a23c435c9b9f3cc/63321e635bdbc964bf196b29_63225e0669bba785c9e60352_smarty_logo.png">
+                    <a href="javascript:void(0)" class="avatar rounded-circle mr-3"
+                       style="background: white!important;">
+                      <img alt="Image placeholder"
+                           src="https://cdn.prod.website-files.com/62a9b4f36a23c435c9b9f3cc/63321e635bdbc964bf196b29_63225e0669bba785c9e60352_smarty_logo.png">
                     </a>
                     <div class="media-body">
                       <span class="mb-0 text-sm">{{ user.name }}</span>
@@ -36,7 +43,31 @@
                     {{ user.email }}
                   </span>
                 </td>
-              </tr>
+                <td>
+                  <span class="badge badge-dot mr-4">
+                    {{ user.phonenumber }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge badge-dot mr-4">
+                    {{ user.active }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge badge-dot mr-4">
+                    {{ user.verified }}
+                  </span>
+                </td>
+                <td>
+                  <i class="fa-solid fa-user-shield" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem"
+                     (click)="Active(user)" title="Activate Technician"></i>
+                  <i class="fa-solid fa-user-check" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem"
+                     (click)="Verify(user)" title="Verify Technician"></i>
+                  <i class="fa-solid fa-times" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem"
+                     (click)="Suspend(user)" title="Suspend Technician"></i>
+                </td>
+              </ng-container>
+            </tr>
             </tbody>
           </table>
         </div>

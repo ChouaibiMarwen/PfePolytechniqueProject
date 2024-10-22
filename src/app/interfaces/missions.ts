@@ -46,6 +46,7 @@ export interface Participant {
   role: Role;
   suspendReason: string;
   verified: boolean;
+  active: boolean;
   lastOtp?: string | null; // Optional
   timestamp: number; // Timestamp
 }

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatDialog} from "@angular/material/dialog";
 import {AddTechnicienComponent} from "./add-technicien/add-technicien.component";
 import {Route, Router} from "@angular/router";
 import {UserService} from "../../services/user.service";
+import {Participant} from "../../interfaces/missions";
 
 @Component({
   selector: 'app-tables',
@@ -10,16 +11,17 @@ import {UserService} from "../../services/user.service";
   styleUrls: ['./tables.component.scss']
 })
 export class TablesComponent implements OnInit {
-  users: any[] = [];
-  constructor(private router: Router,private User:UserService) { }
+  users: Participant[] = [];
+
+  constructor(private router: Router, private User: UserService) {
+  }
 
   ngOnInit() {
     this.GetAllTechnicien()
   }
 
   GetAllTechnicien(): void {
-    const roles = ['ROLE_TECHNICIEN'];
-    this.User.getUsersByRoles(roles).then(
+    this.User.All_Users().then(
       (data) => {
         this.users = data;
       },
@@ -29,7 +31,25 @@ export class TablesComponent implements OnInit {
     );
   }
 
-  NewTech(){
+  NewTech() {
     this.router.navigate(['/Technician/add'])
+  }
+
+  Active(id: any) {
+    this.User.activated(id).then((res) => {
+      this.GetAllTechnicien()
+    })
+  }
+
+  Verify(id: any) {
+    this.User.verified(id).then((res) => {
+      this.GetAllTechnicien()
+    })
+  }
+
+  Suspend(id: any) {
+    this.User.suspended(id).then((res) => {
+      this.GetAllTechnicien()
+    })
   }
 }

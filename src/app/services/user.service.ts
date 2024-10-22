@@ -25,6 +25,20 @@ export class UserService {
     return lastValueFrom(this.http.patch<Participant>(environment.serverUrl + '/api/v1/users/update_current_user_personal_information', data))
   }
 
+  activated(id: any) {
+    return lastValueFrom(this.http.patch<Participant>(environment.serverUrl + `/api/v1/users/activated/${id}`,{}))
+  }
+  verified(id: any) {
+    return lastValueFrom(this.http.patch<Participant>(environment.serverUrl + `/api/v1/users/verified/${id}`, {}))
+  }
+  suspended(id: any) {
+    return lastValueFrom(this.http.delete<Participant>(environment.serverUrl + `/api/v1/users/${id}`, {}))
+  }
+
+  All_Users() {
+    return lastValueFrom(this.http.get<Participant[]>(environment.serverUrl + '/api/v1/technician/all'))
+  }
+
   getUsersByRoles(roles: string[]) {
     const params = {
       role: roles
