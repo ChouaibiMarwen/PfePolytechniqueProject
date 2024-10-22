@@ -6,28 +6,27 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <!-- Brand -->
-    <a class="navbar-brand pt-0" routerLinkActive="active" [routerLink]="['/dashboard']">
-      <img src="./assets/img/brand/tt.jpeg" class="navbar-brand-img" alt="...">
-      <span>Tunisie Telecom</span>
+    <a class="navbar-brand pt-0" routerLinkActive="active" [routerLink]="[CurrentUser.role.role === 'ROLE_ADMIN'?'/dashboard':'/Calendar']">
+      <img src="https://cdn.prod.website-files.com/62a9b4f36a23c435c9b9f3cc/63321e635bdbc964bf196b29_63225e0669bba785c9e60352_smarty_logo.png" class="navbar-brand-img" alt="...">
     </a>
     <!-- User -->
     <ul class="nav align-items-center d-md-none">
-      <li class="nav-item" ngbDropdown placement="bottom-right">
-        <a class="nav-link nav-link-icon" role="button" ngbDropdownToggle>
-          <i class="ni ni-bell-55"></i>
-        </a>
-        <div class="dropdown-menu-arrow dropdown-menu-right" ngbDropdownMenu>
-          <a class="dropdown-item" href="javascript:void(0)">Action</a>
-          <a class="dropdown-item" href="javascript:void(0)">Another action</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="javascript:void(0)">Something else here</a>
-        </div>
-      </li>
+<!--      <li class="nav-item" ngbDropdown placement="bottom-right">-->
+<!--        <a class="nav-link nav-link-icon" role="button" ngbDropdownToggle>-->
+<!--          <i class="ni ni-bell-55"></i>-->
+<!--        </a>-->
+<!--        <div class="dropdown-menu-arrow dropdown-menu-right" ngbDropdownMenu>-->
+<!--          <a class="dropdown-item" href="javascript:void(0)">Action</a>-->
+<!--          <a class="dropdown-item" href="javascript:void(0)">Another action</a>-->
+<!--          <div class="dropdown-divider"></div>-->
+<!--          <a class="dropdown-item" href="javascript:void(0)">Something else here</a>-->
+<!--        </div>-->
+<!--      </li>-->
       <li class="nav-item" ngbDropdown placement="bottom-right">
         <a class="nav-link" role="button" ngbDropdownToggle>
           <div class="media align-items-center">
             <span class="avatar avatar-sm rounded-circle">
-              <img alt="Image placeholder" src="./assets/img/theme/team-1-800x800.jpg">
+              <img alt="Image placeholder" style="width: 100%;height: 100%;object-fit: cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFwrrW4t_r1rZ143elL3EaOBm95tPN1_FZWw&s">
             </span>
           </div>
         </a>
@@ -38,18 +37,6 @@
           <a routerLinkActive="active" [routerLink]="['/user-profile']" class="dropdown-item">
             <i class="ni ni-single-02"></i>
             <span>My profile</span>
-          </a>
-          <a routerLinkActive="active" [routerLink]="['/user-profile']" class="dropdown-item">
-            <i class="ni ni-settings-gear-65"></i>
-            <span>Settings</span>
-          </a>
-          <a routerLinkActive="active" [routerLink]="['/user-profile']" class="dropdown-item">
-            <i class="ni ni-calendar-grid-58"></i>
-            <span>Activity</span>
-          </a>
-          <a routerLinkActive="active" [routerLink]="['/user-profile']" class="dropdown-item">
-            <i class="ni ni-support-16"></i>
-            <span>Support</span>
           </a>
           <div class="dropdown-divider"></div>
           <a href="#!" class="dropdown-item" (click)="Logout()">
@@ -65,8 +52,8 @@
       <div class="navbar-collapse-header d-md-none">
         <div class="row">
           <div class="col-6 collapse-brand">
-            <a  routerLinkActive="active" [routerLink]="['/dashboard']">
-              <img src="./assets/img/brand/blue.png">
+            <a  routerLinkActive="active" [routerLink]="[CurrentUser.role.role === 'ROLE_ADMIN'?'/dashboard':'/Calendar']">
+              <img src="https://cdn.prod.website-files.com/62a9b4f36a23c435c9b9f3cc/63321e635bdbc964bf196b29_63225e0669bba785c9e60352_smarty_logo.png">
             </a>
           </div>
           <div class="col-6 collapse-close">
@@ -91,7 +78,7 @@
       <!-- Navigation -->
       <ul class="navbar-nav">
           <li *ngFor="let menuItem of menuItems" class="{{menuItem.class}} nav-item">
-              <a routerLinkActive="active" [routerLink]="[menuItem.path]" class="nav-link">
+              <a routerLinkActive="Activation" [routerLink]="[menuItem.path]" class="nav-link">
                   <i class="ni {{menuItem.icon}}"></i>
                   {{menuItem.title}}
               </a>

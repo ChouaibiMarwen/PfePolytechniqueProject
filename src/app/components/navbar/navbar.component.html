@@ -23,7 +23,7 @@
               <img alt="Image placeholder" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFwrrW4t_r1rZ143elL3EaOBm95tPN1_FZWw&s" style="width: 100%;height: 100%;object-fit: cover">
             </span>
             <div class="media-body ml-2 d-none d-lg-block">
-              <span class="mb-0 text-sm  font-weight-bold">Unknown User</span>
+              <span class="mb-0 text-sm  font-weight-bold">{{ CurrenUser.name }}</span>
             </div>
           </div>
         </a>
@@ -35,23 +35,11 @@
             <i class="ni ni-single-02"></i>
             <span>My profile</span>
           </a>
-          <a routerLinkActive="active" [routerLink]="['/user-profile']" class="dropdown-item">
-            <i class="ni ni-settings-gear-65"></i>
-            <span>Settings</span>
-          </a>
-          <a routerLinkActive="active" [routerLink]="['/user-profile']" class="dropdown-item">
-            <i class="ni ni-calendar-grid-58"></i>
-            <span>Activity</span>
-          </a>
-          <a routerLinkActive="active" [routerLink]="['/user-profile']" class="dropdown-item">
-            <i class="ni ni-support-16"></i>
-            <span>Support</span>
-          </a>
           <div class="dropdown-divider"></div>
-          <a href="#!" class="dropdown-item">
+          <span class="dropdown-item" (click)="Logout()">
             <i class="ni ni-user-run"></i>
             <span>Logout</span>
-          </a>
+          </span>
         </div>
       </li>
     </ul>

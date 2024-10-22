@@ -10,8 +10,18 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {ClipboardModule} from "ngx-clipboard";
 import {ComponentsModule} from "../../components/components.module";
 import {CalendarComponent} from "../../pages/calendar/calendar.component";
-
-
+import {
+  CalendarDateFormatter,
+  CalendarModule,
+  CalendarMomentDateFormatter,
+  DateAdapter,
+  MOMENT
+} from "angular-calendar";
+import {adapterFactory} from "angular-calendar/date-adapters/moment";
+import * as moment from 'moment';
+export function momentAdapterFactory() {
+  return adapterFactory(moment);
+}
 @NgModule({
   declarations: [
     CalendarComponent
@@ -24,7 +34,25 @@ import {CalendarComponent} from "../../pages/calendar/calendar.component";
     NgbModule,
     ClipboardModule,
     ComponentsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CalendarModule.forRoot(
+      {
+        provide: DateAdapter,
+        useFactory: momentAdapterFactory,
+      },
+      {
+        dateFormatter: {
+          provide: CalendarDateFormatter,
+          useClass: CalendarMomentDateFormatter,
+        },
+      }
+    ),
+  ],
+  providers: [
+    {
+      provide: MOMENT,
+      useValue: moment,
+    },
   ],
 })
 export class TechLayoutModule {

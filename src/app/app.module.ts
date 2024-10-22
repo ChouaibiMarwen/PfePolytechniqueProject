@@ -27,6 +27,13 @@ import { BudgetsComponent } from './pages/budgets/budgets.component';
 import { TransactionsComponent } from './pages/transactions/transactions.component';
 
 import {TechLayoutComponent} from "./layouts/tech-layout/tech-layout.component";
+import {CalendarModule} from "angular-calendar";
+import { MymissionsComponent } from './pages/mymissions/mymissions.component';
+import { DemandBudgetComponent } from './pages/mymissions/demand-budget/demand-budget.component';
+import { MyBudgetRequestsComponent } from './pages/my-budget-requests/my-budget-requests.component';
+import { MyTransactionsComponent } from './pages/my-transactions/my-transactions.component';
+import { AddTransactionComponent } from './pages/mymissions/add-transaction/add-transaction.component';
+import { MissionsTransactionsComponent } from './pages/mymissions/missions-transactions/missions-transactions.component';
 
 
 
@@ -58,7 +65,13 @@ import {TechLayoutComponent} from "./layouts/tech-layout/tech-layout.component";
     UpdateParticipantComponent,
     UpdateMissionComponent,
     BudgetsComponent,
-    TransactionsComponent
+    TransactionsComponent,
+    MymissionsComponent,
+    DemandBudgetComponent,
+    MyBudgetRequestsComponent,
+    MyTransactionsComponent,
+    AddTransactionComponent,
+    MissionsTransactionsComponent
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true},],
   bootstrap: [AppComponent],

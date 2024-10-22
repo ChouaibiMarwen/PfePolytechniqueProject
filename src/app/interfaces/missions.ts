@@ -12,6 +12,7 @@ export interface Missions {
   active: boolean;
   deleted: boolean;
   title: string;
+  transactions: Transaction[];
 }
 
 export interface Budget {

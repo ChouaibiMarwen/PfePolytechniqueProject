@@ -27,6 +27,7 @@
     "@angular/router": "^14.2.0",
     "@ng-bootstrap/ng-bootstrap": "12.0.1",
     "@popperjs/core": "^2.11.4",
+    "angular-calendar": "^0.30.0",
     "bootstrap": "^5.3.3",
     "chart.js": "2.9.4",
     "clipboard": "2.0.10",

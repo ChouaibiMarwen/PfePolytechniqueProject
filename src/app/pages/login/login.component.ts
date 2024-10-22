@@ -15,6 +15,7 @@ import {SharedService} from "../../services/shared.service";
 })
 export class LoginComponent implements OnInit, OnDestroy {
   ipAddress:any;
+  see:boolean =false;
   login = new FormGroup({
     username: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),

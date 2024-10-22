@@ -45,10 +45,8 @@
                 </span>
               </td>
               <td class="text-right">
-                <i class="fa-solid fa-check" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem"
-                   (click)="approve(budget.id)" title="View Mission" *ngIf="budget.status === 'PENDING'" ></i>
-                <i class="fa-solid fa-times" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem" *ngIf="budget.status === 'PENDING'"
-                   data-toggle="modal" data-target="#denyModal" title="Update Participant" (click)="setBudgetId(budget.id)"></i>
+                <i class="fa-solid fa-times" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem"
+                   (click)="cancel(budget.id)" title="View Mission" *ngIf="budget.status === 'PENDING'" ></i>
               </td>
             </tr>
             </tbody>

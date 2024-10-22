@@ -8,8 +8,7 @@
     <div class="col">
       <div class="card shadow">
         <div class="card-header border-0" style="display: flex;justify-content: space-between;align-items: center">
-          <h3 class="mb-0">Missions</h3>
-          <button class="new" (click)="NewMission()">New Mission</button>
+          <h3 class="mb-0">My Missions</h3>
         </div>
         <div class="row" style="padding: 0.5rem 1rem;">
           <div class="col-md-2">
@@ -96,26 +95,12 @@
                 <!--                </div>-->
               </td>
               <td class="text-right">
-                <i class="fa-solid fa-eye" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem"
-                   (click)="sendData(mission,'/missions/update')" title="View Mission"></i>
-                <i class="fa-solid fa-users" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem"
-                   (click)="sendData(mission,'/missions/update/participant')" title="Update Participant"></i>
-                <ng-container *ngFor="let status of statuses">
-                  <i *ngIf="mission.status !== status"
-                     class="fa-solid"
-                     [ngClass]="{
-            'fa-xmark': status === 'CANCELLED',
-            'fa-check': status === 'COMPLETED',
-            'fa-clock': status === 'IN_PROGRESS',
-            'fa-calendar-xmark': status === 'OVERDUE',
-            'fa-hourglass-half': status === 'PENDING'
-        }"
-                     style="cursor:pointer;font-size: 1.2rem; padding: 0 0.5rem"
-                     [title]="getTitle(status)"
-                     (click)="update_status(mission.id, status)">
-                  </i>
-                </ng-container>
-
+                <i class="fa-solid fa-dollar-sign" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem"
+                   (click)="sendData(mission,'/My_Missions/request_budget')" title="Request Budget"></i>
+                <i class="fa-solid fa-money-bill-transfer" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem"
+                   data-toggle="modal" data-target="#denyModal" title="Add Transaction" (click)="sendData(mission,'/My_Missions/add_transaction')" ></i>
+                <i class="fa-solid fa-arrow-right-arrow-left" style="cursor:pointer;font-size: 1.2rem;padding: 0 0.5rem"
+                   data-toggle="modal" data-target="#denyModal" title="Display Mission Transaction" (click)="sendData(mission,'/My_Missions/Transactions')" ></i>
               </td>
             </tr>
             </tbody>

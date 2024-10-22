@@ -1,5 +1,32 @@
-<div class="header bg-gradient-info pb-8 pt-5 pt-md-8">
-  <div class="container-fluid">
-
+<div class="header bg-gradient-danger pt-5 pt-md-8" style="    height: 25rem;">
+  <div class="container-fluid ">
+    <div class="d-flex justify-content-between mb-3">
+      <button (click)="prevMonth()" class="btn btn-primary">Previous Month</button>
+      <button (click)="nextMonth()" class="btn btn-primary">Next Month</button>
+    </div>
+    <!-- Display the month name and year -->
+    <h2 class="text-center text-white">
+      {{ viewDate | date:'MMMM y' }}
+    </h2>
+    <div [ngSwitch]="view" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
+      <mwl-calendar-month-view
+        *ngSwitchCase="'month'"
+        [viewDate]="viewDate"
+        [events]="events"
+      >
+      </mwl-calendar-month-view>
+      <mwl-calendar-week-view
+        *ngSwitchCase="'week'"
+        [viewDate]="viewDate"
+        [events]="events"
+      >
+      </mwl-calendar-week-view>
+      <mwl-calendar-day-view
+        *ngSwitchCase="'day'"
+        [viewDate]="viewDate"
+        [events]="events"
+      >
+      </mwl-calendar-day-view>
+    </div>
   </div>
 </div>

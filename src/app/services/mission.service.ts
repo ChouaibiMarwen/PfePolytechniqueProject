@@ -22,6 +22,10 @@ export class MissionService {
     return lastValueFrom(this.http.patch<any>(environment.serverUrl + `/api/v1/mission/update_mission_participants/${mission_id}`,data))
   }
 
+  MyMissions() {
+    return lastValueFrom(this.http.get<any>(environment.serverUrl + `/api/v1/mission/all_my_missions_list`))
+  }
+
   formatDate(date: Date): string {
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'short',
@@ -59,5 +63,28 @@ export class MissionService {
     }
 
     return lastValueFrom(this.http.get<any>(environment.serverUrl + '/api/v1/mission/all_missions_pg', { params }));
+  }
+  getMyMissions(page: any, size: any, idTeamLead?: any, startdate?: any, enddate?: any, status?: any, title?: any) {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (idTeamLead) {
+      params = params.set('idTeamLead', idTeamLead.toString());
+    }
+    if (startdate) {
+      params = params.set('startdate', this.formatDate(startdate));
+    }
+    if (enddate) {
+      params = params.set('enddate', this.formatDate(enddate));
+    }
+    if (status) {
+      params = params.set('status', status);
+    }
+    if (title) {
+      params = params.set('title', title);
+    }
+
+    return lastValueFrom(this.http.get<any>(environment.serverUrl + '/api/v1/mission/all_my_missions_pg', { params }));
   }
 }

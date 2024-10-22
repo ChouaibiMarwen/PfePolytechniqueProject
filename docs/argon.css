@@ -19556,7 +19556,7 @@ textarea[resize='horizontal']
         padding-left: 1.5rem;
 
         flex: 1 1;
-        align-items: stretch;
+        /*align-items: stretch;*/
     }
     .navbar-vertical.navbar-expand-md .navbar-collapse > *
     {
