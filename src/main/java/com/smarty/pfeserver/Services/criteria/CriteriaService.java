@@ -4,6 +4,7 @@ import com.smarty.pfeserver.Enum.Project.MissionStatusEnum;
 import com.smarty.pfeserver.Enum.User.RoleEnum;
 import com.smarty.pfeserver.Models.Auth.Role;
 import com.smarty.pfeserver.Models.Project.Mission;
+import com.smarty.pfeserver.Models.Project.Task;
 import com.smarty.pfeserver.Models.Project.Transaction;
 import com.smarty.pfeserver.Models.User.users;
 import com.smarty.pfeserver.Repository.Auth.RoleRepository;
@@ -177,6 +178,51 @@ public class CriteriaService {
 
         // Step 6: Execute the query and return the results
         return em.createQuery(criteriaQuery).getResultList();
+    }
+
+    public List<Task> findTasksWithFilters(String title, Date startDate, Date endDate, MissionStatusEnum status, users participant) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Task> cq = cb.createQuery(Task.class);
+        Root<Task> task = cq.from(Task.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Title filter
+        if (title != null && !title.isEmpty()) {
+            predicates.add(cb.like(task.get("title"), "%" + title + "%"));
+        }
+
+        // Start date filter
+        if (startDate != null && endDate == null) {
+            predicates.add(cb.greaterThanOrEqualTo(task.get("startdate"), startDate));
+        }
+
+        // End date filter
+        if (endDate != null && startDate == null) {
+            predicates.add(cb.lessThanOrEqualTo(task.get("startdate"), endDate));
+        }
+
+        // Between start and end date filter
+        if (startDate != null && endDate != null) {
+            predicates.add(cb.between(task.get("startdate"), startDate, endDate));
+        }
+
+        // Status filter
+        if (status != null) {
+            predicates.add(cb.equal(task.get("status"), status));
+        }
+
+        // Participant filter
+        if (participant != null) {
+            Join<Task, users> participants = task.join("taskparticipants");
+            predicates.add(cb.equal(participants, participant));
+        }
+
+        // Combine all predicates
+        cq.where(predicates.toArray(new Predicate[0]));
+
+        TypedQuery<Task> query = em.createQuery(cq);
+        return query.getResultList();
     }
 
 }

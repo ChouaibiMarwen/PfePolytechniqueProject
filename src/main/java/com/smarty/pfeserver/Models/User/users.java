@@ -79,7 +79,9 @@ public class users implements Serializable {
     @ManyToMany(mappedBy = "participants")
     @JsonIgnore
     private Set<Mission> missions = new HashSet<>();
-
+    @ManyToMany(mappedBy = "taskparticipants")
+    @JsonIgnore
+    private Set<Task> tasks = new HashSet<>();
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -320,6 +322,14 @@ public class users implements Serializable {
         this.missions = missions;
     }
 
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
+    }
+
     public void addMission(Mission mission) {
         this.missions.add(mission);
         mission.getParticipants().add(this);
@@ -328,5 +338,17 @@ public class users implements Serializable {
     public void removeMission(Mission mission) {
         this.missions.remove(mission);
         mission.getParticipants().remove(this);
+    }
+
+
+
+    public void addTask(Task task) {
+        this.tasks.add(task);
+        task.getTaskparticipants().add(this);
+    }
+
+    public void removeTask(Task task) {
+        this.tasks.remove(task);
+        task.getTaskparticipants().remove(this);
     }
 }

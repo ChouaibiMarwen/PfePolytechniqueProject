@@ -46,6 +46,8 @@ public class Mission {
     private Set<users> participants = new HashSet<>();
     @OneToMany(mappedBy = "mission", cascade = {CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.EAGER)
     private Set<Transaction> transactions = new HashSet<>();
+    @OneToMany(mappedBy = "mission", cascade = {CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.EAGER)
+    private Set<Task> tasks = new HashSet<>();
     @JsonIgnore
     @OneToMany(mappedBy = "mission", cascade = {CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.EAGER)
     private Set<BoostBudgetRequest> requestBoostBudgetRequest = new HashSet<>();
@@ -177,5 +179,13 @@ public class Mission {
 
     public void setRequestBoostBudgetRequest(Set<BoostBudgetRequest> requestBoostBudgetRequest) {
         this.requestBoostBudgetRequest = requestBoostBudgetRequest;
+    }
+
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
     }
 }
