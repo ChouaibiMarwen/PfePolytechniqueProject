@@ -3,6 +3,7 @@ package com.smarty.pfeserver.Request.Projet;
 public class AddTransactionRequest {
     private String name ;
     private String description ;
+    private String fileurl ;
     private Double amount;
    private Long missionId ;
 
@@ -36,5 +37,13 @@ public class AddTransactionRequest {
 
     public void setMissionId(Long missionId) {
         this.missionId = missionId;
+    }
+
+    public String getFileurl() {
+        return fileurl;
+    }
+
+    public void setFileurl(String fileurl) {
+        this.fileurl = fileurl;
     }
 }

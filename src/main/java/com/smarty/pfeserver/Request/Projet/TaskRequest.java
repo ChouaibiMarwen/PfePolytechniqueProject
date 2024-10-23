@@ -10,8 +10,10 @@ public class TaskRequest {
     private Date startdate;
     private String title;
     private String description;
+    private String fileurl;
     private Date enddate;
     private List<Long> idParticipants;
+
 
     public Date getStartdate() {
         return startdate;
@@ -51,5 +53,13 @@ public class TaskRequest {
 
     public void setIdParticipants(List<Long> idParticipants) {
         this.idParticipants = idParticipants;
+    }
+
+    public String getFileurl() {
+        return fileurl;
+    }
+
+    public void setFileurl(String fileurl) {
+        this.fileurl = fileurl;
     }
 }

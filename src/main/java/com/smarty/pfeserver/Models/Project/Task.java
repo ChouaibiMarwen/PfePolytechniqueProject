@@ -38,6 +38,8 @@ public class Task {
     private Double evolutionPercentage = 0.0;
     @Column(name = "enddate")
     private Date enddate;
+    @Column(name = "fileurl")
+    private String fileurl;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "users_mtasks",
             joinColumns =
@@ -147,5 +149,13 @@ public class Task {
     public void removeParticipants(users user)  {
         this.taskparticipants.remove(user);
         user.getTasks().remove(this);
+    }
+
+    public String getFileurl() {
+        return fileurl;
+    }
+
+    public void setFileurl(String fileurl) {
+        this.fileurl = fileurl;
     }
 }

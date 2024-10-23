@@ -25,6 +25,8 @@ public class Mission {
     private String title;
     @Column(name = "address")
     private String address;
+    @Column(name = "fileurl")
+    private String fileurl;
     @Column(name = "enddate")
     private Date enddate;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -187,5 +189,13 @@ public class Mission {
 
     public void setTasks(Set<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public String getFileurl() {
+        return fileurl;
+    }
+
+    public void setFileurl(String fileurl) {
+        this.fileurl = fileurl;
     }
 }

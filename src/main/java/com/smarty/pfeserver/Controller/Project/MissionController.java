@@ -52,7 +52,7 @@ public class MissionController extends BaseController {
             @ApiResponse(code = 403, message = "Forbidden")
     })
 
-    public ResponseEntity<Mission> all_my_notification(@ModelAttribute MissionRequest request) throws IOException {
+    public ResponseEntity<Mission> add_mission(@ModelAttribute MissionRequest request) throws IOException {
         /*users user = this.userService.findByUserName(getCurrentUser().getUsername());*/
 
         if(request.getTitle() == null)
@@ -70,6 +70,8 @@ public class MissionController extends BaseController {
         mission.setBudget(request.getBudget());
         mission.setStartdate(request.getStartdate());
         mission.setAddress(request.getAddress());
+        if(request.getFileurl() != null)
+            mission.setFileurl(request.getFileurl());
         mission.setEnddate(request.getEnddate());
         if(request.getIdTechniciens()!= null){
             for(Long id : request.getIdTechniciens()){
@@ -171,7 +173,8 @@ public class MissionController extends BaseController {
                 return new ResponseEntity("can't update budget while it is completed", HttpStatus.NOT_ACCEPTABLE);
             mission.setBudget(request.getBudget());
         }
-
+        if(request.getFileurl() != null)
+            mission.setFileurl(request.getFileurl());
         if(request.getStartdate() != null){
             if(mission.getStatus() != MissionStatusEnum.PENDING)
                 return new ResponseEntity("can't update start date while mission is already started or cancelled", HttpStatus.NOT_ACCEPTABLE);

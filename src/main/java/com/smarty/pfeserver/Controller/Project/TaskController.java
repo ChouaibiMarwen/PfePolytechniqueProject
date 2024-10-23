@@ -67,6 +67,8 @@ public class TaskController extends BaseController {
             task.setStartdate(request.getStartdate());
         if(request.getEnddate() != null)
             task.setEnddate(request.getEnddate());
+        if(request.getFileurl() != null)
+            task.setFileurl(request.getFileurl());
         if(request.getDescription() != null)
             task.setDescription(request.getDescription());
         if(request.getTitle() != null)

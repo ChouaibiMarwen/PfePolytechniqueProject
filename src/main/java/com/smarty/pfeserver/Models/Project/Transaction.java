@@ -29,6 +29,8 @@ public class Transaction {
     private String description ;
     @Column(name = "rejectionreason" , columnDefinition = "TEXT")
     private String rejectionreason ;
+    @Column(name = "fileurl")
+    private String fileurl;
     @Column(name = "amount")
     private Double amount;
     @JsonIgnore
@@ -163,5 +165,13 @@ public class Transaction {
 
     public void setRejectionreason(String rejectionreason) {
         this.rejectionreason = rejectionreason;
+    }
+
+    public String getFileurl() {
+        return fileurl;
+    }
+
+    public void setFileurl(String fileurl) {
+        this.fileurl = fileurl;
     }
 }

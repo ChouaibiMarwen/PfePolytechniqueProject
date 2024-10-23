@@ -13,6 +13,7 @@ public class UpdateMissionRequest {
     private Double locationLatitude;
     private Double locationLongitude;
     private String locationname;
+    private String fileurl;
     private Double budget;
     private MissionStatusEnum status;
 
@@ -94,5 +95,13 @@ public class UpdateMissionRequest {
 
     public void setStatus(MissionStatusEnum status) {
         this.status = status;
+    }
+
+    public String getFileurl() {
+        return fileurl;
+    }
+
+    public void setFileurl(String fileurl) {
+        this.fileurl = fileurl;
     }
 }

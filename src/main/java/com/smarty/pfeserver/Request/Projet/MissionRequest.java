@@ -13,6 +13,7 @@ public class MissionRequest {
     private Double locationLatitude;
     private Double locationLongitude;
     private String locationname;
+    private String fileurl;
     private Double budget;
     private List<Long> idTechniciens;
 
@@ -95,5 +96,13 @@ public class MissionRequest {
 
     public void setIdTechniciens(List<Long> idTechniciens) {
         this.idTechniciens = idTechniciens;
+    }
+
+    public String getFileurl() {
+        return fileurl;
+    }
+
+    public void setFileurl(String fileurl) {
+        this.fileurl = fileurl;
     }
 }

@@ -70,6 +70,8 @@ public class TransactionController extends BaseController {
         transaction.setAmount(request.getAmount());
         if (request.getDescription() != null)
             transaction.setDescription(request.getDescription());
+        if (request.getFileurl() != null)
+            transaction.setFileurl(request.getFileurl());
         if (request.getName() != null)
             transaction.setName(request.getName());
 
