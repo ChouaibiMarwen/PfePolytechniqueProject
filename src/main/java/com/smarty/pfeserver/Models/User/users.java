@@ -1,5 +1,6 @@
 package com.smarty.pfeserver.Models.User;
 
+import com.smarty.pfeserver.Enum.Project.SoftSkillsEnum;
 import com.smarty.pfeserver.Enum.Tools.Provider;
 import com.smarty.pfeserver.Models.Auth.Privilege;
 import com.smarty.pfeserver.Models.Auth.Role;
@@ -49,6 +50,8 @@ public class users implements Serializable {
     private String password;
     @Transient
     private String name;
+    @ElementCollection
+    private Set<SoftSkillsEnum> softskills = new HashSet<>();
     @Column(name = "phone_number")
     private String phonenumber;
     @Column(name = "suspend_reason")
@@ -350,5 +353,13 @@ public class users implements Serializable {
     public void removeTask(Task task) {
         this.tasks.remove(task);
         task.getTaskparticipants().remove(this);
+    }
+
+    public Set<SoftSkillsEnum> getSoftskills() {
+        return softskills;
+    }
+
+    public void setSoftskills(Set<SoftSkillsEnum> softskills) {
+        this.softskills = softskills;
     }
 }

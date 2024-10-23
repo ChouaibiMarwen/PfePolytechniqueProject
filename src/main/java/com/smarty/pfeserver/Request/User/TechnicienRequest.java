@@ -1,7 +1,11 @@
 package com.smarty.pfeserver.Request.User;
 
+import com.smarty.pfeserver.Enum.Project.SoftSkillsEnum;
 import com.smarty.pfeserver.Enum.User.IdTypeEnum;
 import com.smarty.pfeserver.Request.Tools.AddressRequest;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class TechnicienRequest {
     private String email ;
@@ -11,6 +15,7 @@ public class TechnicienRequest {
     private IdTypeEnum idType;
     private PersonalInformationRequest informationRequest;
     private AddressRequest useraddressRequest;
+    private Set<SoftSkillsEnum> softSkillsEnumSet = new HashSet<>();
 
     public String getEmail() {
         return email;
@@ -66,5 +71,13 @@ public class TechnicienRequest {
 
     public void setUseraddressRequest(AddressRequest useraddressRequest) {
         this.useraddressRequest = useraddressRequest;
+    }
+
+    public Set<SoftSkillsEnum> getSoftSkillsEnumSet() {
+        return softSkillsEnumSet;
+    }
+
+    public void setSoftSkillsEnumSet(Set<SoftSkillsEnum> softSkillsEnumSet) {
+        this.softSkillsEnumSet = softSkillsEnumSet;
     }
 }

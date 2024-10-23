@@ -1,12 +1,15 @@
 package com.smarty.pfeserver.Controller.User;
 
+import com.smarty.pfeserver.Enum.Project.SoftSkillsEnum;
 import com.smarty.pfeserver.Enum.User.Gender;
 import com.smarty.pfeserver.Models.Auth.Privilege;
+import com.smarty.pfeserver.Models.Project.Mission;
 import com.smarty.pfeserver.Models.Tools.Address;
 import com.smarty.pfeserver.Models.Tools.PersonalInformation;
 import com.smarty.pfeserver.Models.User.users;
 import com.smarty.pfeserver.Models.country.Root;
 import com.smarty.pfeserver.Models.country.State;
+import com.smarty.pfeserver.Request.Projet.UpdateMissionRequest;
 import com.smarty.pfeserver.Request.User.TechnicienRequest;
 import com.smarty.pfeserver.Services.Country.CountriesServices;
 import com.smarty.pfeserver.Services.Tools.AddressServices;
@@ -22,10 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -84,6 +84,7 @@ public class TechnicienController {
         if (!UserService.isValidEmail(request.getEmail().toLowerCase()) && !request.getEmail().contains(" "))
             return new ResponseEntity("email", HttpStatus.NOT_ACCEPTABLE);
 
+
         String name = request.getInformationRequest().getFirstnameen() + request.getInformationRequest().getLastnameen();
         String username = userService.GenerateUserName(name, userService.Count());
         users existingUserByUsername = userService.findByUserName(username);
@@ -124,6 +125,11 @@ public class TechnicienController {
         user.setEmail(request.getEmail().toLowerCase());
         user.setPhonenumber(request.getPhonenumber().toLowerCase());
         user.setPassword(request.getPassword());
+        if(request.getSoftSkillsEnumSet()!= null && !request.getSoftSkillsEnumSet().isEmpty()){
+            for(SoftSkillsEnum  s : request.getSoftSkillsEnumSet() ){
+                user.getSoftskills().add(s);
+            }
+        }
         user.setPersonalinformation(resultinformation);
         List<Privilege> privilegeList = this.privilegeService.findAll();
         Set<Privilege> privileges = user.getPrivileges();
@@ -154,12 +160,36 @@ public class TechnicienController {
             if (request.getUseraddressRequest().getStreetname() != null)
                 address.setStreetname(request.getUseraddressRequest().getStreetname());
         }
+
         address.setUser(user);
         Address addressresult = this.addressServices.save(address);
         users technicien = userService.UpdateUser(user);
 
 
         return new ResponseEntity<>(technicien, HttpStatus.OK);
+
+    }
+
+    @PatchMapping(value = {"/update_technician_skills/{user_id}"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "update_technician_skills for admin", notes = "Endpoint to update_technician_skills for admin")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully add"),
+            @ApiResponse(code = 400, message = "Bad request, check required fields"),
+            @ApiResponse(code = 403, message = "Forbidden")
+    })
+    public ResponseEntity<users> update_technician_skills(@PathVariable Long user_id, @RequestParam List<SoftSkillsEnum> newskills) throws IOException {
+        users user = this.userService.findById(user_id);
+        if (user == null)
+            return new ResponseEntity("Mission not found", HttpStatus.NOT_FOUND);
+        if(newskills!= null && !newskills.isEmpty()){
+            user.getSoftskills().clear();
+            for(SoftSkillsEnum  s : newskills){
+                user.getSoftskills().add(s);
+            }
+        }
+        users result = this.userService.UpdateUser(user);
+        return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
 
