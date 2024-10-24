@@ -303,15 +303,11 @@ public class UserService extends BaseController implements UserDetailsService {
 
 
     public List<users> allusersByRole(RoleEnum role) {
-        try {
-            Role userRole = roleRepository.findByRole(role);
-            if(userRole == null)
-                throw new NotFoundException("Role is not found");
+        Role userRole = roleRepository.findByRole(role);
+        if(userRole == null)
+            throw new NotFoundException("Role is not found");
 
-            return this.userRepository.findByRoleAndDeletedIsFalse(userRole);
-        } catch (NoSuchElementException ex) {
-            throw new NotFoundException("hourbor id not found data");
-        }
+        return this.userRepository.findByRoleAndDeletedIsFalse(userRole);
     }
 
 
@@ -635,6 +631,10 @@ public class UserService extends BaseController implements UserDetailsService {
         user.setPhonenumber(user.getPhonenumber()+date);
         user.setUsername(user.getUsername()+date);
          return UpdateUser(user);
+    }
+
+    public List<users> alluersbyrole(RoleEnum role){
+        return this.userRepository.findByRole_Role(role);
     }
 
 }

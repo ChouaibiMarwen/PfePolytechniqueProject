@@ -156,7 +156,7 @@ public class TaskController extends BaseController {
     }
 
     @PatchMapping(value = {"/update_task_status/{task_id}"})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN') ")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN')")
     @ApiOperation(value = "update a task status for admin and users", notes = "Endpoint to update a task for admin and user")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),

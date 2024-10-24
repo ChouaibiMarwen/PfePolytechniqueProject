@@ -1,6 +1,7 @@
 package com.smarty.pfeserver.Repository.User;
 
 
+import com.smarty.pfeserver.Enum.User.RoleEnum;
 import com.smarty.pfeserver.Models.Auth.Role;
 import com.smarty.pfeserver.Models.User.users;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,7 @@ public interface UserRepository extends JpaRepository<users, Long> {
 
     users findByRole(Role role);
 
+    List<users> findByRole_Role(RoleEnum role);
 
     Page<users> findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(Pageable page, Role role, String name, Boolean delete, String userNaMe);
     List<users> findAllByRoleAndEmailLikeIgnoreCaseAndDeletedAndUsernameNotLikeIgnoreCaseOrderByTimestmpDesc(Role role, String name, Boolean delete, String userNaMe);
