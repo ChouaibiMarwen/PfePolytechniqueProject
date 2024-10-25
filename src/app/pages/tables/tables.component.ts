@@ -4,6 +4,7 @@ import {AddTechnicienComponent} from "./add-technicien/add-technicien.component"
 import {Route, Router} from "@angular/router";
 import {UserService} from "../../services/user.service";
 import {Participant} from "../../interfaces/missions";
+import {DataService} from "../../services/data.service";
 
 @Component({
   selector: 'app-tables',
@@ -13,7 +14,7 @@ import {Participant} from "../../interfaces/missions";
 export class TablesComponent implements OnInit {
   users: Participant[] = [];
 
-  constructor(private router: Router, private User: UserService) {
+  constructor(private dataService: DataService,private router: Router, private User: UserService) {
   }
 
   ngOnInit() {
@@ -51,5 +52,10 @@ export class TablesComponent implements OnInit {
     this.User.suspended(id).then((res) => {
       this.GetAllTechnicien()
     })
+  }
+
+  sendData(data:any,navigate:any) {
+    this.dataService.setData(data);
+    this.router.navigate([navigate])
   }
 }

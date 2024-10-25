@@ -12,10 +12,45 @@ import {Router} from "@angular/router";
 export class AddTechnicienComponent implements OnInit {
   technicianForm: FormGroup;
   private _snackBar = inject(MatSnackBar);
-
+  softSkills: { name: string; value: string }[] = [
+    { name: 'Active Listening', value: 'ACTIVE_LISTENING' },
+    { name: 'Adaptability', value: 'ADAPTABILITY' },
+    { name: 'Attention to Detail', value: 'ATTENTION_TO_DETAIL' },
+    { name: 'Collaboration', value: 'COLLABORATION' },
+    { name: 'Communication', value: 'COMMUNICATION' },
+    { name: 'Conflict Resolution', value: 'CONFLICT_RESOLUTION' },
+    { name: 'Creativity', value: 'CREATIVITY' },
+    { name: 'Critical Thinking', value: 'CRITICAL_THINKING' },
+    { name: 'Decision Making', value: 'DECISION_MAKING' },
+    { name: 'Emotional Intelligence', value: 'EMOTIONAL_INTELLIGENCE' },
+    { name: 'Interpersonal Skills', value: 'INTERPERSONAL_SKILLS' },
+    { name: 'Leadership', value: 'LEADERSHIP' },
+    { name: 'Negotiation', value: 'NEGOTIATION' },
+    { name: 'Patience', value: 'PATIENCE' },
+    { name: 'Problem Solving', value: 'PROBLEM_SOLVING' },
+    { name: 'Self-Motivation', value: 'SELF_MOTIVATION' },
+    { name: 'Stress Management', value: 'STRESS_MANAGEMENT' },
+    { name: 'Teamwork', value: 'TEAMWORK' },
+    { name: 'Time Management', value: 'TIME_MANAGEMENT' },
+    { name: 'Work Ethic', value: 'WORK_ETHIC' }
+  ];
+  selectedSoftSkills: string[] = [];
   constructor(private router: Router,private fb: FormBuilder, private technicianService: TechnicianService,) {
   }
 
+  toggleSkill(skillValue: string): void {
+    const index = this.selectedSoftSkills.indexOf(skillValue);
+    if (index === -1) {
+      // Skill not selected, add it
+      this.selectedSoftSkills.push(skillValue);
+    } else {
+      // Skill already selected, remove it
+      this.selectedSoftSkills.splice(index, 1);
+    }
+
+    // Update the form control with the selected skills
+    this.technicianForm.patchValue({ softSkills: this.selectedSoftSkills });
+  }
   ngOnInit(): void {
     this.technicianForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -25,6 +60,7 @@ export class AddTechnicienComponent implements OnInit {
       }),
       password: ['', [Validators.required]],
       phonenumber: ['', Validators.required],
+      softSkills: [[], Validators.required],
     });
   }
 
@@ -42,6 +78,7 @@ export class AddTechnicienComponent implements OnInit {
         },
         password: this.technicianForm.value.password,
         phonenumber: this.technicianForm.value.phonenumber,
+        softSkillsEnumSet: this.selectedSoftSkills,
       };
       this.technicianService.New_Tech(data).then((response) => {
         console.log(response);

@@ -1,0 +1,38 @@
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+  <!--<app-stat></app-stat>-->
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Form -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0" style="display: flex;justify-content: space-between;align-items: center">
+          <h3 class="mb-0">Update Soft Skills</h3>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-danger" role="alert" *ngIf="Error">
+            {{Error}}
+          </div>
+          <div class="alert alert-success" role="alert" *ngIf="Success">
+            {{Success}}
+          </div>
+          <div class="alert alert-warning" role="alert" *ngIf="Warning">
+            {{Warning}}
+          </div>
+          <form [formGroup]="technicianForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label>Soft skills</label>
+              <div class="skills">
+                <div class="skill" [ngClass]="{'selected': selectedSoftSkills.includes(soft.value)}" *ngFor="let soft of softSkills" (click)="toggleSkill(soft.value)">
+                  <span>{{soft.name}}</span>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

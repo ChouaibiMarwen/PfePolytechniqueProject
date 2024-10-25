@@ -49,6 +49,7 @@ export interface Participant {
   active: boolean;
   lastOtp?: string | null; // Optional
   timestamp: number; // Timestamp
+  softskills:string[];
 }
 
 export interface PersonalInformation {

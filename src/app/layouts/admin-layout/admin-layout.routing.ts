@@ -12,11 +12,15 @@ import {UpdateParticipantComponent} from "../../pages/missions/update-participan
 import {UpdateMissionComponent} from "../../pages/missions/update-mission/update-mission.component";
 import {BudgetsComponent} from "../../pages/budgets/budgets.component";
 import {TransactionsComponent} from "../../pages/transactions/transactions.component";
+import {UpdateTechComponent} from "../../pages/tables/update-tech/update-tech.component";
+import {TasksComponent} from "../../pages/tasks/tasks.component";
+import {MyTasksComponent} from "../../pages/tasks/my-tasks/my-tasks.component";
 
 export const AdminLayoutRoutes: Routes = [
   {path: 'dashboard', component: DashboardComponent},
   {path: 'user-profile', component: UserProfileComponent},
   {path: 'Technician', component: TablesComponent},
+  {path: 'Technician/Skills/update', component: UpdateTechComponent},
   {path: 'Technician/add', component: AddTechnicienComponent},
   {path: 'missions', component: MissionsComponent},
   {path: 'missions/add', component: NewMissionComponent},
@@ -24,6 +28,8 @@ export const AdminLayoutRoutes: Routes = [
   {path: 'missions/update/participant', component: UpdateParticipantComponent},
   {path: 'transaction', component: TransactionsComponent},
   {path: 'Budget_Requests', component: BudgetsComponent},
+  {path: 'Tasks', component: TasksComponent},
+
   {path: 'icons', component: IconsComponent},
   {path: 'maps', component: MapsComponent}
 ];

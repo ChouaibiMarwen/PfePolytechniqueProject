@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CalendarEvent, CalendarView, DAYS_OF_WEEK } from 'angular-calendar';
 import moment from 'moment';
 import { MissionService } from "../../services/mission.service";
+import {DataService} from "../../services/data.service";
+import {Router} from "@angular/router";
 
 // Configure moment.js for week start
 moment.updateLocale('en', {
@@ -22,7 +24,7 @@ export class CalendarComponent implements OnInit {
   events: CalendarEvent[] = [];
   missions: any[];
 
-  constructor(private Service: MissionService) {
+  constructor(private Service: MissionService,private dataService: DataService,private router:Router) {
     this.GetAllMyMiSSION();
   }
 
@@ -57,10 +59,21 @@ export class CalendarComponent implements OnInit {
         start: new Date(mission.startdate),
         end: new Date(mission.enddate),
         title: mission.title,
-        color: this.generateRandomColor(), // Generate a random color for each mission
+        color: this.generateRandomColor(),
+        meta: { mission: mission }// Generate a random color for each mission
       }));
     }).catch((error) => {
       console.error("Error fetching missions", error);
     });
+  }
+
+  sendData(data:any,navigate:any) {
+    this.dataService.setData(data);
+    this.router.navigate([navigate])
+  }
+
+  onEventClick(event: CalendarEvent): void {
+    this.sendData(event.meta?.mission,'/missions/update')
+    console.log('Mission ID:', event.meta?.mission); // Adjust this line based on how your event is structured
   }
 }

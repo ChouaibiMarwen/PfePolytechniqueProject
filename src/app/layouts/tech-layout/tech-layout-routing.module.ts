@@ -9,6 +9,10 @@ import {AddTransactionComponent} from "../../pages/mymissions/add-transaction/ad
 import {
   MissionsTransactionsComponent
 } from "../../pages/mymissions/missions-transactions/missions-transactions.component";
+import {LiveMeetComponent} from "../../pages/live-meet/live-meet.component";
+import {RoomComponent} from "../../pages/live-meet/room/room.component";
+import {MyTasksComponent} from "../../pages/tasks/my-tasks/my-tasks.component";
+import {NewTaskComponent} from "../../pages/tasks/new-task/new-task.component";
 
 export const TechLayoutRoutes: Routes = [
   {path: 'Calendar', component: CalendarComponent},
@@ -18,6 +22,10 @@ export const TechLayoutRoutes: Routes = [
   {path: 'My_Missions/add_transaction', component: AddTransactionComponent},
   {path: 'My_Missions/Transactions', component: MissionsTransactionsComponent},
   {path: 'My_Budget_Requests', component: MyBudgetRequestsComponent},
+  {path: 'LiveMeet', component: LiveMeetComponent},
+  {path: 'LiveMeet/Room/:roomID', component: RoomComponent},
+  {path: 'MyTasks', component: MyTasksComponent},
+  {path: 'NewTask', component: NewTaskComponent},
 ]
 
 export class TechLayoutRoutingModule {

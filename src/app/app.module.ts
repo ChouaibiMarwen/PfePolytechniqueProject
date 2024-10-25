@@ -35,6 +35,12 @@ import { MyTransactionsComponent } from './pages/my-transactions/my-transactions
 import { AddTransactionComponent } from './pages/mymissions/add-transaction/add-transaction.component';
 import { MissionsTransactionsComponent } from './pages/mymissions/missions-transactions/missions-transactions.component';
 import { ConfirmationModalComponent } from './pages/confirmation-modal/confirmation-modal.component';
+import { LiveMeetComponent } from './pages/live-meet/live-meet.component';
+import { RoomComponent } from './pages/live-meet/room/room.component';
+import { UpdateTechComponent } from './pages/tables/update-tech/update-tech.component';
+import { TasksComponent } from './pages/tasks/tasks.component';
+import { NewTaskComponent } from './pages/tasks/new-task/new-task.component';
+import { MyTasksComponent } from './pages/tasks/my-tasks/my-tasks.component';
 
 
 
@@ -73,7 +79,13 @@ import { ConfirmationModalComponent } from './pages/confirmation-modal/confirmat
     MyTransactionsComponent,
     AddTransactionComponent,
     MissionsTransactionsComponent,
-    ConfirmationModalComponent
+    ConfirmationModalComponent,
+    LiveMeetComponent,
+    RoomComponent,
+    UpdateTechComponent,
+    TasksComponent,
+    NewTaskComponent,
+    MyTasksComponent
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true},],
   bootstrap: [AppComponent],

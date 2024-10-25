@@ -18,6 +18,7 @@ export const ROUTES: RouteInfo[] = [
   {path: '/transaction', title: 'Transaction Management', icon: 'ni-money-coins text-info', class: ''},
   {path: '/Budget_Requests', title: 'Budget Requests', icon: 'ni-bullet-list-67 text-yellow', class: ''},
   {path: '/user-profile', title: 'User profile', icon: 'ni-single-02  text-pink', class: ''},
+  {path: '/Tasks', title: 'Tasks', icon: 'ni-bullet-list-67  text-danger', class: ''},
 ];
 
 export const Tech_ROUTES: RouteInfo[] = [
@@ -26,6 +27,8 @@ export const Tech_ROUTES: RouteInfo[] = [
   {path: '/My_Budget_Requests', title: 'My Budget Requests', icon: 'ni-bullet-list-67 text-yellow', class: ''},
   {path: '/My_Transactions', title: 'My Transactions', icon: 'ni-money-coins text-info', class: ''},
   {path: '/user-profile', title: 'User profile', icon: 'ni-single-02  text-pink', class: ''},
+  {path: '/LiveMeet', title: 'Live Meet', icon: 'ni-tv-2  text-dark', class: ''},
+  {path: '/MyTasks', title: 'My Tasks', icon: 'ni-bullet-list-67  text-danger', class: ''},
 ];
 
 @Component({

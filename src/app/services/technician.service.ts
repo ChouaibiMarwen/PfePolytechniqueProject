@@ -13,4 +13,8 @@ export class TechnicianService {
   New_Tech(data:any) {
     return lastValueFrom(this.http.post<any>(environment.serverUrl + '/api/v1/technician/add_technicien',data))
   }
+
+  Update_Skills(user_id:any,data:any) {
+    return lastValueFrom(this.http.patch<any>(environment.serverUrl +  `/api/v1/technician/update_technician_skills/${user_id}`,data))
+  }
 }
