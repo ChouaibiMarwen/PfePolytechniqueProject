@@ -77,7 +77,7 @@ export class NewTaskComponent implements OnInit {
       this.Success = "Task added successfully!";
       setTimeout(() => {
         this.Success = null;
-        this.router.navigate(['/missions']);
+        this.router.navigate(['/MyTasks']);
       }, 2000);
     }).catch((error) => {
       if(error.status === 406) {

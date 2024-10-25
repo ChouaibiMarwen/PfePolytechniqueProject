@@ -98,7 +98,9 @@ export class MyTasksComponent implements OnInit {
   }
 
   selectedStatus: string = '';
-
+  getBeforeDecimal(num: number): number {
+    return Math.floor(num);
+  }
 
   UpdateStat(id: number, reason: string) {
     const formData = new FormData();
@@ -106,5 +108,15 @@ export class MyTasksComponent implements OnInit {
     this.task.UpdateSTatus(id,formData).then((res)=>{
       this.getAllMissions(this.paginatedMissions.page)
     })
+  }
+
+  getProgressColor(progress:any) {
+    if (progress < 50) {
+      return 'red';
+    } else if (progress < 75) {
+      return 'orange';
+    } else {
+      return 'green';
+    }
   }
 }
