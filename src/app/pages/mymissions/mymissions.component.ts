@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {PaginatedMissions} from "../../interfaces/missions";
+import {PaginatedMissions, Participant} from "../../interfaces/missions";
 import {DataService} from "../../services/data.service";
 import {Router} from "@angular/router";
 import {UserService} from "../../services/user.service";
@@ -17,10 +17,14 @@ export class MymissionsComponent implements OnInit {
   enddate: any;
   status: any = null;
   title: any;
+  CurrentUser:Participant
   statuses = ['CANCELLED', 'COMPLETED', 'IN_PROGRESS', 'OVERDUE', 'PENDING'];
   constructor(private dataService: DataService,private router: Router,private User:UserService,private mission:MissionService) { }
   ngOnInit(): void {
     this.getAllMissions(0)
+    this.User.getProfile().then((res)=>{
+      this.CurrentUser = res;
+    })
   }
 
 

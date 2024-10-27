@@ -36,7 +36,7 @@ export class UserService {
   }
 
   All_Users() {
-    return lastValueFrom(this.http.get<Participant[]>(environment.serverUrl + '/api/v1/technician/all'))
+    return lastValueFrom(this.http.get<Participant[]>(environment.serverUrl + '/api/v1/users/all'))
   }
 
   getUsersByRoles(roles: string[]) {

@@ -42,7 +42,7 @@
                 {{ budget.missiontitle}}
               </td>
               <td>
-                {{ FindUserName(budget.createdbyid).name}}
+                {{ FindUserName(budget?.createdbyid)?.name?FindUserName(budget?.createdbyid)?.name:'-'}}
               </td>
               <td>
                 <span class="badge badge-dot mr-4">

@@ -1,0 +1,31 @@
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+  <!--  <app-stat></app-stat>-->
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="main-title text-center">
+          <span class="color1">{{ 'Hi, this is '}}<span class="highlight">{{ 'Smarty' }}</span> {{ 'AI Bot' }}</span>
+        </div>
+        <div class="sub-title text-center" >
+          <span>{{ typedText }}</span><span class="cursor">|</span>
+        </div>
+        <div class="">
+          <div class="buttons" *ngIf="!showDateInputs">
+            <button (click)="analyse_overdue_missions_and_advices()">{{ 'analyse overdue missions and advices'}}</button>
+            <button (click)="showSalaryInputs()">{{ 'decide Mission Participants and Budget' }}</button>
+            <button (click)="extra_skills_needed_for_future_missions_with_advices_to_hire()">{{ 'extra skills needed for future missions with advices to hire' }}</button>
+          </div>
+        </div>
+        <div *ngIf="showDateInputs" class="inputs-date text-center" >
+          <input type="text" [(ngModel)]="Description"/>
+          <input type="number"  [(ngModel)]="ParticipantNumber"/>
+          <button (click)="submitDates()">Submit</button>
+          <button (click)="resetState()">Back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -21,6 +21,7 @@ export class NewMissionComponent implements OnInit {
   ngOnInit(): void {
     this.missionForm = this.fb.group({
       title: ['', Validators.required],
+      description: ['', Validators.required],
       address: ['', Validators.required],
       budget: [null, [Validators.required, Validators.min(0)]],
       startdate: ['', Validators.required],
@@ -64,6 +65,7 @@ export class NewMissionComponent implements OnInit {
     const endDate = new Date(this.missionForm.value.enddate);
     const formData = new FormData();
     formData.append('title', this.missionForm.value.title);
+    formData.append('description', this.missionForm.value.description);
     formData.append('address', this.missionForm.value.address);
     formData.append('budget', this.missionForm.value.budget);
     formData.append('startdate', this.formatDate(startDate));

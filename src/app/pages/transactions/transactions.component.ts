@@ -57,7 +57,7 @@ export class TransactionsComponent implements OnInit {
 
   deny(id: number, reason: string) {
     const formData = new FormData();
-    formData.append('reason', reason);
+    formData.append('status', reason);
     this.tran.UpdateStat(id,formData).then((res)=>{
       this.getAllTransactions(this.paginatedMissions.page)
     })

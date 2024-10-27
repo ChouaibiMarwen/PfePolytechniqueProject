@@ -15,6 +15,7 @@ import {TransactionsComponent} from "../../pages/transactions/transactions.compo
 import {UpdateTechComponent} from "../../pages/tables/update-tech/update-tech.component";
 import {TasksComponent} from "../../pages/tasks/tasks.component";
 import {MyTasksComponent} from "../../pages/tasks/my-tasks/my-tasks.component";
+import {AIComponent} from "../../pages/ai/ai.component";
 
 export const AdminLayoutRoutes: Routes = [
   {path: 'dashboard', component: DashboardComponent},
@@ -29,6 +30,7 @@ export const AdminLayoutRoutes: Routes = [
   {path: 'transaction', component: TransactionsComponent},
   {path: 'Budget_Requests', component: BudgetsComponent},
   {path: 'Tasks', component: TasksComponent},
+  {path: 'AI', component: AIComponent},
 
   {path: 'icons', component: IconsComponent},
   {path: 'maps', component: MapsComponent}

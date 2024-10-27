@@ -97,6 +97,7 @@ interface Transaction {
   name: string;
   description: string;
   rejectionReason: string | null;
+  rejectionreason: string | null;
   amount: number;
   archive: boolean;
   timestamp: number; // You might want to use Date if you prefer

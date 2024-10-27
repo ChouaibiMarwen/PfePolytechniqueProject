@@ -19,6 +19,7 @@ export const ROUTES: RouteInfo[] = [
   {path: '/Budget_Requests', title: 'Budget Requests', icon: 'ni-bullet-list-67 text-yellow', class: ''},
   {path: '/user-profile', title: 'User profile', icon: 'ni-single-02  text-pink', class: ''},
   {path: '/Tasks', title: 'Tasks', icon: 'ni-bullet-list-67  text-danger', class: ''},
+  {path: '/AI', title: 'My Artificial Intelligence', icon: 'ni-atom  text-info', class: ''},
 ];
 
 export const Tech_ROUTES: RouteInfo[] = [
@@ -29,6 +30,7 @@ export const Tech_ROUTES: RouteInfo[] = [
   {path: '/user-profile', title: 'User profile', icon: 'ni-single-02  text-pink', class: ''},
   {path: '/LiveMeet', title: 'Live Meet', icon: 'ni-tv-2  text-dark', class: ''},
   {path: '/MyTasks', title: 'My Tasks', icon: 'ni-bullet-list-67  text-danger', class: ''},
+
 ];
 
 @Component({

@@ -13,7 +13,7 @@ import {DataService} from "../../services/data.service";
 })
 export class TablesComponent implements OnInit {
   users: Participant[] = [];
-
+  Success:any;
   constructor(private dataService: DataService,private router: Router, private User: UserService) {
   }
 
@@ -39,18 +39,31 @@ export class TablesComponent implements OnInit {
   Active(id: any) {
     this.User.activated(id).then((res) => {
       this.GetAllTechnicien()
+      if(res.active){
+        this.Success = "Technician Has been activated successfully"
+      }else{
+        this.Success = "Technician Has been unactivated successfully"
+      }
+
     })
   }
 
   Verify(id: any) {
     this.User.verified(id).then((res) => {
       this.GetAllTechnicien()
+
+      if(res.verified){
+        this.Success = "Technician Has been verified successfully"
+      }else{
+        this.Success = "Technician Has been unverified successfully"
+      }
     })
   }
 
   Suspend(id: any) {
     this.User.suspended(id).then((res) => {
       this.GetAllTechnicien()
+      this.Success = "Technician Has been suspended successfully"
     })
   }
 

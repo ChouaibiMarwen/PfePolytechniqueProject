@@ -76,11 +76,6 @@ export class MissionsTransactionsComponent implements OnInit {
     this.selectedStatus = ''; // Reset the reason when opening the modal
   }
 
-  // deny(id: number) {
-  //   this.tran.cancel(id).then((res)=>{
-  //     this.getAllTransactions(this.paginatedMissions.page)
-  //   })
-  // }
 
   deny(id: number, reason: string) {
     const formData = new FormData();
@@ -88,11 +83,5 @@ export class MissionsTransactionsComponent implements OnInit {
     this.tran.Deny(id,formData).then((res)=>{
 
     })
-  }
-
-
-  sendData(data:any,navigate:any) {
-    this.dataService.setData(data);
-    this.router.navigate([navigate])
   }
 }

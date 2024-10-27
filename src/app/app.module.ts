@@ -41,6 +41,7 @@ import { UpdateTechComponent } from './pages/tables/update-tech/update-tech.comp
 import { TasksComponent } from './pages/tasks/tasks.component';
 import { NewTaskComponent } from './pages/tasks/new-task/new-task.component';
 import { MyTasksComponent } from './pages/tasks/my-tasks/my-tasks.component';
+import { AIComponent } from './pages/ai/ai.component';
 
 
 
@@ -85,7 +86,8 @@ import { MyTasksComponent } from './pages/tasks/my-tasks/my-tasks.component';
     UpdateTechComponent,
     TasksComponent,
     NewTaskComponent,
-    MyTasksComponent
+    MyTasksComponent,
+    AIComponent
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true},],
   bootstrap: [AppComponent],

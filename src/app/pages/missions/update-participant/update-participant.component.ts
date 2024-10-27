@@ -54,7 +54,7 @@ export class UpdateParticipantComponent implements OnInit {
   onSubmit(): void {
     const formData = new FormData();
     // const ids: number[] = this.missionForm.value.idTechniciens.map(res => res.id) || [];
-    formData.append('idTechniciens', this.missionForm.value.idTechniciens);
+    formData.append('idTechniciens', this.missionForm.value.idTechniciens.join(', '));
     console.log(this.missionForm.value.idTechniciens)
     this.missionService.updateMissionParticipant(this.CurrentMission.id,formData).then((response) => {
       this.Success = "Mission participants updated successfully!";

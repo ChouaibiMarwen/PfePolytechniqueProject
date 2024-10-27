@@ -11,6 +11,9 @@
           <h3 class="mb-0">Technicians</h3>
           <button class="new" (click)="NewTech()">New Technician</button>
         </div>
+        <div class="alert alert-success" role="alert" *ngIf="Success" style="    margin: 1rem;">
+          {{Success}}
+        </div>
         <div class="table-responsive">
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
@@ -24,7 +27,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let user of users">
+            <tr *ngFor="let user of users;let i = index">
               <ng-container *ngIf="user.role.role != 'ROLE_ADMIN'">
                 <th scope="row">
                   <div class="media align-items-center">
