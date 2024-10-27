@@ -25,6 +25,8 @@ public class Mission {
     private String title;
     @Column(name = "address")
     private String address;
+    @Column(name = "description")
+    private String description;
     @Column(name = "fileurl")
     private String fileurl;
     @Column(name = "enddate")
@@ -197,5 +199,13 @@ public class Mission {
 
     public void setFileurl(String fileurl) {
         this.fileurl = fileurl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

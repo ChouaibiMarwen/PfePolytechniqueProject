@@ -72,6 +72,8 @@ public class MissionController extends BaseController {
         mission.setAddress(request.getAddress());
         if(request.getFileurl() != null)
             mission.setFileurl(request.getFileurl());
+        if(request.getDescription() != null)
+            mission.setDescription(request.getDescription());
         mission.setEnddate(request.getEnddate());
         if(request.getIdTechniciens()!= null){
             for(Long id : request.getIdTechniciens()){
@@ -168,6 +170,8 @@ public class MissionController extends BaseController {
             return new ResponseEntity("can't update mission after it is completed", HttpStatus.NOT_ACCEPTABLE);
         if(request.getTitle() != null)
             mission.setTitle(request.getTitle());
+        if(request.getDescription() != null)
+            mission.setDescription(request.getDescription());
         if(request.getBudget() != null){
             if(mission.getStatus() == MissionStatusEnum.COMPLETED)
                 return new ResponseEntity("can't update budget while it is completed", HttpStatus.NOT_ACCEPTABLE);

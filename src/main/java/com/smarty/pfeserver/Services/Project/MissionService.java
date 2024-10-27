@@ -135,6 +135,9 @@ public class MissionService {
     public Integer countallByStatus(MissionStatusEnum status){
         return this.repository.countByStatus(status);
     }
+    public List<Mission> findAllByStatus(MissionStatusEnum status){
+        return this.repository.findAllByStatus(status);
+    }
 
     public Double totalmessionsBudgetcount() {
         List<Mission> missions = this.findAll();

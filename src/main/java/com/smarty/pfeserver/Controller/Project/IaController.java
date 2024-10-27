@@ -31,15 +31,40 @@ public class IaController extends BaseController {
     @Autowired
     private OpenAIService openAIService;
 
-    @PostMapping("/company_future_prediction")
+    @PostMapping("/decide_Mission_Participants_and_Budget")
     @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN') ")
-    public ResponseEntity<IaResponse> company_future_prediction(
+    public ResponseEntity<IaResponse> decide_Mission_Participants_and_Budget(
             @RequestParam Integer participantsnumber,
             @RequestParam String missiondescription ) throws FirebaseMessagingException {
 
         users admin = this.userService.findByUserName(getCurrentUser().getUsername());
 
         String resp = this.predectionsServices.decideMissionParticipantsBudget( missiondescription, participantsnumber);
+        IaResponse result = new IaResponse(resp);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+    }
+    @PostMapping("/extra_skills_needed_for_future_missions_with_advices_to_hire")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN') ")
+    public ResponseEntity<IaResponse> analyzeAndIdentifyMissingSkills() throws FirebaseMessagingException {
+
+        users admin = this.userService.findByUserName(getCurrentUser().getUsername());
+
+        String resp = this.predectionsServices.analyzeAndIdentifyMissingSkills();
+        IaResponse result = new IaResponse(resp);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+    }
+
+    @PostMapping("/analyse_overdue_missions_and_advices")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN') ")
+    public ResponseEntity<IaResponse> analyse_overdue_missions_and_advices() throws FirebaseMessagingException {
+
+        users admin = this.userService.findByUserName(getCurrentUser().getUsername());
+
+        String resp = this.predectionsServices.analyseOverdueMissionsAndGiveAdvices();
         IaResponse result = new IaResponse(resp);
 
         return new ResponseEntity<>(result, HttpStatus.OK);

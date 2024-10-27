@@ -10,6 +10,7 @@ public class UpdateMissionRequest {
     private String address;
     private Date enddate;
     private Long idTeamLead;
+    private String description;
     private Double locationLatitude;
     private Double locationLongitude;
     private String locationname;
@@ -103,5 +104,13 @@ public class UpdateMissionRequest {
 
     public void setFileurl(String fileurl) {
         this.fileurl = fileurl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

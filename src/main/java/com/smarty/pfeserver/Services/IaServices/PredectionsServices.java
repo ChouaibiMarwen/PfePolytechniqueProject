@@ -15,10 +15,7 @@ import com.smarty.pfeserver.Services.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -159,5 +156,67 @@ public class PredectionsServices {
 
         return explanation.toString();
     }
+// ****************************************** needed extra  skills based on the old missions descriptions history ********************
 
+    public String analyzeAndIdentifyMissingSkills() {
+        // Step 1: Retrieve all mission descriptions
+        List<Mission> missions = this.missionService.findAll();
+
+        if (missions.isEmpty()) {
+            return "No missions found. Unable to analyze missing skills.";
+        }
+
+        // Step 2: Combine mission descriptions into a single prompt input
+        String combinedDescriptions = missions.stream()
+                .map(Mission::getDescription)
+                .collect(Collectors.joining(". "));
+
+        // Step 3: Retrieve existing skills
+        List<String> existingSkills = Arrays.stream(SoftSkillsEnum.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
+
+        // Step 4: Construct a prompt for OpenAI without listing known skills
+        String prompt = "Based on the following mission descriptions, analyze any missing or underrepresented soft skills "
+                + "that are essential for future missions. Only list new, relevant skills that are not currently covered. "
+                + "Provide explanations for the importance of each skill, as well as specific, practical advice for "
+                + "identifying these skills in potential hires. Avoid listing any skills already known or common.";
+
+        // Add the mission descriptions without directly referencing existing skills
+        prompt += " Mission descriptions: " + combinedDescriptions;
+
+        // Step 5: Call OpenAI's getPrediction method to get the missing skills analysis
+        String predictionResponse = openAIService.getPrediction(prompt);
+
+        // Step 6: Return the response as human-readable analysis and advice
+        return predictionResponse.trim();
+    }
+    // **************************** overdue missions and how we solve this into the future ***********************
+    public String analyseOverdueMissionsAndGiveAdvices() {
+        List<Mission> overdueMissions = missionService.findAllByStatus(MissionStatusEnum.OVERDUE);
+
+        int totalOverdue = overdueMissions.size();
+        double averageBudget = overdueMissions.stream()
+                .mapToDouble(Mission::getBudget)
+                .average()
+                .orElse(0.0);
+
+        double averageParticipants = overdueMissions.stream()
+                .mapToInt(mission -> mission.getParticipants().size())
+                .average()
+                .orElse(0);
+
+        // Generate the prompt for OpenAI based on overdue missions' summary data
+        String prompt = "There are " + totalOverdue + " overdue missions that have exceeded their execution periods." +
+                " The average budget allocated to these missions is $" + String.format("%.2f", averageBudget) +
+                " and the average number of participants involved per mission is approximately " +
+                String.format("%.1f", averageParticipants) + "." +
+                " Please provide some advice on how to execute missions within the set timelines, considering these average statistics." +
+                " Provide suggestions on budget management, optimal participant numbers, and timeline adjustments for timely completion.";
+
+        // Call OpenAI for advice
+        String response = openAIService.getPrediction(prompt);
+
+        return response;
+    }
 }
