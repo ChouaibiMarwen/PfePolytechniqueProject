@@ -199,7 +199,7 @@ public class TransactionController extends BaseController {
 
     }
 
-    @GetMapping(value = {"/update_transaction_status/{transaction_id}"})
+    @PatchMapping(value = {"/update_transaction_status/{transaction_id}"})
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "update a transaction status for admin", notes = "Endpoint to update a transaction status for admin")
     @ApiResponses(value = {

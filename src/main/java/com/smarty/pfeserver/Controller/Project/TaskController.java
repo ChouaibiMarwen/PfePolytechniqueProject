@@ -110,7 +110,7 @@ public class TaskController extends BaseController {
     }
 
     @GetMapping(value = {"/my_tasks_pg"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN')")
     @ApiOperation(value = "get all tasks for technician", notes = "Endpoint to all tasks for technicien")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully add"),

@@ -89,7 +89,7 @@ public class UsersController extends BaseController {
     private CriteriaService criteriaService;
 
     @GetMapping(value = {"/current_user"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN')")
     public ResponseEntity<users> GetCurrentUser() throws IOException {
         users user = this.userService.findByUserName(getCurrentUser().getUsername());
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -257,7 +257,7 @@ public class UsersController extends BaseController {
     }
 
     @GetMapping(value = {"/all_users_list_by_roles_list"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TECHNICIEN')")
     @ApiOperation(value = "get all users by role and status for admin", notes = "Endpoint to get users")
     @ApiResponses(value = {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully get"),
@@ -588,4 +588,15 @@ public class UsersController extends BaseController {
     }
 
 
+    @GetMapping(value = {"/all"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUB_ADMIN')")
+    @ApiOperation(value = "Get all technicians", notes = "Endpoint to retrieve all technicians")
+    @ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 200, message = "Successfully retrieved list of technicians"),
+            @io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden, you are not authorized"),
+    })
+    public ResponseEntity<List<users>> getAllTechnicians() {
+        List<users> technicians = userService.findAll();
+        return new ResponseEntity<>(technicians, HttpStatus.OK);
+    }
 }
